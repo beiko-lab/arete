@@ -8,7 +8,7 @@ process QUAST {
     label 'process_medium'
     publishDir "${params.outdir}",
         mode: params.publish_dir_mode,
-        saveAs: { filename -> saveFiles(filename:filename, options:params.options, publish_dir:meta.id + "/" + getSoftwareName(task.process), publish_id:'') }
+        saveAs: { filename -> saveFiles(filename:filename, options:params.options, publish_dir:meta.id + "/" + getSoftwareName(task.process), publish_id:meta.id) }
 
     conda (params.enable_conda ? 'bioconda::quast=5.0.2' : null)
     if (workflow.containerEngine == 'singularity' && !params.singularity_pull_docker_container) {
@@ -18,31 +18,25 @@ process QUAST {
     }
 
     input:
-    path consensus
-    path fasta
-    path gff
-    val use_fasta
-    val use_gff
+    tuple val(meta), path(assembly)
+    path(reference_genome)
 
     output:
-    path "${prefix}"    , emit: results
-    path '*.tsv'        , emit: tsv
+    path "${prefix}", emit: results
+    path '*.tsv', emit: tsv
     path '*.version.txt', emit: version
 
     script:
     def software  = getSoftwareName(task.process)
     prefix        = options.suffix ?: software
-    def features  = use_gff ? "--features $gff" : ''
-    def reference = use_fasta ? "-r $fasta" : ''
     """
     quast.py \\
-        --output-dir $prefix \\
-        $reference \\
-        $features \\
+        --output-dir ${prefix} \\
         --threads $task.cpus \\
+        -r $reference_genome \\
         $options.args \\
-        ${consensus.join(' ')}
-    ln -s ${prefix}/report.tsv
+        $assembly
+    cp ${prefix}/report.tsv ${meta.id}_report.tsv
     echo \$(quast.py --version 2>&1) | sed 's/^.*QUAST v//; s/ .*\$//' > ${software}.version.txt
     """
 }

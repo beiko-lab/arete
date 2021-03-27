@@ -18,6 +18,7 @@ for (param in checkPathParamList) { if (param) { file(param, checkIfExists: true
 
 // Check mandatory parameters
 if (params.input_sample_table) { ch_input = file(params.input_sample_table) } else { exit 1, 'Input samplesheet not specified!' }
+if (params.reference_genome) { ch_reference_genome = file(params.reference_genome) } else { exit 1, 'Reference genome not specified!' }
 
 ////////////////////////////////////////////////////
 /* --          CONFIG FILES                    -- */
@@ -46,6 +47,7 @@ include { FASTP                 } from '../modules/nf-core/software/fastp/main' 
 include { UNICYCLER             } from '../modules/nf-core/software/unicycler/main'  addParams( options: [:] )
 include { QUAST                 } from '../modules/nf-core/software/quast/main'  addParams( options: [:]                          )
 include { MULTIQC               } from '../modules/nf-core/software/multiqc/main' addParams( options: multiqc_options              )
+include { PROKKA                } from '../modules/nf-core/software/prokka/main' addParams( options: [:] )
 
 // Subworkflows: local
 include { INPUT_CHECK           } from '../subworkflows/local/input_check'        addParams( options: [:]                          )
@@ -96,11 +98,11 @@ workflow ARETE {
     UNICYCLER(FASTP.out.reads)
     ch_software_versions = ch_software_versions.mix(UNICYCLER.out.version.first().ifEmpty(null))
 
-    ///*
-    // * Module: Evaluate Assembly
-    // */
-    //QUAST(UNICYCLER.out.scaffolds)
-    //ch_software_versions = ch_software_versions.mix(QUAST.out.version.first().ifEmpty(null))
+    /*
+     * Module: Evaluate Assembly
+     */
+    QUAST(UNICYCLER.out.scaffolds, ch_reference_genome)
+    ch_software_versions = ch_software_versions.mix(QUAST.out.version.first().ifEmpty(null))
 
     ///*
     // * Module: Annotate AMR
@@ -120,11 +122,11 @@ workflow ARETE {
     //ABRICATE(UNICYCLER.out.assemblies, "BacMet2")
     //ch_software_versions = ch_software_versions.mix(ABRICATE.out.version.first().ifEmpty(null))
 
-    ///*
-    // * Module: Prokka
-    // */
-    //PROKKA(UNICYCLER.out.assemblies)
-    //ch_software_versions = ch_software_versions.mix(PROKKA.out.version.first().ifEmpty(null))
+    /*
+     * Module: Prokka
+     */
+    PROKKA(UNICYCLER.out.scaffolds)
+    ch_software_versions = ch_software_versions.mix(PROKKA.out.version.first().ifEmpty(null))
 
     ///*
     // * Module: Mob-Suite
@@ -171,8 +173,9 @@ workflow ARETE {
     ch_multiqc_files = ch_multiqc_files.mix(GET_SOFTWARE_VERSIONS.out.yaml.collect())
     ch_multiqc_files = ch_multiqc_files.mix(FASTQC.out.zip.collect{it[1]}.ifEmpty([]))
     ch_multiqc_files = ch_multiqc_files.mix(TRIM_FASTQC.out.zip.collect{it[1]}.ifEmpty([]))
+    ch_multiqc_files = ch_multiqc_files.mix(QUAST.out.tsv.collect().ifEmpty([]))
+    ch_multiqc_files = ch_multiqc_files.mix(PROKKA.out.log.collect{it[1]}.ifEmpty([]))
     //ch_multiqc_files = ch_multiqc_files.mix(KRAKEN2.out.zip.collect{it[1]}.ifEmpty([]))
-    //ch_multiqc_files = ch_multiqc_files.mix(QUAST.out.zip.collect{it[1]}.ifEmpty([]))
     
     MULTIQC (ch_multiqc_files.collect())
     multiqc_report       = MULTIQC.out.report.toList()

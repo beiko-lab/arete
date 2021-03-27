@@ -8,7 +8,7 @@ process PROKKA {
     label 'process_low'
     publishDir "${params.outdir}",
         mode: params.publish_dir_mode,
-        saveAs: { filename -> saveFiles(filename:filename, options:params.options, publish_dir:getSoftwareName(task.process), publish_id:meta.id) }
+        saveAs: { filename -> saveFiles(filename:filename, options:params.options, publish_dir:meta.id + "/" + getSoftwareName(task.process), publish_id:meta.id) }
 
     conda (params.enable_conda ? "bioconda::prokka=1.14.6" : null)
     if (workflow.containerEngine == 'singularity' && !params.singularity_pull_docker_container) {
@@ -19,8 +19,6 @@ process PROKKA {
 
     input:
     tuple val(meta), path(fasta)
-    path proteins
-    path prodigal_tf
 
     output:
     tuple val(meta), path("${prefix}/*.gff"), emit: gff
@@ -40,15 +38,11 @@ process PROKKA {
     script:
     def software = getSoftwareName(task.process)
     prefix   = options.suffix ? "${meta.id}${options.suffix}" : "${meta.id}"
-    def proteins_opt = proteins ? "--proteins ${proteins[0]}" : ""
-    def prodigal_opt = prodigal_tf ? "--prodigaltf ${prodigal_tf[0]}" : ""
     """
     prokka \\
         $options.args \\
         --cpus $task.cpus \\
         --prefix $prefix \\
-        $proteins_opt \\
-        $prodigal_tf \\
         $fasta
 
     echo \$(prokka --version 2>&1) | sed 's/^.*prokka //' > ${software}.version.txt
