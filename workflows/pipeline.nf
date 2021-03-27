@@ -69,7 +69,7 @@ workflow ARETE {
     /*
      * MODULE: Run FastQC
      */
-    FASTQC(INPUT_CHECK.out.reads)
+    FASTQC(INPUT_CHECK.out.reads, "raw_fastqc")
     ch_software_versions = ch_software_versions.mix(FASTQC.out.version.first().ifEmpty(null))
     
     /*
@@ -81,7 +81,7 @@ workflow ARETE {
     /*
      * MODULE: Run FastQC on trimmed reads
      */
-    TRIM_FASTQC(FASTP.out.reads)
+    TRIM_FASTQC(FASTP.out.reads, "trim_fastqc")
     ch_software_versions = ch_software_versions.mix(TRIM_FASTQC.out.version.first().ifEmpty(null))
 
     ///*
@@ -96,11 +96,11 @@ workflow ARETE {
     UNICYCLER(FASTP.out.reads)
     ch_software_versions = ch_software_versions.mix(UNICYCLER.out.version.first().ifEmpty(null))
 
-    /*
-     * Module: Evaluate Assembly
-     */
-    QUAST(UNICYCLER.out.scaffolds)
-    ch_software_versions = ch_software_versions.mix(QUAST.out.version.first().ifEmpty(null))
+    ///*
+    // * Module: Evaluate Assembly
+    // */
+    //QUAST(UNICYCLER.out.scaffolds)
+    //ch_software_versions = ch_software_versions.mix(QUAST.out.version.first().ifEmpty(null))
 
     ///*
     // * Module: Annotate AMR
