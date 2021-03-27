@@ -13,7 +13,7 @@
 You will need to create a samplesheet with information about the samples you would like to analyse before running the pipeline. Use this parameter to specify its location. It has to be a comma-separated file with 3 columns, and a header row as shown in the examples below.
 
 ```bash
---input '[path to samplesheet file]'
+--input_sample_table '[path to samplesheet file]'
 ```
 
 ### Multiple runs of the same sample

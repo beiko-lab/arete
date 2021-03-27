@@ -1,7 +1,5 @@
-# ![nf-core/arete](docs/images/nf-core-arete_logo.png)
-
-[![GitHub Actions CI Status](https://github.com/nf-core/arete/workflows/nf-core%20CI/badge.svg)](https://github.com/nf-core/arete/actions?query=workflow%3A%22nf-core+CI%22)
-[![GitHub Actions Linting Status](https://github.com/nf-core/arete/workflows/nf-core%20linting/badge.svg)](https://github.com/nf-core/arete/actions?query=workflow%3A%22nf-core+linting%22)
+[![GitHub Actions CI Status](https://github.com/fmaguire/arete/workflows/nf-core%20CI/badge.svg)](https://github.com/fmaguire/arete/actions?query=workflow%3A%22nf-core+CI%22)
+[![GitHub Actions Linting Status](https://github.com/fmaguire/arete/workflows/nf-core%20linting/badge.svg)](https://github.com/fmaguire/arete/actions?query=workflow%3A%22nf-core+linting%22)
 [![AWS CI](https://img.shields.io/badge/CI%20tests-full%20size-FF9900?labelColor=000000&logo=Amazon%20AWS)](https://nf-co.re/arete/results)
 [![Cite with Zenodo](http://img.shields.io/badge/DOI-10.5281/zenodo.XXXXXXX-1073c8?labelColor=000000)](https://doi.org/10.5281/zenodo.XXXXXXX)
 
@@ -17,7 +15,7 @@
 ## Introduction
 
 <!-- TODO nf-core: Write a 1-2 sentence summary of what data the pipeline is for and what it does -->
-**nf-core/arete** is a bioinformatics best-practice analysis pipeline for AMR/VF LGT-focused bacterial genomics workflow.
+**ARETE** is a bioinformatics best-practice analysis pipeline for AMR/VF LGT-focused bacterial genomics workflow.
 
 The pipeline is built using [Nextflow](https://www.nextflow.io), a workflow tool to run tasks across multiple compute infrastructures in a very portable manner. It uses Docker / Singularity containers making installation trivial and results highly reproducible.
 
@@ -40,7 +38,7 @@ On release, automated continuous integration tests run the pipeline on a full-si
 3. Download the pipeline and test it on a minimal dataset with a single command:
 
     ```bash
-    nextflow run nf-core/arete -profile test,<docker/singularity/podman/shifter/charliecloud/conda/institute>
+    nextflow run fmaguire/arete -profile test,<docker/singularity/podman/shifter/charliecloud/conda/institute>
     ```
 
     * Please check [nf-core/configs](https://github.com/nf-core/configs#documentation) to see if a custom config file to run nf-core pipelines already exists for your Institute. If so, you can simply use `-profile <institute>` in your command. This will enable either `docker` or `singularity` and set the appropriate execution settings for your local compute environment.
@@ -52,23 +50,18 @@ On release, automated continuous integration tests run the pipeline on a full-si
     <!-- TODO nf-core: Update the example "typical command" below used to run the pipeline -->
 
     ```bash
-    nextflow run nf-core/arete -profile <docker/singularity/podman/shifter/charliecloud/conda/institute> --input samplesheet.csv --genome GRCh37
+    nextflow run fmaguire/arete -profile <docker/singularity/podman/shifter/charliecloud/conda/institute> --input samplesheet.csv --reference GRCh37
     ```
 
 See [usage docs](https://nf-co.re/arete/usage) for all of the available options when running the pipeline.
 
 ## Documentation
 
-The nf-core/arete pipeline comes with documentation about the pipeline: [usage](https://nf-co.re/arete/usage) and [output](https://nf-co.re/arete/output).
+The ARETE pipeline comes with documentation about the pipeline: [usage](https://nf-co.re/arete/usage) and [output](https://nf-co.re/arete/output).
 
 ## Credits
 
-nf-core/arete was originally written by Finlay Maguire.
-
-We thank the following people for their extensive assistance in the development
-of this pipeline:
-
-<!-- TODO nf-core: If applicable, make list of people who have also contributed -->
+ARETE was written by Finlay Maguire.
 
 ## Contributions and Support
 

@@ -34,36 +34,11 @@ class Workflow {
     }
 
     static void validateWorkflowParams(params, log) {
-        genomeExists(params, log)
-
-        if (!params.fasta) { 
-            log.error "Genome fasta file not specified with e.g. '--fasta genome.fa' or via a detectable config file."
+        if (!params.reference_genome) { 
+            log.error "Genome fasta file not specified with e.g. '--reference_genome genome.fa'"
             System.exit(1)
         }
     }
-
-    // Exit pipeline if incorrect --genome key provided
-    static void genomeExists(params, log) {
-        if (params.genomes && params.genome && !params.genomes.containsKey(params.genome)) {
-            log.error "=============================================================================\n" +
-                      "  Genome '${params.genome}' not found in any config files provided to the pipeline.\n" +
-                      "  Currently, the available genome keys are:\n" +
-                      "  ${params.genomes.keySet().join(", ")}\n" +
-                      "==================================================================================="
-            System.exit(1)
-        }
-    }
-
-    // Get attribute from genome config file e.g. fasta
-    static String getGenomeAttribute(params, attribute) {
-        def val = ''
-        if (params.genomes && params.genome && params.genomes.containsKey(params.genome)) {
-            if (params.genomes[ params.genome ].containsKey(attribute)) {
-                val = params.genomes[ params.genome ][ attribute ]
-            }
-        }
-        return val
-    }   
 
     /*
      * Get workflow summary for MultiQC

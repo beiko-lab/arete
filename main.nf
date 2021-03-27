@@ -1,11 +1,11 @@
 #!/usr/bin/env nextflow
 /*
 ========================================================================================
-                         nf-core/arete
+                         arete
 ========================================================================================
- nf-core/arete Analysis Pipeline.
+ ARETE Analysis Pipeline.
  #### Homepage / Documentation
- https://github.com/nf-core/arete
+ https://github.com/fmaguire/arete
 ----------------------------------------------------------------------------------------
 */
 
@@ -19,19 +19,12 @@ log.info Utils.logo(workflow, params.monochrome_logs)
 
 def json_schema = "$projectDir/nextflow_schema.json"
 if (params.help) {
-    // TODO nf-core: Update typical command used to run pipeline
-    def command = "nextflow run nf-core/arete --input samplesheet.csv --genome GRCh37 -profile docker"
+    def command = "nextflow run arete --input samplesheet.csv --reference_fasta reference.fasta -profile conda"
     log.info NfcoreSchema.paramsHelp(workflow, params, json_schema, command)
     log.info Workflow.citation(workflow)
     log.info Utils.dashedLine(params.monochrome_logs)
     exit 0
 }
-
-////////////////////////////////////////////////////
-/* --        GENOME PARAMETER VALUES           -- */
-////////////////////////////////////////////////////
-
-params.fasta = Workflow.getGenomeAttribute(params, 'fasta')
 
 ////////////////////////////////////////////////////
 /* --         PRINT PARAMETER SUMMARY          -- */
