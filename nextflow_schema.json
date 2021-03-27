@@ -51,6 +51,22 @@
                 }
             }
         },
+        "fastp_options": {
+            "title": "FASTP execution options",
+            "type": "object",
+            "fa_icon": "fas fa-file-code",
+            "description": "Save the results for failed trim runs",
+            "required": [
+                "save_trimmed_fail"
+            ],
+            "properties": {
+                "save_trimmed_fail": {
+                    "type": "bool",
+                    "fa_icon": "fas fa-file-code",
+                    "description": "Save failed FASTP result"
+                }
+            }
+        },
         "generic_options": {
             "title": "Generic options",
             "type": "object",

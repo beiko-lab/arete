@@ -41,6 +41,10 @@ include { GET_SOFTWARE_VERSIONS } from '../modules/local/get_software_versions' 
 
 // Modules: nf-core/modules
 include { FASTQC                } from '../modules/nf-core/software/fastqc/main'  addParams( options: modules['fastqc']            )
+include { FASTQC as TRIM_FASTQC } from '../modules/nf-core/software/fastqc/main'  addParams( options: modules['fastqc']            )
+include { FASTP                 } from '../modules/nf-core/software/fastp/main'  addParams( options: [:]                          )
+include { UNICYCLER             } from '../modules/nf-core/software/unicycler/main'  addParams( options: [:] )
+include { QUAST                 } from '../modules/nf-core/software/quast/main'  addParams( options: [:]                          )
 include { MULTIQC               } from '../modules/nf-core/software/multiqc/main' addParams( options: multiqc_options              )
 
 // Subworkflows: local
@@ -68,17 +72,17 @@ workflow ARETE {
     FASTQC(INPUT_CHECK.out.reads)
     ch_software_versions = ch_software_versions.mix(FASTQC.out.version.first().ifEmpty(null))
     
-    ///*
-    // * MODULE: Trim Reads
-    // */
-    //FASTP(INPUT_CHECK.out.reads)
-    //ch_software_versions = ch_software_versions.mix(FASTP.out.version.first().ifEmpty(null))
+    /*
+     * MODULE: Trim Reads
+     */
+    FASTP(INPUT_CHECK.out.reads)
+    ch_software_versions = ch_software_versions.mix(FASTP.out.version.first().ifEmpty(null))
 
-    ///*
-    // * MODULE: Run FastQC on trimmed reads
-    // */
-    //POST_TRIM_FASTQC(FASTP.out.reads)
-    //ch_software_versions = ch_software_versions.mix(POST_TRIM_FASTQC.out.version.first().ifEmpty(null))
+    /*
+     * MODULE: Run FastQC on trimmed reads
+     */
+    TRIM_FASTQC(FASTP.out.reads)
+    ch_software_versions = ch_software_versions.mix(TRIM_FASTQC.out.version.first().ifEmpty(null))
 
     ///*
     // * MODULE: Run Kraken2
@@ -86,22 +90,22 @@ workflow ARETE {
     //KRAKEN2(FASTP.out.reads)
     //ch_software_versions = ch_software_versions.mix(KRAKEN2.out.version.first().ifEmpty(null))
 
-    ///*
-    // * MODULE: Assembly
-    // */
-    //UNICYCLER(FASTP.out.reads)
-    //ch_software_versions = ch_software_versions.mix(UNICYCLER.out.version.first().ifEmpty(null))
+    /*
+     * MODULE: Assembly
+     */
+    UNICYCLER(FASTP.out.reads)
+    ch_software_versions = ch_software_versions.mix(UNICYCLER.out.version.first().ifEmpty(null))
 
-    ///*
-    // * Module: Evaluate Assembly
-    // */
-    //QUAST(UNICYCLER.out.assemblies)
-    //ch_software_versions = ch_software_versions.mix(QUAST.out.version.first().ifEmpty(null))
+    /*
+     * Module: Evaluate Assembly
+     */
+    QUAST(UNICYCLER.out.scaffolds)
+    ch_software_versions = ch_software_versions.mix(QUAST.out.version.first().ifEmpty(null))
 
     ///*
     // * Module: Annotate AMR
     // */
-    //RGI(UNICYCLER.out.assemblies)
+    //RGI(UNICYCLER.out.scaffolds)
     //ch_software_versions = ch_software_versions.mix(RGI.out.version.first().ifEmpty(null))
 
     ///*
@@ -166,7 +170,7 @@ workflow ARETE {
     ch_multiqc_files = ch_multiqc_files.mix(ch_workflow_summary.collectFile(name: 'workflow_summary_mqc.yaml'))
     ch_multiqc_files = ch_multiqc_files.mix(GET_SOFTWARE_VERSIONS.out.yaml.collect())
     ch_multiqc_files = ch_multiqc_files.mix(FASTQC.out.zip.collect{it[1]}.ifEmpty([]))
-    //ch_multiqc_files = ch_multiqc_files.mix(POST_TRIM_FASTQC.out.zip.collect{it[1]}.ifEmpty([]))
+    ch_multiqc_files = ch_multiqc_files.mix(TRIM_FASTQC.out.zip.collect{it[1]}.ifEmpty([]))
     //ch_multiqc_files = ch_multiqc_files.mix(KRAKEN2.out.zip.collect{it[1]}.ifEmpty([]))
     //ch_multiqc_files = ch_multiqc_files.mix(QUAST.out.zip.collect{it[1]}.ifEmpty([]))
     
@@ -187,4 +191,4 @@ workflow.onComplete {
 
 ////////////////////////////////////////////////////
 /* --                  THE END                 -- */
-////////////////////////////////////////////////////
+///////////////////////////////////////////////////
