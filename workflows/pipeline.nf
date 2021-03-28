@@ -48,6 +48,16 @@ include { UNICYCLER             } from '../modules/nf-core/software/unicycler/ma
 include { QUAST                 } from '../modules/nf-core/software/quast/main'  addParams( options: [:]                          )
 include { MULTIQC               } from '../modules/nf-core/software/multiqc/main' addParams( options: multiqc_options              )
 include { PROKKA                } from '../modules/nf-core/software/prokka/main' addParams( options: [:] )
+include { ABRICATE as ABRICATE_VF;
+          UPDATE_ABRICATE_DB as ABRICATE_VF_DB} from '../modules/local/software/abricate/main' addParams( options: [:] )
+include { ABRICATE as ABRICATE_BCM2;
+          UPDATE_ABRICATE_DB as ABRICATE_BCM2_DB} from '../modules/local/software/abricate/main' addParams( options: [:] )
+include { RGI;
+          UPDATE_RGI_DB } from '../modules/local/software/rgi/main' addParams( options: [:] )
+include { SNIPPY; 
+          SNIPPY_CORE } from '../modules/local/software/snippy/main' addParams( options: [:] )
+include { MOB_INIT;
+          MOB_RECON } from '../modules/local/software/mobsuite/main' addParams( options: [:] )
 
 // Subworkflows: local
 include { INPUT_CHECK           } from '../subworkflows/local/input_check'        addParams( options: [:]                          )
@@ -67,7 +77,9 @@ workflow ARETE {
      * SUBWORKFLOW: Read in samplesheet, validate and stage input files
      */
     INPUT_CHECK(ch_input)
+    
 
+    /////////////////// Read Processing /////////////////////////////
     /*
      * MODULE: Run FastQC
      */
@@ -91,7 +103,9 @@ workflow ARETE {
     // */
     //KRAKEN2(FASTP.out.reads)
     //ch_software_versions = ch_software_versions.mix(KRAKEN2.out.version.first().ifEmpty(null))
+    
 
+    /////////////////// ASSEMBLE /////////////////////////////
     /*
      * MODULE: Assembly
      */
@@ -103,24 +117,30 @@ workflow ARETE {
      */
     QUAST(UNICYCLER.out.scaffolds, ch_reference_genome)
     ch_software_versions = ch_software_versions.mix(QUAST.out.version.first().ifEmpty(null))
+    
+    
+    /////////////////// ANNOTATION ///////////////////////////
+    /*
+     * Module: Annotate AMR
+     */
+    UPDATE_RGI_DB()
+    ch_software_versions = ch_software_versions.mix(UPDATE_RGI_DB.out.version.ifEmpty(null))
+    RGI(UNICYCLER.out.scaffolds)
+    ch_software_versions = ch_software_versions.mix(RGI.out.version.first().ifEmpty(null))
 
-    ///*
-    // * Module: Annotate AMR
-    // */
-    //RGI(UNICYCLER.out.scaffolds)
-    //ch_software_versions = ch_software_versions.mix(RGI.out.version.first().ifEmpty(null))
+    /*
+     * Module: Annotate VF
+     */
+    ABRICATE_VF_DB("vfdb")
+    ABRICATE_VF(UNICYCLER.out.scaffolds, "vfdb")
+    ch_software_versions = ch_software_versions.mix(ABRICATE_VF.out.version.first().ifEmpty(null))
 
-    ///*
-    // * Module: Annotate VF
-    // */
-    //ABRICATE(UNICYCLER.out.assemblies, "VFDB")
-    //ch_software_versions = ch_software_versions.mix(ABRICATE.out.version.first().ifEmpty(null))
-
-    ///*
-    // * Module: Annotate BacMet
-    // */
-    //ABRICATE(UNICYCLER.out.assemblies, "BacMet2")
-    //ch_software_versions = ch_software_versions.mix(ABRICATE.out.version.first().ifEmpty(null))
+    /*
+     * Module: Annotate BacMet
+     */
+    ABRICATE_BCM2_DB("bacmet2")
+    ABRICATE_BCM2(UNICYCLER.out.scaffolds, "bacmet2")
+    ch_software_versions = ch_software_versions.mix(ABRICATE_BCM2.out.version.first().ifEmpty(null))
 
     /*
      * Module: Prokka
@@ -128,18 +148,21 @@ workflow ARETE {
     PROKKA(UNICYCLER.out.scaffolds)
     ch_software_versions = ch_software_versions.mix(PROKKA.out.version.first().ifEmpty(null))
 
-    ///*
-    // * Module: Mob-Suite
-    // */
-    //MOBSUITE(UNICYCLER.out.assemblies)
-    //ch_software_versions = ch_software_versions.mix(MOBSUITE.out.version.first().ifEmpty(null))
+    /*
+     * Module: Mob-Suite
+     */
+    MOB_INIT()
+    ch_software_versions = ch_software_versions.mix(MOB_INIT.out.version.ifEmpty(null))
+    // touch to make sure mob init runs furst
+    MOB_RECON(UNICYCLER.out.scaffolds, MOB_INIT.out.version.ifEmpty(null))
 
-    ///*
-    // * Module: Snippy
-    // */
-    //SNIPPY(UNICYCLER.out.assemblies, ch_reference_genome)
-    //ch_software_versions = ch_software_versions.mix(QUAST.out.version.first().ifEmpty(null))
-    //
+    /*
+     * Module: Snippy
+     */
+    SNIPPY(FASTP.out.reads, ch_reference_genome)
+    //SNIPPY_CORE(SNIPPY.out.snippy_folder.collect())
+    //ch_software_versions = ch_software_versions.mix(SNIPPY_CORE.out.version.ifEmpty(null))
+    
     ///*
     // * Module: IQTree
     // */

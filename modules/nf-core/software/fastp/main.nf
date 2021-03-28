@@ -9,7 +9,7 @@ process FASTP {
     label 'process_medium'
     publishDir "${params.outdir}",
         mode: params.publish_dir_mode,
-        saveAs: { filename -> saveFiles(filename:filename, options:params.options, publish_dir:meta.id + "/" + getSoftwareName(task.process), publish_id:meta.id) }
+        saveAs: { filename -> saveFiles(filename:filename, options:params.options, publish_dir:meta.id + "/read_processing/" + getSoftwareName(task.process), publish_id:meta.id) }
 
     conda (params.enable_conda ? 'bioconda::fastp=0.20.1' : null)
     if (workflow.containerEngine == 'singularity' && !params.singularity_pull_docker_container) {

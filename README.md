@@ -18,16 +18,49 @@
 **ARETE** is a bioinformatics best-practice analysis pipeline for AMR/VF LGT-focused bacterial genomics workflow.
 
 The pipeline is built using [Nextflow](https://www.nextflow.io), a workflow tool to run tasks across multiple compute infrastructures in a very portable manner. It uses Docker / Singularity containers making installation trivial and results highly reproducible.
+The [nf-core](https://nf-cor.re) project provided overall project template, pre-written software modules, and generally best practice recommendations.
 
 <!-- TODO nf-core: Add full-sized test dataset and amend the paragraph below if applicable -->
-On release, automated continuous integration tests run the pipeline on a full-sized dataset on the AWS cloud infrastructure. This ensures that the pipeline runs on AWS, has sensible resource allocation defaults set to run on real-world datasets, and permits the persistent storage of results to benchmark between pipeline releases and other analysis sources. The results obtained from the full-sized test can be viewed on the [nf-core website](https://nf-co.re/arete/results).
+On release, automated continuous integration tests run the pipeline on a full-sized dataset on the AWS cloud infrastructure. This ensures that the pipeline runs on AWS, has sensible resource allocation defaults set to run on real-world datasets, and permits the persistent storage of results to benchmark between pipeline releases and other analysis sources. 
 
 ## Pipeline summary
 
 <!-- TODO nf-core: Fill in short bullet-pointed list of the default steps in the pipeline -->
 
-1. Read QC ([`FastQC`](https://www.bioinformatics.babraham.ac.uk/projects/fastqc/))
-2. Present QC for raw reads ([`MultiQC`](http://multiqc.info/))
+Read processing:
+1. Raw Read QC ([`FastQC`](https://www.bioinformatics.babraham.ac.uk/projects/fastqc/))
+2. Read Trimming ([`fastp`](https://github.com/OpenGene/fastp))
+3. Trimmed Read QC ([`FastQC`](https://www.bioinformatics.babraham.ac.uk/projects/fastqc/))
+4. *TODO* Taxonomic Profiling ([`kraken2`](http://ccb.jhu.edu/software/kraken2/))
+
+Annotation:
+1. Prokka ([`prokka`](https://github.com/tseemann/prokka))
+2. AMR ([`RGI`](https://github.com/arpcard/rgi))
+3. VF ([`abricate`](https://github.com/tseemann/abricate))
+4. Metal Resistance ([`abricate`](https://github.com/tseemann/abricate))
+5. Plasmids ([`mob_suite`](https://github.com/phac-nml/mob-suite))
+6. *TODO* CAZY
+7. *TODO* ICEberg BLAST
+
+Phylogeny:
+1. *TODO* snippy ([`snippy`](https://github.com/tseemann/snippy))
+2. *TODO* iqtree ([`iqtree`](http://www.iqtree.org/))
+
+Summary using MultiQC needs tweaked to have report include tools other than fastqc.
+
+### Not Implemented 
+
+When a developer takes over this workflow the following 5 issues are main out-standing
+development requirements.
+
+They largely weren't done due to being web or galaxy only tools or haven't been
+conda/containerised obviously yet.
+
+1. Prophage identification (e.g., PHASTER)
+2. Genomic Island Detection (e.g., IslandCompare)
+3. ICE identification (e.g., ICEFinder) although ICEBerg BLAST is done
+4. Gain-loss Mapping (e.g., GLOOME)
+5. Summary of results in various heatmaps etc
 
 ## Quick Start
 
@@ -50,14 +83,14 @@ On release, automated continuous integration tests run the pipeline on a full-si
     <!-- TODO nf-core: Update the example "typical command" below used to run the pipeline -->
 
     ```bash
-    nextflow run fmaguire/arete -profile <docker/singularity/podman/shifter/charliecloud/conda/institute> --input samplesheet.csv --reference GRCh37
+    nextflow run fmaguire/arete -profile <docker/singularity/podman/shifter/charliecloud/conda/institute> --input_sample_sheet samplesheet.csv --reference_genome efaecium_DO.fasta
     ```
 
-See [usage docs](https://nf-co.re/arete/usage) for all of the available options when running the pipeline.
+See [usage docs](https://github.com/fmaguire/arete/usage) for all of the available options when running the pipeline.
 
 ## Documentation
 
-The ARETE pipeline comes with documentation about the pipeline: [usage](https://nf-co.re/arete/usage) and [output](https://nf-co.re/arete/output).
+The ARETE pipeline comes with documentation about the pipeline: [usage](https://github.com/fmaguire/arete/usage) and [output](https://github.com/fmaguire/arete/output).
 
 ## Credits
 
