@@ -19,6 +19,7 @@ for (param in checkPathParamList) { if (param) { file(param, checkIfExists: true
 // Check mandatory parameters
 if (params.input_sample_table) { ch_input = file(params.input_sample_table) } else { exit 1, 'Input samplesheet not specified!' }
 if (params.reference_genome) { ch_reference_genome = file(params.reference_genome) } else { exit 1, 'Reference genome not specified!' }
+if (params.outgroup_genome ) { ch_outgroup_genome = file(params.outgroup_genome) } else { ch_outgroup_genome = '' }
 
 ////////////////////////////////////////////////////
 /* --          CONFIG FILES                    -- */
@@ -47,17 +48,24 @@ include { FASTP                 } from '../modules/nf-core/software/fastp/main' 
 include { UNICYCLER             } from '../modules/nf-core/software/unicycler/main'  addParams( options: [:] )
 include { QUAST                 } from '../modules/nf-core/software/quast/main'  addParams( options: [:]                          )
 include { MULTIQC               } from '../modules/nf-core/software/multiqc/main' addParams( options: multiqc_options              )
+include { KRAKEN2_DB;
+          KRAKEN2_RUN           } from '../modules/nf-core/software/kraken2/run/main' addParams( options: [:] )
 include { PROKKA                } from '../modules/nf-core/software/prokka/main' addParams( options: [:] )
 include { ABRICATE as ABRICATE_VF;
           UPDATE_ABRICATE_DB as ABRICATE_VF_DB} from '../modules/local/software/abricate/main' addParams( options: [:] )
 include { ABRICATE as ABRICATE_BCM2;
           UPDATE_ABRICATE_DB as ABRICATE_BCM2_DB} from '../modules/local/software/abricate/main' addParams( options: [:] )
+include { GET_CAZYDB } from '../modules/local/blast_databases.nf' 
+include { DIAMOND_MAKEDB; 
+          DIAMOND_BLASTX } from '../modules/local/software/diamond/main' 
 include { RGI;
           UPDATE_RGI_DB } from '../modules/local/software/rgi/main' addParams( options: [:] )
 include { SNIPPY; 
+          SNIPPY_CTG;
           SNIPPY_CORE } from '../modules/local/software/snippy/main' addParams( options: [:] )
 include { MOB_INIT;
           MOB_RECON } from '../modules/local/software/mobsuite/main' addParams( options: [:] )
+include { IQTREE } from '../modules/local/software/iqtree/main' addParams( options: [:] )
 
 // Subworkflows: local
 include { INPUT_CHECK           } from '../subworkflows/local/input_check'        addParams( options: [:]                          )
@@ -101,8 +109,9 @@ workflow ARETE {
     ///*
     // * MODULE: Run Kraken2
     // */
-    //KRAKEN2(FASTP.out.reads)
-    //ch_software_versions = ch_software_versions.mix(KRAKEN2.out.version.first().ifEmpty(null))
+    KRAKEN2_DB()
+    KRAKEN2_RUN(FASTP.out.reads, KRAKEN2_DB.out.minikraken)
+    ch_software_versions = ch_software_versions.mix(KRAKEN2_RUN.out.version.first().ifEmpty(null))
     
 
     /////////////////// ASSEMBLE /////////////////////////////
@@ -157,19 +166,31 @@ workflow ARETE {
     MOB_RECON(UNICYCLER.out.scaffolds, MOB_INIT.out.version.ifEmpty(null))
 
     /*
+     * Module: BLAST vs CAZY
+     */
+    GET_CAZYDB() 
+    DIAMOND_MAKEDB(GET_CAZYDB.out.cazydb)
+    ch_software_versions = ch_software_versions.mix(DIAMOND_MAKEDB.out.version.ifEmpty(null))
+    DIAMOND_BLASTX(PROKKA.out.ffn, DIAMOND_MAKEDB.out.db, "CAZYDB")
+
+    ////////////////////////// PHYLO ////////////////////////////////////////
+    /*
      * Module: Snippy
      */
     SNIPPY(FASTP.out.reads, ch_reference_genome)
-    //SNIPPY_CORE(SNIPPY.out.snippy_folder.collect())
-    //ch_software_versions = ch_software_versions.mix(SNIPPY_CORE.out.version.ifEmpty(null))
+    SNIPPY_CTG(ch_outgroup_genome, ch_reference_genome)
+    ch_snippy_folders = SNIPPY.out.snippy_folder.mix(SNIPPY_CTG.out.snippy_folder).collect()
+    SNIPPY_CORE(ch_snippy_folders, ch_reference_genome)
+    ch_software_versions = ch_software_versions.mix(SNIPPY_CORE.out.version.ifEmpty(null))
     
-    ///*
-    // * Module: IQTree
-    // */
-    //IQTREE(SNIPPY.out.snps)
-    //ch_software_versions = ch_software_versions.mix(IQTREE.out.version.first().ifEmpty(null))
+    /*
+     * Module: IQTree
+     */
+    IQTREE(SNIPPY_CORE.out.var_aln, SNIPPY_CORE.out.base_freq)
+    ch_software_versions = ch_software_versions.mix(IQTREE.out.version.ifEmpty(null))
 
 
+    ////////////////////////// REPORTING /////////////////////////////////////
     /*
      * MODULE: Pipeline reporting
      */
@@ -196,9 +217,9 @@ workflow ARETE {
     ch_multiqc_files = ch_multiqc_files.mix(GET_SOFTWARE_VERSIONS.out.yaml.collect())
     ch_multiqc_files = ch_multiqc_files.mix(FASTQC.out.zip.collect{it[1]}.ifEmpty([]))
     ch_multiqc_files = ch_multiqc_files.mix(TRIM_FASTQC.out.zip.collect{it[1]}.ifEmpty([]))
+    ch_multiqc_files = ch_multiqc_files.mix(KRAKEN2_RUN.out.txt.collect{it[1]}.ifEmpty([]))
     ch_multiqc_files = ch_multiqc_files.mix(QUAST.out.tsv.collect().ifEmpty([]))
     ch_multiqc_files = ch_multiqc_files.mix(PROKKA.out.log.collect{it[1]}.ifEmpty([]))
-    //ch_multiqc_files = ch_multiqc_files.mix(KRAKEN2.out.zip.collect{it[1]}.ifEmpty([]))
     
     MULTIQC (ch_multiqc_files.collect())
     multiqc_report       = MULTIQC.out.report.toList()

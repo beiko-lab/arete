@@ -34,7 +34,6 @@ process FASTP {
     def software = getSoftwareName(task.process)
     def prefix   = options.suffix ? "${meta.id}${options.suffix}" : "${meta.id}"
     if (meta.single_end) {
-        def fail_fastq = params.save_trimmed_fail ? "--failed_out ${prefix}.fail.fastq.gz" : ''
         """
         [ ! -f  ${prefix}.fastq.gz ] && ln -s $reads ${prefix}.fastq.gz
         fastp \\
@@ -43,13 +42,11 @@ process FASTP {
             --thread $task.cpus \\
             --json ${prefix}.fastp.json \\
             --html ${prefix}.fastp.html \\
-            $fail_fastq \\
             $options.args \\
             2> ${prefix}.fastp.log
         echo \$(fastp --version 2>&1) | sed -e "s/fastp //g" > ${software}.version.txt
         """
     } else {
-        def fail_fastq = params.save_trimmed_fail ? "--unpaired1 ${prefix}_1.fail.fastq.gz --unpaired2 ${prefix}_2.fail.fastq.gz" : ''
         """
         [ ! -f  ${prefix}_1.fastq.gz ] && ln -s ${reads[0]} ${prefix}_1.fastq.gz
         [ ! -f  ${prefix}_2.fastq.gz ] && ln -s ${reads[1]} ${prefix}_2.fastq.gz
@@ -60,7 +57,6 @@ process FASTP {
             --out2 ${prefix}_2.trim.fastq.gz \\
             --json ${prefix}.fastp.json \\
             --html ${prefix}.fastp.html \\
-            $fail_fastq \\
             --thread $task.cpus \\
             --detect_adapter_for_pe \\
             $options.args \\

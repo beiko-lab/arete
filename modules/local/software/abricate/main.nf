@@ -10,7 +10,7 @@ process UPDATE_ABRICATE_DB {
     if (workflow.containerEngine == 'singularity' && !params.singularity_pull_docker_container) {
         container "https://depot.galaxyproject.org/singularity/abricate:1.0.1-0"
     } else {
-        container "quay.io/biocontainers/abricate:1.0.1-0"
+        container "quay.io/biocontainers/abricate:1.0.1--h1341992_0"
     }
     input:
     val db
@@ -33,7 +33,7 @@ process ABRICATE {
     if (workflow.containerEngine == 'singularity' && !params.singularity_pull_docker_container) {
         container "https://depot.galaxyproject.org/singularity/abricate:1.0.1-0"
     } else {
-        container "quay.io/biocontainers/abricate:1.0.1-0"
+        container "quay.io/biocontainers/abricate:1.0.1--h1341992_0"
     }
 
     input:
@@ -56,6 +56,7 @@ process ABRICATE {
     echo \$(abricate --version 2>&1) | sed 's/^.*abricate //' > ${software}.version.txt
     """
 }
+
 
 
 

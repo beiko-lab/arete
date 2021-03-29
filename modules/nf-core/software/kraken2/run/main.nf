@@ -4,12 +4,13 @@ include { initOptions; saveFiles; getSoftwareName } from './functions'
 params.options = [:]
 def options    = initOptions(params.options)
 
+
 process KRAKEN2_RUN {
     tag "$meta.id"
     label 'process_high'
     publishDir "${params.outdir}",
         mode: params.publish_dir_mode,
-        saveAs: { filename -> saveFiles(filename:filename, options:params.options, publish_dir:getSoftwareName(task.process), publish_id:meta.id) }
+        saveAs: { filename -> saveFiles(filename:filename, options:params.options, publish_dir:meta.id + "/read_processing/" + getSoftwareName(task.process), publish_id:meta.id) }
 
     conda (params.enable_conda ? 'bioconda::kraken2=2.1.1' : null)
     if (workflow.containerEngine == 'singularity' && !params.singularity_pull_docker_container) {
@@ -20,7 +21,7 @@ process KRAKEN2_RUN {
 
     input:
     tuple val(meta), path(reads)
-    path  db
+    path db
 
     output:
     tuple val(meta), path('*classified*')  , emit: classified
@@ -48,5 +49,20 @@ process KRAKEN2_RUN {
 
     gzip *.fastq
     echo \$(kraken2 --version 2>&1) | sed 's/^.*Kraken version //; s/ .*\$//' > ${software}.version.txt
+    """
+}
+
+process KRAKEN2_DB {
+    tag "minikraken"
+    label 'process_high'
+
+    output:
+    path("""k2_standard_8gb_20201202"""), emit: minikraken
+    
+    script:
+    """
+    curl https://genome-idx.s3.amazonaws.com/kraken/k2_standard_8gb_20201202.tar.gz --output k2_standard_8gb_20201202.tar.gz
+    mkdir -p k2_standard_8gb_20201202 
+    tar xvf k2_standard_8gb_20201202.tar.gz -C k2_standard_8gb_20201202
     """
 }

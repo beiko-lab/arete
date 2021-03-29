@@ -10,7 +10,7 @@ process UPDATE_RGI_DB {
     if (workflow.containerEngine == 'singularity' && !params.singularity_pull_docker_container) {
         container "https://depot.galaxyproject.org/singularity/5.1.1-0"
     } else {
-        container "quay.io/biocontainers/5.1.1-0"
+        container "quay.io/biocontainers/rgi:5.1.1--py_0"
     }
 
     output:
@@ -36,7 +36,7 @@ process RGI {
     if (workflow.containerEngine == 'singularity' && !params.singularity_pull_docker_container) {
         container "https://depot.galaxyproject.org/singularity/5.1.1-0"
     } else {
-        container "quay.io/biocontainers/5.1.1-0"
+        container "quay.io/biocontainers/rgi:5.1.1--py_0"
     }
 
     input:

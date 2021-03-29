@@ -10,7 +10,7 @@ process MOB_INIT {
     if (workflow.containerEngine == 'singularity' && !params.singularity_pull_docker_container) {
         container "https://depot.galaxyproject.org/singularity/mob_suite:3.0.1-0"
     } else {
-        container "quay.io/biocontainers/mob_suite:3.0.1-0"
+        container "kbessonov/mob_suite:3.0.1"
     }
 
     output:
@@ -34,7 +34,7 @@ process MOB_RECON {
     if (workflow.containerEngine == 'singularity' && !params.singularity_pull_docker_container) {
         container "https://depot.galaxyproject.org/singularity/mob_suite:3.0.1-0"
     } else {
-        container "quay.io/biocontainers/mob_suite:3.0.1-0"
+        container "quay.io/biocontainers/mob_suite:3.0.1--py_0"
     }
 
     input:

@@ -39,31 +39,21 @@
             "title": "Reference genome options",
             "type": "object",
             "fa_icon": "fas fa-dna",
-            "description": "Reference genome fasta file required for the workflow.",
+            "description": "Reference and outgroup genome fasta files required for the workflow.",
             "required": [
-                "reference_genome"
+                "reference_genome",
+                "outgroup_genome"
             ],
             "properties": {
                 "reference_genome": {
                     "type": "string",
                     "fa_icon": "fas fa-file-code",
                     "description": "Path to FASTA reference genome file."
-                }
-            }
-        },
-        "fastp_options": {
-            "title": "FASTP execution options",
-            "type": "object",
-            "fa_icon": "fas fa-file-code",
-            "description": "Save the results for failed trim runs",
-            "required": [
-                "save_trimmed_fail"
-            ],
-            "properties": {
-                "save_trimmed_fail": {
-                    "type": "bool",
+                },
+                "outgroup_genome": {
+                    "type": "string",
                     "fa_icon": "fas fa-file-code",
-                    "description": "Save failed FASTP result"
+                    "description": "Path to FASTA genome file to use as outgroup for tree."
                 }
             }
         },
