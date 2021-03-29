@@ -4,13 +4,13 @@ params.options = [:]
 options        = initOptions(params.options)
 
 process DIAMOND_MAKEDB {
-    tag "$db"
+    tag "$fasta"
     label 'process_low'
     conda (params.enable_conda ? "bioconda::diamond=2.0.8" : null)
     if (workflow.containerEngine == 'singularity' && !params.singularity_pull_docker_container) {
         container "https://depot.galaxyproject.org/singularity/diamond:2.0.8-1"
     } else {
-        container "quay.io/biocontainers/diamond:2.0.8-1"
+        container "quay.io/biocontainers/diamond:0.8.26--h2e03b76_4"
     }
     input:
     path fasta
@@ -38,7 +38,7 @@ process DIAMOND_BLASTX {
     if (workflow.containerEngine == 'singularity' && !params.singularity_pull_docker_container) {
         container "https://depot.galaxyproject.org/singularity/diamond:2.0.8-1"
     } else {
-        container "quay.io/biocontainers/diamond:2.0.8-1"
+        container "quay.io/biocontainers/diamond:0.8.26--h2e03b76_4"
     }
 
     input:

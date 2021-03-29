@@ -63,8 +63,7 @@ include { RGI;
 include { SNIPPY; 
           SNIPPY_CTG;
           SNIPPY_CORE } from '../modules/local/software/snippy/main' addParams( options: [:] )
-include { MOB_INIT;
-          MOB_RECON } from '../modules/local/software/mobsuite/main' addParams( options: [:] )
+include { MOB_RECON } from '../modules/local/software/mobsuite/main' addParams( options: [:] )
 include { IQTREE } from '../modules/local/software/iqtree/main' addParams( options: [:] )
 
 // Subworkflows: local
@@ -133,22 +132,22 @@ workflow ARETE {
      * Module: Annotate AMR
      */
     UPDATE_RGI_DB()
-    ch_software_versions = ch_software_versions.mix(UPDATE_RGI_DB.out.version.ifEmpty(null))
-    RGI(UNICYCLER.out.scaffolds)
+    ch_software_versions = ch_software_versions.mix(UPDATE_RGI_DB.out.card_version.ifEmpty(null))
+    RGI(UNICYCLER.out.scaffolds, UPDATE_RGI_DB.out.card_json)
     ch_software_versions = ch_software_versions.mix(RGI.out.version.first().ifEmpty(null))
 
     /*
      * Module: Annotate VF
      */
     ABRICATE_VF_DB("vfdb")
-    ABRICATE_VF(UNICYCLER.out.scaffolds, "vfdb")
+    ABRICATE_VF(UNICYCLER.out.scaffolds, ABRICATE_VF_DB.out.db, "vfdb")
     ch_software_versions = ch_software_versions.mix(ABRICATE_VF.out.version.first().ifEmpty(null))
 
     /*
      * Module: Annotate BacMet
      */
     ABRICATE_BCM2_DB("bacmet2")
-    ABRICATE_BCM2(UNICYCLER.out.scaffolds, "bacmet2")
+    ABRICATE_BCM2(UNICYCLER.out.scaffolds, ABRICATE_BCM2_DB.out.db, "bacmet2")
     ch_software_versions = ch_software_versions.mix(ABRICATE_BCM2.out.version.first().ifEmpty(null))
 
     /*
@@ -160,10 +159,12 @@ workflow ARETE {
     /*
      * Module: Mob-Suite
      */
-    MOB_INIT()
-    ch_software_versions = ch_software_versions.mix(MOB_INIT.out.version.ifEmpty(null))
+    //Not needed as run on install (also doesn't last between container invocations)
+    //MOB_INIT()
+    //ch_software_versions = ch_software_versions.mix(MOB_INIT.out.version.ifEmpty(null))
     // touch to make sure mob init runs furst
-    MOB_RECON(UNICYCLER.out.scaffolds, MOB_INIT.out.version.ifEmpty(null))
+    MOB_RECON(UNICYCLER.out.scaffolds)
+    ch_software_versions = ch_software_versions.mix(MOB_RECON.out.first().ifEmpty(null))
 
     /*
      * Module: BLAST vs CAZY

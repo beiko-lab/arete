@@ -14,11 +14,14 @@ process UPDATE_ABRICATE_DB {
     }
     input:
     val db
+
+    output:
+    path("""$db"""), emit: db
     
     script:
     """
-    abricate-get_db --db $db
-    abricate --setupdb
+    abricate-get_db --db $db --dbdir . --force
+    abricate --setupdb --datadir .
     """
 }
 
@@ -38,10 +41,11 @@ process ABRICATE {
 
     input:
     tuple val(meta), path(fasta)
-    val db
+    path(db)
+    val db_label
 
     output:
-    tuple val(meta), path("${meta.id}_${db}.tsv"), emit: tsv
+    tuple val(meta), path("${meta.id}_${db_label}.tsv"), emit: tsv
     path "*.version.txt", emit: version
 
     script:
@@ -49,9 +53,10 @@ process ABRICATE {
     prefix = "${meta.id}"
     """
     abricate \\
-        $options.args \\
+        --datadir .\\
+        --db $db_label \\
         --threads $task.cpus \\
-        $fasta > ${meta.id}_${db}.tsv
+        $fasta > ${meta.id}_${db_label}.tsv
 
     echo \$(abricate --version 2>&1) | sed 's/^.*abricate //' > ${software}.version.txt
     """
