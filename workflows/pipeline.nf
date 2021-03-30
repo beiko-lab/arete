@@ -63,7 +63,8 @@ include { RGI;
 include { SNIPPY; 
           SNIPPY_CTG;
           SNIPPY_CORE } from '../modules/local/software/snippy/main' addParams( options: [:] )
-include { MOB_RECON } from '../modules/local/software/mobsuite/main' addParams( options: [:] )
+include { MOB_INIT;
+          MOB_RECON } from '../modules/local/software/mobsuite/main' addParams( options: [:] )
 include { IQTREE } from '../modules/local/software/iqtree/main' addParams( options: [:] )
 
 // Subworkflows: local
@@ -160,10 +161,9 @@ workflow ARETE {
      * Module: Mob-Suite
      */
     //Not needed as run on install (also doesn't last between container invocations)
-    //MOB_INIT()
-    //ch_software_versions = ch_software_versions.mix(MOB_INIT.out.version.ifEmpty(null))
+    MOB_INIT()
     // touch to make sure mob init runs furst
-    MOB_RECON(UNICYCLER.out.scaffolds)
+    MOB_RECON(UNICYCLER.out.scaffolds, MOB_INIT.out.mob_db)
     ch_software_versions = ch_software_versions.mix(MOB_RECON.out.first().ifEmpty(null))
 
     /*

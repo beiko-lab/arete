@@ -68,16 +68,16 @@ Note: this workflow should also support [`Docker`] [`Podman`](https://podman.io/
 3. **NOT IMPLEMENTED SKIP TO 4** Download the pipeline and test it on a minimal dataset with a single command:
 
     ```bash
-    nextflow run fmaguire/arete -profile test,<conda/singularity>
+    nextflow run fmaguire/arete -profile test,<docker/conda>
     ```
 
     * Please check [nf-core/configs](https://github.com/nf-core/configs#documentation) to see if a custom config file to run nf-core pipelines already exists for your Institute. If so, you can simply use `-profile <institute>` in your command. This will enable either `docker` or `singularity` and set the appropriate execution settings for your local compute environment.
     * If you are using `singularity` then the pipeline will auto-detect this and attempt to download the Singularity images directly as opposed to performing a conversion from Docker images. If you are persistently observing issues downloading Singularity images directly due to timeout or network issues then please use the `--singularity_pull_docker_container` parameter to pull and convert the Docker image instead.
 
-3. Start running your own analysis!
+3. Start running your own analysis (ideally using `-profile docker` for stability)!
 
     ```bash
-    nextflow run fmaguire/arete -profile <conda/singularity> --input_sample_sheet samplesheet.csv --reference_genome efaecium_DO.fasta --outgroup_genome test/E_hirae_ATCC9790_GCF_000271405.2_ASM27140v2_genomic.fna 
+    nextflow run fmaguire/arete -profile conda --input_sample_sheet samplesheet.csv --reference_genome efaecium_DO.fasta --outgroup_genome test/E_hirae_ATCC9790_GCF_000271405.2_ASM27140v2_genomic.fna 
     ```
 `samplesheet.csv` must be formatted `sample,fastq_1,fastq_2`
 

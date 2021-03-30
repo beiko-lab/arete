@@ -10,7 +10,7 @@ process DIAMOND_MAKEDB {
     if (workflow.containerEngine == 'singularity' && !params.singularity_pull_docker_container) {
         container "https://depot.galaxyproject.org/singularity/diamond:2.0.8-1"
     } else {
-        container "quay.io/biocontainers/diamond:0.8.26--h2e03b76_4"
+        container "quay.io/biocontainers/diamond:2.0.8--h56fc30b_0"
     }
     input:
     path fasta
@@ -38,7 +38,7 @@ process DIAMOND_BLASTX {
     if (workflow.containerEngine == 'singularity' && !params.singularity_pull_docker_container) {
         container "https://depot.galaxyproject.org/singularity/diamond:2.0.8-1"
     } else {
-        container "quay.io/biocontainers/diamond:0.8.26--h2e03b76_4"
+        container "quay.io/biocontainers/diamond:2.0.8--h56fc30b_0"
     }
 
     input:

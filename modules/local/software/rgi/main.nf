@@ -45,8 +45,8 @@ process RGI {
     def software = getSoftwareName(task.process)
     prefix = "${meta.id}"
     """
-    rgi load -i $card_db
-    rgi main --input_sequence $fasta --output_file ${meta.id}_rgi --input_type contig --clean
+    rgi load -i $card_db --local
+    rgi main --local --input_sequence $fasta --output_file ${meta.id}_rgi --input_type contig --clean
 
     echo \$(rgi main --version 2>&1) > ${software}.version.txt
     """
