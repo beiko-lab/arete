@@ -91,6 +91,8 @@ Note: this workflow should also support [`Docker`] [`Podman`](https://podman.io/
 
 If you have issues running the workflow with `-profile conda` due to mob-suite, use `-profile docker` and just comment out mob-suite [here](https://github.com/fmaguire/arete/blob/master/workflows/pipeline.nf#L164).
 
+**Note**: If you get this error at the end ```Failed to invoke `workflow.onComplete` event handler``` it isn't a problem, it just means you don't have an sendmail   configured and it can't send an email report saying it finished correctly i.e., its not that the workflow failed.
+
 See [usage docs](https://github.com/fmaguire/arete/usage) for all of the available options when running the pipeline.
 
 ## Documentation
