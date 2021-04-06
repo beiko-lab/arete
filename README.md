@@ -28,6 +28,10 @@ Read processing:
 3. Trimmed Read QC ([`FastQC`](https://www.bioinformatics.babraham.ac.uk/projects/fastqc/))
 4. Taxonomic Profiling ([`kraken2`](http://ccb.jhu.edu/software/kraken2/))
 
+Assembly:
+1. Unicycler ([`unicycler`](https://github.com/rrwick/Unicycler))
+2. QUAST QC ([`quast`](http://quast.sourceforge.net/))
+
 Annotation:
 1. Prokka ([`prokka`](https://github.com/tseemann/prokka))
 2. AMR ([`RGI`](https://github.com/arpcard/rgi))
@@ -47,10 +51,10 @@ Summary using MultiQC needs tweaked to have report include tools other than fast
 When a developer takes over this workflow the following 5 issues are main out-standing
 development requirements.
 
-Only the conda profile has been tested, ideally docker/singularity should be used via biocontainers for more reproducibility
+Conda profile and docker profiles have been tested (docker/singularity is better if possible due to conda fragility). Currently mob-suite is the limiting factor as it has occasional failures to install in conda and can't be run in a read-only container right now (see [1](https://github.com/phac-nml/mob-suite/issues/38), [2](https://github.com/phac-nml/mob-suite/issues/82)). If you have issues running the workflow as it currently is, use `-profile docker` and just comment out mob-suite [here](https://github.com/fmaguire/arete/blob/master/workflows/pipeline.nf#L164). 
 
 They largely weren't done due to being web or galaxy only tools or haven't been
-conda/containerised obviously yet.
+conda/containerised obviously yet (CRISPRCaSFinder should be relatively easy).
 
 1. Prophage identification (e.g., PHASTER)
 2. Genomic Island Detection (e.g., IslandCompare)
