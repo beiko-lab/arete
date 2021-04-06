@@ -48,10 +48,14 @@ Summary using MultiQC needs tweaked to have report include tools other than fast
 
 ### Not Implemented 
 
-When a developer takes over this workflow the following 5 issues are main out-standing
+When a developer takes over this workflow the following issues are main out-standing
 development requirements.
 
 Conda profile and docker profiles have been tested (docker/singularity is better if possible due to conda fragility). Currently mob-suite is the limiting factor as it has occasional failures to install in conda and can't be run in a read-only container right now (see [1](https://github.com/phac-nml/mob-suite/issues/38), [2](https://github.com/phac-nml/mob-suite/issues/82)). If you have issues running the workflow as it currently is, use `-profile docker` and just comment out mob-suite [here](https://github.com/fmaguire/arete/blob/master/workflows/pipeline.nf#L164). 
+
+Currently if user doesn't have `sendmail` configured, the workflow will throw an error on completion or failure when trying to send an email to the user, this needs handled more gracefully. 
+
+All inputs for the multiQC report should be being fed to multiQC but it doesn't seem to be incorporating all of them in the report (e.g., QUAST/kraken2). This needs explored and fixed. 
 
 They largely weren't done due to being web or galaxy only tools or haven't been
 conda/containerised obviously yet (CRISPRCaSFinder should be relatively easy).
@@ -78,13 +82,14 @@ Note: this workflow should also support [`Docker`] [`Podman`](https://podman.io/
     * Please check [nf-core/configs](https://github.com/nf-core/configs#documentation) to see if a custom config file to run nf-core pipelines already exists for your Institute. If so, you can simply use `-profile <institute>` in your command. This will enable either `docker` or `singularity` and set the appropriate execution settings for your local compute environment.
     * If you are using `singularity` then the pipeline will auto-detect this and attempt to download the Singularity images directly as opposed to performing a conversion from Docker images. If you are persistently observing issues downloading Singularity images directly due to timeout or network issues then please use the `--singularity_pull_docker_container` parameter to pull and convert the Docker image instead.
 
-3. Start running your own analysis (ideally using `-profile docker` for stability)!
+3. Start running your own analysis (ideally using `-profile docker` for stability)! 
 
     ```bash
     nextflow run fmaguire/arete -profile conda --input_sample_sheet samplesheet.csv --reference_genome efaecium_DO.fasta --outgroup_genome test/E_hirae_ATCC9790_GCF_000271405.2_ASM27140v2_genomic.fna 
     ```
 `samplesheet.csv` must be formatted `sample,fastq_1,fastq_2`
 
+If you have issues running the workflow with `-profile conda` due to mob-suite, use `-profile docker` and just comment out mob-suite [here](https://github.com/fmaguire/arete/blob/master/workflows/pipeline.nf#L164).
 
 See [usage docs](https://github.com/fmaguire/arete/usage) for all of the available options when running the pipeline.
 
