@@ -13,6 +13,7 @@
 **ARETE** is a bioinformatics best-practice analysis pipeline for AMR/VF LGT-focused bacterial genomics workflow.
 
 The pipeline is built using [Nextflow](https://www.nextflow.io), a workflow tool to run tasks across multiple compute infrastructures in a very portable manner. It uses Docker / Singularity containers (although only conda has been tested so far) making installation trivial and results highly reproducible.
+Like other workflow languages it provides [useful features](https://www.nextflow.io/docs/latest/getstarted.html#modify-and-resume) like `-resume` to only rerun tasks that haven't already been completed (e.g., allowing editing of inputs/tasks and recovery from crashes without a full re-run).
 The [nf-core](https://nf-cor.re) project provided overall project template, pre-written software modules, and generally best practice recommendations.
 
 <!-- TODO nf-core: Add full-sized test dataset and amend the paragraph below if applicable -->
@@ -89,7 +90,7 @@ Note: this workflow should also support [`Docker`] [`Podman`](https://podman.io/
     ```
 `samplesheet.csv` must be formatted `sample,fastq_1,fastq_2`
 
-If you have issues running the workflow with `-profile conda` due to mob-suite, use `-profile docker` and just comment out mob-suite [here](https://github.com/fmaguire/arete/blob/master/workflows/pipeline.nf#L164).
+If you have issues running the workflow with `-profile conda` due to mob-suite, use `-profile docker` and just comment out mob-suite [here](https://github.com/fmaguire/arete/blob/master/workflows/pipeline.nf#L164).  
 
 **Note**: If you get this error at the end ```Failed to invoke `workflow.onComplete` event handler``` it isn't a problem, it just means you don't have an sendmail   configured and it can't send an email report saying it finished correctly i.e., its not that the workflow failed.
 
