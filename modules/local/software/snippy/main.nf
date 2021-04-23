@@ -12,7 +12,7 @@ process SNIPPY_CORE {
     
     conda (params.enable_conda ? "bioconda::snippy=4.6.0" : null)
     if (workflow.containerEngine == 'singularity' && !params.singularity_pull_docker_container) {
-        container "https://depot.galaxyproject.org/singularity/snippy:4.6.0"
+        container "https://depot.galaxyproject.org/singularity/snippy:4.6.0--0"
     } else {
         container "quay.io/biocontainers/snippy:4.6.0--0"
     }
@@ -46,7 +46,7 @@ process SNIPPY {
 
     conda (params.enable_conda ? "bioconda::snippy=4.6.0" : null)
     if (workflow.containerEngine == 'singularity' && !params.singularity_pull_docker_container) {
-        container "https://depot.galaxyproject.org/singularity/snippy:4.6.0"
+        container "https://depot.galaxyproject.org/singularity/snippy:4.6.0--0"
     } else {
         container "quay.io/biocontainers/snippy:4.6.0--0"
     }
@@ -75,7 +75,7 @@ process SNIPPY_CTG {
 
     conda (params.enable_conda ? "bioconda::snippy=4.6.0" : null)
     if (workflow.containerEngine == 'singularity' && !params.singularity_pull_docker_container) {
-        container "https://depot.galaxyproject.org/singularity/snippy:4.6.0"
+        container "https://depot.galaxyproject.org/singularity/snippy:4.6.0--0"
     } else {
         container "quay.io/biocontainers/snippy:4.6.0--0"
     }

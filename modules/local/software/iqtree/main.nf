@@ -12,7 +12,7 @@ process IQTREE {
     
     conda (params.enable_conda ? "bioconda::iqtree=2.0.3" : null)
     if (workflow.containerEngine == 'singularity' && !params.singularity_pull_docker_container) {
-        container "https://depot.galaxyproject.org/singularity/iqtree:2.0.3-1"
+        container "https://depot.galaxyproject.org/singularity/iqtree:2.0.3--h176a8bc_1"
     } else {
         container "quay.io/biocontainers/iqtree:2.0.3--h176a8bc_1"
     }

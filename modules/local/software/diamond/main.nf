@@ -8,7 +8,7 @@ process DIAMOND_MAKEDB {
     label 'process_low'
     conda (params.enable_conda ? "bioconda::diamond=2.0.8" : null)
     if (workflow.containerEngine == 'singularity' && !params.singularity_pull_docker_container) {
-        container "https://depot.galaxyproject.org/singularity/diamond:2.0.8-1"
+        container "https://depot.galaxyproject.org/singularity/diamond:2.0.8--h56fc30b_0"
     } else {
         container "quay.io/biocontainers/diamond:2.0.8--h56fc30b_0"
     }
@@ -36,7 +36,7 @@ process DIAMOND_BLASTX {
 
     conda (params.enable_conda ? "bioconda::diamond=2.0.8" : null)
     if (workflow.containerEngine == 'singularity' && !params.singularity_pull_docker_container) {
-        container "https://depot.galaxyproject.org/singularity/diamond:2.0.8-1"
+        container "https://depot.galaxyproject.org/singularity/diamond:2.0.8--h56fc30b_0"
     } else {
         container "quay.io/biocontainers/diamond:2.0.8--h56fc30b_0"
     }

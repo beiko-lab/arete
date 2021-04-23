@@ -28,7 +28,7 @@ process RGI {
 
     conda (params.enable_conda ? "bioconda::rgi=5.1.1" : null)
     if (workflow.containerEngine == 'singularity' && !params.singularity_pull_docker_container) {
-        container "https://depot.galaxyproject.org/singularity/5.1.1-0"
+        container "https://depot.galaxyproject.org/singularity/5.1.1--py_0"
     } else {
         container "quay.io/biocontainers/rgi:5.1.1--py_0"
     }

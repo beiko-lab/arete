@@ -8,7 +8,7 @@ process UPDATE_ABRICATE_DB {
     label 'process_low'
     conda (params.enable_conda ? "bioconda::abricate=1.0.1" : null)
     if (workflow.containerEngine == 'singularity' && !params.singularity_pull_docker_container) {
-        container "https://depot.galaxyproject.org/singularity/abricate:1.0.1-0"
+        container "https://depot.galaxyproject.org/singularity/abricate:1.0.1--h1341992_0"
     } else {
         container "quay.io/biocontainers/abricate:1.0.1--h1341992_0"
     }
@@ -34,7 +34,7 @@ process ABRICATE {
 
     conda (params.enable_conda ? "bioconda::abricate=1.0.1" : null)
     if (workflow.containerEngine == 'singularity' && !params.singularity_pull_docker_container) {
-        container "https://depot.galaxyproject.org/singularity/abricate:1.0.1-0"
+        container "https://depot.galaxyproject.org/singularity/abricate:1.0.1--h1341992_0"
     } else {
         container "quay.io/biocontainers/abricate:1.0.1--h1341992_0"
     }
