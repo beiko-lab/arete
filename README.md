@@ -52,7 +52,8 @@ Summary using MultiQC needs tweaked to have report include tools other than fast
 When a developer takes over this workflow the following issues are main out-standing
 development requirements.
 
-Conda profile and docker profiles have been tested (docker/singularity is better if possible due to conda fragility). Currently mob-suite is the limiting factor as it has occasional failures to install in conda and can't be run in a read-only container right now (see [1](https://github.com/phac-nml/mob-suite/issues/38), [2](https://github.com/phac-nml/mob-suite/issues/82)). If you have issues running the workflow as it currently is, use `-profile docker` and just comment out mob-suite [here](https://github.com/fmaguire/arete/blob/master/workflows/pipeline.nf#L164). 
+Conda profile and docker profiles have been tested (docker is better if possible due to conda fragility). Singularity has not been (just auto-populated from nf-core usegalaxy paths mostly) so is unlikely to work. That said running docker containers in singularity should work but again has not been tested.
+Currently mob-suite is the limiting factor in containerisation as it has occasional failures to install in conda and can't be run in a read-only container right now (see [1](https://github.com/phac-nml/mob-suite/issues/38), [2](https://github.com/phac-nml/mob-suite/issues/82)). If you have issues running the workflow as it currently is, use `-profile docker` and just comment out mob-suite [here](https://github.com/fmaguire/arete/blob/master/workflows/pipeline.nf#L164). 
 
 Currently if user doesn't have `sendmail` configured, the workflow will throw an error on completion or failure when trying to send an email to the user, this needs handled more gracefully. 
 
