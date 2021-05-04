@@ -241,7 +241,7 @@ workflow ARETE {
 ////////////////////////////////////////////////////
 
 workflow.onComplete {
-    Completion.email(workflow, params, params.summary_params, projectDir, log, multiqc_report)
+    //Completion.email(workflow, params, params.summary_params, projectDir, log, multiqc_report)
     Completion.summary(workflow, params, log)
 }
 
