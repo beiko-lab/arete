@@ -35,7 +35,7 @@ Assembly:
 
 Annotation:
 1. Prokka ([`prokka`](https://github.com/tseemann/prokka))
-2. AMR ([`RGI`](https://github.com/arpcard/rgi) and [`PATHRACER`](https://www.google.com/search?client=firefox-b-d&q=pathracer))
+2. AMR ([`RGI`](https://github.com/arpcard/rgi) and [`PATHRACER`](http://cab.spbu.ru/software/pathracer))
 3. VF ([`abricate`](https://github.com/tseemann/abricate))
 4. Metal Resistance ([`abricate`](https://github.com/tseemann/abricate))
 5. Plasmids ([`mob_suite`](https://github.com/phac-nml/mob-suite))
