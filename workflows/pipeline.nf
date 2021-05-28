@@ -63,6 +63,8 @@ include { RGI;
 include { SNIPPY; 
           SNIPPY_CTG;
           SNIPPY_CORE } from '../modules/local/software/snippy/main' addParams( options: [:] )
+include { GET_NCBI_AMR_HMM; 
+          PATHRACER } from '../modules/local/software/pathracer/main' addParams( options: [:] )
 //include { MOB_INIT;
 //include { MOB_RECON } from '../modules/local/software/mobsuite/main' addParams( options: [:] )
 //include { CRISPRCASFINDER } from '../modules/local/software/crisprcasfinder/main' addParams( options: [:] )
@@ -137,6 +139,12 @@ workflow ARETE {
     ch_software_versions = ch_software_versions.mix(UPDATE_RGI_DB.out.card_version.ifEmpty(null))
     RGI(UNICYCLER.out.scaffolds, UPDATE_RGI_DB.out.card_json)
     ch_software_versions = ch_software_versions.mix(RGI.out.version.first().ifEmpty(null))
+
+    /*
+     *  Module: Annotate graph with pathracer 
+     */ 
+    GET_NCBI_AMR_HMM()
+    PATHRACER(UNICYCLER.out.raw_gfa, GET_NCBI_AMR_HMM.out.hmm);
 
     /*
      * Module: Annotate VF
@@ -230,7 +238,7 @@ workflow ARETE {
     ch_multiqc_files = ch_multiqc_files.mix(QUAST.out.tsv.collect().ifEmpty([]))
     ch_multiqc_files = ch_multiqc_files.mix(PROKKA.out.log.collect{it[1]}.ifEmpty([]))
     
-    MULTIQC (ch_multiqc_files.collect())
+    MULTIQC(ch_multiqc_files.collect())
     multiqc_report       = MULTIQC.out.report.toList()
     ch_software_versions = ch_software_versions.mix(MULTIQC.out.version.ifEmpty(null))
     

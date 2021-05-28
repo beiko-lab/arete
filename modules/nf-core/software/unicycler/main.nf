@@ -24,6 +24,7 @@ process UNICYCLER {
     output:
     tuple val(meta), path('*.scaffolds.fa'), emit: scaffolds
     tuple val(meta), path('*.assembly.gfa'), emit: gfa
+    tuple val(meta), path('*.spades_raw.gfa'), emit: raw_gfa
     tuple val(meta), path('*.log')         , emit: log
     path  '*.version.txt'                  , emit: version
 
@@ -37,7 +38,8 @@ process UNICYCLER {
         $options.args \\
         $input_reads \\
         --out ./
-
+    
+    mv 001_best_spades_graph.gfa ${prefix}.spades_raw.gfa
     mv assembly.fasta ${prefix}.scaffolds.fa
     mv assembly.gfa ${prefix}.assembly.gfa
     mv unicycler.log ${prefix}.unicycler.log

@@ -35,7 +35,7 @@ Assembly:
 
 Annotation:
 1. Prokka ([`prokka`](https://github.com/tseemann/prokka))
-2. AMR ([`RGI`](https://github.com/arpcard/rgi))
+2. AMR ([`RGI`](https://github.com/arpcard/rgi) and [`PATHRACER`](https://www.google.com/search?client=firefox-b-d&q=pathracer))
 3. VF ([`abricate`](https://github.com/tseemann/abricate))
 4. Metal Resistance ([`abricate`](https://github.com/tseemann/abricate))
 5. Plasmids ([`mob_suite`](https://github.com/phac-nml/mob-suite))
@@ -44,8 +44,6 @@ Annotation:
 Phylogeny:
 1. snippy ([`snippy`](https://github.com/tseemann/snippy))
 2. iqtree ([`iqtree`](http://www.iqtree.org/))
-
-Summary using MultiQC needs tweaked to have report include tools other than fastqc.
 
 ### Not Implemented 
 
