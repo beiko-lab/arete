@@ -50,14 +50,30 @@ Phylogeny:
 When a developer takes over this workflow the following issues are main out-standing
 development requirements.
 
-Conda profile and docker profiles have been tested (docker is better if possible due to conda fragility). Singularity has not been (just auto-populated from nf-core usegalaxy paths mostly) so is unlikely to work. That said running docker containers in singularity should work but again has not been tested.
+- Conda profile and docker profiles have been tested (docker is better if possible due to conda fragility). Singularity has not been (just auto-populated from nf-core usegalaxy paths mostly) so is unlikely to work. That said running docker containers in singularity should work but again has not been tested.
 Currently mob-suite is the limiting factor in containerisation as it has occasional failures to install in conda and can't be run in a read-only container right now (see [1](https://github.com/phac-nml/mob-suite/issues/38), [2](https://github.com/phac-nml/mob-suite/issues/82)). If you have issues running the workflow as it currently is, use `-profile docker` and just comment out mob-suite [here](https://github.com/fmaguire/arete/blob/master/workflows/pipeline.nf#L164). 
 
-Currently if user doesn't have `sendmail` configured, the workflow will throw an error on completion or failure when trying to send an email to the user, this needs handled more gracefully. 
+- Nf-core linting fixes done and added to github actions CI.
 
-All inputs for the multiQC report should be being fed to multiQC but it doesn't seem to be incorporating all of them in the report (e.g., QUAST/kraken2). This needs explored and fixed. 
+- Minimal test set added and added to github actions CI.
 
-They largely weren't done due to being web or galaxy only tools or haven't been
+- Additional developed modules added to nf-core module repo.
+
+- Possible switch to roary for pangenome phylogeny
+
+- Consider updating to newer SPAdes as unicycler is dependent on an older version (and newer spades can integrate plasmidspades runs on the same assembly graph). 
+
+- Some processes download databases for convenience and "as needed" but given that some run environments don't have external internet access this will fail so these dependencies may need off-loaded to a `get_dbs.sh` script or a more elegant solution!
+
+- Currently if user doesn't have `sendmail` configured, the workflow will throw an error on completion or failure when trying to send an email to the user, this needs handled more gracefully. 
+
+- All inputs for the multiQC report should be being fed to multiQC but it doesn't seem to be incorporating all of them in the report (e.g., QUAST/kraken2). This needs explored and fixed. 
+
+- User request to add optional reference gbk to refine prokka annotations.
+
+- User request to add --metagenome mode.
+
+- They largely weren't done due to being web or galaxy only tools or haven't been
 conda/containerised obviously yet (CRISPRCaSFinder should be relatively easy).
 
 1. Prophage identification (e.g., PHASTER)
