@@ -8,7 +8,7 @@
 [![run with singularity](https://img.shields.io/badge/run%20with-singularity-1d355c.svg?labelColor=000000)](https://sylabs.io/docs/)
 
 
-![aretelogo](docs/images/arete.png)
+![aretelogo](docs/images/arete_logo.png)
 
 ## Introduction
 
