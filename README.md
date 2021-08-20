@@ -20,7 +20,7 @@ Like other workflow languages it provides [useful features](https://www.nextflow
 The [nf-core](https://nf-cor.re) project provided overall project template, pre-written software modules, and generally best practice recommendations.
 
 <!-- TODO nf-core: Add full-sized test dataset and amend the paragraph below if applicable -->
-On release, automated continuous integration tests run the pipeline on a full-sized dataset on the AWS cloud infrastructure. This ensures that the pipeline runs on AWS, has sensible resource allocation defaults set to run on real-world datasets, and permits the persistent storage of results to benchmark between pipeline releases and other analysis sources. 
+On release, automated continuous integration tests run the pipeline on a full-sized dataset on the AWS cloud infrastructure. This ensures that the pipeline runs on AWS, has sensible resource allocation defaults set to run on real-world datasets, and permits the persistent storage of results to benchmark between pipeline releases and other analysis sources.
 
 ## Pipeline summary
 
@@ -48,13 +48,13 @@ Phylogeny:
 1. snippy ([`snippy`](https://github.com/tseemann/snippy))
 2. iqtree ([`iqtree`](http://www.iqtree.org/))
 
-### Not Implemented 
+### Not Implemented
 
 When a developer takes over this workflow the following issues are main out-standing
 development requirements.
 
 - Conda profile and docker profiles have been tested (docker is better if possible due to conda fragility). Singularity has not been (just auto-populated from nf-core usegalaxy paths mostly) so is unlikely to work. That said running docker containers in singularity should work but again has not been tested.
-Currently mob-suite is the limiting factor in containerisation as it has occasional failures to install in conda and can't be run in a read-only container right now (see [1](https://github.com/phac-nml/mob-suite/issues/38), [2](https://github.com/phac-nml/mob-suite/issues/82)). If you have issues running the workflow as it currently is, use `-profile docker` and just comment out mob-suite [here](https://github.com/fmaguire/arete/blob/master/workflows/pipeline.nf#L164). 
+Currently mob-suite is the limiting factor in containerisation as it has occasional failures to install in conda and can't be run in a read-only container right now (see [1](https://github.com/phac-nml/mob-suite/issues/38), [2](https://github.com/phac-nml/mob-suite/issues/82)). If you have issues running the workflow as it currently is, use `-profile docker` and just comment out mob-suite [here](https://github.com/fmaguire/arete/blob/master/workflows/pipeline.nf#L164).
 
 - Nf-core linting fixes done and added to github actions CI.
 
@@ -64,13 +64,13 @@ Currently mob-suite is the limiting factor in containerisation as it has occasio
 
 - Possible switch to roary for pangenome phylogeny
 
-- Consider updating to newer SPAdes as unicycler is dependent on an older version (and newer spades can integrate plasmidspades runs on the same assembly graph). 
+- Consider updating to newer SPAdes as unicycler is dependent on an older version (and newer spades can integrate plasmidspades runs on the same assembly graph).
 
 - Some processes download databases for convenience and "as needed" but given that some run environments don't have external internet access this will fail so these dependencies may need off-loaded to a `get_dbs.sh` script or a more elegant solution!
 
-- Currently if user doesn't have `sendmail` configured, the workflow will throw an error on completion or failure when trying to send an email to the user, this needs handled more gracefully. 
+- Currently if user doesn't have `sendmail` configured, the workflow will throw an error on completion or failure when trying to send an email to the user, this needs handled more gracefully.
 
-- All inputs for the multiQC report should be being fed to multiQC but it doesn't seem to be incorporating all of them in the report (e.g., QUAST/kraken2). This needs explored and fixed. 
+- All inputs for the multiQC report should be being fed to multiQC but it doesn't seem to be incorporating all of them in the report (e.g., QUAST/kraken2). This needs explored and fixed.
 
 - User request to add optional reference gbk to refine prokka annotations.
 
@@ -101,10 +101,10 @@ Note: this workflow should also support [`Docker`] [`Podman`](https://podman.io/
     * Please check [nf-core/configs](https://github.com/nf-core/configs#documentation) to see if a custom config file to run nf-core pipelines already exists for your Institute. If so, you can simply use `-profile <institute>` in your command. This will enable either `docker` or `singularity` and set the appropriate execution settings for your local compute environment.
     * If you are using `singularity` then the pipeline will auto-detect this and attempt to download the Singularity images directly as opposed to performing a conversion from Docker images. If you are persistently observing issues downloading Singularity images directly due to timeout or network issues then please use the `--singularity_pull_docker_container` parameter to pull and convert the Docker image instead.
 
-3. Start running your own analysis (ideally using `-profile docker` for stability)! 
+3. Start running your own analysis (ideally using `-profile docker` for stability)!
 
     ```bash
-    nextflow run fmaguire/arete -profile conda --input_sample_sheet samplesheet.csv --reference_genome efaecium_DO.fasta --outgroup_genome test/E_hirae_ATCC9790_GCF_000271405.2_ASM27140v2_genomic.fna 
+    nextflow run fmaguire/arete -profile conda --input_sample_table samplesheet.csv --reference_genome efaecium_DO.fasta --outgroup_genome test/E_hirae_ATCC9790_GCF_000271405.2_ASM27140v2_genomic.fna 
     ```
 `samplesheet.csv` must be formatted `sample,fastq_1,fastq_2`
 
