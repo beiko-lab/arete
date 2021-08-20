@@ -4,6 +4,6 @@ process GET_CAZYDB {
 
     script:
     """
-    curl http://bcb.unl.edu/dbCAN2/download/CAZyDB.07312020.fa --output CAZyDB.07312020.fa
+    curl https://bcb.unl.edu/dbCAN2/download/CAZyDB.07312020.fa --output CAZyDB.07312020.fa
     """
 }
