@@ -190,6 +190,12 @@ workflow ARETE {
     ch_software_versions = ch_software_versions.mix(DIAMOND_MAKEDB.out.version.ifEmpty(null))
     DIAMOND_BLASTX(PROKKA.out.ffn, DIAMOND_MAKEDB.out.db, "CAZYDB")
 
+    ////////////////////////// PANGENOME /////////////////////////////////////
+    /*
+    * Module: Roary
+    */
+    //TODO Process Roary; Input: Unicyler.out, output: Various
+
     ////////////////////////// PHYLO ////////////////////////////////////////
     /*
      * Module: Snippy
@@ -205,7 +211,7 @@ workflow ARETE {
      */
     IQTREE(SNIPPY_CORE.out.var_aln, SNIPPY_CORE.out.base_freq)
     ch_software_versions = ch_software_versions.mix(IQTREE.out.version.ifEmpty(null))
-
+    //TODO Roary instead of Snippy
 
     ////////////////////////// REPORTING /////////////////////////////////////
     /*
