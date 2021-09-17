@@ -262,3 +262,105 @@ workflow.onComplete {
 ////////////////////////////////////////////////////
 /* --                  THE END                 -- */
 ///////////////////////////////////////////////////
+
+
+////////////////////////////////////////////////////
+/* --              Workflow Subset             -- */
+///////////////////////////////////////////////////
+
+workflow ASSEMBLY{
+
+    ch_software_versions = Channel.empty()
+
+    /*
+     * SUBWORKFLOW: Read in samplesheet, validate and stage input files
+     */
+    INPUT_CHECK(ch_input)
+    
+
+    /////////////////// Read Processing /////////////////////////////
+    /*
+     * MODULE: Run FastQC
+     */
+    FASTQC(INPUT_CHECK.out.reads, "raw_fastqc")
+    ch_software_versions = ch_software_versions.mix(FASTQC.out.version.first().ifEmpty(null))
+    
+    /*
+     * MODULE: Trim Reads
+     */
+    FASTP(INPUT_CHECK.out.reads)
+    ch_software_versions = ch_software_versions.mix(FASTP.out.version.first().ifEmpty(null))
+
+    /*
+     * MODULE: Run FastQC on trimmed reads
+     */
+    TRIM_FASTQC(FASTP.out.reads, "trim_fastqc")
+    ch_software_versions = ch_software_versions.mix(TRIM_FASTQC.out.version.first().ifEmpty(null))
+
+    ///*
+    // * MODULE: Run Kraken2
+    // */
+    KRAKEN2_DB()
+    KRAKEN2_RUN(FASTP.out.reads, KRAKEN2_DB.out.minikraken)
+    ch_software_versions = ch_software_versions.mix(KRAKEN2_RUN.out.version.first().ifEmpty(null))
+    
+
+    /////////////////// ASSEMBLE /////////////////////////////
+    /*
+     * MODULE: Assembly
+     */
+    UNICYCLER(FASTP.out.reads)
+    ch_software_versions = ch_software_versions.mix(UNICYCLER.out.version.first().ifEmpty(null))
+
+    /*
+     * Module: Evaluate Assembly
+     */
+    QUAST(UNICYCLER.out.scaffolds, ch_reference_genome)
+    ch_software_versions = ch_software_versions.mix(QUAST.out.version.first().ifEmpty(null))
+    
+    
+    /////////////////// ANNOTATION ///////////////////////////
+    /*
+     * Module: Prokka
+     */
+    PROKKA(UNICYCLER.out.scaffolds)
+    ch_software_versions = ch_software_versions.mix(PROKKA.out.version.first().ifEmpty(null))
+
+    
+
+    ////////////////////////// REPORTING /////////////////////////////////////
+    /*
+     * MODULE: Pipeline reporting
+     */
+    // Get unique list of files containing version information
+    ch_software_versions
+        .map { it -> if (it) [ it.baseName, it ] }
+        .groupTuple()
+        .map { it[1][0] }
+        .flatten()
+        .collect()
+        .set { ch_software_versions }
+    GET_SOFTWARE_VERSIONS(ch_software_versions)
+
+    /*
+     * MODULE: MultiQC
+     */
+    workflow_summary    = Workflow.paramsSummaryMultiqc(workflow, params.summary_params)
+    ch_workflow_summary = Channel.value(workflow_summary)
+
+    ch_multiqc_files = Channel.empty()
+    ch_multiqc_files = ch_multiqc_files.mix(Channel.from(ch_multiqc_config))
+    ch_multiqc_files = ch_multiqc_files.mix(ch_multiqc_custom_config.collect().ifEmpty([]))
+    ch_multiqc_files = ch_multiqc_files.mix(ch_workflow_summary.collectFile(name: 'workflow_summary_mqc.yaml'))
+    ch_multiqc_files = ch_multiqc_files.mix(GET_SOFTWARE_VERSIONS.out.yaml.collect())
+    ch_multiqc_files = ch_multiqc_files.mix(FASTQC.out.zip.collect{it[1]}.ifEmpty([]))
+    ch_multiqc_files = ch_multiqc_files.mix(TRIM_FASTQC.out.zip.collect{it[1]}.ifEmpty([]))
+    ch_multiqc_files = ch_multiqc_files.mix(KRAKEN2_RUN.out.txt.collect{it[1]}.ifEmpty([]))
+    ch_multiqc_files = ch_multiqc_files.mix(QUAST.out.tsv.collect().ifEmpty([]))
+    ch_multiqc_files = ch_multiqc_files.mix(PROKKA.out.log.collect{it[1]}.ifEmpty([]))
+    
+    MULTIQC(ch_multiqc_files.collect())
+    multiqc_report       = MULTIQC.out.report.toList()
+    ch_software_versions = ch_software_versions.mix(MULTIQC.out.version.ifEmpty(null))
+    
+}
