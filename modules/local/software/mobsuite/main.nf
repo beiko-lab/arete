@@ -39,6 +39,7 @@ process MOB_RECON {
     //--database_directory $mob_db  \\
 }
 
+//TODO appaears depreacated; remove after testing
 process MOB_INIT {
     tag "MOB_INIT"
     label 'process_medium'
