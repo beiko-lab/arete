@@ -236,6 +236,8 @@ workflow ARETE {
     workflow_summary    = Workflow.paramsSummaryMultiqc(workflow, params.summary_params)
     ch_workflow_summary = Channel.value(workflow_summary)
 
+    //Mix QUAST results into one report file
+
     ch_multiqc_files = Channel.empty()
     ch_multiqc_files = ch_multiqc_files.mix(Channel.from(ch_multiqc_config))
     ch_multiqc_files = ch_multiqc_files.mix(ch_multiqc_custom_config.collect().ifEmpty([]))
@@ -244,7 +246,7 @@ workflow ARETE {
     ch_multiqc_files = ch_multiqc_files.mix(FASTQC.out.zip.collect{it[1]}.ifEmpty([]))
     ch_multiqc_files = ch_multiqc_files.mix(TRIM_FASTQC.out.zip.collect{it[1]}.ifEmpty([]))
     ch_multiqc_files = ch_multiqc_files.mix(KRAKEN2_RUN.out.txt.collect{it[1]}.ifEmpty([]))
-    ch_multiqc_files = ch_multiqc_files.mix(QUAST.out.tsv.collect().ifEmpty([]))
+    ch_multiqc_files = ch_multiqc_files.mix(QUAST.out.tsv.collectFile(name: 'report.tsv').ifEmpty([]))
     ch_multiqc_files = ch_multiqc_files.mix(PROKKA.out.txt.collect{it[1]}.ifEmpty([]))
 
     MULTIQC(ch_multiqc_files.collect())
