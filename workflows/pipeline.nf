@@ -246,7 +246,7 @@ workflow ARETE {
     ch_multiqc_files = ch_multiqc_files.mix(FASTQC.out.zip.collect{it[1]}.ifEmpty([]))
     ch_multiqc_files = ch_multiqc_files.mix(TRIM_FASTQC.out.zip.collect{it[1]}.ifEmpty([]))
     ch_multiqc_files = ch_multiqc_files.mix(KRAKEN2_RUN.out.txt.collect{it[1]}.ifEmpty([]))
-    ch_multiqc_files = ch_multiqc_files.mix(QUAST.out.tsv.collectFile(name: 'report.tsv').ifEmpty([]))
+    ch_multiqc_files = ch_multiqc_files.mix(QUAST.out.tsv.collect())
     ch_multiqc_files = ch_multiqc_files.mix(PROKKA.out.txt.collect{it[1]}.ifEmpty([]))
 
     MULTIQC(ch_multiqc_files.collect())
