@@ -29,7 +29,7 @@ process DIAMOND_MAKEDB {
 
 process DIAMOND_BLASTX {
     tag "$meta.id"
-    label 'process_low'
+    label 'process_high'
     publishDir "${params.outdir}",
         mode: params.publish_dir_mode,
         saveAs: { filename -> saveFiles(filename:filename, options:params.options, publish_dir:meta.id + "/annotation/" + getSoftwareName(task.process), publish_id:meta.id) }
@@ -52,7 +52,7 @@ process DIAMOND_BLASTX {
     script:
     def software = getSoftwareName(task.process)
     """
-    diamond blastx --query $orfs --db $db --evalue 1e-06 --outfmt 6 qseqid sseqid pident length mismatch gapopen qstart qend sstart send evalue bitscore full_qseq --max-target-seqs 25 --out ${meta.id}_${label}.out6 --threads $task.cpus --more-sensitive
+    diamond blastx --query $orfs --db $db --evalue 1e-06 --outfmt 6 qseqid sseqid pident slen qlen length mismatch gapopen qstart qend sstart send evalue bitscore full_qseq --max-target-seqs 25 --out ${meta.id}_${label}.out6 --threads $task.cpus --more-sensitive
     """
 }
 

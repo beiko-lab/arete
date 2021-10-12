@@ -55,9 +55,15 @@ include { PROKKA                } from '../modules/nf-core/software/prokka/main'
 //          UPDATE_ABRICATE_DB as ABRICATE_VF_DB} from '../modules/local/software/abricate/main' addParams( options: [:] )
 //include { ABRICATE as ABRICATE_BCM2;
 //          UPDATE_ABRICATE_DB as ABRICATE_BCM2_DB} from '../modules/local/software/abricate/main' addParams( options: [:] )
-include { GET_CAZYDB } from '../modules/local/blast_databases.nf'
-include { DIAMOND_MAKEDB;
-          DIAMOND_BLASTX } from '../modules/local/software/diamond/main'
+include { GET_CAZYDB;
+          GET_VFDB;
+          GET_BACMET} from '../modules/local/blast_databases.nf'
+include { DIAMOND_MAKEDB as DIAMOND_MAKE_CAZY;
+          DIAMOND_MAKEDB as DIAMOND_MAKE_VFDB;
+          DIAMOND_MAKEDB as DIAMOND_MAKE_BACMET;
+          DIAMOND_BLASTX as DIAMOND_BLAST_CAZY;
+          DIAMOND_BLASTX as DIAMOND_BLAST_VFDB;
+          DIAMOND_BLASTX as DIAMOND_BLAST_BACMET} from '../modules/local/software/diamond/main'
 include { RGI;
           UPDATE_RGI_DB } from '../modules/local/software/rgi/main' addParams( options: [:] )
 //include { SNIPPY;
@@ -180,12 +186,22 @@ workflow ARETE {
     //ch_software_versions = ch_software_versions.mix(CRISPRCASFINDER.out.version.first().ifEmpty(null))
 
     /*
-     * Module: BLAST vs CAZY
+     * Module: BLAST vs CAZY, VFDB, Bacmet
      */
     GET_CAZYDB()
-    DIAMOND_MAKEDB(GET_CAZYDB.out.cazydb)
-    ch_software_versions = ch_software_versions.mix(DIAMOND_MAKEDB.out.version.ifEmpty(null))
-    DIAMOND_BLASTX(PROKKA.out.ffn, DIAMOND_MAKEDB.out.db, "CAZYDB")
+    GET_BACMET()
+    GET_VFDB()
+    DIAMOND_MAKE_CAZY(GET_CAZYDB.out.cazydb)
+    ch_software_versions = ch_software_versions.mix(DIAMOND_MAKE_CAZY.out.version.ifEmpty(null))
+    DIAMOND_BLAST_CAZY(PROKKA.out.ffn, DIAMOND_MAKE_CAZY.out.db, "CAZYDB")
+
+    DIAMOND_MAKE_VFDB(GET_VFDB.out.vfdb)
+    DIAMOND_BLAST_VFDB(PROKKA.out.ffn, DIAMOND_MAKE_VFDB.out.db, "VFDB")
+
+    DIAMOND_MAKE_BACMET(GET_BACMET.out.bacmet)
+    DIAMOND_BLAST_BACMET(PROKKA.out.ffn, DIAMOND_MAKE_BACMET.out.db, "BACMET")
+
+
 
     ////////////////////////// PANGENOME /////////////////////////////////////
     /*
