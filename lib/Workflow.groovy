@@ -32,15 +32,14 @@ class Workflow {
         // Check the hostnames against configured profiles
         Checks.hostName(workflow, params, log)
     }
-    /*
+
     static void validateWorkflowParams(params, log) {
         if (!params.reference_genome) { 
             log.error "Genome fasta file not specified with e.g. '--reference_genome genome.fa'"
             System.exit(1)
         }
     }
-    */
-    
+
     /*
      * Get workflow summary for MultiQC
      */

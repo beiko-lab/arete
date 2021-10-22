@@ -40,6 +40,10 @@
             "type": "object",
             "fa_icon": "fas fa-dna",
             "description": "Reference and outgroup genome fasta files required for the workflow.",
+            "required": [
+                "reference_genome",
+                "outgroup_genome"
+            ],
             "properties": {
                 "reference_genome": {
                     "type": "string",
