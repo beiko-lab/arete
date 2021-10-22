@@ -10,11 +10,11 @@ process GET_CAZYDB {
 
 process GET_VFDB{
     output:
-    path "VFDB_setB_nt.fas.gz", emit: vfdb
+    path "VFDB_setB_pro.fas.gz", emit: vfdb
 
     script:
     """
-    curl http://www.mgc.ac.cn/VFs/Down/VFDB_setB_nt.fas.gz --output VFDB_setB_nt.fas.gz
+    curl http://www.mgc.ac.cn/VFs/Down/VFDB_setB_pro.fas.gz --output VFDB_setB_pro.fas.gz
     """
 }
 

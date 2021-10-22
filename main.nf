@@ -53,6 +53,10 @@ workflow assembly {
     include { ASSEMBLY } from './workflows/pipeline' addParams( summary_params: summary_params )
     ASSEMBLY ()
 }
+workflow annotation {
+    include { ANNOTATION } from './workflows/pipeline' addParams( summary_params: summary_params )
+    ANNOTATION ()
+}
 
 ////////////////////////////////////////////////////
 /* --                  THE END                 -- */
