@@ -9,7 +9,7 @@ params.summary_params = [:]
 ////////////////////////////////////////////////////
 
 // Validate input parameters
-Workflow.validateWorkflowParams(params, log)
+//Workflow.validateWorkflowParams(params, log)
 
 // TODO nf-core: Add all file path parameters for the pipeline to the list below
 // Check input path parameters to see if they exist
@@ -17,9 +17,9 @@ def checkPathParamList = [ params.input_sample_table, params.multiqc_config, par
 for (param in checkPathParamList) { if (param) { file(param, checkIfExists: true) } }
 
 // Check mandatory parameters
-if (params.input_sample_table) { ch_input = file(params.input_sample_table) } else { exit 1, 'Input samplesheet not specified!' }
-if (params.reference_genome) { ch_reference_genome = file(params.reference_genome) } else { exit 1, 'Reference genome not specified!' }
-if (params.outgroup_genome ) { ch_outgroup_genome = file(params.outgroup_genome) } else { ch_outgroup_genome = '' }
+//if (params.input_sample_table) { ch_input = file(params.input_sample_table) } else { exit 1, 'Input samplesheet not specified!' }
+//if (params.reference_genome) { ch_reference_genome = file(params.reference_genome) } else { exit 1, 'Reference genome not specified!' }
+//if (params.outgroup_genome ) { ch_outgroup_genome = file(params.outgroup_genome) } else { ch_outgroup_genome = '' }
 
 ////////////////////////////////////////////////////
 /* --          CONFIG FILES                    -- */
@@ -74,11 +74,12 @@ include { GET_NCBI_AMR_HMM;
 include { MOB_INIT;
           MOB_RECON } from '../modules/local/software/mobsuite/main' addParams( options: [:] )
 //include { CRISPRCASFINDER } from '../modules/local/software/crisprcasfinder/main' addParams( options: [:] )
-//include { IQTREE } from '../modules/local/software/iqtree/main' addParams( options: [:] )
+include { IQTREE } from '../modules/local/software/iqtree/main' addParams( options: [:] )
 include { ROARY } from '../modules/local/software/roary/main'
 
 // Subworkflows: local
-include { INPUT_CHECK           } from '../subworkflows/local/input_check'        addParams( options: [:]                          )
+include { INPUT_CHECK;
+          ANNOTATION_INPUT_CHECK } from '../subworkflows/local/input_check'        addParams( options: [:]                          )
 
 ////////////////////////////////////////////////////
 /* --           RUN MAIN WORKFLOW              -- */
@@ -88,6 +89,11 @@ include { INPUT_CHECK           } from '../subworkflows/local/input_check'      
 def multiqc_report = []
 
 workflow ARETE {
+
+    // Check mandatory parameters
+    if (params.input_sample_table) { ch_input = file(params.input_sample_table) } else { exit 1, 'Input samplesheet not specified!' }
+    if (params.reference_genome) { ch_reference_genome = file(params.reference_genome) } else { exit 1, 'Reference genome not specified!' }
+    if (params.outgroup_genome ) { ch_outgroup_genome = file(params.outgroup_genome) } else { ch_outgroup_genome = '' }
 
     ch_software_versions = Channel.empty()
 
@@ -154,20 +160,6 @@ workflow ARETE {
     //PATHRACER(UNICYCLER.out.raw_gfa, GET_NCBI_AMR_HMM.out.hmm);
 
     /*
-     * Module: Annotate VF
-     */
-    //ABRICATE_VF_DB("vfdb")
-    //ABRICATE_VF(UNICYCLER.out.scaffolds, ABRICATE_VF_DB.out.db, "vfdb")
-    //ch_software_versions = ch_software_versions.mix(ABRICATE_VF.out.version.first().ifEmpty(null))
-
-    /*
-     * Module: Annotate BacMet
-     */
-    //ABRICATE_BCM2_DB("bacmet2")
-    //ABRICATE_BCM2(UNICYCLER.out.scaffolds, ABRICATE_BCM2_DB.out.db, "bacmet2")
-    //ch_software_versions = ch_software_versions.mix(ABRICATE_BCM2.out.version.first().ifEmpty(null))
-
-    /*
      * Module: Prokka
      */
     PROKKA(UNICYCLER.out.scaffolds)
@@ -178,12 +170,6 @@ workflow ARETE {
      */
     MOB_RECON(UNICYCLER.out.scaffolds)
     ch_software_versions = ch_software_versions.mix(MOB_RECON.out.version.first().ifEmpty(null))
-
-    /*
-     *  Module: CRISPRCASFINDER
-     */
-    //CRISPRCASFINDER(UNICYCLER.out.scaffolds)
-    //ch_software_versions = ch_software_versions.mix(CRISPRCASFINDER.out.version.first().ifEmpty(null))
 
     /*
      * Module: BLAST vs CAZY, VFDB, Bacmet
@@ -200,7 +186,6 @@ workflow ARETE {
 
     DIAMOND_MAKE_BACMET(GET_BACMET.out.bacmet)
     DIAMOND_BLAST_BACMET(PROKKA.out.ffn, DIAMOND_MAKE_BACMET.out.db, "BACMET")
-
 
 
     ////////////////////////// PANGENOME /////////////////////////////////////
@@ -286,9 +271,13 @@ workflow.onComplete {
 
 
 ////////////////////////////////////////////////////
-/* --              Workflow Subset             -- */
+/* --              Workflow Subsets           -- */
 ///////////////////////////////////////////////////
 
+
+////////////////////////////////////////////////////
+/* --       Assembly: Raw -> Prokka            -- */
+///////////////////////////////////////////////////
 workflow ASSEMBLY{
 
     ch_software_versions = Channel.empty()
@@ -379,6 +368,131 @@ workflow ASSEMBLY{
     ch_multiqc_files = ch_multiqc_files.mix(KRAKEN2_RUN.out.txt.collect{it[1]}.ifEmpty([]))
     ch_multiqc_files = ch_multiqc_files.mix(QUAST.out.tsv.collect().ifEmpty([]))
     ch_multiqc_files = ch_multiqc_files.mix(PROKKA.out.log.collect{it[1]}.ifEmpty([]))
+
+    MULTIQC(ch_multiqc_files.collect())
+    multiqc_report       = MULTIQC.out.report.toList()
+    ch_software_versions = ch_software_versions.mix(MULTIQC.out.version.ifEmpty(null))
+
+}
+
+// Assemblies -> Annotations.
+workflow ANNOTATION {
+    // Check mandatory parameters
+    if (params.input_sample_table) { ch_input = file(params.input_sample_table) } else { exit 1, 'Input samplesheet not specified!' }
+
+    ch_software_versions = Channel.empty()
+
+    /*
+     * SUBWORKFLOW: Read in samplesheet, validate and stage input files
+     */
+    ANNOTATION_INPUT_CHECK(ch_input)
+
+    //Instead of QC here, move QC to the assembly workflow.
+    //TODO clear with team and delete this module.
+    /*
+     * Module: Evaluate Assembly
+     */
+    //QUAST(UNICYCLER.out.scaffolds, ch_reference_genome)
+    //ch_software_versions = ch_software_versions.mix(QUAST.out.version.first().ifEmpty(null))
+
+
+    /////////////////// ANNOTATION ///////////////////////////
+    /*
+     * Module: Annotate AMR
+     */
+    UPDATE_RGI_DB()
+    ch_software_versions = ch_software_versions.mix(UPDATE_RGI_DB.out.card_version.ifEmpty(null))
+    RGI(ANNOTATION_INPUT_CHECK.out.genomes, UPDATE_RGI_DB.out.card_json)
+    ch_software_versions = ch_software_versions.mix(RGI.out.version.first().ifEmpty(null))
+
+    /*
+     *  Module: Annotate graph with pathracer
+     */
+    // TODO figure out how this works with pre-existing genomes....
+    //GET_NCBI_AMR_HMM()
+    //PATHRACER(UNICYCLER.out.raw_gfa, GET_NCBI_AMR_HMM.out.hmm);
+
+    /*
+     * Module: Prokka
+     */
+    PROKKA(ANNOTATION_INPUT_CHECK.out.genomes)
+    ch_software_versions = ch_software_versions.mix(PROKKA.out.version.first().ifEmpty(null))
+
+    /*
+     * Module: Mob-Suite
+     */
+    MOB_RECON(ANNOTATION_INPUT_CHECK.out.genomes)
+    ch_software_versions = ch_software_versions.mix(MOB_RECON.out.version.first().ifEmpty(null))
+
+    /*
+     * Module: BLAST vs CAZY, VFDB, Bacmet
+     */
+    GET_CAZYDB()
+    GET_BACMET()
+    GET_VFDB()
+    DIAMOND_MAKE_CAZY(GET_CAZYDB.out.cazydb)
+    ch_software_versions = ch_software_versions.mix(DIAMOND_MAKE_CAZY.out.version.ifEmpty(null))
+    DIAMOND_BLAST_CAZY(PROKKA.out.ffn, DIAMOND_MAKE_CAZY.out.db, "CAZYDB")
+
+    DIAMOND_MAKE_VFDB(GET_VFDB.out.vfdb)
+    DIAMOND_BLAST_VFDB(PROKKA.out.ffn, DIAMOND_MAKE_VFDB.out.db, "VFDB")
+
+    DIAMOND_MAKE_BACMET(GET_BACMET.out.bacmet)
+    DIAMOND_BLAST_BACMET(PROKKA.out.ffn, DIAMOND_MAKE_BACMET.out.db, "BACMET")
+
+
+    ////////////////////////// PANGENOME /////////////////////////////////////
+    /*
+    * Module: Roary
+    */
+    ROARY(PROKKA.out.gff.collect{it[1]})
+    ch_software_versions = ch_software_versions.mix(ROARY.out.version.ifEmpty(null))
+
+
+    ////////////////////////// PHYLO ////////////////////////////////////////
+    /*
+     * Module: IQTree
+     */
+    //IQTREE(SNIPPY_CORE.out.var_aln, SNIPPY_CORE.out.base_freq)
+    //ch_software_versions = ch_software_versions.mix(IQTREE.out.version.ifEmpty(null))
+    
+    //TODO IQTree with roary
+    IQTREE(ROARY.out.roary_core_gene_alignment)
+    ch_software_versions = ch_software_versions.mix(IQTREE.out.version.ifEmpty(null))
+
+
+    ////////////////////////// REPORTING /////////////////////////////////////
+    /*
+     * MODULE: Pipeline reporting
+     */
+    // Get unique list of files containing version information
+    ch_software_versions
+        .map { it -> if (it) [ it.baseName, it ] }
+        .groupTuple()
+        .map { it[1][0] }
+        .flatten()
+        .collect()
+        .set { ch_software_versions }
+    GET_SOFTWARE_VERSIONS(ch_software_versions)
+
+    /*
+     * MODULE: MultiQC
+     */
+    workflow_summary    = Workflow.paramsSummaryMultiqc(workflow, params.summary_params)
+    ch_workflow_summary = Channel.value(workflow_summary)
+
+    //Mix QUAST results into one report file
+
+    ch_multiqc_files = Channel.empty()
+    ch_multiqc_files = ch_multiqc_files.mix(Channel.from(ch_multiqc_config))
+    ch_multiqc_files = ch_multiqc_files.mix(ch_multiqc_custom_config.collect().ifEmpty([]))
+    ch_multiqc_files = ch_multiqc_files.mix(ch_workflow_summary.collectFile(name: 'workflow_summary_mqc.yaml'))
+    ch_multiqc_files = ch_multiqc_files.mix(GET_SOFTWARE_VERSIONS.out.yaml.collect())
+    //ch_multiqc_files = ch_multiqc_files.mix(FASTQC.out.zip.collect{it[1]}.ifEmpty([]))
+    //ch_multiqc_files = ch_multiqc_files.mix(TRIM_FASTQC.out.zip.collect{it[1]}.ifEmpty([]))
+    //ch_multiqc_files = ch_multiqc_files.mix(KRAKEN2_RUN.out.txt.collect{it[1]}.ifEmpty([]))
+    //ch_multiqc_files = ch_multiqc_files.mix(QUAST.out.tsv.collect())
+    ch_multiqc_files = ch_multiqc_files.mix(PROKKA.out.txt.collect{it[1]}.ifEmpty([]))
 
     MULTIQC(ch_multiqc_files.collect())
     multiqc_report       = MULTIQC.out.report.toList()
