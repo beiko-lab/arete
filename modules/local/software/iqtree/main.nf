@@ -4,8 +4,8 @@ params.options = [:]
 options        = initOptions(params.options)
 
 process IQTREE {
-    tag "snippy_core"
-    label 'process_low'
+    tag "roary_core"
+    label 'process_medium'
     publishDir "${params.outdir}",
         mode: params.publish_dir_mode,
         saveAs: { filename -> saveFiles(filename:filename, options:params.options, publish_dir:"phylo/iqtree") }
@@ -19,16 +19,17 @@ process IQTREE {
 
     input:
     path var_aln 
-    path base_freq
+    //path base_freq
 
     output:
     path "core_genome_phylo*", emit: tree
     path "*.version.txt", emit: version
     
+    //-fconst \$(cat $base_freq)
     script:
     def software = getSoftwareName(task.process)
     """
-    iqtree -fconst \$(cat $base_freq) -s $var_aln -pre core_genome_phylo -nt $task.cpus -bb 10000 -abayes -nm 1500
+    iqtree -s $var_aln -pre core_genome_phylo -nt $task.cpus -bb 10000 -abayes -nm 1500
     echo \$(iqtree --version 2>&1) | grep "version" | sed 's/IQ-TREE multicore version //' | sed 's/ for .*//' > ${software}.version.txt
     """
 }
