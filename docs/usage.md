@@ -1,16 +1,19 @@
 # nf-core/arete: Usage
 
-## :warning: Please read this documentation on the nf-core website: [https://nf-co.re/arete/usage](https://nf-co.re/arete/usage)
+<!--## :warning: Please read this documentation on the nf-core website: [https://nf-co.re/arete/usage](https://nf-co.re/arete/usage) -->
 
 > _Documentation of pipeline parameters is generated automatically from the pipeline schema and can no longer be found in markdown files._
 
 ## Introduction
 
 <!-- TODO nf-core: Add documentation about anything specific to running your pipeline. For general topics, please point to (and add to) the main nf-core website. -->
-
+The ARETE pipeline can is designed as an end-to-end workflow manager for genome assembly, annotation, and phylogenetic analysis, beginning with read data. However, in some cases a user may wish to stop the pipeline prior to annotation or use the annotation features of the work flow with pre-existing assemblies. Therefore, ARETE allows users three use cases: 
+1. Run the full pipeline as described in [readme](../README.md).
+2. Input 
 ## Samplesheet input
 
-You will need to create a samplesheet with information about the samples you would like to analyse before running the pipeline. Use this parameter to specify its location. It has to be a comma-separated file with 3 columns, and a header row as shown in the examples below.
+You will need to create a samplesheet with information about the samples you would like to analyse before running the pipeline. Use this parameter to specify its location. 
+For full runs and assembly, it has to be a comma-separated file with 3 columns, and a header row as shown in the examples below.
 
 ```bash
 --input_sample_table '[path to samplesheet file]'
@@ -41,9 +44,18 @@ TREATMENT_REP3,AEG588A6_S6_L004_R1_001.fastq.gz,
 
 An [example samplesheet](../assets/samplesheet.csv) has been provided with the pipeline.
 
+### Annotation only samplesheet
+The ARETE pipeline allows users to provide pre-existing assemblies to make use of the annotation and reporting features of the workflow. Users are expected to independently quality check these assemblies prior to use. 
+
+The sample sheet must be a 2 column, comma-seperated CSV file with header. 
+
+| Column         | Description                                                                                                                 |
+|----------------|-----------------------------------------------------------------------------------------------------------------------------|
+| `sample`       | Custom sample name. This entry will be identical for multiple sequencing libraries/runs from the same sample.               |
+|`fna_file_path`      | Full path to FASTA or fna file for assembly or genome. File has to be gzipped and have the extension ".fna.gz" or ".fasta.gz".  |
 ## Reference and Outgroup Genome
 
-User must provide a path to a reference genome in fasta format for use in SNP calling and assembly evaluation.
+For full workflow or assembly, user must provide a path to a reference genome in fasta format for use in assembly evaluation.
 ```bash
 --reference_genome ref.fasta
 ```
@@ -58,10 +70,10 @@ The pipeline also requires a genome in fasta format to be supplied to use as an 
 The typical command for running the pipeline is as follows:
 
 ```bash
-nextflow run fmaguire/arete --input_sample_table samplesheet.csv --reference_genome ref.fasta --outgroup_genome out.fasta -profile conda
+nextflow run fmaguire/arete --input_sample_table samplesheet.csv --reference_genome ref.fasta --outgroup_genome out.fasta -profile docker
 ```
 
-This will launch the pipeline with the `conda` configuration profile. See below for more information about profiles.
+This will launch the pipeline with the `docker` configuration profile. See below for more information about profiles.
 
 Note that the pipeline will create the following files in your working directory:
 
@@ -70,6 +82,17 @@ work            # Directory containing the nextflow working files
 results         # Finished results (configurable, see below)
 .nextflow_log   # Log file from Nextflow
 # Other nextflow hidden files, eg. history of pipeline runs and old logs.
+```
+
+As written above, the pipeline also allows users to execute only assembly or only annotation. To execute assembly:
+```bash
+nextflow run fmaguire/arete -entry assembly --input_sample_table samplesheet.csv --reference_genome ref.fasta --outgroup_genome out.fasta -profile docker
+```
+
+To execute annotation:
+
+```bash
+nextflow run fmaguire/arete -entry annotation --input_sample_table samplesheet.csv -profile docker
 ```
 
 ## Updating the pipeline
