@@ -212,9 +212,8 @@ workflow ARETE {
     //IQTREE(SNIPPY_CORE.out.var_aln, SNIPPY_CORE.out.base_freq)
     //ch_software_versions = ch_software_versions.mix(IQTREE.out.version.ifEmpty(null))
     
-    //TODO IQTree with roary
-    //IQTREE(ROARY.out.roary_core_gene_alignment)
-    //ch_software_versions = ch_software_versions.mix(IQTREE.out.version.ifEmpty(null))
+    IQTREE(ROARY.out.roary_core_gene_alignment)
+    ch_software_versions = ch_software_versions.mix(IQTREE.out.version.ifEmpty(null))
 
 
     ////////////////////////// REPORTING /////////////////////////////////////
@@ -386,15 +385,6 @@ workflow ANNOTATION {
      * SUBWORKFLOW: Read in samplesheet, validate and stage input files
      */
     ANNOTATION_INPUT_CHECK(ch_input)
-
-    //Instead of QC here, move QC to the assembly workflow.
-    //TODO clear with team and delete this module.
-    /*
-     * Module: Evaluate Assembly
-     */
-    //QUAST(UNICYCLER.out.scaffolds, ch_reference_genome)
-    //ch_software_versions = ch_software_versions.mix(QUAST.out.version.first().ifEmpty(null))
-
 
     /////////////////// ANNOTATION ///////////////////////////
     /*
