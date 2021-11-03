@@ -39,45 +39,34 @@ Assembly:
 Annotation:
 1. Prokka ([`prokka`](https://github.com/tseemann/prokka))
 2. AMR ([`RGI`](https://github.com/arpcard/rgi) and [`PATHRACER`](http://cab.spbu.ru/software/pathracer))
-3. VF ([`abricate`](https://github.com/tseemann/abricate))
-4. Metal Resistance ([`abricate`](https://github.com/tseemann/abricate))
-5. Plasmids ([`mob_suite`](https://github.com/phac-nml/mob-suite))
-6. CAZY query using DIAMOND ([`diamond`](https://github.com/bbuchfink/diamond))
+3. Plasmids ([`mob_suite`](https://github.com/phac-nml/mob-suite))
+4. CAZY, VFDB, and BacMet query using DIAMOND ([`diamond`](https://github.com/bbuchfink/diamond))
 
 Phylogeny:
-1. snippy ([`snippy`](https://github.com/tseemann/snippy))
+1. Roary ([`roary`](https://sanger-pathogens.github.io/Roary/))
 2. iqtree ([`iqtree`](http://www.iqtree.org/))
 
 ### Not Implemented
 
-When a developer takes over this workflow the following issues are main out-standing
-development requirements.
+Outstanding development requirements (not comprehensive):
 
-- Conda profile and docker profiles have been tested (docker is better if possible due to conda fragility). Singularity has not been (just auto-populated from nf-core usegalaxy paths mostly) so is unlikely to work. That said running docker containers in singularity should work but again has not been tested.
-Currently mob-suite is the limiting factor in containerisation as it has occasional failures to install in conda and can't be run in a read-only container right now (see [1](https://github.com/phac-nml/mob-suite/issues/38), [2](https://github.com/phac-nml/mob-suite/issues/82)). If you have issues running the workflow as it currently is, use `-profile docker` and just comment out mob-suite [here](https://github.com/fmaguire/arete/blob/master/workflows/pipeline.nf#L164).
-
-- Nf-core linting fixes done and added to github actions CI.
+- Nf-core bump to version 2 and linting fixes done and added to github actions CI.
 
 - Minimal test set added and added to github actions CI.
 
 - Additional developed modules added to nf-core module repo.
 
-- Possible switch to roary for pangenome phylogeny
-
 - Consider updating to newer SPAdes as unicycler is dependent on an older version (and newer spades can integrate plasmidspades runs on the same assembly graph).
 
-- Some processes download databases for convenience and "as needed" but given that some run environments don't have external internet access this will fail so these dependencies may need off-loaded to a `get_dbs.sh` script or a more elegant solution!
+- Incorporate external DB downloader for compute nodes with no internet access
 
 - Currently if user doesn't have `sendmail` configured, the workflow will throw an error on completion or failure when trying to send an email to the user, this needs handled more gracefully.
-
-- All inputs for the multiQC report should be being fed to multiQC but it doesn't seem to be incorporating all of them in the report (e.g., QUAST/kraken2). This needs explored and fixed.
 
 - User request to add optional reference gbk to refine prokka annotations.
 
 - User request to add --metagenome mode.
 
-- They largely weren't done due to being web or galaxy only tools or haven't been
-conda/containerised obviously yet (CRISPRCaSFinder should be relatively easy).
+- Integration of additional tools and scripts:
 
 1. Prophage identification (e.g., PHASTER)
 2. Genomic Island Detection (e.g., IslandCompare)
@@ -104,29 +93,28 @@ Note: this workflow should also support [`Docker`] [`Podman`](https://podman.io/
 3. Start running your own analysis (ideally using `-profile docker` for stability)!
 
     ```bash
-    nextflow run fmaguire/arete -profile conda --input_sample_table samplesheet.csv --reference_genome efaecium_DO.fasta --outgroup_genome test/E_hirae_ATCC9790_GCF_000271405.2_ASM27140v2_genomic.fna 
+    nextflow run fmaguire/arete -profile docker --input_sample_table samplesheet.csv --reference_genome efaecium_DO.fasta --outgroup_genome test/E_hirae_ATCC9790_GCF_000271405.2_ASM27140v2_genomic.fna 
     ```
 `samplesheet.csv` must be formatted `sample,fastq_1,fastq_2`
 
-If you have issues running the workflow with `-profile conda` due to mob-suite, use `-profile docker` and just comment out mob-suite [here](https://github.com/fmaguire/arete/blob/master/workflows/pipeline.nf#L164).  
+
 
 **Note**: If you get this error at the end ```Failed to invoke `workflow.onComplete` event handler``` it isn't a problem, it just means you don't have an sendmail   configured and it can't send an email report saying it finished correctly i.e., its not that the workflow failed.
 
-See [usage docs](https://github.com/fmaguire/arete/usage) for all of the available options when running the pipeline.
+See [usage docs](docs/usage.md) for all of the available options when running the pipeline.
 
 ## Documentation
 
-The ARETE pipeline comes with documentation about the pipeline: [usage](https://github.com/fmaguire/arete/usage) and [output](https://github.com/fmaguire/arete/output).
+The ARETE pipeline comes with documentation about the pipeline: [usage](docs/usage.md) and [output](docs/output.md).
 
 ## Credits
 
-ARETE was written by Finlay Maguire.
+ARETE was written by [Finlay Maguire](https://github.com/fmaguire) and is currently developed by [Alex Manuele](https://github.com/alexmanuele). 
 
 ## Contributions and Support
 
 If you would like to contribute to this pipeline, please see the [contributing guidelines](.github/CONTRIBUTING.md).
 
-For further information or help, don't hesitate to get in touch on the [Slack `#arete` channel](https://nfcore.slack.com/channels/arete) (you can join with [this invite](https://nf-co.re/join/slack)).
 
 ## Citations
 

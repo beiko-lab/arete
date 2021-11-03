@@ -22,8 +22,21 @@ The pipeline is built using [Nextflow](https://www.nextflow.io/) and processes d
 
 * [FastQC](#fastqc) - Raw read QC
 * [MultiQC](#multiqc) - Aggregate report describing results and QC from the whole pipeline
+* [FastP](#fastp) - Read trimming
+* [Kraken2](#kraken) - Taxonomic assignment
+* [Unicycler](#unicycler) - Short read assembly
+* [Quast](#quast) - Assembly quality score
+* [Prokka](#prokka) - Gene detection and annotation
+* [Roary](#roary) - Pangenome alignment
+* [RGI](#rgi) - Detection and annotation of AMR determinants
+* [Diamond](#diamond) - Detection and annotation of genes using external databases.
+  - [CAZy](#cazy): Carbohydrate metabolism
+  - [VFDB](#vfdb): Virulence factors
+  - [BacMet](#bacmet): Metal resistance determinants
+* [IqTree](#IQTree) - Maximum likelihood core genome phylogenetic tree
 * [Pipeline information](#pipeline-information) - Report metrics generated during the workflow execution
 
+<!-- TODO put all the other crap in below. Can't be arsed today -->
 ### FastQC
 
 <details markdown="1">

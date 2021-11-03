@@ -5,7 +5,7 @@ options        = initOptions(params.options)
 
 process IQTREE {
     tag "roary_core"
-    label 'process_medium'
+    label 'process_high'
     publishDir "${params.outdir}",
         mode: params.publish_dir_mode,
         saveAs: { filename -> saveFiles(filename:filename, options:params.options, publish_dir:"phylo/iqtree") }
