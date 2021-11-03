@@ -13,10 +13,10 @@ process MOB_RECON {
 
     conda (params.enable_conda ? "bioconda::mob_suite=3.0.1" : null)
     if (workflow.containerEngine == 'singularity' && !params.singularity_pull_docker_container) {
-        container "https://depot.galaxyproject.org/singularity/mob_suite:3.0.3--pyhdfd78af_0"
+        container "https://depot.galaxyproject.org/singularity/mob_suite:3.0.1--py_0"
     } else {
         //container "finlaymaguire/mob-suite:444"
-        container "quay.io/biocontainers/mob_suite:3.0.3--pyhdfd78af_0"
+        container "quay.io/biocontainers/mob_suite:3.0.1--py_0"
     }
 
     input:
@@ -39,16 +39,15 @@ process MOB_RECON {
     //--database_directory $mob_db  \\
 }
 
-//TODO appaears depreacated; remove after testing
 process MOB_INIT {
     tag "MOB_INIT"
     label 'process_medium'
     conda (params.enable_conda ? "bioconda::mob_suite=3.0.1" : null)
     if (workflow.containerEngine == 'singularity' && !params.singularity_pull_docker_container) {
-        container "https://depot.galaxyproject.org/singularity/mob_suite:3.0.3--pyhdfd78af_0"
+        container "https://depot.galaxyproject.org/singularity/mob_suite:3.0.1--py_0"
     } else {
         //container "finlaymaguire/mob-suite:439"
-        container "quay.io/biocontainers/mob_suite:3.0.3--pyhdfd78af_0"
+        container "quay.io/biocontainers/mob_suite:3.0.1--py_0"
     }
 
     output:
