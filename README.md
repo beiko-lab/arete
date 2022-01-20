@@ -93,7 +93,7 @@ Note: this workflow should also support [`Docker`] [`Podman`](https://podman.io/
 3. Start running your own analysis (ideally using `-profile docker` for stability)!
 
     ```bash
-    nextflow run fmaguire/arete -profile docker --input_sample_table samplesheet.csv --reference_genome efaecium_DO.fasta --outgroup_genome test/E_hirae_ATCC9790_GCF_000271405.2_ASM27140v2_genomic.fna 
+    nextflow run fmaguire/arete -profile docker --input_sample_table samplesheet.csv --reference_genome efaecium_DO.fasta --outgroup_genome test/E_hirae_ATCC9790_GCF_000271405.2_ASM27140v2_genomic.fna
     ```
 `samplesheet.csv` must be formatted `sample,fastq_1,fastq_2`
 
@@ -109,7 +109,7 @@ The ARETE pipeline comes with documentation about the pipeline: [usage](docs/usa
 
 ## Credits
 
-ARETE was written by [Finlay Maguire](https://github.com/fmaguire) and is currently developed by [Alex Manuele](https://github.com/alexmanuele). 
+ARETE was written by [Finlay Maguire](https://github.com/fmaguire) and is currently developed by [Alex Manuele](https://github.com/alexmanuele).
 
 ## Contributions and Support
 

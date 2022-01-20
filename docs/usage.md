@@ -7,12 +7,12 @@
 ## Introduction
 
 <!-- TODO nf-core: Add documentation about anything specific to running your pipeline. For general topics, please point to (and add to) the main nf-core website. -->
-The ARETE pipeline can is designed as an end-to-end workflow manager for genome assembly, annotation, and phylogenetic analysis, beginning with read data. However, in some cases a user may wish to stop the pipeline prior to annotation or use the annotation features of the work flow with pre-existing assemblies. Therefore, ARETE allows users three use cases: 
+The ARETE pipeline can is designed as an end-to-end workflow manager for genome assembly, annotation, and phylogenetic analysis, beginning with read data. However, in some cases a user may wish to stop the pipeline prior to annotation or use the annotation features of the work flow with pre-existing assemblies. Therefore, ARETE allows users three use cases:
 1. Run the full pipeline as described in [readme](../README.md).
-2. Input 
+2. Input
 ## Samplesheet input
 
-You will need to create a samplesheet with information about the samples you would like to analyse before running the pipeline. Use this parameter to specify its location. 
+You will need to create a samplesheet with information about the samples you would like to analyse before running the pipeline. Use this parameter to specify its location.
 For full runs and assembly, it has to be a comma-separated file with 3 columns, and a header row as shown in the examples below.
 
 ```bash
@@ -45,9 +45,9 @@ TREATMENT_REP3,AEG588A6_S6_L004_R1_001.fastq.gz,
 An [example samplesheet](../assets/samplesheet.csv) has been provided with the pipeline.
 
 ### Annotation only samplesheet
-The ARETE pipeline allows users to provide pre-existing assemblies to make use of the annotation and reporting features of the workflow. Users are expected to independently quality check these assemblies prior to use. 
+The ARETE pipeline allows users to provide pre-existing assemblies to make use of the annotation and reporting features of the workflow. Users are expected to independently quality check these assemblies prior to use.
 
-The sample sheet must be a 2 column, comma-seperated CSV file with header. 
+The sample sheet must be a 2 column, comma-seperated CSV file with header.
 
 | Column         | Description                                                                                                                 |
 |----------------|-----------------------------------------------------------------------------------------------------------------------------|
@@ -63,7 +63,7 @@ For full workflow or assembly, user must provide a path to a reference genome in
 The pipeline also requires a genome in fasta format to be supplied to use as an outgroup for phylogenetic analyses:
 ```bash
 --outgroup_genome out.fasta
-```  
+```
 
 ## Running the pipeline
 
