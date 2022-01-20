@@ -57,6 +57,7 @@ def check_samplesheet(file_in, file_out):
 
         ## Check header
         MIN_COLS = 2
+        # TODO nf-core: Update the column names for the input samplesheet
         HEADER = ["sample", "fastq_1", "fastq_2"]
         header = [x.strip('"') for x in fin.readline().strip().split(",")]
         if header[: len(HEADER)] != HEADER:
@@ -84,10 +85,8 @@ def check_samplesheet(file_in, file_out):
 
             ## Check sample name entries
             sample, fastq_1, fastq_2 = lspl[: len(HEADER)]
-            if sample:
-                if sample.find(" ") != -1:
-                    print_error("Sample entry contains spaces!", "Line", line)
-            else:
+            sample = sample.replace(" ", "_")
+            if not sample:
                 print_error("Sample entry has not been specified!", "Line", line)
 
             ## Check FastQ file extension
@@ -133,10 +132,7 @@ def check_samplesheet(file_in, file_out):
                     print_error("Multiple runs of a sample must be of the same datatype!", "Sample: {}".format(sample))
 
                 for idx, val in enumerate(sample_mapping_dict[sample]):
-                    if idx > 0:
-                        print_error("Duplicate sample names in sample sheet")
-                    fout.write(",".join(["{}".format(sample)] + val) + "\n")
-                    idx+=1
+                    fout.write(",".join(["{}_T{}".format(sample, idx + 1)] + val) + "\n")
     else:
         print_error("No entries to process!", "Samplesheet: {}".format(file_in))
 

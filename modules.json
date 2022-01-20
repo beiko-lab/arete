@@ -1,0 +1,50 @@
+{
+    "name": "ARETE",
+    "homePage": "https://github.com/fmaguire/arete",
+    "repos": {
+        "nf-core/modules": {
+            "blast/blastn": {
+                "git_sha": "3aacd46da2b221ed47aaa05c413a828538d2c2ae"
+            },
+            "blast/makeblastdb": {
+                "git_sha": "3aacd46da2b221ed47aaa05c413a828538d2c2ae"
+            },
+            "diamond/blastx": {
+                "git_sha": "49da8642876ae4d91128168cd0db4f1c858d7792"
+            },
+            "diamond/makedb": {
+                "git_sha": "49da8642876ae4d91128168cd0db4f1c858d7792"
+            },
+            "fastp": {
+                "git_sha": "3aacd46da2b221ed47aaa05c413a828538d2c2ae"
+            },
+            "fastqc": {
+                "git_sha": "e937c7950af70930d1f34bb961403d9d2aa81c7d"
+            },
+            "iqtree": {
+                "git_sha": "49da8642876ae4d91128168cd0db4f1c858d7792"
+            },
+            "kraken2/kraken2": {
+                "git_sha": "3aacd46da2b221ed47aaa05c413a828538d2c2ae"
+            },
+            "multiqc": {
+                "git_sha": "e937c7950af70930d1f34bb961403d9d2aa81c7d"
+            },
+            "prokka": {
+                "git_sha": "49da8642876ae4d91128168cd0db4f1c858d7792"
+            },
+            "quast": {
+                "git_sha": "3aacd46da2b221ed47aaa05c413a828538d2c2ae"
+            },
+            "roary": {
+                "git_sha": "0ba88fb8699ab1d94ca748ca1c5a903cbbc30602"
+            },
+            "snpsites": {
+                "git_sha": "3aacd46da2b221ed47aaa05c413a828538d2c2ae"
+            },
+            "unicycler": {
+                "git_sha": "171a2a2dbf6008cf00b0aac6b981f182aba968c7"
+            }
+        }
+    }
+}

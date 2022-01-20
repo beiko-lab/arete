@@ -1,55 +1,72 @@
 #!/usr/bin/env nextflow
 /*
 ========================================================================================
-                         arete
+    fmaguire/arete
 ========================================================================================
- ARETE Analysis Pipeline.
- #### Homepage / Documentation
- https://github.com/fmaguire/arete
+    Github : https://github.com/fmaguire/arete
 ----------------------------------------------------------------------------------------
 */
 
 nextflow.enable.dsl = 2
 
-////////////////////////////////////////////////////
-/* --               PRINT HELP                 -- */
-////////////////////////////////////////////////////
+/*
+========================================================================================
+    GENOME PARAMETER VALUES
+========================================================================================
+*/
 
-log.info Utils.logo(workflow, params.monochrome_logs)
+//params.fasta = WorkflowMain.getGenomeAttribute(params, 'fasta')
 
-def json_schema = "$projectDir/nextflow_schema.json"
-if (params.help) {
-    def command = "nextflow run arete --input samplesheet.csv --reference_fasta reference.fasta -profile conda"
-    log.info NfcoreSchema.paramsHelp(workflow, params, json_schema, command)
-    log.info Workflow.citation(workflow)
-    log.info Utils.dashedLine(params.monochrome_logs)
-    exit 0
+/*
+========================================================================================
+    VALIDATE & PRINT PARAMETER SUMMARY
+========================================================================================
+*/
+// TODO new function to validate our params
+//WorkflowMain.initialise(workflow, params, log)
+
+/*
+========================================================================================
+    NAMED WORKFLOW FOR PIPELINE
+========================================================================================
+*/
+
+include { ARETE } from './workflows/arete'
+
+//
+// WORKFLOW: Run main nf-core/arete analysis pipeline
+//
+/*
+workflow NFCORE_ARETE {
+    ARETE ()
+}
+*/
+workflow assembly{
+    include { ASSEMBLY } from './workflows/arete'
+    ASSEMBLY ()
+
 }
 
-////////////////////////////////////////////////////
-/* --         PRINT PARAMETER SUMMARY          -- */
-////////////////////////////////////////////////////
+workflow annotation {
+    include { ANNOTATION } from './workflows/arete'
+    ANNOTATION ()
+}
+/*
+========================================================================================
+    RUN ALL WORKFLOWS
+========================================================================================
+*/
 
-def summary_params = NfcoreSchema.paramsSummaryMap(workflow, params, json_schema)
-log.info NfcoreSchema.paramsSummaryLog(workflow, params, json_schema)
-log.info Workflow.citation(workflow)
-log.info Utils.dashedLine(params.monochrome_logs)
-
-////////////////////////////////////////////////////
-/* --         VALIDATE PARAMETERS              -- */
-////////////////////////////////////////////////////
-
-Workflow.validateMainParams(workflow, params, json_schema, log)
-
-////////////////////////////////////////////////////
-/* --            RUN WORKFLOW(S)               -- */
-////////////////////////////////////////////////////
-
+//
+// WORKFLOW: Execute a single named workflow for the pipeline
+// See: https://github.com/nf-core/rnaseq/issues/619
+//
 workflow {
-    include { ARETE } from './workflows/pipeline' addParams( summary_params: summary_params )
     ARETE ()
 }
 
-////////////////////////////////////////////////////
-/* --                  THE END                 -- */
-////////////////////////////////////////////////////
+/*
+========================================================================================
+    THE END
+========================================================================================
+*/
