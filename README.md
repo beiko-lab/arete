@@ -44,13 +44,12 @@ Annotation:
 
 Phylogeny:
 1. Roary ([`roary`](https://sanger-pathogens.github.io/Roary/))
+3. SNPSites ([`snpsites`](https://github.com/sanger-pathogens/snp-sites))
 2. iqtree ([`iqtree`](http://www.iqtree.org/))
 
 ### Not Implemented
 
 Outstanding development requirements (not comprehensive):
-
-- Nf-core bump to version 2 and linting fixes done and added to github actions CI.
 
 - Minimal test set added and added to github actions CI.
 
@@ -59,10 +58,6 @@ Outstanding development requirements (not comprehensive):
 - Consider updating to newer SPAdes as unicycler is dependent on an older version (and newer spades can integrate plasmidspades runs on the same assembly graph).
 
 - Incorporate external DB downloader for compute nodes with no internet access
-
-- Currently if user doesn't have `sendmail` configured, the workflow will throw an error on completion or failure when trying to send an email to the user, this needs handled more gracefully.
-
-- User request to add optional reference gbk to refine prokka annotations.
 
 - User request to add --metagenome mode.
 
@@ -79,7 +74,7 @@ Outstanding development requirements (not comprehensive):
 1. Install [`nextflow`](https://nf-co.re/usage/installation)
 
 2. Install [`Docker`](https://www.docker.com), [`Conda`](https://conda.io/miniconda.html), and ensure you have a working `curl` installed (should be present on almost all systems).
-Note: this workflow should also support [`Docker`] [`Podman`](https://podman.io/), [`Shifter`](https://nersc.gitlab.io/development/shifter/how-to-use/) or [`Charliecloud`](https://hpc.github.io/charliecloud/) execution for full pipeline reproducibility. Ideally future development will minimise reliance on `conda`(see [docs](https://nf-co.re/usage/configuration#basic-configuration-profiles)). Configure `mail` on your system to send an email on workflow success/failure (without this you will get a small error at the end `Failed to invoke workflow.onComplete event handler` but this doesn't mean the workflow didn't finish successfully).
+Note: this workflow should also support [`Docker`] [`Podman`](https://podman.io/), [`Shifter`](https://nersc.gitlab.io/development/shifter/how-to-use/) or [`Charliecloud`](https://hpc.github.io/charliecloud/) execution for full pipeline reproducibility. Ideally future development will minimise reliance on `conda`(see [docs](https://nf-co.re/usage/configuration#basic-configuration-profiles)). Configure `mail` on your system to send an email on workflow success/failure (without this you may get a small error at the end `Failed to invoke workflow.onComplete event handler` but this doesn't mean the workflow didn't finish successfully).
 
 3. **NOT IMPLEMENTED SKIP TO 4** Download the pipeline and test it on a minimal dataset with a single command:
 
@@ -90,10 +85,10 @@ Note: this workflow should also support [`Docker`] [`Podman`](https://podman.io/
     * Please check [nf-core/configs](https://github.com/nf-core/configs#documentation) to see if a custom config file to run nf-core pipelines already exists for your Institute. If so, you can simply use `-profile <institute>` in your command. This will enable either `docker` or `singularity` and set the appropriate execution settings for your local compute environment.
     * If you are using `singularity` then the pipeline will auto-detect this and attempt to download the Singularity images directly as opposed to performing a conversion from Docker images. If you are persistently observing issues downloading Singularity images directly due to timeout or network issues then please use the `--singularity_pull_docker_container` parameter to pull and convert the Docker image instead.
 
-3. Start running your own analysis (ideally using `-profile docker` for stability)!
+4. Start running your own analysis (ideally using `-profile docker` for stability)!
 
     ```bash
-    nextflow run fmaguire/arete -profile docker --input_sample_table samplesheet.csv --reference_genome efaecium_DO.fasta --outgroup_genome test/E_hirae_ATCC9790_GCF_000271405.2_ASM27140v2_genomic.fna 
+    nextflow run arete -profile docker --input_sample_table samplesheet.csv 
     ```
 `samplesheet.csv` must be formatted `sample,fastq_1,fastq_2`
 
@@ -109,7 +104,7 @@ The ARETE pipeline comes with documentation about the pipeline: [usage](docs/usa
 
 ## Credits
 
-ARETE was written by [Finlay Maguire](https://github.com/fmaguire) and is currently developed by [Alex Manuele](https://github.com/alexmanuele). 
+ARETE was written by [Finlay Maguire](https://github.com/fmaguire) and is currently developed by [Alex Manuele](https://github.com/alexmanuele).
 
 ## Contributions and Support
 
@@ -121,12 +116,13 @@ If you would like to contribute to this pipeline, please see the [contributing g
 <!-- TODO nf-core: Add citation for pipeline after first release. Uncomment lines below and update Zenodo doi and badge at the top of this file. -->
 <!-- If you use  nf-core/arete for your analysis, please cite it using the following doi: [10.5281/zenodo.XXXXXX](https://doi.org/10.5281/zenodo.XXXXXX) -->
 
-An extensive list of references for the tools used by the pipeline can be found in the [`CITATIONS.md`](CITATIONS.md) file.
+This pipeline uses code and infrastructure developed and maintained by the [nf-core](https://nf-co.re) initative, and reused here under the [MIT license](https://github.com/nf-core/tools/blob/master/LICENSE).
 
-You can cite the `nf-core` publication as follows:
-
-> **The nf-core framework for community-curated bioinformatics pipelines.**
+> The nf-core framework for community-curated bioinformatics pipelines.
 >
 > Philip Ewels, Alexander Peltzer, Sven Fillinger, Harshil Patel, Johannes Alneberg, Andreas Wilm, Maxime Ulysse Garcia, Paolo Di Tommaso & Sven Nahnsen.
 >
-> _Nat Biotechnol._ 2020 Feb 13. doi: [10.1038/s41587-020-0439-x](https://dx.doi.org/10.1038/s41587-020-0439-x).
+> Nat Biotechnol. 2020 Feb 13. doi: 10.1038/s41587-020-0439-x.
+>
+
+In addition, references of tools and data used in this pipeline are as follows can be found in the [`CITATIONS.md`](CITATIONS.md) file.
