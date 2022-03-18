@@ -4,10 +4,11 @@
 
 ## Introduction
 
-The ARETE pipeline can is designed as an end-to-end workflow manager for genome assembly, annotation, and phylogenetic analysis, beginning with read data. However, in some cases a user may wish to stop the pipeline prior to annotation or use the annotation features of the work flow with pre-existing assemblies. Therefore, ARETE allows users three use cases:
+The ARETE pipeline can is designed as an end-to-end workflow manager for genome assembly, annotation, and phylogenetic analysis, beginning with read data. However, in some cases a user may wish to stop the pipeline prior to annotation or use the annotation features of the work flow with pre-existing assemblies. Therefore, ARETE allows users four use cases:
 1. Run the full pipeline end-to-end..
 2. Input a set of reads and stop after assembly.
-3. Input a set of assemblies and perform annotation and taxonomic analyses.
+3. Input a set of assemblies and perform QC.
+4. Input a set of assemblies and perform annotation and taxonomic analyses.
 
 This document will describe how to perform each workflow.
 ## Samplesheet input
@@ -45,14 +46,14 @@ TREATMENT_REP3,AEG588A6_S6_L004_R1_001.fastq.gz,
 An [example samplesheet](../assets/samplesheet.csv) has been provided with the pipeline.
 
 ### Annotation only samplesheet
-The ARETE pipeline allows users to provide pre-existing assemblies to make use of the annotation and reporting features of the workflow. Users are expected to independently quality check these assemblies prior to use.
+The ARETE pipeline allows users to provide pre-existing assemblies to make use of the annotation and reporting features of the workflow. Users may use the `assembly_qc` entry point to perform QC on the assemblies. **Note that the QC workflow does not automatically filter low quality assemblies, it simply generates QC reports!** `assembly` and `assembly_qc` workflows accept the same format of sample sheet.
 
 The sample sheet must be a 2 column, comma-seperated CSV file with header.
 
 | Column         | Description                                                                                                                 |
 |----------------|-----------------------------------------------------------------------------------------------------------------------------|
 | `sample`       | Custom sample name. This entry will be identical for multiple sequencing libraries/runs from the same sample.               |
-|`fna_file_path`      | Full path to FASTA or fna file for assembly or genome. File has to be gzipped and have the extension ".fna.gz" or ".fasta.gz".  |
+|`fna_file_path`      | Full path to fna file for assembly or genome. File must have `.fna` file extension.  |
 ## Reference Genome
 
 For full workflow or assembly, users may provide a path to a reference genome in fasta format for use in assembly evaluation.
@@ -84,15 +85,21 @@ results         # Finished results (configurable, see below)
 # Other nextflow hidden files, eg. history of pipeline runs and old logs.
 ```
 
-As written above, the pipeline also allows users to execute only assembly or only annotation. To execute assembly:
+As written above, the pipeline also allows users to execute only assembly or only annotation. To execute assembly (reference genome optional):
 ```bash
 nextflow run arete -entry assembly --input_sample_table samplesheet.csv --reference_genome ref.fasta  -profile docker
 ```
 
-To execute annotation:
+To execute QC on pre-existing assemblies (reference genome optional):
 
 ```bash
-nextflow run fmaguire/arete -entry annotation --input_sample_table samplesheet.csv -profile docker
+nextflow run arete -entry assembly_qc --input_sample_table samplesheet.csv --reference_genome ref.fasta  -profile docker
+```
+
+To execute annotation of pre-existing assemblies:
+
+```bash
+nextflow run arete -entry annotation --input_sample_table samplesheet.csv -profile docker
 ```
 
 ## Updating the pipeline

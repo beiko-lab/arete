@@ -51,6 +51,11 @@ workflow annotation {
     include { ANNOTATION } from './workflows/arete'
     ANNOTATION ()
 }
+
+workflow assembly_qc {
+    include { QUALITYCHECK } from './workflows/arete'
+    QUALITYCHECK()
+}
 /*
 ========================================================================================
     RUN ALL WORKFLOWS

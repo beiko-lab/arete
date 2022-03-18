@@ -3,7 +3,15 @@
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## v1.2 dev - January 19,2021
+## v.1.2.1 dev - March 18, 2022
+
+### `Added` 
+- Add CheckM nf-core module
+- Add `assembly_qc` workflow; runs QC software on existing software
+
+### `Fixed`
+- Fixed MultiQC not finding QUAST report (again)
+## v1.2.0 dev - January 19,2022
 Major refactoring to align with Nextflow DSL2 syntax.
 ### `Added`
 - Add SNPsites module
