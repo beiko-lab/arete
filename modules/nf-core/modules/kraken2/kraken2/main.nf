@@ -40,7 +40,6 @@ process KRAKEN2_KRAKEN2 {
         --unclassified-out $unclassified \\
         --classified-out $classified \\
         --report ${prefix}.kraken2.report.txt \\
-        --gzip-compressed \\
         $paired \\
         $options.args \\
         $reads

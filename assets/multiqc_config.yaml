@@ -10,7 +10,7 @@ report_section_order:
 
 sp:
     quast:
-        fn: "*_report.tsv"
+        fn: "report.tsv"
         shared: true
 
 export_plots: true

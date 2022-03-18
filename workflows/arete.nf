@@ -77,6 +77,7 @@ include { DIAMOND_BLASTX as DIAMOND_BLAST_CAZY;
 include { IQTREE } from '../modules/nf-core/modules/iqtree/main'  addParams( options: [:] )
 include { ROARY } from '../modules/nf-core/modules/roary/main'  addParams( options: [args:'-e -n'] )
 include { SNPSITES } from '../modules/nf-core/modules/snpsites/main' addParams( options: [:] )
+include { CHECKM_LINEAGEWF } from '../modules/nf-core/modules/checkm/lineagewf/main' addParams( options: [:] )
 //
 // MODULE: Local to the pipeline
 //
@@ -507,6 +508,69 @@ workflow ANNOTATION {
 
 }
 
+workflow QUALITYCHECK{
+    if (params.input_sample_table){ ch_input = file(params.input_sample_table) } else { exit 1, 'Input samplesheet not specified!' }
+    if (params.reference_genome) {
+        ch_reference_genome = file(params.reference_genome)
+        use_reference_genome = true
+        }
+    else {
+        ch_reference_genome = []
+        use_reference_genome = false
+    }
+    ch_software_versions = Channel.empty()
+    /*
+     * SUBWORKFLOW: Read in samplesheet, validate and stage input files
+     */
+    ANNOTATION_INPUT_CHECK(ch_input)
+
+    ///*
+    // * MODULE: Run Kraken2
+    // */
+    KRAKEN2_DB()
+    KRAKEN2_RUN(ANNOTATION_INPUT_CHECK.out.genomes, KRAKEN2_DB.out.minikraken)
+    ch_software_versions = ch_software_versions.mix(KRAKEN2_RUN.out.versions.first().ifEmpty(null))
+
+    /*
+    * Module: CheckM Quality Check
+    */
+    CHECKM_LINEAGEWF(ANNOTATION_INPUT_CHECK.out.genomes, "fna") //todo figure out a way to infer the file extension during input check
+    ch_software_versions = ch_software_versions.mix(CHECKM_LINEAGEWF.out.versions.first().ifEmpty(null))
+    /*
+     * Module: QUAST quality check
+     */
+    // Need to reformat assembly channel for QUAST
+    // pattern adapted from nf-core/bacass
+    ch_assembly = Channel.empty()
+    ch_assembly = ch_assembly.mix(ANNOTATION_INPUT_CHECK.out.genomes.dump(tag: 'assembly'))
+    ch_assembly
+        .map { meta, fasta -> fasta } //QUAST doesn't take the meta tag
+        .collect()
+        .set { ch_to_quast }
+    QUAST(ch_to_quast, ch_reference_genome, [], use_reference_genome, false)
+    ch_software_versions = ch_software_versions.mix(QUAST.out.versions.first().ifEmpty(null))
+
+    ch_multiqc_files = Channel.empty()
+    ch_multiqc_files = ch_multiqc_files.mix(Channel.from(ch_multiqc_config))
+    ch_multiqc_files = ch_multiqc_files.mix(QUAST.out.tsv.collect())
+    ch_multiqc_files = ch_multiqc_files.mix(KRAKEN2_RUN.out.txt.collect{it[1]}.ifEmpty([]))
+    MULTIQC(ch_multiqc_files.collect())
+    multiqc_report       = MULTIQC.out.report.toList()
+    ch_software_versions = ch_software_versions.mix(MULTIQC.out.version.ifEmpty(null))
+
+    // Get unique list of files containing version information
+    ch_software_versions
+        .map { it -> if (it) [ it.baseName, it ] }
+        .groupTuple()
+        .map { it[1][0] }
+        .flatten()
+        .collect()
+        .set { ch_software_versions }
+    GET_SOFTWARE_VERSIONS(ch_software_versions)
+    //multiqc
+    workflow_summary    = WorkflowArete.paramsSummaryMultiqc(workflow, summary_params)
+    ch_workflow_summary = Channel.value(workflow_summary)
+}
 /*
 ========================================================================================
     COMPLETION EMAIL AND SUMMARY

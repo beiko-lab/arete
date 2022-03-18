@@ -62,6 +62,7 @@ workflow ANNOTATION_INPUT_CHECK{
 def get_sample_info_assemblies(LinkedHashMap row) {
     def meta = [:]
     meta.id           = row.sample
+    meta.single_end = true //Bit of a hack; call assemblies "single end" to allow passing to kraken
 
     def array = []
     if (!file(row.path).exists()) {

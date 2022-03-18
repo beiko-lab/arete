@@ -9,6 +9,9 @@
             "blast/makeblastdb": {
                 "git_sha": "3aacd46da2b221ed47aaa05c413a828538d2c2ae"
             },
+            "checkm/lineagewf": {
+                "git_sha": "e745e167c1020928ef20ea1397b6b4d230681b4d"
+            },
             "diamond/blastx": {
                 "git_sha": "49da8642876ae4d91128168cd0db4f1c858d7792"
             },
