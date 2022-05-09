@@ -45,4 +45,13 @@ process FASTQC {
         fastqc --version | sed -e "s/FastQC v//g" > ${software}.version.txt
         """
     }
+
+    stub:
+    def software = getSoftwareName(task.process)
+    def prefix   = "${meta.id}.${run_name}"
+    """
+    touch ${prefix}.fastqcstub.html
+    touch ${prefix}.fastqcstub.zip
+    fastqc --version | sed -e "s/FastQC v//g" > ${software}.version.txt
+    """
 }

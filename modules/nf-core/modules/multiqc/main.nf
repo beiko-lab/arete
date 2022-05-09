@@ -32,4 +32,13 @@ process MULTIQC {
     multiqc -f $options.args .
     multiqc --version | sed -e "s/multiqc, version //g" > ${software}.version.txt
     """
+
+    stub:
+    def software = getSoftwareName(task.process)
+    """
+    touch stub_multiqc_report.html
+    mkdir multiqc_stub_data
+    mkdir multiqc_stub_reports
+    multiqc --version | sed -e "s/multiqc, version //g" > ${software}.version.txt
+    """
 }

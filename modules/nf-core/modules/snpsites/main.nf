@@ -42,4 +42,14 @@ process SNPSITES {
         ${getSoftwareName(task.process)}: \$(snp-sites -V 2>&1 | sed 's/snp-sites //')
     END_VERSIONS
     """
+    stub:
+    """
+    touch snpsites_stub.fas
+    echo acgt > snpsites_stub.sites.txt
+    CONSTANT_SITES=\$(cat snpsites_stub.sites.txt)
+    cat <<-END_VERSIONS > versions.yml
+    ${getProcessName(task.process)}:
+        ${getSoftwareName(task.process)}: \$(snp-sites -V 2>&1 | sed 's/snp-sites //')
+    END_VERSIONS
+    """
 }

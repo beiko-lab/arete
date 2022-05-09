@@ -16,6 +16,10 @@ process GET_VFDB{
     """
     curl http://www.mgc.ac.cn/VFs/Down/VFDB_setB_pro.fas.gz --output VFDB_setB_pro.fas.gz
     """
+    stub:
+    """
+    touch VFDB_setB_pro.fas.gz
+    """
 }
 
 process GET_BACMET{
@@ -25,5 +29,9 @@ process GET_BACMET{
     script:
     """
     curl http://bacmet.biomedicine.gu.se/download/BacMet2_predicted_database.fasta.gz --output BacMet2_predicted_database.fasta.gz
+    """
+    stub:
+    """
+    touch BacMet2_predicted_database.fasta.gz
     """
 }
