@@ -1,0 +1,10 @@
+lint:
+    files_exist:
+    - assets/nf-core-ARETE_logo.png
+    - docs/images/nf-core-ARETE_logo.png
+    files_unchanged:
+    - assets/email_template.html
+    - assets/multiqc_config.yaml
+    nextflow_config:
+    - params.input
+    - manifest.name

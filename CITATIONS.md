@@ -13,6 +13,9 @@
 * [BLAST](https://blast.ncbi.nlm.nih.gov/Blast.cgi)
     > Camacho C, Coulouris G, Avagyan V, Ma N, Papadopoulos J, Bealer K, Madden TL [BLAST+: architecture and applications](http://dx.doi.org/10.1186/1471-2105-10-421). _BMC Bioinformatics_ 10, 421 (2009)
 
+* [CheckM](https://github.com/Ecogenomics/CheckM)
+    > Parks DH, Imelfort M, Skennerton CT, Hugenholtz P, Tyson GW. 2015. [CheckM: assessing the quality of microbial genomes recovered from isolates, single cells, and metagenomes](http://genome.cshlp.org/content/25/7/1043.short). Genome Research, 25: 1043–1055.
+
 * [DIAMOND](https://github.com/bbuchfink/diamond)
     > Buchfink B, Xie C, Huson DH [Fast and sensitive protein alignment using DIAMOND.](http://dx.doi.org/10.1038/nmeth.3176) _Nat. Methods._ 12, 59–60 (2015)
 

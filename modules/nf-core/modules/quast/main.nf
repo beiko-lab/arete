@@ -48,4 +48,16 @@ process QUAST {
         ${getSoftwareName(task.process)}: \$(quast.py --version 2>&1 | sed 's/^.*QUAST v//; s/ .*\$//')
     END_VERSIONS
     """
+
+    stub:
+    def software  = getSoftwareName(task.process)
+    prefix        = options.suffix ?: software
+    """
+    mkdir ${prefix}
+    touch ${prefix}_quast_stub.tsv
+    cat <<-END_VERSIONS > versions.yml
+    ${getProcessName(task.process)}:
+        ${getSoftwareName(task.process)}: \$(quast.py --version 2>&1 | sed 's/^.*QUAST v//; s/ .*\$//')
+    END_VERSIONS
+    """
 }

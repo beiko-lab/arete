@@ -56,4 +56,16 @@ process UNICYCLER {
         ${getSoftwareName(task.process)}: \$(echo \$(unicycler --version 2>&1) | sed 's/^.*Unicycler v//; s/ .*\$//')
     END_VERSIONS
     """
+    stub:
+    
+    def prefix      = options.suffix ? "${meta.id}${options.suffix}" : "${meta.id}"
+    """
+    touch ${prefix}_stub.scaffolds.fa
+    touch ${prefix}_stub.assembly.gfa
+    touch ${prefix}_stub.unicylcer.log
+        cat <<-END_VERSIONS > versions.yml
+    ${getProcessName(task.process)}:
+        ${getSoftwareName(task.process)}: \$(echo \$(unicycler --version 2>&1) | sed 's/^.*Unicycler v//; s/ .*\$//')
+    END_VERSIONS
+    """
 }

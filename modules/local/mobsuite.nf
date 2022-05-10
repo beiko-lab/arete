@@ -37,6 +37,12 @@ process MOB_RECON {
     mob_recon --version > ${software}.version.txt
     """
     //--database_directory $mob_db  \\
+    stub:
+    def software = getSoftwareName(task.process)
+    """
+    mkdir ${meta.id}_mob_recon
+    mob_recon --version > ${software}.version.txt
+    """
 }
 
 // MOB_INIT also exists but seems to be unneeded.

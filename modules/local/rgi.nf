@@ -53,4 +53,11 @@ process RGI {
 
     echo \$(rgi main --version 2>&1) > ${software}.version.txt
     """
+    stub:
+    def software = getSoftwareName(task.process)
+    def prefix   = options.suffix ? "${meta.id}${options.suffix}" : "${meta.id}"
+    """
+    touch ${prefix}_rgi.txt
+    echo \$(rgi main --version 2>&1) > ${software}.version.txt
+    """
 }
