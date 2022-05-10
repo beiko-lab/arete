@@ -57,4 +57,26 @@ process PROKKA {
         ${getSoftwareName(task.process)}: \$(echo \$(prokka --version 2>&1) | sed 's/^.*prokka //')
     END_VERSIONS
     """
+
+    stub:
+    prefix   = options.suffix ? "${meta.id}${options.suffix}" : "${meta.id}"
+    """
+    mkdir ${prefix}
+    touch ${prefix}/${prefix}_stub.err
+    touch ${prefix}/${prefix}_stub.ffn
+    touch ${prefix}/${prefix}_stub.faa
+    touch ${prefix}/${prefix}_stub.gbk
+    touch ${prefix}/${prefix}_stub.fna
+    touch ${prefix}/${prefix}_stub.fsa
+    touch ${prefix}/${prefix}_stub.gff
+    touch ${prefix}/${prefix}_stub.log
+    touch ${prefix}/${prefix}_stub.sqn
+    touch ${prefix}/${prefix}_stub.tbl
+    touch ${prefix}/${prefix}_stub.tsv
+    touch ${prefix}/${prefix}_stub.txt
+    cat <<-END_VERSIONS > versions.yml
+    ${getProcessName(task.process)}:
+        ${getSoftwareName(task.process)}: \$(echo \$(prokka --version 2>&1) | sed 's/^.*prokka //')
+    END_VERSIONS
+    """
 }

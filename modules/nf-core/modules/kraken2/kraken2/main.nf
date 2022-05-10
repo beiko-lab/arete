@@ -52,4 +52,17 @@ process KRAKEN2_KRAKEN2 {
         pigz: \$( pigz --version 2>&1 | sed 's/pigz //g' )
     END_VERSIONS
     """
+
+    stub:
+    def prefix       = options.suffix  ? "${meta.id}${options.suffix}"  : "${meta.id}"
+    """
+    touch ${prefix}.classified.fastq.gz
+    touch ${prefix}.unclassified.fastq.gz
+    touch ${prefix}.kraken2.report.txt
+    cat <<-END_VERSIONS > versions.yml
+    ${getProcessName(task.process)}:
+        ${getSoftwareName(task.process)}: \$(echo \$(kraken2 --version 2>&1) | sed 's/^.*Kraken version //; s/ .*\$//')
+        pigz: \$( pigz --version 2>&1 | sed 's/pigz //g' )
+    END_VERSIONS
+    """
 }

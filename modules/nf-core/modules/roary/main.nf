@@ -40,4 +40,14 @@ process ROARY {
         ${getSoftwareName(task.process)}: \$( roary --version )
     END_VERSIONS
     """
+
+    stub:
+    """
+    mkdir results
+    touch results/roary_stub.aln
+    cat <<-END_VERSIONS > versions.yml
+    ${getProcessName(task.process)}:
+        ${getSoftwareName(task.process)}: \$( roary --version )
+    END_VERSIONS
+    """
 }

@@ -7,7 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### `Added` 
 - Add CheckM nf-core module
-- Add `assembly_qc` workflow; runs QC software on existing software
+- Add `assembly_qc` workflow; runs QC software on existing assemblies
 
 ### `Fixed`
 - Fixed MultiQC not finding QUAST report (again)

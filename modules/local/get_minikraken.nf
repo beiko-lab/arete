@@ -17,4 +17,8 @@ process KRAKEN2_DB {
     mkdir -p k2_standard_8gb_20201202
     tar xvf k2_standard_8gb_20201202.tar.gz -C k2_standard_8gb_20201202
     """
+    stub:
+    """
+    mkdir -p k2_standard_8gb_20201202
+    """
 }
