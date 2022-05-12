@@ -43,7 +43,7 @@ def modules = params.modules.clone()
 include { INPUT_CHECK;
           ANNOTATION_INPUT_CHECK } from '../subworkflows/local/input_check' addParams( options: [:] )
 
-
+include { ASSEMBLE_SHORTREADS } from '../subworkflows/local/assembly' addParams( options: [:] )
 
 /*
 ========================================================================================
@@ -124,59 +124,8 @@ workflow ARETE {
      */
     INPUT_CHECK(ch_input)
 
-    /////////////////// Read Processing /////////////////////////////
-    /*
-     * MODULE: Run FastQC
-     */
-    FASTQC(INPUT_CHECK.out.reads, "raw_fastqc")
-    ch_software_versions = ch_software_versions.mix(FASTQC.out.version.first().ifEmpty(null))
-
-    /*
-     * MODULE: Trim Reads
-     */
-    FASTP(INPUT_CHECK.out.reads, false, false)
-    ch_software_versions = ch_software_versions.mix(FASTP.out.versions.first().ifEmpty(null))
-
-    /*
-     * MODULE: Run FastQC on trimmed reads
-     */
-    TRIM_FASTQC(FASTP.out.reads, "trim_fastqc")
-    ch_software_versions = ch_software_versions.mix(TRIM_FASTQC.out.version.first().ifEmpty(null))
-
-    ///*
-    // * MODULE: Run Kraken2
-    // */
-    KRAKEN2_DB()
-    KRAKEN2_RUN(FASTP.out.reads, KRAKEN2_DB.out.minikraken)
-    ch_software_versions = ch_software_versions.mix(KRAKEN2_RUN.out.versions.first().ifEmpty(null))
-
-
-    /////////////////// ASSEMBLE /////////////////////////////
-    /*
-     * MODULE: Assembly
-     */
-
-    // unicycler can accept short reads and long reads. For now, shortread only: Pass empty list for optional file args
-    ch_unicycler_input = FASTP.out.reads.map { it -> it + [[]]}
-    UNICYCLER(ch_unicycler_input)
-    ch_software_versions = ch_software_versions.mix(UNICYCLER.out.versions.first().ifEmpty(null))
-
-
-    // Unicycler outputs not quite right for QUAST. Need to re-arrange
-    // pattern adapted from nf-core/bacass
-    ch_assembly = Channel.empty()
-    ch_assembly = ch_assembly.mix(UNICYCLER.out.scaffolds.dump(tag: 'unicycler'))
-    ch_assembly
-        .map { meta, fasta -> fasta } //QUAST doesn't take the meta tag
-        .collect()
-        .set { ch_to_quast }
-    /*
-     * Module: Evaluate Assembly
-     */
-    QUAST(ch_to_quast, ch_reference_genome, [], use_reference_genome, false)
-    ch_software_versions = ch_software_versions.mix(QUAST.out.versions.first().ifEmpty(null))
-
-
+    ASSEMBLE_SHORTREADS(INPUT_CHECK.out.reads, ch_reference_genome, use_reference_genome)
+    ch_software_versions = ch_software_versions.mix(ASSEMBLE_SHORTREADS.out.assembly_software)
 
     /////////////////// ANNOTATION ///////////////////////////
     /*
@@ -184,7 +133,7 @@ workflow ARETE {
      */
     UPDATE_RGI_DB()
     ch_software_versions = ch_software_versions.mix(UPDATE_RGI_DB.out.card_version.ifEmpty(null))
-    RGI(UNICYCLER.out.scaffolds, UPDATE_RGI_DB.out.card_json)
+    RGI(ASSEMBLE_SHORTREADS.out.scaffolds, UPDATE_RGI_DB.out.card_json)
     ch_software_versions = ch_software_versions.mix(RGI.out.version.first().ifEmpty(null))
 
     /*
@@ -196,7 +145,8 @@ workflow ARETE {
     /*
      * Module: Prokka
      */
-
+    ch_assembly = Channel.empty()
+    ch_assembly = ch_assembly.mix(ASSEMBLE_SHORTREADS.out.assemblies)
     PROKKA (
         ch_assembly,
         [],
@@ -275,10 +225,7 @@ workflow ARETE {
     ch_multiqc_files = ch_multiqc_files.mix(ch_multiqc_custom_config.collect().ifEmpty([]))
     ch_multiqc_files = ch_multiqc_files.mix(ch_workflow_summary.collectFile(name: 'workflow_summary_mqc.yaml'))
     ch_multiqc_files = ch_multiqc_files.mix(GET_SOFTWARE_VERSIONS.out.yaml.collect())
-    ch_multiqc_files = ch_multiqc_files.mix(FASTQC.out.zip.collect{it[1]}.ifEmpty([]))
-    ch_multiqc_files = ch_multiqc_files.mix(TRIM_FASTQC.out.zip.collect{it[1]}.ifEmpty([]))
-    ch_multiqc_files = ch_multiqc_files.mix(KRAKEN2_RUN.out.txt.collect{it[1]}.ifEmpty([]))
-    ch_multiqc_files = ch_multiqc_files.mix(QUAST.out.tsv.collect())
+    ch_multiqc_files = ch_multiqc_files.mix(ASSEMBLE_SHORTREADS.out.multiqc)
     ch_multiqc_files = ch_multiqc_files.mix(PROKKA.out.txt.collect{it[1]}.ifEmpty([]))
 
     MULTIQC(ch_multiqc_files.collect())
@@ -308,66 +255,16 @@ workflow ASSEMBLY {
      */
     INPUT_CHECK(ch_input)
 
-    /////////////////// Read Processing /////////////////////////////
-    /*
-     * MODULE: Run FastQC
-     */
-    FASTQC(INPUT_CHECK.out.reads, "raw_fastqc")
-    ch_software_versions = ch_software_versions.mix(FASTQC.out.version.first().ifEmpty(null))
+    ASSEMBLE_SHORTREADS(INPUT_CHECK.out.reads, ch_reference_genome, use_reference_genome)
+    ch_software_versions = ch_software_versions.mix(ASSEMBLE_SHORTREADS.out.assembly_software)
 
-    /*
-     * MODULE: Trim Reads
-     */
-    FASTP(INPUT_CHECK.out.reads, false, false)
-    ch_software_versions = ch_software_versions.mix(FASTP.out.versions.first().ifEmpty(null))
-
-    /*
-     * MODULE: Run FastQC on trimmed reads
-     */
-    TRIM_FASTQC(FASTP.out.reads, "trim_fastqc")
-    ch_software_versions = ch_software_versions.mix(TRIM_FASTQC.out.version.first().ifEmpty(null))
-
-    ///*
-    // * MODULE: Run Kraken2
-    // */
-    KRAKEN2_DB()
-    KRAKEN2_RUN(FASTP.out.reads, KRAKEN2_DB.out.minikraken)
-    ch_software_versions = ch_software_versions.mix(KRAKEN2_RUN.out.versions.first().ifEmpty(null))
-
-
-    /////////////////// ASSEMBLE /////////////////////////////
-    /*
-     * MODULE: Assembly
-     */
-
-    // unicycler can accept short reads and long reads. For now, shortread only: Pass empty list for optional file args
-    ch_unicycler_input = FASTP.out.reads.map { it -> it + [[]]}
-    UNICYCLER(ch_unicycler_input)
-    ch_software_versions = ch_software_versions.mix(UNICYCLER.out.versions.first().ifEmpty(null))
-
-
-    // Unicycler outputs not quite right for QUAST. Need to re-arrange
-    // pattern adapted from nf-core/bacass
-    ch_assembly = Channel.empty()
-    ch_assembly = ch_assembly.mix(UNICYCLER.out.scaffolds.dump(tag: 'unicycler'))
-    ch_assembly
-        .map { meta, fasta -> fasta } //QUAST doesn't take the meta tag
-        .collect()
-        .set { ch_to_quast }
-    /*
-     * Module: Evaluate Assembly
-     */
-    QUAST(ch_to_quast, ch_reference_genome, [], use_reference_genome, false)
-    ch_software_versions = ch_software_versions.mix(QUAST.out.versions.first().ifEmpty(null))
-
-
-    /////////////////// ANNOTATION ///////////////////////////
-    /*
-     * Module: Prokka
-     */
+    // /////////////////// ANNOTATION ///////////////////////////
+    // /*
+    //  * Module: Prokka
+    //  */
 
     PROKKA (
-        ch_assembly,
+        ASSEMBLE_SHORTREADS.out.assemblies,
         [],
         []
     ) //Assembly, protein file, pre-trained prodigal
@@ -383,6 +280,7 @@ workflow ASSEMBLY {
         .collect()
         .set { ch_software_versions }
     GET_SOFTWARE_VERSIONS(ch_software_versions)
+
     //multiqc
     workflow_summary    = WorkflowArete.paramsSummaryMultiqc(workflow, summary_params)
     ch_workflow_summary = Channel.value(workflow_summary)
@@ -391,11 +289,7 @@ workflow ASSEMBLY {
     ch_multiqc_files = ch_multiqc_files.mix(Channel.from(ch_multiqc_config))
     ch_multiqc_files = ch_multiqc_files.mix(ch_multiqc_custom_config.collect().ifEmpty([]))
     ch_multiqc_files = ch_multiqc_files.mix(ch_workflow_summary.collectFile(name: 'workflow_summary_mqc.yaml'))
-    ch_multiqc_files = ch_multiqc_files.mix(GET_SOFTWARE_VERSIONS.out.yaml.collect())
-    ch_multiqc_files = ch_multiqc_files.mix(FASTQC.out.zip.collect{it[1]}.ifEmpty([]))
-    ch_multiqc_files = ch_multiqc_files.mix(TRIM_FASTQC.out.zip.collect{it[1]}.ifEmpty([]))
-    ch_multiqc_files = ch_multiqc_files.mix(KRAKEN2_RUN.out.txt.collect{it[1]}.ifEmpty([]))
-    ch_multiqc_files = ch_multiqc_files.mix(QUAST.out.tsv.collect())
+    ch_multiqc_files = ch_multiqc_files.mix(ASSEMBLE_SHORTREADS.out.multiqc)
     ch_multiqc_files = ch_multiqc_files.mix(PROKKA.out.txt.collect{it[1]}.ifEmpty([]))
 
     MULTIQC(ch_multiqc_files.collect())
@@ -496,10 +390,6 @@ workflow ANNOTATION {
     ch_multiqc_files = ch_multiqc_files.mix(ch_multiqc_custom_config.collect().ifEmpty([]))
     ch_multiqc_files = ch_multiqc_files.mix(ch_workflow_summary.collectFile(name: 'workflow_summary_mqc.yaml'))
     ch_multiqc_files = ch_multiqc_files.mix(GET_SOFTWARE_VERSIONS.out.yaml.collect())
-    //ch_multiqc_files = ch_multiqc_files.mix(FASTQC.out.zip.collect{it[1]}.ifEmpty([]))
-    //ch_multiqc_files = ch_multiqc_files.mix(TRIM_FASTQC.out.zip.collect{it[1]}.ifEmpty([]))
-    //ch_multiqc_files = ch_multiqc_files.mix(KRAKEN2_RUN.out.txt.collect{it[1]}.ifEmpty([]))
-    //ch_multiqc_files = ch_multiqc_files.mix(QUAST.out.tsv.collect())
     ch_multiqc_files = ch_multiqc_files.mix(PROKKA.out.txt.collect{it[1]}.ifEmpty([]))
 
     MULTIQC(ch_multiqc_files.collect())
