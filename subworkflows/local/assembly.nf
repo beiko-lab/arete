@@ -77,7 +77,9 @@ workflow ASSEMBLE_SHORTREADS{
         // * MODULE: Run Kraken2
         // */
         KRAKEN2_DB()
-        KRAKEN2_RUN(FASTP.out.reads, KRAKEN2_DB.out.minikraken)
+        ch_kraken_db = Channel.fromPath("dbcache/k2_standard_8gb_20201202")
+        //KRAKEN2_RUN(FASTP.out.reads, KRAKEN2_DB.out.minikraken)
+        KRAKEN2_RUN(FASTP.out.reads, ch_kraken_db)
         ch_software_versions = ch_software_versions.mix(KRAKEN2_RUN.out.versions.first().ifEmpty(null))
 
         /////////////////// ASSEMBLE /////////////////////////////

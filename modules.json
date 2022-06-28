@@ -12,6 +12,9 @@
             "checkm/lineagewf": {
                 "git_sha": "e745e167c1020928ef20ea1397b6b4d230681b4d"
             },
+            "diamond/blastp": {
+                "git_sha": "bd3bfe0817246082525ab93707976676b1fe208b"
+            },
             "diamond/blastx": {
                 "git_sha": "49da8642876ae4d91128168cd0db4f1c858d7792"
             },
@@ -24,14 +27,23 @@
             "fastqc": {
                 "git_sha": "e937c7950af70930d1f34bb961403d9d2aa81c7d"
             },
+            "gubbins": {
+                "git_sha": "e745e167c1020928ef20ea1397b6b4d230681b4d"
+            },
             "iqtree": {
                 "git_sha": "49da8642876ae4d91128168cd0db4f1c858d7792"
             },
             "kraken2/kraken2": {
                 "git_sha": "3aacd46da2b221ed47aaa05c413a828538d2c2ae"
             },
+            "mafft": {
+                "git_sha": "f0800157544a82ae222931764483331a81812012"
+            },
             "multiqc": {
                 "git_sha": "e937c7950af70930d1f34bb961403d9d2aa81c7d"
+            },
+            "panaroo/run": {
+                "git_sha": "d16f1ea4d75a179bb672c8e8aec5948d3ee5f0bd"
             },
             "prokka": {
                 "git_sha": "49da8642876ae4d91128168cd0db4f1c858d7792"

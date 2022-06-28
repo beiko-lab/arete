@@ -44,7 +44,8 @@ include { INPUT_CHECK;
           ANNOTATION_INPUT_CHECK } from '../subworkflows/local/input_check' addParams( options: [:] )
 
 include { ASSEMBLE_SHORTREADS } from '../subworkflows/local/assembly' addParams( options: [:] )
-
+include { ANNOTATE_ASSEMBLIES } from '../subworkflows/local/annotation' addParams( options: [:] )
+include { SINGLE_SPECIES_PHYLO } from '../subworkflows/local/phylo' addParams( options: [:] )
 /*
 ========================================================================================
     IMPORT NF-CORE MODULES/SUBWORKFLOWS
@@ -128,75 +129,79 @@ workflow ARETE {
     ch_software_versions = ch_software_versions.mix(ASSEMBLE_SHORTREADS.out.assembly_software)
 
     /////////////////// ANNOTATION ///////////////////////////
-    /*
-     * Module: Annotate AMR
-     */
-    UPDATE_RGI_DB()
-    ch_software_versions = ch_software_versions.mix(UPDATE_RGI_DB.out.card_version.ifEmpty(null))
-    RGI(ASSEMBLE_SHORTREADS.out.scaffolds, UPDATE_RGI_DB.out.card_json)
-    ch_software_versions = ch_software_versions.mix(RGI.out.version.first().ifEmpty(null))
+    ANNOTATE_ASSEMBLIES(ASSEMBLE_SHORTREADS.out.scaffolds)
+    ch_software_versions = ch_software_versions.mix(ANNOTATE_ASSEMBLIES.out.annotation_software)
+    // /*
+    //  * Module: Annotate AMR
+    //  */
+    // UPDATE_RGI_DB()
+    // ch_software_versions = ch_software_versions.mix(UPDATE_RGI_DB.out.card_version.ifEmpty(null))
+    // RGI(ASSEMBLE_SHORTREADS.out.scaffolds, UPDATE_RGI_DB.out.card_json)
+    // ch_software_versions = ch_software_versions.mix(RGI.out.version.first().ifEmpty(null))
 
-    /*
-     *  Module: Annotate graph with pathracer
-     */
-    //GET_NCBI_AMR_HMM()
-    //PATHRACER(UNICYCLER.out.raw_gfa, GET_NCBI_AMR_HMM.out.hmm);
+    // /*
+    //  *  Module: Annotate graph with pathracer
+    //  */
+    // //GET_NCBI_AMR_HMM()
+    // //PATHRACER(UNICYCLER.out.raw_gfa, GET_NCBI_AMR_HMM.out.hmm);
 
-    /*
-     * Module: Prokka
-     */
-    ch_assembly = Channel.empty()
-    ch_assembly = ch_assembly.mix(ASSEMBLE_SHORTREADS.out.assemblies)
-    PROKKA (
-        ch_assembly,
-        [],
-        []
-    ) //Assembly, protein file, pre-trained prodigal
-    ch_software_versions = ch_software_versions.mix(PROKKA.out.versions.first().ifEmpty(null))
+    // /*
+    //  * Module: Prokka
+    //  */
+    // ch_assembly = Channel.empty()
+    // ch_assembly = ch_assembly.mix(ASSEMBLE_SHORTREADS.out.assemblies)
+    // PROKKA (
+    //     ch_assembly,
+    //     [],
+    //     []
+    // ) //Assembly, protein file, pre-trained prodigal
+    // ch_software_versions = ch_software_versions.mix(PROKKA.out.versions.first().ifEmpty(null))
 
-    /*
-     * Module: Mob-Suite
-     */
-    MOB_RECON(ch_assembly)
-    ch_software_versions = ch_software_versions.mix(MOB_RECON.out.version.first().ifEmpty(null))
+    // /*
+    //  * Module: Mob-Suite
+    //  */
+    // MOB_RECON(ch_assembly)
+    // ch_software_versions = ch_software_versions.mix(MOB_RECON.out.version.first().ifEmpty(null))
 
-    /*
-     * Module: BLAST vs CAZY, VFDB, Bacmet
-     */
-    GET_CAZYDB()
-    GET_BACMET()
-    GET_VFDB()
-    DIAMOND_MAKE_CAZY(GET_CAZYDB.out.cazydb)
-    ch_software_versions = ch_software_versions.mix(DIAMOND_MAKE_CAZY.out.versions.ifEmpty(null))
-    DIAMOND_BLAST_CAZY(PROKKA.out.ffn, DIAMOND_MAKE_CAZY.out.db, "CAZYDB")
+    // /*
+    //  * Module: BLAST vs CAZY, VFDB, Bacmet
+    //  */
+    // GET_CAZYDB()
+    // GET_BACMET()
+    // GET_VFDB()
+    // DIAMOND_MAKE_CAZY(GET_CAZYDB.out.cazydb)
+    // ch_software_versions = ch_software_versions.mix(DIAMOND_MAKE_CAZY.out.versions.ifEmpty(null))
+    // DIAMOND_BLAST_CAZY(PROKKA.out.ffn, DIAMOND_MAKE_CAZY.out.db, "CAZYDB")
 
-    DIAMOND_MAKE_VFDB(GET_VFDB.out.vfdb)
-    DIAMOND_BLAST_VFDB(PROKKA.out.ffn, DIAMOND_MAKE_VFDB.out.db, "VFDB")
+    // DIAMOND_MAKE_VFDB(GET_VFDB.out.vfdb)
+    // DIAMOND_BLAST_VFDB(PROKKA.out.ffn, DIAMOND_MAKE_VFDB.out.db, "VFDB")
 
-    DIAMOND_MAKE_BACMET(GET_BACMET.out.bacmet)
-    DIAMOND_BLAST_BACMET(PROKKA.out.ffn, DIAMOND_MAKE_BACMET.out.db, "BACMET")
+    // DIAMOND_MAKE_BACMET(GET_BACMET.out.bacmet)
+    // DIAMOND_BLAST_BACMET(PROKKA.out.ffn, DIAMOND_MAKE_BACMET.out.db, "BACMET")
 
 
     ////////////////////////// PANGENOME /////////////////////////////////////
-    /*
-    * Module: Roary
-    */
-    ROARY(PROKKA.out.gff.collect{ meta, gff -> gff}.map( gff -> [[id: 'roary'], gff]))
-    ch_software_versions = ch_software_versions.mix(ROARY.out.versions.ifEmpty(null))
+    SINGLE_SPECIES_PHYLO(ANNOTATE_ASSEMBLIES.out.gff)
+    ch_software_versions = ch_software_versions.mix(SINGLE_SPECIES_PHYLO.out.phylo_software)
+    // /*
+    // * Module: Roary
+    // */
+    // ROARY(PROKKA.out.gff.collect{ meta, gff -> gff}.map( gff -> [[id: 'roary'], gff]))
+    // ch_software_versions = ch_software_versions.mix(ROARY.out.versions.ifEmpty(null))
 
-    /*
-    * Module: SNPSites. TODO make this optional?
-    */
-    SNPSITES(ROARY.out.aln.collect{ meta, aln -> aln })
-    ch_software_versions = ch_software_versions.mix(SNPSITES.out.versions.ifEmpty(null))
+    // /*
+    // * Module: SNPSites. TODO make this optional?
+    // */
+    // SNPSITES(ROARY.out.aln.collect{ meta, aln -> aln })
+    // ch_software_versions = ch_software_versions.mix(SNPSITES.out.versions.ifEmpty(null))
 
 
-    /*
-     * Module: IQTree
-     */
-    //TODO optional SNP-sites?
-    IQTREE(SNPSITES.out.fasta, SNPSITES.out.constant_sites_string)
-    ch_software_versions = ch_software_versions.mix(IQTREE.out.versions.ifEmpty(null))
+    // /*
+    //  * Module: IQTree
+    //  */
+    // //TODO optional SNP-sites?
+    // IQTREE(SNPSITES.out.fasta, SNPSITES.out.constant_sites_string)
+    // ch_software_versions = ch_software_versions.mix(IQTREE.out.versions.ifEmpty(null))
 
     ////////////////////////// REPORTING /////////////////////////////////////
     /*
@@ -226,7 +231,8 @@ workflow ARETE {
     ch_multiqc_files = ch_multiqc_files.mix(ch_workflow_summary.collectFile(name: 'workflow_summary_mqc.yaml'))
     ch_multiqc_files = ch_multiqc_files.mix(GET_SOFTWARE_VERSIONS.out.yaml.collect())
     ch_multiqc_files = ch_multiqc_files.mix(ASSEMBLE_SHORTREADS.out.multiqc)
-    ch_multiqc_files = ch_multiqc_files.mix(PROKKA.out.txt.collect{it[1]}.ifEmpty([]))
+    //ch_multiqc_files = ch_multiqc_files.mix(PROKKA.out.txt.collect{it[1]}.ifEmpty([]))
+    ch_multiqc_files = ch_multiqc_files.mix(ANNOTATE_ASSEMBLIES.out.multiqc)
 
     MULTIQC(ch_multiqc_files.collect())
     multiqc_report       = MULTIQC.out.report.toList()
