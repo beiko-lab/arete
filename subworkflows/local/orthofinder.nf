@@ -16,21 +16,27 @@ include { BLASTP } from '../../modules/nf-core/modules/diamond/blastp/main' addP
 // MODULE: Local to the pipeline
 //
 
-include { ORTHOFINDER } from '../../modules/local/orthofinder' addParams (options: [:])
+include { OF_PREPARE_BLAST } from '../../modules/local/orthofinder' addParams (options: [:])
+include { ORTHOFINDER_RUN } from '../../modules/local/orthofinder' addParams (options: [:])
 
-
-// Usage pattern from nf-core/rnaseq: Empty dummy file for optional inputs
-//ch_dummy_input = file("$projectDir/assets/dummy_file.txt", checkIfExists: true)
 
 /*
 ========================================================================================
     RUN MAIN WORKFLOW
 ========================================================================================
 */
-
+process 
 
 workflow ORTHOFINDER_PANGENOME{
     take: proteins
 
+    main:
+        ch_software_versions = Channel.empty()
+
+        OF_PREPARE_BLAST(proteins)
+
+
 
 }
+
+//function to get list of blast pairs

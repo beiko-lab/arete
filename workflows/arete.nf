@@ -45,7 +45,7 @@ include { INPUT_CHECK;
 
 include { ASSEMBLE_SHORTREADS } from '../subworkflows/local/assembly' addParams( options: [:] )
 include { ANNOTATE_ASSEMBLIES } from '../subworkflows/local/annotation' addParams( options: [:] )
-include { SINGLE_SPECIES_PHYLO } from '../subworkflows/local/phylo' addParams( options: [:] )
+include { PHYLOGENOMICS } from '../subworkflows/local/phylo' addParams( options: [:] )
 /*
 ========================================================================================
     IMPORT NF-CORE MODULES/SUBWORKFLOWS
@@ -113,6 +113,17 @@ workflow ARETE {
         ch_reference_genome = []
         use_reference_genome = false
     }
+    if (params.use_bakta){
+        ch_bakta_db = file(params.use_bakta)
+    }
+    else{
+        ch_bakta_db = false
+    }
+
+    use_roary = params.use_roary ? true : false
+    use_full_alignment = params.use_full_alignment ? true : false
+    use_fasttree = params.use_fasttree ? true: false
+
     // TODO
     // Outgroup genome isnt currently used for anything. Used to be used for SNIPPY and ended up in the core genome alignment.
     // Look into whether it's possible to include something in the alignment/tree
@@ -129,7 +140,7 @@ workflow ARETE {
     ch_software_versions = ch_software_versions.mix(ASSEMBLE_SHORTREADS.out.assembly_software)
 
     /////////////////// ANNOTATION ///////////////////////////
-    ANNOTATE_ASSEMBLIES(ASSEMBLE_SHORTREADS.out.scaffolds)
+    ANNOTATE_ASSEMBLIES(ASSEMBLE_SHORTREADS.out.scaffolds, ch_bakta_db)
     ch_software_versions = ch_software_versions.mix(ANNOTATE_ASSEMBLIES.out.annotation_software)
     // /*
     //  * Module: Annotate AMR
@@ -181,8 +192,8 @@ workflow ARETE {
 
 
     ////////////////////////// PANGENOME /////////////////////////////////////
-    SINGLE_SPECIES_PHYLO(ANNOTATE_ASSEMBLIES.out.gff)
-    ch_software_versions = ch_software_versions.mix(SINGLE_SPECIES_PHYLO.out.phylo_software)
+    PHYLOGENOMICS(ANNOTATE_ASSEMBLIES.out.gff, use_roary, use_full_alignment, use_fasttree)
+    ch_software_versions = ch_software_versions.mix(PHYLOGENOMICS.out.phylo_software)
     // /*
     // * Module: Roary
     // */

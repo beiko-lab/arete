@@ -3,6 +3,9 @@
     "homePage": "https://github.com/fmaguire/arete",
     "repos": {
         "nf-core/modules": {
+            "bakta": {
+                "git_sha": "dfbb0bc17cb6799892e1d4d2de2f4e08abae92b6"
+            },
             "blast/blastn": {
                 "git_sha": "3aacd46da2b221ed47aaa05c413a828538d2c2ae"
             },

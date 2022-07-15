@@ -12,7 +12,7 @@ def modules = params.modules.clone()
 //
 include { IQTREE } from '../../modules/nf-core/modules/iqtree/main'  addParams( options: [:] )
 include { ROARY } from '../../modules/nf-core/modules/roary/main'  addParams( options: [args:'-e -n'] )
-include { PANAROO_RUN } from '../../modules/nf-core/modules/panaroo/main' addParams( options: [args:'-a core'])
+include { PANAROO_RUN } from '../../modules/nf-core/modules/panaroo/run/main' addParams( options: [args:'-a pan'])
 include { SNPSITES } from '../../modules/nf-core/modules/snpsites/main' addParams( options: [:] )
 include { FASTTREE } from '../../modules/nf-core/modules/fasttree/main' addParams( options: [:] )
 
@@ -22,7 +22,7 @@ include { FASTTREE } from '../../modules/nf-core/modules/fasttree/main' addParam
 include { GET_SOFTWARE_VERSIONS } from '../../modules/local/get_software_versions' addParams( options: [publish_files : ['tsv':'']] )
 
 
-workflow SINGLE_SPECIES_PHYLO{
+workflow PHYLOGENOMICS{
     take:
         gffs
         use_roary
@@ -54,7 +54,7 @@ workflow SINGLE_SPECIES_PHYLO{
             FASTTREE(ch_core_gene_alignment)
             ch_software_versions = ch_software_versions.mix(FASTTREE.out.versions.ifEmpty(null))
         }
-        
+
         else{        
             if (!use_full_alignment){
                 SNPSITES(ch_core_gene_alignment)
@@ -62,10 +62,7 @@ workflow SINGLE_SPECIES_PHYLO{
                 IQTREE(SNPSITES.out.fasta, SNPSITES.out.constant_sites_string)
             }
             else{
-                if (!use_fasttree){
-                    IQTREE(ch_core_gene_alignment, false)
-                }
-                
+                IQTREE(ch_core_gene_alignment, false)
             }
             ch_software_versions = ch_software_versions.mix(IQTREE.out.versions.ifEmpty(null))
         }
