@@ -14,6 +14,8 @@ include { IQTREE } from '../../modules/nf-core/modules/iqtree/main'  addParams( 
 include { ROARY } from '../../modules/nf-core/modules/roary/main'  addParams( options: [args:'-e -n'] )
 include { PANAROO_RUN } from '../../modules/nf-core/modules/panaroo/main' addParams( options: [args:'-a core'])
 include { SNPSITES } from '../../modules/nf-core/modules/snpsites/main' addParams( options: [:] )
+include { FASTTREE } from '../../modules/nf-core/modules/fasttree/main' addParams( options: [:] )
+
 //
 // MODULE: Local to the pipeline
 //
@@ -25,6 +27,7 @@ workflow SINGLE_SPECIES_PHYLO{
         gffs
         use_roary
         use_full_alignment
+        use_fasttree
     main:
         ch_software_versions = Channel.empty()
         ch_core_gene_alignment = Channel.empty()
@@ -36,11 +39,7 @@ workflow SINGLE_SPECIES_PHYLO{
             ch_core_gene_alignment.mix(ROARY.out.aln.collect{ meta, aln -> aln })
             ch_software_versions = ch_software_versions.mix(ROARY.out.versions.ifEmpty(null))
         }
-        /*
-        else if(use_orthofinder){
-            ...
-        }
-        */
+
         // By default, run panaroo
         else{
             PANAROO_RUN(gffs.collect{ meta, gff -> gff}.map( gff -> [[id: 'panaroo'], gff]))
@@ -51,19 +50,29 @@ workflow SINGLE_SPECIES_PHYLO{
         /*
         * Maximum likelihood core gene tree. Uses SNPSites by default
         */
-        if (!use_full_alignment){
-            SNPSITES(ch_core_gene_alignment)
-            ch_software_versions = ch_software_versions.mix(SNPSITES.out.versions.ifEmpty(null))
-            IQTREE(SNPSITES.out.fasta, SNPSITES.out.constant_sites_string)
+        if (use_fasttree){
+            FASTTREE(ch_core_gene_alignment)
+            ch_software_versions = ch_software_versions.mix(FASTTREE.out.versions.ifEmpty(null))
         }
-        else{
-            IQTREE(ch_core_gene_alignment, false)
+        
+        else{        
+            if (!use_full_alignment){
+                SNPSITES(ch_core_gene_alignment)
+                ch_software_versions = ch_software_versions.mix(SNPSITES.out.versions.ifEmpty(null))
+                IQTREE(SNPSITES.out.fasta, SNPSITES.out.constant_sites_string)
+            }
+            else{
+                if (!use_fasttree){
+                    IQTREE(ch_core_gene_alignment, false)
+                }
+                
+            }
+            ch_software_versions = ch_software_versions.mix(IQTREE.out.versions.ifEmpty(null))
         }
-        ch_software_versions = ch_software_versions.mix(IQTREE.out.versions.ifEmpty(null))
-
 
     emit:
         phylo_software = ch_software_versions
+        core_alignment = PANAROO_RUN.out.aln
 }
 
 /*
