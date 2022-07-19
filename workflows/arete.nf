@@ -87,6 +87,7 @@ include { RGI;
           UPDATE_RGI_DB } from '../modules/local/rgi'  addParams( options: [:] )
 include { MOB_RECON } from '../modules/local/mobsuite'  addParams( options: [:] )
 include { KRAKEN2_DB } from '../modules/local/get_minikraken'  addParams( options: [:] )
+include { GET_DB_CACHE } from '../modules/local/get_db_cache' addParams( options: [:] )
 
 
 // Usage pattern from nf-core/rnaseq: Empty dummy file for optional inputs
@@ -120,6 +121,19 @@ workflow ARETE {
         ch_bakta_db = false
     }
 
+    //db_cache = params.db_cache ? params.db_cache: false
+    //ch_db_cache = Channel.empty()
+    // ch_assembly_db_cache = Channel.empty()
+    // ch_annotation_db_cache = Channel.empty()
+    // if (params.db_cache){
+    //     ch_assembly_db_cache = GET_ASSEMBLY_DB_CACHE(file(params.db_cache))
+    //     ch_annotation_db_cache = GET_ANNOTATION_DB_CACHE(file(params.db_cache))
+    // }
+    // else{
+    //     ch_assembly_db_cache = false
+    //     ch_annotation_db_cache = false
+    // }
+    db_cache = params.db_cache ? params.db_cache : false
     use_roary = params.use_roary ? true : false
     use_full_alignment = params.use_full_alignment ? true : false
     use_fasttree = params.use_fasttree ? true: false
@@ -136,13 +150,58 @@ workflow ARETE {
      */
     INPUT_CHECK(ch_input)
 
-    /////////////////// ASSEMBLY ///////////////////////////
-    ASSEMBLE_SHORTREADS(INPUT_CHECK.out.reads, ch_reference_genome, use_reference_genome)
+    if(db_cache){
+        GET_DB_CACHE(db_cache)
+        /////////////////// ASSEMBLY ///////////////////////////
+        ASSEMBLE_SHORTREADS(
+            INPUT_CHECK.out.reads, 
+            ch_reference_genome, 
+            use_reference_genome,
+            GET_DB_CACHE.out.minikraken
+            )
+
+        /////////////////// ANNOTATION ///////////////////////////
+        ANNOTATE_ASSEMBLIES(
+            ASSEMBLE_SHORTREADS.out.scaffolds,
+            ch_bakta_db,
+            GET_DB_CACHE.out.vfdb,
+            GET_DB_CACHE.out.cazydb,
+            GET_DB_CACHE.out.bacmet,
+            GET_DB_CACHE.out.card_json,
+            GET_DB_CACHE.out.card_version
+            )
+
+
+    }
+    else{
+        ASSEMBLE_SHORTREADS(
+            INPUT_CHECK.out.reads, 
+            ch_reference_genome, 
+            use_reference_genome,
+            []
+            )
+
+        /////////////////// ANNOTATION ///////////////////////////
+        ANNOTATE_ASSEMBLIES(
+            ASSEMBLE_SHORTREADS.out.scaffolds,
+            ch_bakta_db,
+            [],
+            [],
+            [],
+            [],
+            []
+            )
+    }
+    ch_software_versions = ch_software_versions.mix(ANNOTATE_ASSEMBLIES.out.annotation_software)
     ch_software_versions = ch_software_versions.mix(ASSEMBLE_SHORTREADS.out.assembly_software)
 
-    /////////////////// ANNOTATION ///////////////////////////
-    ANNOTATE_ASSEMBLIES(ASSEMBLE_SHORTREADS.out.scaffolds, ch_bakta_db)
-    ch_software_versions = ch_software_versions.mix(ANNOTATE_ASSEMBLIES.out.annotation_software)
+    // /////////////////// ASSEMBLY ///////////////////////////
+    // ASSEMBLE_SHORTREADS(INPUT_CHECK.out.reads, ch_reference_genome, use_reference_genome, db_cache)
+    // ch_software_versions = ch_software_versions.mix(ASSEMBLE_SHORTREADS.out.assembly_software)
+
+    // /////////////////// ANNOTATION ///////////////////////////
+    // ANNOTATE_ASSEMBLIES(ASSEMBLE_SHORTREADS.out.scaffolds, ch_bakta_db, db_cache)
+    // ch_software_versions = ch_software_versions.mix(ANNOTATE_ASSEMBLIES.out.annotation_software)
 
     ////////////////////////// PANGENOME /////////////////////////////////////
     PHYLOGENOMICS(ANNOTATE_ASSEMBLIES.out.gff, use_roary, use_full_alignment, use_fasttree)
