@@ -33,7 +33,6 @@ include { CHECKM_LINEAGEWF } from '../../modules/nf-core/modules/checkm/lineagew
 include { GET_SOFTWARE_VERSIONS } from '../../modules/local/get_software_versions' addParams( options: [publish_files : ['tsv':'']] )
 include { KRAKEN2_DB } from '../../modules/local/get_minikraken'  addParams( options: [:] )
 
-
 // Usage pattern from nf-core/rnaseq: Empty dummy file for optional inputs
 ch_dummy_input = file("$projectDir/assets/dummy_file.txt", checkIfExists: true)
 
@@ -51,6 +50,7 @@ workflow ASSEMBLE_SHORTREADS{
         reads
         ch_reference_genome
         use_reference_genome
+        krakendb_cache
 
     main:
     /////////////////// Read Processing /////////////////////////////
@@ -76,8 +76,16 @@ workflow ASSEMBLE_SHORTREADS{
         ///*
         // * MODULE: Run Kraken2
         // */
-        KRAKEN2_DB()
-        ch_kraken_db = Channel.fromPath("dbcache/k2_standard_8gb_20201202")
+        ch_kraken_db = Channel.empty()
+        if (krakendb_cache){
+            ch_kraken_db = ch_kraken_db.mix(krakendb_cache)
+        }
+        else{
+            KRAKEN2_DB()
+            ch_kraken_db = ch_kraken_db.mix(KRAKEN2_DB.minikraken)
+        }
+        
+        
         //KRAKEN2_RUN(FASTP.out.reads, KRAKEN2_DB.out.minikraken)
         KRAKEN2_RUN(FASTP.out.reads, ch_kraken_db)
         ch_software_versions = ch_software_versions.mix(KRAKEN2_RUN.out.versions.first().ifEmpty(null))
