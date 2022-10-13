@@ -25,7 +25,7 @@ process RGI {
     label 'process_low'
     publishDir "${params.outdir}",
         mode: params.publish_dir_mode,
-        saveAs: { filename -> saveFiles(filename:filename, options:params.options, publish_dir:getSoftwareName(task.process), meta:meta, publish_by_meta:['id']) }
+        saveAs: { filename -> saveFiles(filename:filename, options:params.options, publish_dir:getSoftwareName(task.process), publish_id:meta.id) }
 
     conda (params.enable_conda ? "bioconda::rgi=5.2.0" : null)
     if (workflow.containerEngine == 'singularity' && !params.singularity_pull_docker_container) {
