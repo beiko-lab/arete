@@ -43,8 +43,9 @@ def modules = params.modules.clone()
 include { INPUT_CHECK;
           ANNOTATION_INPUT_CHECK } from '../subworkflows/local/input_check' addParams( options: [:] )
 
-
-
+include { ASSEMBLE_SHORTREADS } from '../subworkflows/local/assembly' addParams( options: [:] )
+include { ANNOTATE_ASSEMBLIES } from '../subworkflows/local/annotation' addParams( options: [:] )
+include { PHYLOGENOMICS } from '../subworkflows/local/phylo' addParams( options: [:] )
 /*
 ========================================================================================
     IMPORT NF-CORE MODULES/SUBWORKFLOWS
@@ -86,6 +87,7 @@ include { RGI;
           UPDATE_RGI_DB } from '../modules/local/rgi'  addParams( options: [:] )
 include { MOB_RECON } from '../modules/local/mobsuite'  addParams( options: [:] )
 include { KRAKEN2_DB } from '../modules/local/get_minikraken'  addParams( options: [:] )
+include { GET_DB_CACHE } from '../modules/local/get_db_cache' addParams( options: [:] )
 
 
 // Usage pattern from nf-core/rnaseq: Empty dummy file for optional inputs
@@ -112,6 +114,30 @@ workflow ARETE {
         ch_reference_genome = []
         use_reference_genome = false
     }
+    if (params.use_bakta){
+        ch_bakta_db = file(params.use_bakta)
+    }
+    else{
+        ch_bakta_db = false
+    }
+
+    //db_cache = params.db_cache ? params.db_cache: false
+    //ch_db_cache = Channel.empty()
+    // ch_assembly_db_cache = Channel.empty()
+    // ch_annotation_db_cache = Channel.empty()
+    // if (params.db_cache){
+    //     ch_assembly_db_cache = GET_ASSEMBLY_DB_CACHE(file(params.db_cache))
+    //     ch_annotation_db_cache = GET_ANNOTATION_DB_CACHE(file(params.db_cache))
+    // }
+    // else{
+    //     ch_assembly_db_cache = false
+    //     ch_annotation_db_cache = false
+    // }
+    db_cache = params.db_cache ? params.db_cache : false
+    use_roary = params.use_roary ? true : false
+    use_full_alignment = params.use_full_alignment ? true : false
+    use_fasttree = params.use_fasttree ? true: false
+
     // TODO
     // Outgroup genome isnt currently used for anything. Used to be used for SNIPPY and ended up in the core genome alignment.
     // Look into whether it's possible to include something in the alignment/tree
@@ -124,135 +150,63 @@ workflow ARETE {
      */
     INPUT_CHECK(ch_input)
 
-    /////////////////// Read Processing /////////////////////////////
-    /*
-     * MODULE: Run FastQC
-     */
-    FASTQC(INPUT_CHECK.out.reads, "raw_fastqc")
-    ch_software_versions = ch_software_versions.mix(FASTQC.out.version.first().ifEmpty(null))
+    if(db_cache){
+        GET_DB_CACHE(db_cache)
+        /////////////////// ASSEMBLY ///////////////////////////
+        ASSEMBLE_SHORTREADS(
+            INPUT_CHECK.out.reads, 
+            ch_reference_genome, 
+            use_reference_genome,
+            GET_DB_CACHE.out.minikraken
+            )
 
-    /*
-     * MODULE: Trim Reads
-     */
-    FASTP(INPUT_CHECK.out.reads, false, false)
-    ch_software_versions = ch_software_versions.mix(FASTP.out.versions.first().ifEmpty(null))
-
-    /*
-     * MODULE: Run FastQC on trimmed reads
-     */
-    TRIM_FASTQC(FASTP.out.reads, "trim_fastqc")
-    ch_software_versions = ch_software_versions.mix(TRIM_FASTQC.out.version.first().ifEmpty(null))
-
-    ///*
-    // * MODULE: Run Kraken2
-    // */
-    KRAKEN2_DB()
-    KRAKEN2_RUN(FASTP.out.reads, KRAKEN2_DB.out.minikraken)
-    ch_software_versions = ch_software_versions.mix(KRAKEN2_RUN.out.versions.first().ifEmpty(null))
+        /////////////////// ANNOTATION ///////////////////////////
+        ANNOTATE_ASSEMBLIES(
+            ASSEMBLE_SHORTREADS.out.scaffolds,
+            ch_bakta_db,
+            GET_DB_CACHE.out.vfdb,
+            GET_DB_CACHE.out.cazydb,
+            GET_DB_CACHE.out.bacmet,
+            GET_DB_CACHE.out.card_json,
+            GET_DB_CACHE.out.card_version
+            )
 
 
-    /////////////////// ASSEMBLE /////////////////////////////
-    /*
-     * MODULE: Assembly
-     */
+    }
+    else{
+        ASSEMBLE_SHORTREADS(
+            INPUT_CHECK.out.reads, 
+            ch_reference_genome, 
+            use_reference_genome,
+            []
+            )
 
-    // unicycler can accept short reads and long reads. For now, shortread only: Pass empty list for optional file args
-    ch_unicycler_input = FASTP.out.reads.map { it -> it + [[]]}
-    UNICYCLER(ch_unicycler_input)
-    ch_software_versions = ch_software_versions.mix(UNICYCLER.out.versions.first().ifEmpty(null))
+        /////////////////// ANNOTATION ///////////////////////////
+        ANNOTATE_ASSEMBLIES(
+            ASSEMBLE_SHORTREADS.out.scaffolds,
+            ch_bakta_db,
+            [],
+            [],
+            [],
+            [],
+            []
+            )
+    }
+    ch_software_versions = ch_software_versions.mix(ANNOTATE_ASSEMBLIES.out.annotation_software)
+    ch_software_versions = ch_software_versions.mix(ASSEMBLE_SHORTREADS.out.assembly_software)
 
+    // /////////////////// ASSEMBLY ///////////////////////////
+    // ASSEMBLE_SHORTREADS(INPUT_CHECK.out.reads, ch_reference_genome, use_reference_genome, db_cache)
+    // ch_software_versions = ch_software_versions.mix(ASSEMBLE_SHORTREADS.out.assembly_software)
 
-    // Unicycler outputs not quite right for QUAST. Need to re-arrange
-    // pattern adapted from nf-core/bacass
-    ch_assembly = Channel.empty()
-    ch_assembly = ch_assembly.mix(UNICYCLER.out.scaffolds.dump(tag: 'unicycler'))
-    ch_assembly
-        .map { meta, fasta -> fasta } //QUAST doesn't take the meta tag
-        .collect()
-        .set { ch_to_quast }
-    /*
-     * Module: Evaluate Assembly
-     */
-    QUAST(ch_to_quast, ch_reference_genome, [], use_reference_genome, false)
-    ch_software_versions = ch_software_versions.mix(QUAST.out.versions.first().ifEmpty(null))
-
-
-
-    /////////////////// ANNOTATION ///////////////////////////
-    /*
-     * Module: Annotate AMR
-     */
-    UPDATE_RGI_DB()
-    ch_software_versions = ch_software_versions.mix(UPDATE_RGI_DB.out.card_version.ifEmpty(null))
-    RGI(UNICYCLER.out.scaffolds, UPDATE_RGI_DB.out.card_json)
-    ch_software_versions = ch_software_versions.mix(RGI.out.version.first().ifEmpty(null))
-
-    /*
-     *  Module: Annotate graph with pathracer
-     */
-    //GET_NCBI_AMR_HMM()
-    //PATHRACER(UNICYCLER.out.raw_gfa, GET_NCBI_AMR_HMM.out.hmm);
-
-    /*
-     * Module: Prokka
-     */
-
-    PROKKA (
-        ch_assembly,
-        [],
-        []
-    ) //Assembly, protein file, pre-trained prodigal
-    ch_software_versions = ch_software_versions.mix(PROKKA.out.versions.first().ifEmpty(null))
-
-    /*
-     * Module: Mob-Suite
-     */
-    MOB_RECON(ch_assembly)
-    ch_software_versions = ch_software_versions.mix(MOB_RECON.out.version.first().ifEmpty(null))
-
-    /*
-     * Module: BLAST vs CAZY, VFDB, Bacmet
-     */
-    GET_CAZYDB()
-    GET_BACMET()
-    GET_VFDB()
-    DIAMOND_MAKE_CAZY(GET_CAZYDB.out.cazydb)
-    ch_software_versions = ch_software_versions.mix(DIAMOND_MAKE_CAZY.out.versions.ifEmpty(null))
-    DIAMOND_BLAST_CAZY(PROKKA.out.ffn, DIAMOND_MAKE_CAZY.out.db, "CAZYDB")
-
-    DIAMOND_MAKE_VFDB(GET_VFDB.out.vfdb)
-    DIAMOND_BLAST_VFDB(PROKKA.out.ffn, DIAMOND_MAKE_VFDB.out.db, "VFDB")
-
-    DIAMOND_MAKE_BACMET(GET_BACMET.out.bacmet)
-    DIAMOND_BLAST_BACMET(PROKKA.out.ffn, DIAMOND_MAKE_BACMET.out.db, "BACMET")
-
+    // /////////////////// ANNOTATION ///////////////////////////
+    // ANNOTATE_ASSEMBLIES(ASSEMBLE_SHORTREADS.out.scaffolds, ch_bakta_db, db_cache)
+    // ch_software_versions = ch_software_versions.mix(ANNOTATE_ASSEMBLIES.out.annotation_software)
 
     ////////////////////////// PANGENOME /////////////////////////////////////
-    /*
-    * Module: Roary
-    */
-    ROARY(PROKKA.out.gff.collect{ meta, gff -> gff}.map( gff -> [[id: 'roary'], gff]))
-    ch_software_versions = ch_software_versions.mix(ROARY.out.versions.ifEmpty(null))
+    PHYLOGENOMICS(ANNOTATE_ASSEMBLIES.out.gff, use_roary, use_full_alignment, use_fasttree)
+    ch_software_versions = ch_software_versions.mix(PHYLOGENOMICS.out.phylo_software)
 
-    /*
-    * Module: SNPSites. TODO make this optional?
-    */
-    SNPSITES(ROARY.out.aln.collect{ meta, aln -> aln })
-    ch_software_versions = ch_software_versions.mix(SNPSITES.out.versions.ifEmpty(null))
-
-
-    /*
-     * Module: IQTree
-     */
-    //TODO optional SNP-sites?
-    IQTREE(SNPSITES.out.fasta, SNPSITES.out.constant_sites_string)
-    ch_software_versions = ch_software_versions.mix(IQTREE.out.versions.ifEmpty(null))
-
-    ////////////////////////// REPORTING /////////////////////////////////////
-    /*
-     * MODULE: Pipeline reporting
-     */
-    // Get unique list of files containing version information
     ch_software_versions
         .map { it -> if (it) [ it.baseName, it ] }
         .groupTuple()
@@ -275,11 +229,9 @@ workflow ARETE {
     ch_multiqc_files = ch_multiqc_files.mix(ch_multiqc_custom_config.collect().ifEmpty([]))
     ch_multiqc_files = ch_multiqc_files.mix(ch_workflow_summary.collectFile(name: 'workflow_summary_mqc.yaml'))
     ch_multiqc_files = ch_multiqc_files.mix(GET_SOFTWARE_VERSIONS.out.yaml.collect())
-    ch_multiqc_files = ch_multiqc_files.mix(FASTQC.out.zip.collect{it[1]}.ifEmpty([]))
-    ch_multiqc_files = ch_multiqc_files.mix(TRIM_FASTQC.out.zip.collect{it[1]}.ifEmpty([]))
-    ch_multiqc_files = ch_multiqc_files.mix(KRAKEN2_RUN.out.txt.collect{it[1]}.ifEmpty([]))
-    ch_multiqc_files = ch_multiqc_files.mix(QUAST.out.tsv.collect())
-    ch_multiqc_files = ch_multiqc_files.mix(PROKKA.out.txt.collect{it[1]}.ifEmpty([]))
+    ch_multiqc_files = ch_multiqc_files.mix(ASSEMBLE_SHORTREADS.out.multiqc)
+    //ch_multiqc_files = ch_multiqc_files.mix(PROKKA.out.txt.collect{it[1]}.ifEmpty([]))
+    ch_multiqc_files = ch_multiqc_files.mix(ANNOTATE_ASSEMBLIES.out.multiqc)
 
     MULTIQC(ch_multiqc_files.collect())
     multiqc_report       = MULTIQC.out.report.toList()
@@ -308,71 +260,8 @@ workflow ASSEMBLY {
      */
     INPUT_CHECK(ch_input)
 
-    /////////////////// Read Processing /////////////////////////////
-    /*
-     * MODULE: Run FastQC
-     */
-    FASTQC(INPUT_CHECK.out.reads, "raw_fastqc")
-    ch_software_versions = ch_software_versions.mix(FASTQC.out.version.first().ifEmpty(null))
-
-    /*
-     * MODULE: Trim Reads
-     */
-    FASTP(INPUT_CHECK.out.reads, false, false)
-    ch_software_versions = ch_software_versions.mix(FASTP.out.versions.first().ifEmpty(null))
-
-    /*
-     * MODULE: Run FastQC on trimmed reads
-     */
-    TRIM_FASTQC(FASTP.out.reads, "trim_fastqc")
-    ch_software_versions = ch_software_versions.mix(TRIM_FASTQC.out.version.first().ifEmpty(null))
-
-    ///*
-    // * MODULE: Run Kraken2
-    // */
-    KRAKEN2_DB()
-    KRAKEN2_RUN(FASTP.out.reads, KRAKEN2_DB.out.minikraken)
-    ch_software_versions = ch_software_versions.mix(KRAKEN2_RUN.out.versions.first().ifEmpty(null))
-
-
-    /////////////////// ASSEMBLE /////////////////////////////
-    /*
-     * MODULE: Assembly
-     */
-
-    // unicycler can accept short reads and long reads. For now, shortread only: Pass empty list for optional file args
-    ch_unicycler_input = FASTP.out.reads.map { it -> it + [[]]}
-    UNICYCLER(ch_unicycler_input)
-    ch_software_versions = ch_software_versions.mix(UNICYCLER.out.versions.first().ifEmpty(null))
-
-
-    // Unicycler outputs not quite right for QUAST. Need to re-arrange
-    // pattern adapted from nf-core/bacass
-    ch_assembly = Channel.empty()
-    ch_assembly = ch_assembly.mix(UNICYCLER.out.scaffolds.dump(tag: 'unicycler'))
-    ch_assembly
-        .map { meta, fasta -> fasta } //QUAST doesn't take the meta tag
-        .collect()
-        .set { ch_to_quast }
-    /*
-     * Module: Evaluate Assembly
-     */
-    QUAST(ch_to_quast, ch_reference_genome, [], use_reference_genome, false)
-    ch_software_versions = ch_software_versions.mix(QUAST.out.versions.first().ifEmpty(null))
-
-
-    /////////////////// ANNOTATION ///////////////////////////
-    /*
-     * Module: Prokka
-     */
-
-    PROKKA (
-        ch_assembly,
-        [],
-        []
-    ) //Assembly, protein file, pre-trained prodigal
-    ch_software_versions = ch_software_versions.mix(PROKKA.out.versions.first().ifEmpty(null))
-
+    ASSEMBLE_SHORTREADS(INPUT_CHECK.out.reads, ch_reference_genome, use_reference_genome)
+    ch_software_versions = ch_software_versions.mix(ASSEMBLE_SHORTREADS.out.assembly_software)
 
     // Get unique list of files containing version information
     ch_software_versions
@@ -383,6 +272,7 @@ workflow ASSEMBLY {
         .collect()
         .set { ch_software_versions }
     GET_SOFTWARE_VERSIONS(ch_software_versions)
+
     //multiqc
     workflow_summary    = WorkflowArete.paramsSummaryMultiqc(workflow, summary_params)
     ch_workflow_summary = Channel.value(workflow_summary)
@@ -391,12 +281,8 @@ workflow ASSEMBLY {
     ch_multiqc_files = ch_multiqc_files.mix(Channel.from(ch_multiqc_config))
     ch_multiqc_files = ch_multiqc_files.mix(ch_multiqc_custom_config.collect().ifEmpty([]))
     ch_multiqc_files = ch_multiqc_files.mix(ch_workflow_summary.collectFile(name: 'workflow_summary_mqc.yaml'))
-    ch_multiqc_files = ch_multiqc_files.mix(GET_SOFTWARE_VERSIONS.out.yaml.collect())
-    ch_multiqc_files = ch_multiqc_files.mix(FASTQC.out.zip.collect{it[1]}.ifEmpty([]))
-    ch_multiqc_files = ch_multiqc_files.mix(TRIM_FASTQC.out.zip.collect{it[1]}.ifEmpty([]))
-    ch_multiqc_files = ch_multiqc_files.mix(KRAKEN2_RUN.out.txt.collect{it[1]}.ifEmpty([]))
-    ch_multiqc_files = ch_multiqc_files.mix(QUAST.out.tsv.collect())
-    ch_multiqc_files = ch_multiqc_files.mix(PROKKA.out.txt.collect{it[1]}.ifEmpty([]))
+    ch_multiqc_files = ch_multiqc_files.mix(ASSEMBLE_SHORTREADS.out.multiqc)
+    //ch_multiqc_files = ch_multiqc_files.mix(PROKKA.out.txt.collect{it[1]}.ifEmpty([]))
 
     MULTIQC(ch_multiqc_files.collect())
     multiqc_report       = MULTIQC.out.report.toList()
@@ -406,79 +292,95 @@ workflow ASSEMBLY {
 
 // annotate existing assemblies
 workflow ANNOTATION {
-    if (params.input_sample_table){ ch_input = file(params.input_sample_table) } else { exit 1, 'Input samplesheet not specified!' }
+    // Check mandatory parameters
+    if (params.input_sample_table) { ch_input = file(params.input_sample_table) } else { exit 1, 'Input samplesheet not specified!' }
+    if (params.reference_genome) {
+        ch_reference_genome = file(params.reference_genome)
+        use_reference_genome = true
+        }
+    else {
+        ch_reference_genome = []
+        use_reference_genome = false
+    }
+    if (params.use_bakta){
+        ch_bakta_db = file(params.use_bakta)
+    }
+    else{
+        ch_bakta_db = false
+    }
+
+    //db_cache = params.db_cache ? params.db_cache: false
+    //ch_db_cache = Channel.empty()
+    // ch_assembly_db_cache = Channel.empty()
+    // ch_annotation_db_cache = Channel.empty()
+    // if (params.db_cache){
+    //     ch_assembly_db_cache = GET_ASSEMBLY_DB_CACHE(file(params.db_cache))
+    //     ch_annotation_db_cache = GET_ANNOTATION_DB_CACHE(file(params.db_cache))
+    // }
+    // else{
+    //     ch_assembly_db_cache = false
+    //     ch_annotation_db_cache = false
+    // }
+    db_cache = params.db_cache ? params.db_cache : false
+    use_roary = params.use_roary ? true : false
+    use_full_alignment = params.use_full_alignment ? true : false
+    use_fasttree = params.use_fasttree ? true: false
+
+    // TODO
+    // Outgroup genome isnt currently used for anything. Used to be used for SNIPPY and ended up in the core genome alignment.
+    // Look into whether it's possible to include something in the alignment/tree
+    //if (params.outgroup_genome ) { ch_outgroup_genome = file(params.outgroup_genome) } else { ch_outgroup_genome = '' }
 
     ch_software_versions = Channel.empty()
+
     /*
      * SUBWORKFLOW: Read in samplesheet, validate and stage input files
      */
     ANNOTATION_INPUT_CHECK(ch_input)
 
-    /*
-     * Module: Annotate AMR
-     */
-    UPDATE_RGI_DB()
-    ch_software_versions = ch_software_versions.mix(UPDATE_RGI_DB.out.card_version.ifEmpty(null))
-    RGI(ANNOTATION_INPUT_CHECK.out.genomes, UPDATE_RGI_DB.out.card_json)
-    ch_software_versions = ch_software_versions.mix(RGI.out.version.first().ifEmpty(null))
+    if(db_cache){
+        GET_DB_CACHE(db_cache)
 
-    /*
-     * Module: Prokka
-     */
-    //TODO prokka is in both annotation and assembly right now...
-    PROKKA (
-    ANNOTATION_INPUT_CHECK.out.genomes,
-    [],
-    []
-    ) //Assembly, protein file, pre-trained prodigal
-    ch_software_versions = ch_software_versions.mix(PROKKA.out.versions.first().ifEmpty(null))
+        /////////////////// ANNOTATION ///////////////////////////
+        ANNOTATE_ASSEMBLIES(
+            ANNOTATION_INPUT_CHECK.out.genomes,
+            ch_bakta_db,
+            GET_DB_CACHE.out.vfdb,
+            GET_DB_CACHE.out.cazydb,
+            GET_DB_CACHE.out.bacmet,
+            GET_DB_CACHE.out.card_json,
+            GET_DB_CACHE.out.card_version
+            )
 
 
-    /*
-     * Module: Mob-Suite
-     */
-    MOB_RECON(ANNOTATION_INPUT_CHECK.out.genomes)
-    ch_software_versions = ch_software_versions.mix(MOB_RECON.out.version.first().ifEmpty(null))
+    }
+    else{
 
-    /*
-     * Module: BLAST vs CAZY, VFDB, Bacmet
-     */
-    GET_CAZYDB()
-    GET_BACMET()
-    GET_VFDB()
-    DIAMOND_MAKE_CAZY(GET_CAZYDB.out.cazydb)
-    ch_software_versions = ch_software_versions.mix(DIAMOND_MAKE_CAZY.out.versions.ifEmpty(null))
-    DIAMOND_BLAST_CAZY(PROKKA.out.ffn, DIAMOND_MAKE_CAZY.out.db, "CAZYDB")
+        /////////////////// ANNOTATION ///////////////////////////
+        ANNOTATE_ASSEMBLIES(
+            ANNOTATION_INPUT_CHECK.out.genomes,
+            ch_bakta_db,
+            [],
+            [],
+            [],
+            [],
+            []
+            )
+    }
+    ch_software_versions = ch_software_versions.mix(ANNOTATE_ASSEMBLIES.out.annotation_software)
 
-    DIAMOND_MAKE_VFDB(GET_VFDB.out.vfdb)
-    DIAMOND_BLAST_VFDB(PROKKA.out.ffn, DIAMOND_MAKE_VFDB.out.db, "VFDB")
+    // /////////////////// ASSEMBLY ///////////////////////////
+    // ASSEMBLE_SHORTREADS(INPUT_CHECK.out.reads, ch_reference_genome, use_reference_genome, db_cache)
+    // ch_software_versions = ch_software_versions.mix(ASSEMBLE_SHORTREADS.out.assembly_software)
 
-    DIAMOND_MAKE_BACMET(GET_BACMET.out.bacmet)
-    DIAMOND_BLAST_BACMET(PROKKA.out.ffn, DIAMOND_MAKE_BACMET.out.db, "BACMET")
-
+    // /////////////////// ANNOTATION ///////////////////////////
+    // ANNOTATE_ASSEMBLIES(ASSEMBLE_SHORTREADS.out.scaffolds, ch_bakta_db, db_cache)
+    // ch_software_versions = ch_software_versions.mix(ANNOTATE_ASSEMBLIES.out.annotation_software)
 
     ////////////////////////// PANGENOME /////////////////////////////////////
-    /*
-    * Module: Roary
-    */
-    ROARY(PROKKA.out.gff.collect{ meta, gff -> gff}.map( gff -> [[id: 'roary'], gff]))
-    ch_software_versions = ch_software_versions.mix(ROARY.out.versions.ifEmpty(null))
+    PHYLOGENOMICS(ANNOTATE_ASSEMBLIES.out.gff, use_roary, use_full_alignment, use_fasttree)
+    ch_software_versions = ch_software_versions.mix(PHYLOGENOMICS.out.phylo_software)
 
-    /*
-    * Module: SNPSites. TODO make this optional?
-    */
-    SNPSITES(ROARY.out.aln.collect{ meta, aln -> aln })
-    ch_software_versions = ch_software_versions.mix(SNPSITES.out.versions.ifEmpty(null))
-
-
-    /*
-     * Module: IQTree
-     */
-    //TODO optional SNP-sites?
-    IQTREE(SNPSITES.out.fasta, SNPSITES.out.constant_sites_string)
-    ch_software_versions = ch_software_versions.mix(IQTREE.out.versions.ifEmpty(null))
-
- // Get unique list of files containing version information
     ch_software_versions
         .map { it -> if (it) [ it.baseName, it ] }
         .groupTuple()
@@ -487,20 +389,22 @@ workflow ANNOTATION {
         .collect()
         .set { ch_software_versions }
     GET_SOFTWARE_VERSIONS(ch_software_versions)
-    //multiqc
+
+    /*
+     * MODULE: MultiQC
+     */
     workflow_summary    = WorkflowArete.paramsSummaryMultiqc(workflow, summary_params)
     ch_workflow_summary = Channel.value(workflow_summary)
+
+    //Mix QUAST results into one report file
 
     ch_multiqc_files = Channel.empty()
     ch_multiqc_files = ch_multiqc_files.mix(Channel.from(ch_multiqc_config))
     ch_multiqc_files = ch_multiqc_files.mix(ch_multiqc_custom_config.collect().ifEmpty([]))
     ch_multiqc_files = ch_multiqc_files.mix(ch_workflow_summary.collectFile(name: 'workflow_summary_mqc.yaml'))
     ch_multiqc_files = ch_multiqc_files.mix(GET_SOFTWARE_VERSIONS.out.yaml.collect())
-    //ch_multiqc_files = ch_multiqc_files.mix(FASTQC.out.zip.collect{it[1]}.ifEmpty([]))
-    //ch_multiqc_files = ch_multiqc_files.mix(TRIM_FASTQC.out.zip.collect{it[1]}.ifEmpty([]))
-    //ch_multiqc_files = ch_multiqc_files.mix(KRAKEN2_RUN.out.txt.collect{it[1]}.ifEmpty([]))
-    //ch_multiqc_files = ch_multiqc_files.mix(QUAST.out.tsv.collect())
-    ch_multiqc_files = ch_multiqc_files.mix(PROKKA.out.txt.collect{it[1]}.ifEmpty([]))
+    //ch_multiqc_files = ch_multiqc_files.mix(PROKKA.out.txt.collect{it[1]}.ifEmpty([]))
+    ch_multiqc_files = ch_multiqc_files.mix(ANNOTATE_ASSEMBLIES.out.multiqc)
 
     MULTIQC(ch_multiqc_files.collect())
     multiqc_report       = MULTIQC.out.report.toList()
