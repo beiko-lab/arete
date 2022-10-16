@@ -55,8 +55,6 @@ A list in no particular order of outstanding development features, both in-progr
 
 - Sensible default QC parameters to allow automated end-to-end execution with little-to-no required user intervention
 
-- Download tool to download external resources and containers to allow smooth operation in HPC environments where compute nodes have no internet access
-
 - Integration of additional tools and scripts:
 
 1. Genomic island detection (e.g., IslandCompare)
