@@ -45,7 +45,6 @@ Annotation:
 
 Phylogeny:
 1. Roary ([`roary`](https://sanger-pathogens.github.io/Roary/))
-3. SNPSites ([`snpsites`](https://github.com/sanger-pathogens/snp-sites))
 2. IQTree ([`iqtree`](http://www.iqtree.org/))
 
 ### Future Development Targets
@@ -56,21 +55,15 @@ A list in no particular order of outstanding development features, both in-progr
 
 - Sensible default QC parameters to allow automated end-to-end execution with little-to-no required user intervention
 
-- Consider updating to newer SPAdes as unicycler is dependent on an older version (and newer spades can integrate plasmidspades runs on the same assembly graph).
-
 - Download tool to download external resources and containers to allow smooth operation in HPC environments where compute nodes have no internet access
-
-- Bifurcated logic: "Single Species" mode and "Multi Species" mode
 
 - Integration of additional tools and scripts:
 
-1. Prophage identification (e.g., PHASTER)
-2. Genomic Island Detection (e.g., IslandCompare)
-3. ICE identification (e.g., ICEFinder)
-4. Ortholog detection in multi-species datasets (e.g. OrthoFinder)
-5. Inference of recombination events (e.g. Gubbins, CFML)
-6. Integration of partner-developed tools and algorithms such as [Community Co-Evolution model](https://rdrr.io/github/beiko-lab/evolCCM/f/README.md)
-7. Improved result reporting, such as auto-generated figures and more concise aggregated tables
+1. Genomic island detection (e.g., IslandCompare)
+2. Inference of recombination events (e.g. Gubbins, CFML)
+3. Phylogenetic inference of lateral gene transfer events using [`rspr`](https://github.com/cwhidden/rspr)
+4. Inference of concerted gain and loss of genes and mobile genetic elements using [`the Community Coevolution Model`](https://github.com/beiko-lab/evolCCM)
+5. Partner applications for analysis and visualization of phylogenetic distributions of genes and MGEs and gene-order clustering.
 
 ## Quick Start
 
