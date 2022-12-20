@@ -82,7 +82,7 @@ workflow ASSEMBLE_SHORTREADS{
         }
         else{
             KRAKEN2_DB()
-            ch_kraken_db = ch_kraken_db.mix(KRAKEN2_DB.minikraken)
+            ch_kraken_db = ch_kraken_db.mix(KRAKEN2_DB.out.minikraken)
         }
         
         
