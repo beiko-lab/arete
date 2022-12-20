@@ -71,7 +71,7 @@ A list in no particular order of outstanding development features, both in-progr
 
 Note: this workflow should also support [`Podman`](https://podman.io/), [`Shifter`](https://nersc.gitlab.io/development/shifter/how-to-use/) or [`Charliecloud`](https://hpc.github.io/charliecloud/) execution for full pipeline reproducibility. We have minimized reliance on `conda` and suggest using it only as a last resort (see [docs](https://nf-co.re/usage/configuration#basic-configuration-profiles)). Configure `mail` on your system to send an email on workflow success/failure (without this you may get a small error at the end `Failed to invoke workflow.onComplete event handler` but this doesn't mean the workflow didn't finish successfully).
 
-3. Download the pipeline and test with a `stub-run`. The `stub-run` will ensure that the pipeline is able to download and use containers as well as execute in the propepr logic. 
+3. Download the pipeline and test with a `stub-run`. The `stub-run` will ensure that the pipeline is able to download and use containers as well as execute in the proper logic. 
 
     ```bash
     nextflow run arete/ --input_sample_table samplesheet.csv -profile <docker/singularity/conda> -stub-run
@@ -92,6 +92,21 @@ Note: this workflow should also support [`Podman`](https://podman.io/), [`Shifte
 **Note**: If you get this error at the end ```Failed to invoke `workflow.onComplete` event handler``` it isn't a problem, it just means you don't have an sendmail configured and it can't send an email report saying it finished correctly i.e., its not that the workflow failed.
 
 See [usage docs](docs/usage.md) for all of the available options when running the pipeline.
+
+### Testing
+
+To test the worklow on a minimal dataset you can use the test configuration:
+
+    ```bash
+    nextflow run arete -profile test,docker 
+    ```
+
+Due to download speed of the Kraken2 database and CAZY database this will take ~25 minutes. 
+However to accelerate it you can download/cache the database files to a folder (e.g., `test/db_cache`) and provide a database cache parameter.
+
+    ```bash
+    nextflow run arete -profile test,docker --db_cache $PWD/test/db_cache
+    ```
 
 ## Documentation
 
