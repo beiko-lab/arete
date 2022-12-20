@@ -95,7 +95,7 @@ See [usage docs](docs/usage.md) for all of the available options when running th
 
 ### Testing
 
-To test the worklow on a minimal dataset you can use the test configuration:
+To test the worklow on a minimal dataset you can use the test configuration (with either docker, conda, or singularity - replace `docker` below as appropriate):
 
     ```bash
     nextflow run arete -profile test,docker 
