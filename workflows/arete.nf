@@ -424,6 +424,8 @@ workflow QUALITYCHECK{
         use_reference_genome = false
     }
     ch_software_versions = Channel.empty()
+    db_cache = params.db_cache ? params.db_cache : false
+
     /*
      * SUBWORKFLOW: Read in samplesheet, validate and stage input files
      */
@@ -432,10 +434,15 @@ workflow QUALITYCHECK{
     ///*
     // * MODULE: Run Kraken2
     // */
-    KRAKEN2_DB()
-    KRAKEN2_RUN(ANNOTATION_INPUT_CHECK.out.genomes, KRAKEN2_DB.out.minikraken)
-    ch_software_versions = ch_software_versions.mix(KRAKEN2_RUN.out.versions.first().ifEmpty(null))
+    if(db_cache) {
+        GET_DB_CACHE(db_cache)
+        KRAKEN2_RUN(ANNOTATION_INPUT_CHECK.out.genomes, GET_DB_CACHE.out.minikraken)
+    } else {
+        KRAKEN2_DB()
+        KRAKEN2_RUN(ANNOTATION_INPUT_CHECK.out.genomes, KRAKEN2_DB.out.minikraken)
+    }
 
+    ch_software_versions = ch_software_versions.mix(KRAKEN2_RUN.out.versions.first().ifEmpty(null))
     /*
     * Module: CheckM Quality Check
     */
