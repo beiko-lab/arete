@@ -254,14 +254,22 @@ workflow ASSEMBLY {
     }
     //if (params.outgroup_genome ) { ch_outgroup_genome = file(params.outgroup_genome) } else { ch_outgroup_genome = '' }
 
+    // Setup dbcache
+    db_cache = params.db_cache ? params.db_cache : false
+
     ch_software_versions = Channel.empty()
 
     /*
      * SUBWORKFLOW: Read in samplesheet, validate and stage input files
      */
     INPUT_CHECK(ch_input)
+    if(db_cache){
+        GET_DB_CACHE(db_cache)
+        ASSEMBLE_SHORTREADS(INPUT_CHECK.out.reads, ch_reference_genome, use_reference_genome, GET_DB_CACHE.out.minikraken)
+    } else {
+        ASSEMBLE_SHORTREADS(INPUT_CHECK.out.reads, ch_reference_genome, use_reference_genome, [])
+    }
 
-    ASSEMBLE_SHORTREADS(INPUT_CHECK.out.reads, ch_reference_genome, use_reference_genome)
     ch_software_versions = ch_software_versions.mix(ASSEMBLE_SHORTREADS.out.assembly_software)
 
     // Get unique list of files containing version information
@@ -424,6 +432,8 @@ workflow QUALITYCHECK{
         use_reference_genome = false
     }
     ch_software_versions = Channel.empty()
+    db_cache = params.db_cache ? params.db_cache : false
+
     /*
      * SUBWORKFLOW: Read in samplesheet, validate and stage input files
      */
@@ -432,10 +442,15 @@ workflow QUALITYCHECK{
     ///*
     // * MODULE: Run Kraken2
     // */
-    KRAKEN2_DB()
-    KRAKEN2_RUN(ANNOTATION_INPUT_CHECK.out.genomes, KRAKEN2_DB.out.minikraken)
-    ch_software_versions = ch_software_versions.mix(KRAKEN2_RUN.out.versions.first().ifEmpty(null))
+    if(db_cache) {
+        GET_DB_CACHE(db_cache)
+        KRAKEN2_RUN(ANNOTATION_INPUT_CHECK.out.genomes, GET_DB_CACHE.out.minikraken)
+    } else {
+        KRAKEN2_DB()
+        KRAKEN2_RUN(ANNOTATION_INPUT_CHECK.out.genomes, KRAKEN2_DB.out.minikraken)
+    }
 
+    ch_software_versions = ch_software_versions.mix(KRAKEN2_RUN.out.versions.first().ifEmpty(null))
     /*
     * Module: CheckM Quality Check
     */
