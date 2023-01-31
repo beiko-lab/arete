@@ -53,7 +53,6 @@ workflow ANNOTATE_ASSEMBLIES {
     main:
     
         //if (params.input_sample_table){ ch_input = file(params.input_sample_table) } else { exit 1, 'Input samplesheet not specified!' }
-
         ch_software_versions = Channel.empty()
         /*
         * SUBWORKFLOW: Read in samplesheet, validate and stage input files

@@ -49,7 +49,7 @@ process RGI {
 
     """
     rgi load -i $card_db --local
-    rgi main --local --input_sequence $fasta --output_file ${meta.id}_rgi --input_type contig --clean --include_loose
+    rgi main --local --input_sequence $fasta --output_file ${meta.id}_rgi --input_type contig --clean
 
     echo \$(rgi main --version 2>&1) > ${software}.version.txt
     """

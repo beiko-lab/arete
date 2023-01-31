@@ -1,5 +1,5 @@
 process FASTTREE {
-    label 'process_medium'
+    label 'process_high'
 
     conda (params.enable_conda ? "bioconda::fasttree=2.1.10" : null)
     container "${ workflow.containerEngine == 'singularity' && !task.ext.singularity_pull_docker_container ?
