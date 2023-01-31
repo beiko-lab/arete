@@ -53,7 +53,6 @@ workflow ANNOTATE_ASSEMBLIES {
     main:
     
         //if (params.input_sample_table){ ch_input = file(params.input_sample_table) } else { exit 1, 'Input samplesheet not specified!' }
-
         ch_software_versions = Channel.empty()
         /*
         * SUBWORKFLOW: Read in samplesheet, validate and stage input files
@@ -75,46 +74,45 @@ workflow ANNOTATE_ASSEMBLIES {
         * Load BLAST databases
         */
         if (vfdb_cache){
-            ch_vfdb = ch_vfdb.mix(vfdb_cache)
+            ch_vfdb = ch_vfdb.mix(vfdb_cache).first()
         }
         else{
             GET_VFDB()
-            ch_vfdb = ch_vfdb.mix(GET_VFDB.out.vfdb)
+            ch_vfdb = ch_vfdb.mix(GET_VFDB.out.vfdb).first()
         }
         if(bacmet_cache){
-            ch_bacmet_db = ch_bacmet_db.mix(bacmet_cache)
+            ch_bacmet_db = ch_bacmet_db.mix(bacmet_cache).first()
         }
         else{
             GET_BACMET()
-            ch_bacmet_db = ch_bacmet_db.mix(GET_BACMET.out.bacmet)
+            ch_bacmet_db = ch_bacmet_db.mix(GET_BACMET.out.bacmet).first()
         }
         if (cazydb_cache){
-            ch_cazy_db = ch_cazy_db.mix(ch_cazy_db)
+            ch_cazy_db = ch_cazy_db.mix(ch_cazy_db).first()
         }
         else{
             GET_CAZYDB()
-            ch_cazy_db = ch_cazy_db.mix(GET_CAZYDB.out.cazydb)
+            ch_cazy_db = ch_cazy_db.mix(GET_CAZYDB.out.cazydb).first()
         }
         /*
         * Load RGI for AMR annotation
         */
         if (card_json_cache){
-            ch_card_json = ch_card_json.mix(card_json_cache)
+            ch_card_json = ch_card_json.mix(card_json_cache).first()
             ch_software_versions = ch_software_versions.mix(card_version_cache)
         }
         else{
             UPDATE_RGI_DB()
-            ch_card_json = ch_card_json.mix(UPDATE_RGI_DB.out.card_json)
+            ch_card_json = ch_card_json.mix(UPDATE_RGI_DB.out.card_json).first()
             ch_software_versions = ch_software_versions.mix(UPDATE_RGI_DB.out.card_version.ifEmpty(null))
         }
-        
-
+  
         /*
         * Run RGI
         */
         RGI(assemblies, ch_card_json)
         ch_software_versions = ch_software_versions.mix(RGI.out.version.first().ifEmpty(null))
-
+        
 
         /*
         * Run gene finding software (Prokka or Bakta)

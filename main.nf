@@ -32,6 +32,10 @@ nextflow.enable.dsl = 2
 */
 
 include { ARETE } from './workflows/arete'
+include { ASSEMBLY } from './workflows/arete'
+include { ANNOTATION } from './workflows/arete'
+include { QUALITYCHECK } from './workflows/arete'
+
 
 //
 // WORKFLOW: Run main nf-core/arete analysis pipeline
@@ -42,18 +46,15 @@ workflow NFCORE_ARETE {
 }
 */
 workflow assembly{
-    include { ASSEMBLY } from './workflows/arete'
     ASSEMBLY ()
 
 }
 
 workflow annotation {
-    include { ANNOTATION } from './workflows/arete'
     ANNOTATION ()
 }
 
 workflow assembly_qc {
-    include { QUALITYCHECK } from './workflows/arete'
     QUALITYCHECK()
 }
 /*

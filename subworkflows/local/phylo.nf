@@ -12,7 +12,7 @@ def modules = params.modules.clone()
 //
 include { IQTREE } from '../../modules/nf-core/modules/iqtree/main'  addParams( options: [:] )
 include { ROARY } from '../../modules/nf-core/modules/roary/main'  addParams( options: [args:'-e -n'] )
-include { PANAROO_RUN } from '../../modules/nf-core/modules/panaroo/run/main' addParams( options: [args:'-a pan'])
+include { PANAROO_RUN } from '../../modules/nf-core/modules/panaroo/run/main' addParams( options: [args:'-a pan --clean-mode strict'])
 include { SNPSITES } from '../../modules/nf-core/modules/snpsites/main' addParams( options: [:] )
 include { FASTTREE } from '../../modules/nf-core/modules/fasttree/main' addParams( options: [:] )
 

@@ -6,11 +6,13 @@ options        = initOptions(params.options)
 
 //process for acquiring cached databases
 process GET_DB_CACHE {
+    label 'process_medium'
+
     input:
         path(dbcache)
 
     output:
-        path "VFDB_setB_pro.fas.gz", emit: vfdb
+        path "VFDB_setA_pro.fas.gz", emit: vfdb
         path "CAZyDB.07312020.fa", emit: cazydb
         path "BacMet2_predicted_database.fasta.gz", emit: bacmet
         path "card.json", emit: card_json
@@ -19,7 +21,7 @@ process GET_DB_CACHE {
     
     script:
         """
-        cp $dbcache/VFDB_setB_pro.fas.gz .
+        cp $dbcache/VFDB_setA_pro.fas.gz .
         cp $dbcache/CAZyDB.07312020.fa .
         cp $dbcache/BacMet2_predicted_database.fasta.gz .
         cp $dbcache/card.json .

@@ -1,3 +1,4 @@
+
 /*
 ========================================================================================
     VALIDATE INPUTS
@@ -292,7 +293,8 @@ workflow ASSEMBLY {
 
 // annotate existing assemblies
 workflow ANNOTATION {
-    if (params.input_sample_table){ ch_input = file(params.input_sample_table) } else { exit 1, 'Input samplesheet not specified!' }
+    // Check mandatory parameters
+    if (params.input_sample_table) { ch_input = file(params.input_sample_table) } else { exit 1, 'Input samplesheet not specified!' }
     if (params.reference_genome) {
         ch_reference_genome = file(params.reference_genome)
         use_reference_genome = true
@@ -308,25 +310,78 @@ workflow ANNOTATION {
         ch_bakta_db = false
     }
 
+    //db_cache = params.db_cache ? params.db_cache: false
+    //ch_db_cache = Channel.empty()
+    // ch_assembly_db_cache = Channel.empty()
+    // ch_annotation_db_cache = Channel.empty()
+    // if (params.db_cache){
+    //     ch_assembly_db_cache = GET_ASSEMBLY_DB_CACHE(file(params.db_cache))
+    //     ch_annotation_db_cache = GET_ANNOTATION_DB_CACHE(file(params.db_cache))
+    // }
+    // else{
+    //     ch_assembly_db_cache = false
+    //     ch_annotation_db_cache = false
+    // }
+    db_cache = params.db_cache ? params.db_cache : false
     use_roary = params.use_roary ? true : false
     use_full_alignment = params.use_full_alignment ? true : false
     use_fasttree = params.use_fasttree ? true: false
+
+    // TODO
+    // Outgroup genome isnt currently used for anything. Used to be used for SNIPPY and ended up in the core genome alignment.
+    // Look into whether it's possible to include something in the alignment/tree
+    //if (params.outgroup_genome ) { ch_outgroup_genome = file(params.outgroup_genome) } else { ch_outgroup_genome = '' }
+
     ch_software_versions = Channel.empty()
+
     /*
      * SUBWORKFLOW: Read in samplesheet, validate and stage input files
      */
     ANNOTATION_INPUT_CHECK(ch_input)
+    ANNOTATION_INPUT_CHECK.out.subscribe { println "Got: $it" }
+    if(db_cache){
+        GET_DB_CACHE(db_cache)
+        /////////////////// ANNOTATION ///////////////////////////
+        
+        ANNOTATE_ASSEMBLIES(
+            ANNOTATION_INPUT_CHECK.out.genomes,
+            ch_bakta_db,
+            GET_DB_CACHE.out.vfdb,
+            GET_DB_CACHE.out.cazydb,
+            GET_DB_CACHE.out.bacmet,
+            GET_DB_CACHE.out.card_json,
+            GET_DB_CACHE.out.card_version
+            )
 
-    /////////////////// ANNOTATION ///////////////////////////
-    ANNOTATE_ASSEMBLIES(ANNOTATION_INPUT_CHECK.out.genomes, ch_bakta_db)
+
+    }
+    else{
+
+        /////////////////// ANNOTATION ///////////////////////////
+        ANNOTATE_ASSEMBLIES(
+            ANNOTATION_INPUT_CHECK.out.genomes,
+            ch_bakta_db,
+            [],
+            [],
+            [],
+            [],
+            []
+            )
+    }
     ch_software_versions = ch_software_versions.mix(ANNOTATE_ASSEMBLIES.out.annotation_software)
+
+    // /////////////////// ASSEMBLY ///////////////////////////
+    // ASSEMBLE_SHORTREADS(INPUT_CHECK.out.reads, ch_reference_genome, use_reference_genome, db_cache)
+    // ch_software_versions = ch_software_versions.mix(ASSEMBLE_SHORTREADS.out.assembly_software)
+
+    // /////////////////// ANNOTATION ///////////////////////////
+    // ANNOTATE_ASSEMBLIES(ASSEMBLE_SHORTREADS.out.scaffolds, ch_bakta_db, db_cache)
+    // ch_software_versions = ch_software_versions.mix(ANNOTATE_ASSEMBLIES.out.annotation_software)
 
     ////////////////////////// PANGENOME /////////////////////////////////////
     PHYLOGENOMICS(ANNOTATE_ASSEMBLIES.out.gff, use_roary, use_full_alignment, use_fasttree)
     ch_software_versions = ch_software_versions.mix(PHYLOGENOMICS.out.phylo_software)
 
-
- // Get unique list of files containing version information
     ch_software_versions
         .map { it -> if (it) [ it.baseName, it ] }
         .groupTuple()
@@ -335,16 +390,21 @@ workflow ANNOTATION {
         .collect()
         .set { ch_software_versions }
     GET_SOFTWARE_VERSIONS(ch_software_versions)
-    //multiqc
+
+    /*
+     * MODULE: MultiQC
+     */
     workflow_summary    = WorkflowArete.paramsSummaryMultiqc(workflow, summary_params)
     ch_workflow_summary = Channel.value(workflow_summary)
+
+    //Mix QUAST results into one report file
 
     ch_multiqc_files = Channel.empty()
     ch_multiqc_files = ch_multiqc_files.mix(Channel.from(ch_multiqc_config))
     ch_multiqc_files = ch_multiqc_files.mix(ch_multiqc_custom_config.collect().ifEmpty([]))
     ch_multiqc_files = ch_multiqc_files.mix(ch_workflow_summary.collectFile(name: 'workflow_summary_mqc.yaml'))
     ch_multiqc_files = ch_multiqc_files.mix(GET_SOFTWARE_VERSIONS.out.yaml.collect())
-    ch_multiqc_files = ch_multiqc_files.mix(ASSEMBLE_SHORTREADS.out.multiqc)
+    //ch_multiqc_files = ch_multiqc_files.mix(PROKKA.out.txt.collect{it[1]}.ifEmpty([]))
     ch_multiqc_files = ch_multiqc_files.mix(ANNOTATE_ASSEMBLIES.out.multiqc)
 
     MULTIQC(ch_multiqc_files.collect())
