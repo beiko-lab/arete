@@ -338,11 +338,11 @@ workflow ANNOTATION {
      * SUBWORKFLOW: Read in samplesheet, validate and stage input files
      */
     ANNOTATION_INPUT_CHECK(ch_input)
-    ANNOTATION_INPUT_CHECK.out.subscribe { println "Got: $it" }
+
     if(db_cache){
         GET_DB_CACHE(db_cache)
+
         /////////////////// ANNOTATION ///////////////////////////
-        
         ANNOTATE_ASSEMBLIES(
             ANNOTATION_INPUT_CHECK.out.genomes,
             ch_bakta_db,

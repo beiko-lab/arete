@@ -74,45 +74,46 @@ workflow ANNOTATE_ASSEMBLIES {
         * Load BLAST databases
         */
         if (vfdb_cache){
-            ch_vfdb = ch_vfdb.mix(vfdb_cache).first()
+            ch_vfdb = ch_vfdb.mix(vfdb_cache)
         }
         else{
             GET_VFDB()
-            ch_vfdb = ch_vfdb.mix(GET_VFDB.out.vfdb).first()
+            ch_vfdb = ch_vfdb.mix(GET_VFDB.out.vfdb)
         }
         if(bacmet_cache){
-            ch_bacmet_db = ch_bacmet_db.mix(bacmet_cache).first()
+            ch_bacmet_db = ch_bacmet_db.mix(bacmet_cache)
         }
         else{
             GET_BACMET()
-            ch_bacmet_db = ch_bacmet_db.mix(GET_BACMET.out.bacmet).first()
+            ch_bacmet_db = ch_bacmet_db.mix(GET_BACMET.out.bacmet)
         }
         if (cazydb_cache){
-            ch_cazy_db = ch_cazy_db.mix(ch_cazy_db).first()
+            ch_cazy_db = ch_cazy_db.mix(ch_cazy_db)
         }
         else{
             GET_CAZYDB()
-            ch_cazy_db = ch_cazy_db.mix(GET_CAZYDB.out.cazydb).first()
+            ch_cazy_db = ch_cazy_db.mix(GET_CAZYDB.out.cazydb)
         }
         /*
         * Load RGI for AMR annotation
         */
         if (card_json_cache){
-            ch_card_json = ch_card_json.mix(card_json_cache).first()
+            ch_card_json = ch_card_json.mix(card_json_cache)
             ch_software_versions = ch_software_versions.mix(card_version_cache)
         }
         else{
             UPDATE_RGI_DB()
-            ch_card_json = ch_card_json.mix(UPDATE_RGI_DB.out.card_json).first()
+            ch_card_json = ch_card_json.mix(UPDATE_RGI_DB.out.card_json)
             ch_software_versions = ch_software_versions.mix(UPDATE_RGI_DB.out.card_version.ifEmpty(null))
         }
-  
+        
+
         /*
         * Run RGI
         */
         RGI(assemblies, ch_card_json)
         ch_software_versions = ch_software_versions.mix(RGI.out.version.first().ifEmpty(null))
-        
+
 
         /*
         * Run gene finding software (Prokka or Bakta)

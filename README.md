@@ -45,7 +45,6 @@ Annotation:
 
 Phylogeny:
 1. Roary ([`roary`](https://sanger-pathogens.github.io/Roary/))
-3. SNPSites ([`snpsites`](https://github.com/sanger-pathogens/snp-sites))
 2. IQTree ([`iqtree`](http://www.iqtree.org/))
 
 ### Future Development Targets
@@ -56,21 +55,13 @@ A list in no particular order of outstanding development features, both in-progr
 
 - Sensible default QC parameters to allow automated end-to-end execution with little-to-no required user intervention
 
-- Consider updating to newer SPAdes as unicycler is dependent on an older version (and newer spades can integrate plasmidspades runs on the same assembly graph).
-
-- Download tool to download external resources and containers to allow smooth operation in HPC environments where compute nodes have no internet access
-
-- Bifurcated logic: "Single Species" mode and "Multi Species" mode
-
 - Integration of additional tools and scripts:
 
-1. Prophage identification (e.g., PHASTER)
-2. Genomic Island Detection (e.g., IslandCompare)
-3. ICE identification (e.g., ICEFinder)
-4. Ortholog detection in multi-species datasets (e.g. OrthoFinder)
-5. Inference of recombination events (e.g. Gubbins, CFML)
-6. Integration of partner-developed tools and algorithms such as [Community Co-Evolution model](https://rdrr.io/github/beiko-lab/evolCCM/f/README.md)
-7. Improved result reporting, such as auto-generated figures and more concise aggregated tables
+1. Genomic island detection (e.g., IslandCompare)
+2. Inference of recombination events (e.g. Gubbins, CFML)
+3. Phylogenetic inference of lateral gene transfer events using [`rspr`](https://github.com/cwhidden/rspr)
+4. Inference of concerted gain and loss of genes and mobile genetic elements using [`the Community Coevolution Model`](https://github.com/beiko-lab/evolCCM)
+5. Partner applications for analysis and visualization of phylogenetic distributions of genes and MGEs and gene-order clustering.
 
 ## Quick Start
 
@@ -80,7 +71,7 @@ A list in no particular order of outstanding development features, both in-progr
 
 Note: this workflow should also support [`Podman`](https://podman.io/), [`Shifter`](https://nersc.gitlab.io/development/shifter/how-to-use/) or [`Charliecloud`](https://hpc.github.io/charliecloud/) execution for full pipeline reproducibility. We have minimized reliance on `conda` and suggest using it only as a last resort (see [docs](https://nf-co.re/usage/configuration#basic-configuration-profiles)). Configure `mail` on your system to send an email on workflow success/failure (without this you may get a small error at the end `Failed to invoke workflow.onComplete event handler` but this doesn't mean the workflow didn't finish successfully).
 
-3. Download the pipeline and test with a `stub-run`. The `stub-run` will ensure that the pipeline is able to download and use containers as well as execute in the propepr logic. 
+3. Download the pipeline and test with a `stub-run`. The `stub-run` will ensure that the pipeline is able to download and use containers as well as execute in the proper logic. 
 
     ```bash
     nextflow run arete/ --input_sample_table samplesheet.csv -profile <docker/singularity/conda> -stub-run
@@ -101,6 +92,21 @@ Note: this workflow should also support [`Podman`](https://podman.io/), [`Shifte
 **Note**: If you get this error at the end ```Failed to invoke `workflow.onComplete` event handler``` it isn't a problem, it just means you don't have an sendmail configured and it can't send an email report saying it finished correctly i.e., its not that the workflow failed.
 
 See [usage docs](docs/usage.md) for all of the available options when running the pipeline.
+
+### Testing
+
+To test the worklow on a minimal dataset you can use the test configuration (with either docker, conda, or singularity - replace `docker` below as appropriate):
+
+    ```bash
+    nextflow run arete -profile test,docker 
+    ```
+
+Due to download speed of the Kraken2 database and CAZY database this will take ~25 minutes. 
+However to accelerate it you can download/cache the database files to a folder (e.g., `test/db_cache`) and provide a database cache parameter.
+
+    ```bash
+    nextflow run arete -profile test,docker --db_cache $PWD/test/db_cache
+    ```
 
 ## Documentation
 
