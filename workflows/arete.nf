@@ -254,14 +254,22 @@ workflow ASSEMBLY {
     }
     //if (params.outgroup_genome ) { ch_outgroup_genome = file(params.outgroup_genome) } else { ch_outgroup_genome = '' }
 
+    // Setup dbcache
+    db_cache = params.db_cache ? params.db_cache : false
+
     ch_software_versions = Channel.empty()
 
     /*
      * SUBWORKFLOW: Read in samplesheet, validate and stage input files
      */
     INPUT_CHECK(ch_input)
+    if(db_cache){
+        GET_DB_CACHE(db_cache)
+        ASSEMBLE_SHORTREADS(INPUT_CHECK.out.reads, ch_reference_genome, use_reference_genome, GET_DB_CACHE.out.minikraken)
+    } else {
+        ASSEMBLE_SHORTREADS(INPUT_CHECK.out.reads, ch_reference_genome, use_reference_genome, [])
+    }
 
-    ASSEMBLE_SHORTREADS(INPUT_CHECK.out.reads, ch_reference_genome, use_reference_genome)
     ch_software_versions = ch_software_versions.mix(ASSEMBLE_SHORTREADS.out.assembly_software)
 
     // Get unique list of files containing version information
