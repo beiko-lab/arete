@@ -76,17 +76,15 @@ workflow ASSEMBLE_SHORTREADS{
         ///*
         // * MODULE: Run Kraken2
         // */
-        ch_kraken_db = Channel.empty()
         if (krakendb_cache){
-            ch_kraken_db = ch_kraken_db.mix(krakendb_cache)
+            krakendb_cache.set { ch_kraken_db }
         }
-        else{
+        else {
             KRAKEN2_DB()
-            ch_kraken_db = ch_kraken_db.mix(KRAKEN2_DB.out.minikraken)
+            KRAKEN2_DB.out.minikraken.set { ch_kraken_db }
         }
-        
-        
-        //KRAKEN2_RUN(FASTP.out.reads, KRAKEN2_DB.out.minikraken)
+
+
         KRAKEN2_RUN(FASTP.out.reads, ch_kraken_db)
         ch_software_versions = ch_software_versions.mix(KRAKEN2_RUN.out.versions.first().ifEmpty(null))
 
