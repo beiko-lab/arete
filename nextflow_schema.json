@@ -1,6 +1,6 @@
 {
     "$schema": "http://json-schema.org/draft-07/schema",
-    "$id": "https://raw.githubusercontent.com/fmaguire/arete/master/nextflow_schema.json",
+    "$id": "https://raw.githubusercontent.com/beiko-lab/arete/master/nextflow_schema.json",
     "title": "ARETE pipeline parameters",
     "description": "AMR/VF LGT-focused bacterial genomics workflow",
     "type": "object",
@@ -29,6 +29,12 @@
                     "description": "Path to the output directory where the results will be saved.",
                     "default": "./results",
                     "fa_icon": "fas fa-folder-open"
+                },
+                "db_cache": {
+                    "type": "string",
+                    "default": "None",
+                    "fa_icon": "fas fa-database",
+                    "help_text": "Directory where the databases are located"
                 },
                 "email": {
                     "type": "string",
@@ -59,6 +65,42 @@
                     "type": "string",
                     "fa_icon": "fas fa-file-code",
                     "description": "Path to FASTA genome file to use as outgroup for tree."
+                }
+            }
+        },
+        "annotation": {
+            "title": "Annotation",
+            "type": "object",
+            "description": "Parameters for the annotation subworkflow",
+            "default": "",
+            "fa_icon": "fas fa-edit",
+            "properties": {
+                "use_bakta": {
+                    "type": "string",
+                    "default": "None",
+                    "help_text": "Location to the bakta database"
+                }
+            }
+        },
+        "phylogenomics": {
+            "title": "Phylogenomics",
+            "type": "object",
+            "description": "Parameters for the phylogenomics subworkflow",
+            "default": "",
+            "fa_icon": "fab fa-pagelines",
+            "properties": {
+                "use_roary": {
+                    "type": "boolean",
+                    "description": "Use the roary tool"
+                },
+                "use_full_alignment": {
+                    "type": "boolean",
+                    "default": true,
+                    "description": "Use full alignment with SNPSITES"
+                },
+                "use_fasttree": {
+                    "type": "boolean",
+                    "description": "Use FastTree"
                 }
             }
         },
@@ -257,6 +299,12 @@
         },
         {
             "$ref": "#/definitions/reference_genome_options"
+        },
+        {
+            "$ref": "#/definitions/annotation"
+        },
+        {
+            "$ref": "#/definitions/phylogenomics"
         },
         {
             "$ref": "#/definitions/institutional_config_options"
