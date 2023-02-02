@@ -115,29 +115,12 @@ workflow ARETE {
         ch_reference_genome = []
         use_reference_genome = false
     }
-    if (params.use_bakta){
-        ch_bakta_db = file(params.use_bakta)
-    }
-    else{
-        ch_bakta_db = false
-    }
 
-    //db_cache = params.db_cache ? params.db_cache: false
-    //ch_db_cache = Channel.empty()
-    // ch_assembly_db_cache = Channel.empty()
-    // ch_annotation_db_cache = Channel.empty()
-    // if (params.db_cache){
-    //     ch_assembly_db_cache = GET_ASSEMBLY_DB_CACHE(file(params.db_cache))
-    //     ch_annotation_db_cache = GET_ANNOTATION_DB_CACHE(file(params.db_cache))
-    // }
-    // else{
-    //     ch_assembly_db_cache = false
-    //     ch_annotation_db_cache = false
-    // }
+    ch_bakta_db = params.use_bakta ? file(params.use_bakta) : false
     db_cache = params.db_cache ? params.db_cache : false
-    use_roary = params.use_roary ? true : false
-    use_full_alignment = params.use_full_alignment ? true : false
-    use_fasttree = params.use_fasttree ? true: false
+    use_roary = params.use_roary
+    use_full_alignment = params.use_full_alignment
+    use_fasttree = params.use_fasttree
 
     // TODO
     // Outgroup genome isnt currently used for anything. Used to be used for SNIPPY and ended up in the core genome alignment.
@@ -155,8 +138,8 @@ workflow ARETE {
         GET_DB_CACHE(db_cache)
         /////////////////// ASSEMBLY ///////////////////////////
         ASSEMBLE_SHORTREADS(
-            INPUT_CHECK.out.reads, 
-            ch_reference_genome, 
+            INPUT_CHECK.out.reads,
+            ch_reference_genome,
             use_reference_genome,
             GET_DB_CACHE.out.minikraken
             )
@@ -176,8 +159,8 @@ workflow ARETE {
     }
     else{
         ASSEMBLE_SHORTREADS(
-            INPUT_CHECK.out.reads, 
-            ch_reference_genome, 
+            INPUT_CHECK.out.reads,
+            ch_reference_genome,
             use_reference_genome,
             []
             )
