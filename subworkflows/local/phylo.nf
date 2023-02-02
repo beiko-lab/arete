@@ -30,7 +30,7 @@ workflow PHYLOGENOMICS{
         use_fasttree
     main:
         ch_software_versions = Channel.empty()
-        ch_core_gene_alignment = Channel.empty()
+
         /*
         * Core gene identification and alignment
         */
