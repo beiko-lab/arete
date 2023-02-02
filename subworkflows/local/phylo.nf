@@ -36,14 +36,14 @@ workflow PHYLOGENOMICS{
         */
         if(use_roary){
             ROARY(gffs.collect{ meta, gff -> gff}.map( gff -> [[id: 'roary'], gff]))
-            ch_core_gene_alignment.mix(ROARY.out.aln.collect{ meta, aln -> aln })
+            ROARY.out.aln.collect{ meta, aln -> aln }.set{ ch_core_gene_alignment }
             ch_software_versions = ch_software_versions.mix(ROARY.out.versions.ifEmpty(null))
         }
 
         // By default, run panaroo
         else{
             PANAROO_RUN(gffs.collect{ meta, gff -> gff}.map( gff -> [[id: 'panaroo'], gff]))
-            ch_core_gene_alignment.mix(PANAROO_RUN.out.aln.collect{meta, aln -> aln })
+            PANAROO_RUN.out.aln.collect{meta, aln -> aln }.set{ ch_core_gene_alignment }
             ch_software_versions = ch_software_versions.mix(PANAROO_RUN.out.versions.ifEmpty(null))
         }
 
@@ -55,7 +55,7 @@ workflow PHYLOGENOMICS{
             ch_software_versions = ch_software_versions.mix(FASTTREE.out.versions.ifEmpty(null))
         }
 
-        else{        
+        else{
             if (!use_full_alignment){
                 SNPSITES(ch_core_gene_alignment)
                 ch_software_versions = ch_software_versions.mix(SNPSITES.out.versions.ifEmpty(null))
@@ -74,6 +74,6 @@ workflow PHYLOGENOMICS{
 
 /*
 workflow MULTI_SPECIES_PHYLO{
-    
+
 }
 */
