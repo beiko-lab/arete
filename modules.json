@@ -57,9 +57,6 @@
             "quast": {
                 "git_sha": "3aacd46da2b221ed47aaa05c413a828538d2c2ae"
             },
-            "roary": {
-                "git_sha": "0ba88fb8699ab1d94ca748ca1c5a903cbbc30602"
-            },
             "snpsites": {
                 "git_sha": "3aacd46da2b221ed47aaa05c413a828538d2c2ae"
             },
