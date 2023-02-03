@@ -77,7 +77,6 @@ include { DIAMOND_BLASTX as DIAMOND_BLAST_CAZY;
           DIAMOND_BLASTX as DIAMOND_BLAST_VFDB;
           DIAMOND_BLASTX as DIAMOND_BLAST_BACMET } from '../modules/nf-core/modules/diamond/blastx/main'  addParams( options: [args:'--evalue 1e-06 --outfmt 6 qseqid sseqid pident slen qlen length mismatch gapopen qstart qend sstart send evalue bitscore full_qseq --max-target-seqs 25 --more-sensitive'] )
 include { IQTREE } from '../modules/nf-core/modules/iqtree/main'  addParams( options: [:] )
-include { ROARY } from '../modules/nf-core/modules/roary/main'  addParams( options: [args:'-e -n'] )
 include { SNPSITES } from '../modules/nf-core/modules/snpsites/main' addParams( options: [:] )
 include { CHECKM_LINEAGEWF } from '../modules/nf-core/modules/checkm/lineagewf/main' addParams( options: [:] )
 //
@@ -118,7 +117,6 @@ workflow ARETE {
 
     ch_bakta_db = params.use_bakta ? file(params.use_bakta) : false
     db_cache = params.db_cache ? params.db_cache : false
-    use_roary = params.use_roary
     use_full_alignment = params.use_full_alignment
     use_fasttree = params.use_fasttree
 
@@ -188,7 +186,7 @@ workflow ARETE {
     // ch_software_versions = ch_software_versions.mix(ANNOTATE_ASSEMBLIES.out.annotation_software)
 
     ////////////////////////// PANGENOME /////////////////////////////////////
-    PHYLOGENOMICS(ANNOTATE_ASSEMBLIES.out.gff, use_roary, use_full_alignment, use_fasttree)
+    PHYLOGENOMICS(ANNOTATE_ASSEMBLIES.out.gff, use_full_alignment, use_fasttree)
     ch_software_versions = ch_software_versions.mix(PHYLOGENOMICS.out.phylo_software)
 
     ch_software_versions
@@ -314,7 +312,6 @@ workflow ANNOTATION {
     //     ch_annotation_db_cache = false
     // }
     db_cache = params.db_cache ? params.db_cache : false
-    use_roary = params.use_roary ? true : false
     use_full_alignment = params.use_full_alignment ? true : false
     use_fasttree = params.use_fasttree ? true: false
 
@@ -370,7 +367,7 @@ workflow ANNOTATION {
     // ch_software_versions = ch_software_versions.mix(ANNOTATE_ASSEMBLIES.out.annotation_software)
 
     ////////////////////////// PANGENOME /////////////////////////////////////
-    PHYLOGENOMICS(ANNOTATE_ASSEMBLIES.out.gff, use_roary, use_full_alignment, use_fasttree)
+    PHYLOGENOMICS(ANNOTATE_ASSEMBLIES.out.gff, use_full_alignment, use_fasttree)
     ch_software_versions = ch_software_versions.mix(PHYLOGENOMICS.out.phylo_software)
 
     ch_software_versions

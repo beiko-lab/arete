@@ -8,3 +8,4 @@ lint:
     nextflow_config:
     - params.input
     - manifest.name
+repository_type: pipeline
