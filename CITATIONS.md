@@ -46,8 +46,8 @@
 * [RGI](https://github.com/arpcard/rgi)
     > Alcock et al. 2020. CARD 2020: antibiotic resistome surveillance with the comprehensive antibiotic resistance database. Nucleic Acids Research, Volume 48, Issue D1, Pages D517-525 [PMID 31665441]
 
-* [Roary](https://github.com/sanger-pathogens/Roary)
-    > Page AJ, Cummins CA, Hunt M, Wong VK, Reuter S, Holden MTG, Fookes M, Falush D, Keane JA, Parkhill J [Roary: rapid large-scale prokaryote pan genome analysis.](https://doi.org/10.1093/bioinformatics/btv421) _Bioinformatics_ 31, 3691–3693 (2015)
+* [Panaroo](https://github.com/gtonkinhill/panaroo)
+    > Tonkin-Hill, G., MacAlasdair, N., Ruis, C. et al. Producing polished prokaryotic pangenomes with the Panaroo pipeline. Genome Biol 21, 180 (2020). https://doi.org/10.1186/s13059-020-02090-4
 
 * [SNP-sites](https://pubmed.ncbi.nlm.nih.gov/28348851/)
     > Page AJ, Taylor B, Delaney AJ, Soares J, Seemann T, Keane JA, Harris SR. SNP-sites: rapid efficient extraction of SNPs from multi-FASTA alignments. Microb Genom. 2016 Apr 29;2(4):e000056. doi: 10.1099/mgen.0.000056. PMID: 28348851; PMCID: PMC5320690.

@@ -6,47 +6,46 @@ This document describes the output produced by the pipeline. Most of the plots a
 
 The directories listed below will be created in the results directory after the pipeline has finished. All paths are relative to the top-level results directory.
 
-
 <!-- TODO nf-core: Write this documentation describing your workflow's output -->
+
 ```bash
 
 
 
 ```
 
-
 ** NEEDS UPDATED FOR CURRENT WORKFLOW **
+
 ## Pipeline overview
 
 The pipeline is built using [Nextflow](https://www.nextflow.io/) and processes data using the following steps:
 
-* [FastQC](#fastqc) - Raw read QC
-* [FastP](#fastp) - Read trimming
-* [Kraken2](#kraken) - Taxonomic assignment
-* [Unicycler](#unicycler) - Short read assembly
-* [Quast](#quast) - Assembly quality score
-* [Prokka](#prokka) - Gene detection and annotation
-* [Roary](#roary) - Pangenome alignment
-* [RGI](#rgi) - Detection and annotation of AMR determinants
-* [Diamond](#diamond) - Detection and annotation of genes using external databases.
+- [FastQC](#fastqc) - Raw read QC
+- [FastP](#fastp) - Read trimming
+- [Kraken2](#kraken) - Taxonomic assignment
+- [Unicycler](#unicycler) - Short read assembly
+- [Quast](#quast) - Assembly quality score
+- [Prokka](#prokka) - Gene detection and annotation
+- [Panaroo](#panaroo) - Pangenome alignment
+- [RGI](#rgi) - Detection and annotation of AMR determinants
+- [Diamond](#diamond) - Detection and annotation of genes using external databases.
   - [CAZy](#cazy): Carbohydrate metabolism
   - [VFDB](#vfdb): Virulence factors
   - [BacMet](#bacmet): Metal resistance determinants
-* [IqTree](#IQTree) - Maximum likelihood core genome phylogenetic tree
-* [MultiQC](#multiqc) - Aggregate report describing results and QC from the whole pipeline
-* [Pipeline information](#pipeline-information) - Report metrics generated during the workflow execution
+- [IqTree](#IQTree) - Maximum likelihood core genome phylogenetic tree
+- [MultiQC](#multiqc) - Aggregate report describing results and QC from the whole pipeline
+- [Pipeline information](#pipeline-information) - Report metrics generated during the workflow execution
 
 <!-- TODO put all the other crap in below. Can't be arsed today -->
-
 
 ### FastQC
 
 <details markdown="1">
 <summary>Output files</summary>
 
-* `fastqc/`
-  * `*_fastqc.html`: FastQC report containing quality metrics for your untrimmed raw fastq files.
-  * `*_fastqc.zip`: Zip archive containing the FastQC report, tab-delimited data file and plot images.
+- `fastqc/`
+  - `*_fastqc.html`: FastQC report containing quality metrics for your untrimmed raw fastq files.
+  - `*_fastqc.zip`: Zip archive containing the FastQC report, tab-delimited data file and plot images.
 
 **NB:** The FastQC plots in this directory are generated relative to the raw, input reads. They may contain adapter sequence and regions of low quality. To see how your reads look after adapter and quality trimming please refer to the FastQC reports in the `trimgalore/fastqc/` directory.
 
@@ -67,10 +66,10 @@ The pipeline is built using [Nextflow](https://www.nextflow.io/) and processes d
 <details markdown="1">
 <summary>Output files</summary>
 
-* `kraken2/`
-  * `*.kraken2.report.txt` : Text file containing genome-wise information of Kraken2 findings. See [here](https://github.com/DerrickWood/kraken2/blob/master/docs/MANUAL.markdown#output-formats) for details.
-  * `*.classified(_(1|2))?.fastq.gz` : Fasta file containing classified reads. If paired-end, one file per end.
-  * `*.unclassified(_(1|2))?.fastq.gz` : Fasta file containing unclassified reads. If paired-end, one file per end.
+- `kraken2/`
+  - `*.kraken2.report.txt` : Text file containing genome-wise information of Kraken2 findings. See [here](https://github.com/DerrickWood/kraken2/blob/master/docs/MANUAL.markdown#output-formats) for details.
+  - `*.classified(_(1|2))?.fastq.gz` : Fasta file containing classified reads. If paired-end, one file per end.
+  - `*.unclassified(_(1|2))?.fastq.gz` : Fasta file containing unclassified reads. If paired-end, one file per end.
 
 </details>
 
@@ -81,10 +80,10 @@ Kraken2 is a read classification software which will assign taxonomy to each rea
 <details markdown="1">
 <summary>Output files</summary>
 
-* `unicycler/`
-  * `*.assembly.gfa`
-  * `*.scaffolds.fa`
-  * `*.unicycler.log`
+- `unicycler/`
+  - `*.assembly.gfa`
+  - `*.scaffolds.fa`
+  - `*.unicycler.log`
 
 </details>
 
@@ -95,15 +94,15 @@ Short/hybrid read assembler. For now only handles short reads in arete.
 <details markdown="1">
 <summary>Output files</summary>
 
-* `quast/`
-  * `report.tsv` : A tab-seperated report compiling all QC metrics recorded over all genomes
-  * `quast/`
-    * `report.(html|tex|pdf|tsv|txt)`: The Quast report in different file formats
-    * `transposed_report.(tsv|txt)` : Transpose of the Quast report
-    * `quast.log` : Log file of all Quast runs
-    * `icarus_viewers/`
-      * `contig_size_viewer.html`
-    * `basic_stats/`: Directory containing various summary plots generated by Quast.
+- `quast/`
+  - `report.tsv` : A tab-seperated report compiling all QC metrics recorded over all genomes
+  - `quast/`
+    - `report.(html|tex|pdf|tsv|txt)`: The Quast report in different file formats
+    - `transposed_report.(tsv|txt)` : Transpose of the Quast report
+    - `quast.log` : Log file of all Quast runs
+    - `icarus_viewers/`
+      - `contig_size_viewer.html`
+    - `basic_stats/`: Directory containing various summary plots generated by Quast.
 
 </details>
 
@@ -112,63 +111,32 @@ Short/hybrid read assembler. For now only handles short reads in arete.
 <details markdown="1">
 <summary>Output files</summary>
 
-* `prokka/`
-  * `*/` : Prokka results will be in one directory per genome.
-    * `*.err` : Unacceptable annotations
-    * `*.faa` : Protein FASTA file of translated CDS sequences
-    * `*.ffn` : Nucleotide FASTA file of all the prediction transcripts (CDS, rRNA, tRNA, tmRNA, misc_RNA)
-    * `*.fna` : Nucleotide FASTA file of input contig sequences
-    * `*.fsa` : Nucleotide FASTA file of the input contig sequences, used by "tbl2asn" to create the .sqn file. It is mostly the same as the .fna file, but with extra Sequin tags in the sequence description lines.
-    * `*.gff` : This is the master annotation in GFF3 format, containing both sequences and annotations. 
-    * `*.gbk` : This is a standard Genbank file derived from the master .gff.
-    * `*.log` : Contains all the output that Prokka produced during its run. This is a record of what settings used, even if the --quiet option was enabled.
-    * `*.sqn` : An ASN1 format "Sequin" file for submission to Genbank. It needs to be edited to set the correct taxonomy, authors, related publication etc.
-    * `*.tbl` : Feature Table file, used by "tbl2asn" to create the .sqn file.
-    * `*.tsv` : Tab-separated file of all features: locus_tag,ftype,len_bp,gene,EC_number,COG,product
-    * `*.txt` : Statistics relating to the annotated features found.
+- `prokka/`
+  - `*/` : Prokka results will be in one directory per genome.
+    - `*.err` : Unacceptable annotations
+    - `*.faa` : Protein FASTA file of translated CDS sequences
+    - `*.ffn` : Nucleotide FASTA file of all the prediction transcripts (CDS, rRNA, tRNA, tmRNA, misc_RNA)
+    - `*.fna` : Nucleotide FASTA file of input contig sequences
+    - `*.fsa` : Nucleotide FASTA file of the input contig sequences, used by "tbl2asn" to create the .sqn file. It is mostly the same as the .fna file, but with extra Sequin tags in the sequence description lines.
+    - `*.gff` : This is the master annotation in GFF3 format, containing both sequences and annotations.
+    - `*.gbk` : This is a standard Genbank file derived from the master .gff.
+    - `*.log` : Contains all the output that Prokka produced during its run. This is a record of what settings used, even if the --quiet option was enabled.
+    - `*.sqn` : An ASN1 format "Sequin" file for submission to Genbank. It needs to be edited to set the correct taxonomy, authors, related publication etc.
+    - `*.tbl` : Feature Table file, used by "tbl2asn" to create the .sqn file.
+    - `*.tsv` : Tab-separated file of all features: locus_tag,ftype,len_bp,gene,EC_number,COG,product
+    - `*.txt` : Statistics relating to the annotated features found.
 
 </details>
 
 Prokka is a software tool to annotate bacterial, archaeal and viral genomes quickly and produce standards-compliant output files.
 
-### Roary
-
-<details markdown="1">
-<summary>Output files</summary>
-
-* `roary/`
-  * `results/`
-    * `accessory_binary_genes.fa`
-    * `accessory_binary_genes.fa.newick` : This is a tree created using the binary presence and absence of accessory genes.
-    *`accessory_graph.dot`
-    *`accessory.header.embl`
-    *`accessory.tab`
-    *`blast_identity_frequency.Rtab`
-    *`clustered_proteins` : Groups file where each line lists the sequences in a cluster.
-    *`core_accessory_graph.dot` : A graph in DOT format of how genes are linked together at the contig level in the pan genome, viewable in Gephi.
-    *`core_accessory.header.embl`
-    *`core_accessory.tab`
-    *`core_alignment_header.embl`
-    *`core_gene_alignment.aln` : A multi-FASTA alignment of all of the core genes. 
-    *`gene_presence_absence.csv` : The gene presence and absence spreadsheet lists each gene and which samples it is present in. 
-    *`gene_presence_absence.Rtab` : Gene presence absence as an R table.
-    *`number_of_conserved_genes.Rtab` : File for Roary R script visualisations. 
-    *`number_of_genes_in_pan_genome.Rtab` : File for Roary R script visualisations. 
-    *`number_of_new_genes.Rtab` : File for Roary R script visualisations. 
-    *`number_of_unique_genes.Rtab` : File for Roary R script visualisations. 
-    *`pan_genome_reference.fa` : a FASTA file which contains a single representative nucleotide sequence from each of the clusters in the pan genome.
-    *`summary_statistics.txt` : Number of genes in the core and accessory. A text file with an overview of the genes and how frequently they occur in the input isolates.
-
-</details>
-
-[Roary](https://github.com/sanger-pathogens/Roary) is a high speed pan genome pipeline, which takes annotated assemblies in GFF3 format (produced by Prokka) and calculates the pan genome.
 ### RGI
 
 <details markdown="1">
 <summary>Output files</summary>
 
-* `rgi/`
-  * `*_rgi.txt` : A TSV report containing all AMR predictions for a given genome. For more info see [here](https://github.com/arpcard/rgi#rgi-main-tab-delimited-output-details)
+- `rgi/`
+  - `*_rgi.txt` : A TSV report containing all AMR predictions for a given genome. For more info see [here](https://github.com/arpcard/rgi#rgi-main-tab-delimited-output-details)
 
 </details>
 
@@ -179,33 +147,34 @@ RGI predicts AMR determinants using the CARD ontology and various trained models
 <details markdown="1">
 <summary>Output files</summary>
 
-* `diamond/`
-  * `*_(VFDB|BACMET|CAZYDB).txt` : Blast6 formatted TSVs indicating BlastX results of the genes from each genome against VFDB, BacMet, and CAZy databases.
+- `diamond/`
+  - `*_(VFDB|BACMET|CAZYDB).txt` : Blast6 formatted TSVs indicating BlastX results of the genes from each genome against VFDB, BacMet, and CAZy databases.
 
 </details>
 
-[Diamond](https://github.com/bbuchfink/diamond) is a sequence aligner for protein and translated DNA searches, designed for high performance analysis of big sequence data. We use DIAMOND to predict the presence of virulence factors, heavy metal resistance determinants, and carbohydrate-active enzymes using [VFDB](http://www.mgc.ac.cn/VFs/), [BacMet](http://bacmet.biomedicine.gu.se/), and [CAZy](http://www.cazy.org/) respectively. 
+[Diamond](https://github.com/bbuchfink/diamond) is a sequence aligner for protein and translated DNA searches, designed for high performance analysis of big sequence data. We use DIAMOND to predict the presence of virulence factors, heavy metal resistance determinants, and carbohydrate-active enzymes using [VFDB](http://www.mgc.ac.cn/VFs/), [BacMet](http://bacmet.biomedicine.gu.se/), and [CAZy](http://www.cazy.org/) respectively.
 
 ### IQTree
 
 <details markdown="1">
 <summary>Output files</summary>
 
-* `iqtree/`
-  * `*.treefile` : Newick formatted maximum likelihood tree of core-genome alignment.
+- `iqtree/`
+  - `*.treefile` : Newick formatted maximum likelihood tree of core-genome alignment.
 
 </details>
 
 [IQTree](http://www.iqtree.org/) is a fast and effective stochastic algorithm to infer phylogenetic trees by maximum likelihood.
+
 ### MultiQC
 
 <details markdown="1">
 <summary>Output files</summary>
 
-* `multiqc/`
-  * `multiqc_report.html`: a standalone HTML file that can be viewed in your web browser.
-  * `multiqc_data/`: directory containing parsed statistics from the different tools used in the pipeline.
-  * `multiqc_plots/`: directory containing static images from the report in various formats.
+- `multiqc/`
+  - `multiqc_report.html`: a standalone HTML file that can be viewed in your web browser.
+  - `multiqc_data/`: directory containing parsed statistics from the different tools used in the pipeline.
+  - `multiqc_plots/`: directory containing static images from the report in various formats.
 
 </details>
 
@@ -218,10 +187,10 @@ Results generated by MultiQC collate pipeline QC from supported tools e.g. FastQ
 <details markdown="1">
 <summary>Output files</summary>
 
-* `pipeline_info/`
-  * Reports generated by Nextflow: `execution_report.html`, `execution_timeline.html`, `execution_trace.txt` and `pipeline_dag.dot`/`pipeline_dag.svg`.
-  * Reports generated by the pipeline: `pipeline_report.html`, `pipeline_report.txt` and `software_versions.csv`.
-  * Reformatted samplesheet files used as input to the pipeline: `samplesheet.valid.csv`.
+- `pipeline_info/`
+  - Reports generated by Nextflow: `execution_report.html`, `execution_timeline.html`, `execution_trace.txt` and `pipeline_dag.dot`/`pipeline_dag.svg`.
+  - Reports generated by the pipeline: `pipeline_report.html`, `pipeline_report.txt` and `software_versions.csv`.
+  - Reformatted samplesheet files used as input to the pipeline: `samplesheet.valid.csv`.
 
 </details>
 
