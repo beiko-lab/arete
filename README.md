@@ -48,7 +48,7 @@ Annotation:
 
 Phylogeny:
 
-1. Panaroo ([`panaroo`](https://github.com/gtonkinhill/panaroo)`
+1. Panaroo ([`panaroo`](https://github.com/gtonkinhill/panaroo))
 2. SNP-sites([`SNPsites`](https://github.com/sanger-pathogens/snp-sites))
 3. IQTree ([`iqtree`](http://www.iqtree.org/))
 
