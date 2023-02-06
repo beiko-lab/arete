@@ -413,6 +413,7 @@ workflow QUALITYCHECK{
     }
     ch_software_versions = Channel.empty()
     db_cache = params.db_cache ? params.db_cache : false
+    ch_multiqc_files = Channel.empty()
 
     /*
      * SUBWORKFLOW: Read in samplesheet, validate and stage input files
@@ -422,15 +423,18 @@ workflow QUALITYCHECK{
     ///*
     // * MODULE: Run Kraken2
     // */
-    if(db_cache) {
-        GET_DB_CACHE(db_cache)
-        KRAKEN2_RUN(ANNOTATION_INPUT_CHECK.out.genomes, GET_DB_CACHE.out.minikraken)
-    } else {
-        KRAKEN2_DB()
-        KRAKEN2_RUN(ANNOTATION_INPUT_CHECK.out.genomes, KRAKEN2_DB.out.minikraken)
-    }
+    if (!params.skip_kraken) {
+        if(db_cache) {
+            GET_DB_CACHE(db_cache)
+            KRAKEN2_RUN(ANNOTATION_INPUT_CHECK.out.genomes, GET_DB_CACHE.out.minikraken)
+        } else {
+            KRAKEN2_DB()
+            KRAKEN2_RUN(ANNOTATION_INPUT_CHECK.out.genomes, KRAKEN2_DB.out.minikraken)
+        }
 
-    ch_software_versions = ch_software_versions.mix(KRAKEN2_RUN.out.versions.first().ifEmpty(null))
+        ch_software_versions = ch_software_versions.mix(KRAKEN2_RUN.out.versions.first().ifEmpty(null))
+        ch_multiqc_files = ch_multiqc_files.mix(KRAKEN2_RUN.out.txt.collect{it[1]}.ifEmpty([]))
+    }
     /*
     * Module: CheckM Quality Check
     */
@@ -450,10 +454,8 @@ workflow QUALITYCHECK{
     QUAST(ch_to_quast, ch_reference_genome, [], use_reference_genome, false)
     ch_software_versions = ch_software_versions.mix(QUAST.out.versions.first().ifEmpty(null))
 
-    ch_multiqc_files = Channel.empty()
     ch_multiqc_files = ch_multiqc_files.mix(Channel.from(ch_multiqc_config))
     ch_multiqc_files = ch_multiqc_files.mix(QUAST.out.tsv.collect())
-    ch_multiqc_files = ch_multiqc_files.mix(KRAKEN2_RUN.out.txt.collect{it[1]}.ifEmpty([]))
     MULTIQC(ch_multiqc_files.collect())
     multiqc_report       = MULTIQC.out.report.toList()
     ch_software_versions = ch_software_versions.mix(MULTIQC.out.version.ifEmpty(null))

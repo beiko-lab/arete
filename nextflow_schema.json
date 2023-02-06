@@ -68,6 +68,20 @@
                 }
             }
         },
+        "kraken2": {
+            "title": "Kraken2",
+            "type": "object",
+            "description": "Options for the Kraken2 taxonomic classification",
+            "default": "",
+            "properties": {
+                "skip_kraken": {
+                    "type": "boolean",
+                    "default": false,
+                    "description": "Don't run Kraken2 taxonomic classification"
+                }
+            },
+            "fa_icon": "fas fa-align-left"
+        },
         "annotation": {
             "title": "Annotation",
             "type": "object",
@@ -91,7 +105,6 @@
             "properties": {
                 "use_full_alignment": {
                     "type": "boolean",
-                    "default": false,
                     "description": "Use full alignment"
                 },
                 "use_fasttree": {
@@ -295,6 +308,9 @@
         },
         {
             "$ref": "#/definitions/reference_genome_options"
+        },
+        {
+            "$ref": "#/definitions/kraken2"
         },
         {
             "$ref": "#/definitions/annotation"
