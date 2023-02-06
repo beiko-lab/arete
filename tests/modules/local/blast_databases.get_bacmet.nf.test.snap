@@ -1,0 +1,12 @@
+{
+    "Can download BacMet": {
+        "content": [
+            {
+                "bacmet": [
+                    "BacMet2_predicted_database.fasta.gz:md5,d736989efea2594aad1daf548ece8801"
+                ]
+            }
+        ],
+        "timestamp": "2023-02-03T14:43:02+0000"
+    }
+}

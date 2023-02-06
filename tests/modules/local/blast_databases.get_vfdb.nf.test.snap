@@ -1,0 +1,22 @@
+{
+    "Should run without failures": {
+        "content": [
+            {
+                "vfdb": [
+                    "VFDB_setA_pro.fas.gz:md5,4ba35bcde2914956aa9d1deb9d732bde"
+                ]
+            }
+        ],
+        "timestamp": "2023-02-03T14:29:23+0000"
+    },
+    "Can download VFDB": {
+        "content": [
+            {
+                "vfdb": [
+                    "VFDB_setA_pro.fas.gz:md5,4ba35bcde2914956aa9d1deb9d732bde"
+                ]
+            }
+        ],
+        "timestamp": "2023-02-03T14:29:23+0000"
+    }
+}

@@ -1,0 +1,21 @@
+nextflow_process {
+
+    name "Test Process GET_VFDB"
+    script "modules/local/blast_databases.nf"
+    process "GET_VFDB"
+
+    test("Can download VFDB") {
+
+        then {
+            assert process.success
+            assert process.trace.tasks().size() == 1
+            assert snapshot(process.out).match()
+            with(process.out) {
+              // check if emitted output has been created
+              assert vfdb.size() == 1
+            }
+        }
+
+    }
+
+}

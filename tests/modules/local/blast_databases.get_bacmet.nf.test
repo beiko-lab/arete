@@ -1,0 +1,21 @@
+nextflow_process {
+
+    name "Test Process GET_BACMET"
+    script "modules/local/blast_databases.nf"
+    process "GET_BACMET"
+
+    test("Can download BacMet") {
+
+        then {
+            assert process.success
+            assert process.trace.tasks().size() == 1
+            assert snapshot(process.out).match()
+            with(process.out) {
+              // check if emitted output has been created
+              assert bacmet.size() == 1
+            }
+        }
+
+    }
+
+}
