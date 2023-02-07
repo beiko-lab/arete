@@ -1,0 +1,45 @@
+{
+    "Assembly subworkflow runs without failures": {
+        "content": [
+            {
+                "assemblies": [
+                    [
+                        {
+                            "id": "NZ_CP013325"
+                        },
+                        "NZ_CP013325.scaffolds.fa:md5,cc00e492e233a033919800e1006f83b6"
+                    ]
+                ],
+                "assembly_software": [
+                    "fastqc.version.txt:md5,4b911c22b702092bf99c71d1decdf506",
+                    "trim.version.txt:md5,4b911c22b702092bf99c71d1decdf506",
+                    "versions.yml:md5,4dfd35a680a9314b264c7e1a94b085b9",
+                    "versions.yml:md5,7d4dfbe5ebc33fffec9ff08ac99fa1f7",
+                    "versions.yml:md5,5de2670326ecb16d65efb244be59eab5"
+                ],
+                "scaffolds": [
+                    [
+                        {
+                            "id": "NZ_CP013325"
+                        },
+                        "NZ_CP013325.scaffolds.fa:md5,cc00e492e233a033919800e1006f83b6"
+                    ]
+                ],
+                "multiqc": [
+                    [
+                        "NZ_CP013325.raw_fastqc_1_fastqc.zip:md5,1a99648d242bc6cfd7346bb482091302",
+                        "NZ_CP013325.raw_fastqc_2_fastqc.zip:md5,4cf9f528d12a0e2f7edd6bc95f3a3d7f"
+                    ],
+                    [
+                        "NZ_CP013325.trim_fastqc_1_fastqc.zip:md5,7d59805ed0918a2d7809ac41ebab63c2",
+                        "NZ_CP013325.trim_fastqc_2_fastqc.zip:md5,be8778d8662a571227fb2bc279b6a431"
+                    ],
+                    [
+                        "report.tsv:md5,3155f16c9cc9d744151898ef13f56ea9"
+                    ]
+                ]
+            }
+        ],
+        "timestamp": "2023-02-07T18:28:37+0000"
+    }
+}
