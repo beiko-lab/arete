@@ -16,7 +16,6 @@ jobs:
     strategy:
       matrix:
         NXF_VER:
-          - "21.10.3"
           - "latest-everything"
         profile: ["docker"] # TODO , "singularity", "conda"]
     steps:
