@@ -1,0 +1,36 @@
+nextflow_workflow {
+
+    name "Test Workflow ASSEMBLE_SHORTREADS"
+    script "subworkflows/local/assembly.nf"
+    workflow "ASSEMBLE_SHORTREADS"
+
+    test("Assembly subworkflow runs without failures") {
+
+        when {
+            params {
+                // define parameters here. Example:
+                outdir = "$outputDir"
+                skip_kraken = true
+            }
+            workflow {
+                """
+                // define inputs of the workflow here. Example:
+                input[0] = [[id:'NZ_CP013325'], ['$baseDir/test/NZ_CP013325_1.fq.gz', '$baseDir/test/NZ_CP013325_2.fq.gz']]
+                input[1] = []
+                input[2] = []
+                input[3] = []
+                """
+            }
+        }
+
+        then {
+            assert workflow.success
+            assert snapshot(workflow.out).match()
+            assert workflow.trace.tasks().size() == 5
+            assert workflow.out.assemblies.size() == 1
+            assert workflow.out.scaffolds.size() == 1
+        }
+
+    }
+
+}
