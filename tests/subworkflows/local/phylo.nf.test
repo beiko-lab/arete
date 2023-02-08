@@ -20,15 +20,15 @@ nextflow_workflow {
                 ])
                 // Don't use full alignment
                 input[1] = false
-                // Use fasttree
-                input[2] = true
+                // Don't use fasttree
+                input[2] = false
                 """
             }
         }
 
         then {
             assert workflow.success
-            assert workflow.trace.tasks().size() == 4
+            assert workflow.trace.tasks().size() == 3
             assert workflow.out.core_alignment.size() == 1
         }
 
