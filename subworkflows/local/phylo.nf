@@ -1,12 +1,3 @@
-def summary_params = NfcoreSchema.paramsSummaryMap(workflow, params)
-/*
-========================================================================================
-    CONFIG FILES
-========================================================================================
-*/
-
-def modules = params.modules.clone()
-
 //
 // MODULE: Installed directly from nf-core/modules
 //
@@ -61,9 +52,3 @@ workflow PHYLOGENOMICS{
         phylo_software = ch_software_versions
         core_alignment = ch_core_gene_alignment
 }
-
-/*
-workflow MULTI_SPECIES_PHYLO{
-
-}
-*/
