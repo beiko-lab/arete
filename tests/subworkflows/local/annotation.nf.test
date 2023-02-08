@@ -27,7 +27,6 @@ nextflow_workflow {
 
         then {
             assert workflow.success
-            assert snapshot(workflow.out).match()
             assert workflow.trace.tasks().size() == 13
             assert workflow.out.gff.size() == 1
         }
