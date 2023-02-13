@@ -1,0 +1,39 @@
+nextflow_workflow {
+
+    name "Test Workflow PHYLOGENOMICS"
+    script "subworkflows/local/phylo.nf"
+    workflow "PHYLOGENOMICS"
+
+    test("Phylo subworkflow runs without failures") {
+
+        when {
+            params {
+                // define parameters here. Example:
+                outdir = "$outputDir"
+            }
+            workflow {
+                """
+                // define inputs of the workflow here. Example:
+                input[0] = ch = Channel.from([
+                    [[id:'SRR14022735'], '$baseDir/test/SRR14022735_T1.gff'],
+                    [[id:'SRR14022764'], '$baseDir/test/SRR14022764_T1.gff'],
+                    [[id:'SRR14022754'], '$baseDir/test/SRR14022754_T1.gff']
+                ])
+                // Use full alignment
+                input[1] = true
+                // Don't use fasttree
+                input[2] = false
+                """
+            }
+        }
+
+        then {
+            assert workflow.success
+            assert workflow.trace.tasks().size() == 2
+            assert workflow.out.core_alignment.size() == 1
+            assert workflow.out.core_alignment.get(0).get(0) ==~ ".*/core_gene_alignment.aln"
+        }
+
+    }
+
+}

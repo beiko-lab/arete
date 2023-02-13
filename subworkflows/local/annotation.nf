@@ -1,18 +1,3 @@
-def summary_params = NfcoreSchema.paramsSummaryMap(workflow, params)
-/*
-========================================================================================
-    CONFIG FILES
-========================================================================================
-*/
-
-ch_multiqc_config        = file("$projectDir/assets/multiqc_config.yaml", checkIfExists: true)
-ch_multiqc_custom_config = params.multiqc_config ? Channel.fromPath(params.multiqc_config) : Channel.empty()
-
-def modules = params.modules.clone()
-
-def multiqc_options   = modules['multiqc']
-multiqc_options.args += params.multiqc_title ? Utils.joinModuleArgs(["--title \"$params.multiqc_title\""]) : ''
-
 //
 // MODULE: Installed directly from nf-core/modules
 //
@@ -34,10 +19,6 @@ include { GET_SOFTWARE_VERSIONS } from '../../modules/local/get_software_version
 include { RGI;
           UPDATE_RGI_DB } from '../../modules/local/rgi'  addParams( options: [:] )
 include { MOB_RECON } from '../../modules/local/mobsuite'  addParams( options: [:] )
-
-// Usage pattern from nf-core/rnaseq: Empty dummy file for optional inputs
-ch_dummy_input = file("$projectDir/assets/dummy_file.txt", checkIfExists: true)
-
 
 workflow ANNOTATE_ASSEMBLIES {
     take:

@@ -24,14 +24,14 @@ process GET_VFDB{
 
 process GET_BACMET{
     output:
-    path "BacMet2_predicted_database.fasta.gz", emit: bacmet
+    path "BacMet2_EXP_database.fasta", emit: bacmet
 
     script:
     """
-    curl http://bacmet.biomedicine.gu.se/download/BacMet2_predicted_database.fasta.gz --output BacMet2_predicted_database.fasta.gz
+    curl http://bacmet.biomedicine.gu.se/download/BacMet2_EXP_database.fasta --output BacMet2_EXP_database.fasta
     """
     stub:
     """
-    touch BacMet2_predicted_database.fasta.gz
+    touch BacMet2_EXP_database.fasta
     """
 }

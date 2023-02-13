@@ -1,0 +1,48 @@
+name: nf-core CI
+# This workflow runs the nf-test test suite
+on:
+  push:
+  pull_request:
+  release:
+    types: [published]
+
+env:
+  NXF_ANSI_LOG: false
+
+jobs:
+  test:
+    name: Run ${{ matrix.profile }} pipeline test
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        NXF_VER:
+          - "latest-everything"
+        profile: ["docker"] # TODO , "singularity", "conda"]
+    steps:
+      - name: Check out pipeline code
+        uses: actions/checkout@v2
+
+      - uses: actions/cache@v2
+        with:
+          path: /usr/local/bin/nextflow
+          key: ${{ runner.os }}
+          restore-keys: |
+            ${{ runner.os }}-nextflow-
+
+      - name: Install Nextflow
+        uses: nf-core/setup-nextflow@v1
+        with:
+          version: "${{ matrix.NXF_VER }}"
+
+      - name: Install nf-test
+        run: |
+          wget -qO- https://code.askimed.com/install/nf-test | bash
+          sudo mv nf-test /usr/local/bin/
+
+      - name: Run nf-test
+        run: nf-test test --profile=${{ matrix.profile }} tests/**/**/*nf.test --tap=test.tap
+
+      - uses: pcolby/tap-summary@v1
+        with:
+          path: >-
+            test.tap
