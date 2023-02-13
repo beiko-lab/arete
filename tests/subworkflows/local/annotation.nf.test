@@ -4,7 +4,7 @@ nextflow_workflow {
     script "subworkflows/local/annotation.nf"
     workflow "ANNOTATE_ASSEMBLIES"
 
-    test("Should run without failures") {
+    test("Annotation subworkflow runs without failures") {
 
         when {
             params {
@@ -29,6 +29,7 @@ nextflow_workflow {
             assert workflow.success
             assert workflow.trace.tasks().size() == 13
             assert workflow.out.gff.size() == 1
+            assert workflow.out.gff.get(0).get(1) ==~ ".*/SRR14022735.gff"
         }
 
     }
