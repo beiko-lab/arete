@@ -1,4 +1,4 @@
-name: nf-core CI
+name: nf-test CI
 # This workflow runs the nf-test test suite
 on:
   push:
