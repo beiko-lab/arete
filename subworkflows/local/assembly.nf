@@ -41,7 +41,7 @@ workflow ASSEMBLE_SHORTREADS{
         */
         ch_software_versions = Channel.empty()
         FASTQC(reads)
-        ch_software_versions = ch_software_versions.mix(FASTQC.out.version.first().ifEmpty(null))
+        ch_software_versions = ch_software_versions.mix(FASTQC.out.versions.first().ifEmpty(null))
 
         /*
         * MODULE: Trim Reads
@@ -53,7 +53,7 @@ workflow ASSEMBLE_SHORTREADS{
         * MODULE: Run FastQC on trimmed reads
         */
         TRIM_FASTQC(FASTP.out.reads)
-        ch_software_versions = ch_software_versions.mix(TRIM_FASTQC.out.version.first().ifEmpty(null))
+        ch_software_versions = ch_software_versions.mix(TRIM_FASTQC.out.versions.first().ifEmpty(null))
 
         ///*
         // * MODULE: Run Kraken2
