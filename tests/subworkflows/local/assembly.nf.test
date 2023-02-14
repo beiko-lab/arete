@@ -27,9 +27,9 @@ nextflow_workflow {
             assert workflow.success
             assert workflow.trace.tasks().size() == 5
             assert workflow.out.assemblies.size() == 1
-            assert workflow.out.assemblies.get(0).get(1) ==~ ".*/NZ_CP013325.scaffolds.fa.gz"
+            assert workflow.out.assemblies.get(0).get(1) ==~ ".*/NZ_CP013325.scaffolds.fa"
             assert workflow.out.scaffolds.size() == 1
-            assert workflow.out.scaffolds.get(0).get(1) ==~ ".*/NZ_CP013325.scaffolds.fa.gz"
+            assert workflow.out.scaffolds.get(0).get(1) ==~ ".*/NZ_CP013325.scaffolds.fa"
         }
 
     }
