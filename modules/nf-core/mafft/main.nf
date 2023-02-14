@@ -2,7 +2,7 @@ process MAFFT {
     tag "$meta.id"
     label 'process_high'
 
-    conda "bioconda::mafft=7.508"
+    conda (params.enable_conda ? "bioconda::mafft=7.508" : null)
     container "${ workflow.containerEngine == 'singularity' && !task.ext.singularity_pull_docker_container ?
         'https://depot.galaxyproject.org/singularity/mafft:7.508--hec16e2b_0':
         'quay.io/biocontainers/mafft:7.508--hec16e2b_0' }"

@@ -1,7 +1,7 @@
 process SNPSITES {
     label 'process_medium'
 
-    conda "bioconda::snp-sites=2.5.1"
+    conda (params.enable_conda ? "bioconda::snp-sites=2.5.1" : null)
     container "${ workflow.containerEngine == 'singularity' && !task.ext.singularity_pull_docker_container ?
         'https://depot.galaxyproject.org/singularity/snp-sites:2.5.1--hed695b0_0' :
         'quay.io/biocontainers/snp-sites:2.5.1--hed695b0_0' }"
