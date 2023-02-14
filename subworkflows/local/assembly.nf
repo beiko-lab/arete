@@ -70,7 +70,7 @@ workflow ASSEMBLE_SHORTREADS{
 
             KRAKEN2_RUN(FASTP.out.reads, ch_kraken_db, true, true)
             ch_software_versions = ch_software_versions.mix(KRAKEN2_RUN.out.versions.first().ifEmpty(null))
-            ch_multiqc_files = ch_multiqc_files.mix(KRAKEN2_RUN.out.txt.collect{it[1]}.ifEmpty([]))
+            ch_multiqc_files = ch_multiqc_files.mix(KRAKEN2_RUN.out.report.collect{it[1]}.ifEmpty([]))
         }
         /////////////////// ASSEMBLE /////////////////////////////
         /*
