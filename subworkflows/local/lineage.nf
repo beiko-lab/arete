@@ -5,8 +5,6 @@ def summary_params = NfcoreSchema.paramsSummaryMap(workflow, params)
 ========================================================================================
 */
 
-def modules = params.modules.clone()
-
 //
 // MODULE: Installed directly from nf-core/modules
 //

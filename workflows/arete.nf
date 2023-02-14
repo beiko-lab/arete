@@ -35,9 +35,6 @@ ch_multiqc_logo            = params.multiqc_logo   ? Channel.fromPath( params.mu
 ========================================================================================
 */
 
-// Don't overwrite global params.modules, create a copy instead and use that within the main script.
-def modules = params.modules.clone()
-
 
 //
 // SUBWORKFLOW: Consisting of a mix of local and nf-core/modules
