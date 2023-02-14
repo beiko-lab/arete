@@ -1,0 +1,14 @@
+Changes in module 'nf-core/iqtree'
+--- modules/nf-core/iqtree/main.nf
++++ modules/nf-core/iqtree/main.nf
+@@ -2,7 +2,7 @@
+     tag "$alignment"
+     label 'process_medium'
+ 
+-    conda "bioconda::iqtree=2.1.4_beta"
++    conda (params.enable_conda ? "bioconda::iqtree=2.1.4_beta" : null)
+     container "${ workflow.containerEngine == 'singularity' && !task.ext.singularity_pull_docker_container ?
+         'https://depot.galaxyproject.org/singularity/iqtree:2.1.4_beta--hdcc8f71_0' :
+         'quay.io/biocontainers/iqtree:2.1.4_beta--hdcc8f71_0' }"
+
+************************************************************

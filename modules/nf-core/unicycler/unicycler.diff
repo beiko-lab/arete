@@ -1,0 +1,35 @@
+Changes in module 'nf-core/unicycler'
+--- modules/nf-core/unicycler/main.nf
++++ modules/nf-core/unicycler/main.nf
+@@ -2,7 +2,7 @@
+     tag "$meta.id"
+     label 'process_high'
+ 
+-    conda "bioconda::unicycler=0.4.8"
++    conda (params.enable_conda ? "bioconda::unicycler=0.4.8" : null)
+     container "${ workflow.containerEngine == 'singularity' && !task.ext.singularity_pull_docker_container ?
+         'https://depot.galaxyproject.org/singularity/unicycler:0.4.8--py38h8162308_3' :
+         'quay.io/biocontainers/unicycler:0.4.8--py38h8162308_3' }"
+@@ -11,8 +11,8 @@
+     tuple val(meta), path(shortreads), path(longreads)
+ 
+     output:
+-    tuple val(meta), path('*.scaffolds.fa.gz'), emit: scaffolds
+-    tuple val(meta), path('*.assembly.gfa.gz'), emit: gfa
++    tuple val(meta), path('*.scaffolds.fa'), emit: scaffolds
++    tuple val(meta), path('*.assembly.gfa'), emit: gfa
+     tuple val(meta), path('*.log')            , emit: log
+     path  "versions.yml"                      , emit: versions
+ 
+@@ -33,9 +33,7 @@
+         --out ./
+ 
+     mv assembly.fasta ${prefix}.scaffolds.fa
+-    gzip -n ${prefix}.scaffolds.fa
+     mv assembly.gfa ${prefix}.assembly.gfa
+-    gzip -n ${prefix}.assembly.gfa
+     mv unicycler.log ${prefix}.unicycler.log
+ 
+     cat <<-END_VERSIONS > versions.yml
+
+************************************************************
