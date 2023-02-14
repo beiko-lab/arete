@@ -10,10 +10,10 @@ def modules = params.modules.clone()
 //
 // MODULE: Installed directly from nf-core/modules
 //
-include { IQTREE } from '../../modules/nf-core/modules/iqtree/main'  addParams( options: [:] )
-include { PANAROO_RUN } from '../../modules/nf-core/modules/panaroo/main' addParams( options: [args:'-a core'])
-include { SNPSITES } from '../../modules/nf-core/modules/snpsites/main' addParams( options: [:] )
-include { FASTTREE } from '../../modules/nf-core/modules/fasttree/main' addParams( options: [:] )
+include { IQTREE } from '../../modules/nf-core/iqtree/main'
+include { PANAROO_RUN } from '../../modules/nf-core/panaroo/main'
+include { SNPSITES } from '../../modules/nf-core/snpsites/main'
+include { FASTTREE } from '../../modules/nf-core/fasttree/main'
 
 //
 // MODULE: Local to the pipeline
