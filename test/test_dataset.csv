@@ -1,5 +1,5 @@
 sample,fastq_1,fastq_2
-test_1,test/NZ_CP013325_1.fq.gz,test/NZ_CP013325_2.fq.gz 
-test_2,test/NZ_CP013325_1.fq.gz,test/NZ_CP013325_2.fq.gz 
-test_3,test/NZ_CP013325_1.fq.gz,test/NZ_CP013325_2.fq.gz 
-test_4,test/NZ_CP013325_1.fq.gz,test/NZ_CP013325_2.fq.gz 
+test_1,https://github.com/beiko-lab/arete/raw/master/test/NZ_CP013325_1.fq.gz,https://github.com/beiko-lab/arete/raw/master/test/NZ_CP013325_2.fq.gz
+test_2,https://github.com/beiko-lab/arete/raw/master/test/NZ_CP013325_1.fq.gz,https://github.com/beiko-lab/arete/raw/master/test/NZ_CP013325_2.fq.gz
+test_3,https://github.com/beiko-lab/arete/raw/master/test/NZ_CP013325_1.fq.gz,https://github.com/beiko-lab/arete/raw/master/test/NZ_CP013325_2.fq.gz
+test_4,https://github.com/beiko-lab/arete/raw/master/test/NZ_CP013325_1.fq.gz,https://github.com/beiko-lab/arete/raw/master/test/NZ_CP013325_2.fq.gz
