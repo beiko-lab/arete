@@ -215,7 +215,7 @@ workflow ARETE {
         ch_multiqc_logo
     )
     multiqc_report       = MULTIQC.out.report.toList()
-    ch_software_versions = ch_software_versions.mix(MULTIQC.out.version.ifEmpty(null))
+    ch_software_versions = ch_software_versions.mix(MULTIQC.out.versions.ifEmpty(null))
 
 }
 
@@ -277,7 +277,7 @@ workflow ASSEMBLY {
         ch_multiqc_logo
     )
     multiqc_report       = MULTIQC.out.report.toList()
-    ch_software_versions = ch_software_versions.mix(MULTIQC.out.version.ifEmpty(null))
+    ch_software_versions = ch_software_versions.mix(MULTIQC.out.versions.ifEmpty(null))
 
 }
 
@@ -401,7 +401,7 @@ workflow ANNOTATION {
         ch_multiqc_logo
     )
     multiqc_report       = MULTIQC.out.report.toList()
-    ch_software_versions = ch_software_versions.mix(MULTIQC.out.version.ifEmpty(null))
+    ch_software_versions = ch_software_versions.mix(MULTIQC.out.versions.ifEmpty(null))
 
 }
 
@@ -467,7 +467,7 @@ workflow QUALITYCHECK{
         ch_multiqc_logo
     )
     multiqc_report       = MULTIQC.out.report.toList()
-    ch_software_versions = ch_software_versions.mix(MULTIQC.out.version.ifEmpty(null))
+    ch_software_versions = ch_software_versions.mix(MULTIQC.out.versions.ifEmpty(null))
 
     // Get unique list of files containing version information
     ch_software_versions
