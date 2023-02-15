@@ -44,4 +44,16 @@ process CHECKM_LINEAGEWF {
         checkm: \$( checkm 2>&1 | grep '...:::' | sed 's/.*CheckM v//;s/ .*//' )
     END_VERSIONS
     """
+
+    stub:
+    prefix   = task.ext.prefix ?: "${meta.id}"
+    """
+    mkdir ${prefix}
+    touch ${prefix}/lineage.ms
+    touch ${prefix}.tsv
+    cat <<-END_VERSIONS > versions.yml
+    "${task.process}":
+        checkm: \$( checkm 2>&1 | grep '...:::' | sed 's/.*CheckM v//;s/ .*//' )
+    END_VERSIONS
+    """
 }

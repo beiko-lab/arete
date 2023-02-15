@@ -10,5 +10,18 @@ Changes in module 'nf-core/iqtree'
      container "${ workflow.containerEngine == 'singularity' && !task.ext.singularity_pull_docker_container ?
          'https://depot.galaxyproject.org/singularity/iqtree:2.1.4_beta--hdcc8f71_0' :
          'quay.io/biocontainers/iqtree:2.1.4_beta--hdcc8f71_0' }"
+@@ -36,4 +36,12 @@
+         iqtree: \$(echo \$(iqtree -version 2>&1) | sed 's/^IQ-TREE multicore version //;s/ .*//')
+     END_VERSIONS
+     """
++    stub:
++    """
++    touch faketree.treefile
++    cat <<-END_VERSIONS > versions.yml
++    "${task.process}":
++        iqtree: \$(echo \$(iqtree -version 2>&1) | sed 's/^IQ-TREE multicore version //;s/ .*//')
++    E
++    """
+ }
 
 ************************************************************

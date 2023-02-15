@@ -36,4 +36,12 @@ process IQTREE {
         iqtree: \$(echo \$(iqtree -version 2>&1) | sed 's/^IQ-TREE multicore version //;s/ .*//')
     END_VERSIONS
     """
+    stub:
+    """
+    touch faketree.treefile
+    cat <<-END_VERSIONS > versions.yml
+    "${task.process}":
+        iqtree: \$(echo \$(iqtree -version 2>&1) | sed 's/^IQ-TREE multicore version //;s/ .*//')
+    E
+    """
 }

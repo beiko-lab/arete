@@ -100,4 +100,16 @@ process FASTP {
         END_VERSIONS
         """
     }
+    stub:
+    def prefix = task.ext.prefix ?: "${meta.id}"
+    """
+    touch ${prefix}.trim.fastq.gz
+    touch ${prefix}.trim.fastp.html
+    touch ${prefix}.trim.fastp.json
+    touch ${prefix}.trim.fastp.log
+    cat <<-END_VERSIONS > versions.yml
+    "${task.process}":
+        fastp: \$(fastp --version 2>&1 | sed -e "s/fastp //g")
+    END_VERSIONS
+    """
 }

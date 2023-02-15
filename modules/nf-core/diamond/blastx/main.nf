@@ -65,4 +65,13 @@ process DIAMOND_BLASTX {
         diamond: \$(diamond --version 2>&1 | tail -n 1 | sed 's/^diamond version //')
     END_VERSIONS
     """
+    stub:
+    def prefix = task.ext.prefix ?: "${meta.id}"
+    """
+    touch ${prefix}.txt
+    cat <<-END_VERSIONS > versions.yml
+    "${task.process}":
+        diamond: \$(diamond --version 2>&1 | tail -n 1 | sed 's/^diamond version //')
+    END_VERSIONS
+    """
 }

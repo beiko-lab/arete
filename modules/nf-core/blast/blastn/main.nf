@@ -34,4 +34,13 @@ process BLAST_BLASTN {
         blast: \$(blastn -version 2>&1 | sed 's/^.*blastn: //; s/ .*\$//')
     END_VERSIONS
     """
+    stub:
+    def prefix = task.ext.prefix ?: "${meta.id}"
+    """
+    touch ${prefix}.blastn.txt
+    cat <<-END_VERSIONS > versions.yml
+    "${task.process}":
+        blast: \$(blastn -version 2>&1 | sed 's/^.*blastn: //; s/ .*\$//')
+    END_VERSIONS
+    """
 }

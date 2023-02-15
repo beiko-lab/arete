@@ -10,5 +10,20 @@ Changes in module 'nf-core/snpsites'
      container "${ workflow.containerEngine == 'singularity' && !task.ext.singularity_pull_docker_container ?
          'https://depot.galaxyproject.org/singularity/snp-sites:2.5.1--hed695b0_0' :
          'quay.io/biocontainers/snp-sites:2.5.1--hed695b0_0' }"
+@@ -35,4 +35,14 @@
+         snpsites: \$(snp-sites -V 2>&1 | sed 's/snp-sites //')
+     END_VERSIONS
+     """
++    stub:
++    """
++    touch snpsites_stub.fas
++    echo acgt > snpsites_stub.sites.txt
++    CONSTANT_SITES=\$(cat snpsites_stub.sites.txt)
++    cat <<-END_VERSIONS > versions.yml
++    "${task.process}":
++        snpsites: \$(snp-sites -V 2>&1 | sed 's/snp-sites //')
++    END_VERSIONS
++    """
+ }
 
 ************************************************************

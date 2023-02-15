@@ -42,4 +42,14 @@ process QUAST {
         quast: \$(quast.py --version 2>&1 | sed 's/^.*QUAST v//; s/ .*\$//')
     END_VERSIONS
     """
+    stub:
+    def prefix   = task.ext.prefix ?: 'quast'
+    """
+    mkdir ${prefix}
+    touch ${prefix}_quast_stub.tsv
+    cat <<-END_VERSIONS > versions.yml
+    "${task.process}":
+        quast: \$(quast.py --version 2>&1 | sed 's/^.*QUAST v//; s/ .*\$//')
+    END_VERSIONS
+    """
 }
