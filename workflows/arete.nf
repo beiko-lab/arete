@@ -210,9 +210,9 @@ workflow ARETE {
 
     MULTIQC(
         ch_multiqc_files.collect(),
-        ch_multiqc_config,
+        ch_multiqc_config.collect().ifEmpty([]),
         ch_multiqc_custom_config.collect().ifEmpty([]),
-        ch_multiqc_logo
+        ch_multiqc_logo.collect().ifEmpty([])
     )
     multiqc_report       = MULTIQC.out.report.toList()
     ch_software_versions = ch_software_versions.mix(MULTIQC.out.versions.ifEmpty(null))
@@ -272,9 +272,9 @@ workflow ASSEMBLY {
 
     MULTIQC(
         ch_multiqc_files.collect(),
-        ch_multiqc_config,
+        ch_multiqc_config.collect().ifEmpty([]),
         ch_multiqc_custom_config.collect().ifEmpty([]),
-        ch_multiqc_logo
+        ch_multiqc_logo.collect().ifEmpty([])
     )
     multiqc_report       = MULTIQC.out.report.toList()
     ch_software_versions = ch_software_versions.mix(MULTIQC.out.versions.ifEmpty(null))
@@ -396,9 +396,9 @@ workflow ANNOTATION {
 
     MULTIQC(
         ch_multiqc_files.collect(),
-        ch_multiqc_config,
+        ch_multiqc_config.collect().ifEmpty([]),
         ch_multiqc_custom_config.collect().ifEmpty([]),
-        ch_multiqc_logo
+        ch_multiqc_logo.collect().ifEmpty([])
     )
     multiqc_report       = MULTIQC.out.report.toList()
     ch_software_versions = ch_software_versions.mix(MULTIQC.out.versions.ifEmpty(null))
@@ -458,13 +458,13 @@ workflow QUALITYCHECK{
     QUAST(ch_to_quast, ch_reference_genome, [], use_reference_genome, false)
     ch_software_versions = ch_software_versions.mix(QUAST.out.versions.first().ifEmpty(null))
 
-    ch_multiqc_files = ch_multiqc_files.mix(Channel.from(ch_multiqc_config))
     ch_multiqc_files = ch_multiqc_files.mix(QUAST.out.tsv.collect())
+
     MULTIQC(
         ch_multiqc_files.collect(),
-        ch_multiqc_config,
+        ch_multiqc_config.collect().ifEmpty([]),
         ch_multiqc_custom_config.collect().ifEmpty([]),
-        ch_multiqc_logo
+        ch_multiqc_logo.collect().ifEmpty([])
     )
     multiqc_report       = MULTIQC.out.report.toList()
     ch_software_versions = ch_software_versions.mix(MULTIQC.out.versions.ifEmpty(null))
