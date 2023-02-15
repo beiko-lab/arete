@@ -430,10 +430,10 @@ workflow QUALITYCHECK{
     if (!params.skip_kraken) {
         if(db_cache) {
             GET_DB_CACHE(db_cache)
-            KRAKEN2_RUN(ANNOTATION_INPUT_CHECK.out.genomes, GET_DB_CACHE.out.minikraken, true, true)
+            KRAKEN2_RUN(ANNOTATION_INPUT_CHECK.out.genomes, GET_DB_CACHE.out.minikraken, false, true)
         } else {
             KRAKEN2_DB()
-            KRAKEN2_RUN(ANNOTATION_INPUT_CHECK.out.genomes, KRAKEN2_DB.out.minikraken, true, true)
+            KRAKEN2_RUN(ANNOTATION_INPUT_CHECK.out.genomes, KRAKEN2_DB.out.minikraken, false, true)
         }
 
         ch_software_versions = ch_software_versions.mix(KRAKEN2_RUN.out.versions.first().ifEmpty(null))
