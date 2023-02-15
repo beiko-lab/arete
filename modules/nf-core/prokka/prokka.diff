@@ -1,0 +1,40 @@
+Changes in module 'nf-core/prokka'
+--- modules/nf-core/prokka/main.nf
++++ modules/nf-core/prokka/main.nf
+@@ -2,7 +2,7 @@
+     tag "$meta.id"
+     label 'process_low'
+ 
+-    conda "bioconda::prokka=1.14.6"
++    conda (params.enable_conda ? "bioconda::prokka=1.14.6" : null)
+     container "${ workflow.containerEngine == 'singularity' && !task.ext.singularity_pull_docker_container ?
+         'https://depot.galaxyproject.org/singularity/prokka%3A1.14.6--pl5321hdfd78af_4' :
+         'quay.io/biocontainers/prokka:1.14.6--pl5321hdfd78af_4' }"
+@@ -49,4 +49,25 @@
+         prokka: \$(echo \$(prokka --version 2>&1) | sed 's/^.*prokka //')
+     END_VERSIONS
+     """
++    stub:
++    prefix   = task.ext.prefix ?: "${meta.id}"
++    """
++    mkdir ${prefix}
++    touch ${prefix}/${prefix}_stub.err
++    touch ${prefix}/${prefix}_stub.ffn
++    touch ${prefix}/${prefix}_stub.faa
++    touch ${prefix}/${prefix}_stub.gbk
++    touch ${prefix}/${prefix}_stub.fna
++    touch ${prefix}/${prefix}_stub.fsa
++    touch ${prefix}/${prefix}_stub.gff
++    touch ${prefix}/${prefix}_stub.log
++    touch ${prefix}/${prefix}_stub.sqn
++    touch ${prefix}/${prefix}_stub.tbl
++    touch ${prefix}/${prefix}_stub.tsv
++    touch ${prefix}/${prefix}_stub.txt
++    cat <<-END_VERSIONS > versions.yml
++    "${task.process}":
++        prokka: \$(echo \$(prokka --version 2>&1) | sed 's/^.*prokka //')
++    END_VERSIONS
++    """
+ }
+
+************************************************************

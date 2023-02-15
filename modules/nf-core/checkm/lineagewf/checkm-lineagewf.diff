@@ -1,0 +1,31 @@
+Changes in module 'nf-core/checkm/lineagewf'
+--- modules/nf-core/checkm/lineagewf/main.nf
++++ modules/nf-core/checkm/lineagewf/main.nf
+@@ -2,7 +2,7 @@
+     tag "$meta.id"
+     label 'process_medium'
+ 
+-    conda "bioconda::checkm-genome=1.2.1"
++    conda (params.enable_conda ? "bioconda::checkm-genome=1.2.1" : null)
+     container "${ workflow.containerEngine == 'singularity' && !task.ext.singularity_pull_docker_container ?
+         'https://depot.galaxyproject.org/singularity/checkm-genome:1.2.1--pyhdfd78af_0' :
+         'quay.io/biocontainers/checkm-genome:1.2.1--pyhdfd78af_0' }"
+@@ -44,4 +44,16 @@
+         checkm: \$( checkm 2>&1 | grep '...:::' | sed 's/.*CheckM v//;s/ .*//' )
+     END_VERSIONS
+     """
++
++    stub:
++    prefix   = task.ext.prefix ?: "${meta.id}"
++    """
++    mkdir ${prefix}
++    touch ${prefix}/lineage.ms
++    touch ${prefix}.tsv
++    cat <<-END_VERSIONS > versions.yml
++    "${task.process}":
++        checkm: \$( checkm 2>&1 | grep '...:::' | sed 's/.*CheckM v//;s/ .*//' )
++    END_VERSIONS
++    """
+ }
+
+************************************************************

@@ -1,0 +1,29 @@
+Changes in module 'nf-core/snpsites'
+--- modules/nf-core/snpsites/main.nf
++++ modules/nf-core/snpsites/main.nf
+@@ -1,7 +1,7 @@
+ process SNPSITES {
+     label 'process_medium'
+ 
+-    conda "bioconda::snp-sites=2.5.1"
++    conda (params.enable_conda ? "bioconda::snp-sites=2.5.1" : null)
+     container "${ workflow.containerEngine == 'singularity' && !task.ext.singularity_pull_docker_container ?
+         'https://depot.galaxyproject.org/singularity/snp-sites:2.5.1--hed695b0_0' :
+         'quay.io/biocontainers/snp-sites:2.5.1--hed695b0_0' }"
+@@ -35,4 +35,14 @@
+         snpsites: \$(snp-sites -V 2>&1 | sed 's/snp-sites //')
+     END_VERSIONS
+     """
++    stub:
++    """
++    touch snpsites_stub.fas
++    echo acgt > snpsites_stub.sites.txt
++    CONSTANT_SITES=\$(cat snpsites_stub.sites.txt)
++    cat <<-END_VERSIONS > versions.yml
++    "${task.process}":
++        snpsites: \$(snp-sites -V 2>&1 | sed 's/snp-sites //')
++    END_VERSIONS
++    """
+ }
+
+************************************************************

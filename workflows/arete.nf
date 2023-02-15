@@ -25,17 +25,15 @@ for (param in checkPathParamList) { if (param) { file(param, checkIfExists: true
 ========================================================================================
 */
 
-ch_multiqc_config        = file("$projectDir/assets/multiqc_config.yaml", checkIfExists: true)
-ch_multiqc_custom_config = params.multiqc_config ? Channel.fromPath(params.multiqc_config) : Channel.empty()
+ch_multiqc_config          = Channel.fromPath("$projectDir/assets/multiqc_config.yml", checkIfExists: true)
+ch_multiqc_custom_config   = params.multiqc_config ? Channel.fromPath( params.multiqc_config, checkIfExists: true ) : Channel.empty()
+ch_multiqc_logo            = params.multiqc_logo   ? Channel.fromPath( params.multiqc_logo, checkIfExists: true ) : Channel.empty()
 
 /*
 ========================================================================================
     IMPORT LOCAL MODULES/SUBWORKFLOWS
 ========================================================================================
 */
-
-// Don't overwrite global params.modules, create a copy instead and use that within the main script.
-def modules = params.modules.clone()
 
 
 //
@@ -53,41 +51,38 @@ include { PHYLOGENOMICS } from '../subworkflows/local/phylo' addParams( options:
 ========================================================================================
 */
 
-def multiqc_options   = modules['multiqc']
-multiqc_options.args += params.multiqc_title ? Utils.joinModuleArgs(["--title \"$params.multiqc_title\""]) : ''
-
 //
 // MODULE: Installed directly from nf-core/modules
 //
-include { FASTQC  } from '../modules/nf-core/modules/fastqc/main'  addParams( options: modules['fastqc'] )
-include { MULTIQC } from '../modules/nf-core/modules/multiqc/main' addParams( options: multiqc_options   )
-include { FASTQC as TRIM_FASTQC } from '../modules/nf-core/modules/fastqc/main'  addParams( options: modules['fastqc'] )
-include { FASTP                 } from '../modules/nf-core/modules/fastp/main'  addParams( options: [:] )
-include { UNICYCLER             } from '../modules/nf-core/modules/unicycler/main'  addParams( options: [:] )
-include { QUAST                 } from '../modules/nf-core/modules/quast/main'  addParams( options: [:] )
-include { KRAKEN2_KRAKEN2 as KRAKEN2_RUN } from '../modules/nf-core/modules/kraken2/kraken2/main' addParams( options: [:] )
-include { PROKKA                } from '../modules/nf-core/modules/prokka/main' addParams( options: [:] )
+include { FASTQC  } from '../modules/nf-core/fastqc/main'
+include { MULTIQC } from '../modules/nf-core/multiqc/main'
+include { FASTQC as TRIM_FASTQC } from '../modules/nf-core/fastqc/main'
+include { FASTP                 } from '../modules/nf-core/fastp/main'
+include { UNICYCLER             } from '../modules/nf-core/unicycler/main'
+include { QUAST                 } from '../modules/nf-core/quast/main'
+include { KRAKEN2_KRAKEN2 as KRAKEN2_RUN } from '../modules/nf-core/kraken2/kraken2/main'
+include { PROKKA                } from '../modules/nf-core/prokka/main'
 include { GET_CAZYDB;
           GET_VFDB;
           GET_BACMET} from '../modules/local/blast_databases.nf'
 include { DIAMOND_MAKEDB as DIAMOND_MAKE_CAZY;
           DIAMOND_MAKEDB as DIAMOND_MAKE_VFDB;
-          DIAMOND_MAKEDB as DIAMOND_MAKE_BACMET } from '../modules/nf-core/modules/diamond/makedb/main'  addParams( options: [:] )
+          DIAMOND_MAKEDB as DIAMOND_MAKE_BACMET } from '../modules/nf-core/diamond/makedb/main'
 include { DIAMOND_BLASTX as DIAMOND_BLAST_CAZY;
           DIAMOND_BLASTX as DIAMOND_BLAST_VFDB;
-          DIAMOND_BLASTX as DIAMOND_BLAST_BACMET } from '../modules/nf-core/modules/diamond/blastx/main'  addParams( options: [args:'--evalue 1e-06 --outfmt 6 qseqid sseqid pident slen qlen length mismatch gapopen qstart qend sstart send evalue bitscore full_qseq --max-target-seqs 25 --more-sensitive'] )
-include { IQTREE } from '../modules/nf-core/modules/iqtree/main'  addParams( options: [:] )
-include { SNPSITES } from '../modules/nf-core/modules/snpsites/main' addParams( options: [:] )
-include { CHECKM_LINEAGEWF } from '../modules/nf-core/modules/checkm/lineagewf/main' addParams( options: [:] )
+          DIAMOND_BLASTX as DIAMOND_BLAST_BACMET } from '../modules/nf-core/diamond/blastx/main'
+include { IQTREE } from '../modules/nf-core/iqtree/main'
+include { SNPSITES } from '../modules/nf-core/snpsites/main'
+include { CHECKM_LINEAGEWF } from '../modules/nf-core/checkm/lineagewf/main'
 //
 // MODULE: Local to the pipeline
 //
 include { GET_SOFTWARE_VERSIONS } from '../modules/local/get_software_versions' addParams( options: [publish_files : ['tsv':'']] )
 include { RGI;
-          UPDATE_RGI_DB } from '../modules/local/rgi'  addParams( options: [:] )
-include { MOB_RECON } from '../modules/local/mobsuite'  addParams( options: [:] )
-include { KRAKEN2_DB } from '../modules/local/get_minikraken'  addParams( options: [:] )
-include { GET_DB_CACHE } from '../modules/local/get_db_cache' addParams( options: [:] )
+          UPDATE_RGI_DB } from '../modules/local/rgi'
+include { MOB_RECON } from '../modules/local/mobsuite'
+include { KRAKEN2_DB } from '../modules/local/get_minikraken'
+include { GET_DB_CACHE } from '../modules/local/get_db_cache'
 
 
 // Usage pattern from nf-core/rnaseq: Empty dummy file for optional inputs
@@ -207,17 +202,20 @@ workflow ARETE {
     //Mix QUAST results into one report file
 
     ch_multiqc_files = Channel.empty()
-    ch_multiqc_files = ch_multiqc_files.mix(Channel.from(ch_multiqc_config))
-    ch_multiqc_files = ch_multiqc_files.mix(ch_multiqc_custom_config.collect().ifEmpty([]))
     ch_multiqc_files = ch_multiqc_files.mix(ch_workflow_summary.collectFile(name: 'workflow_summary_mqc.yaml'))
     ch_multiqc_files = ch_multiqc_files.mix(GET_SOFTWARE_VERSIONS.out.yaml.collect())
     ch_multiqc_files = ch_multiqc_files.mix(ASSEMBLE_SHORTREADS.out.multiqc)
     //ch_multiqc_files = ch_multiqc_files.mix(PROKKA.out.txt.collect{it[1]}.ifEmpty([]))
     ch_multiqc_files = ch_multiqc_files.mix(ANNOTATE_ASSEMBLIES.out.multiqc)
 
-    MULTIQC(ch_multiqc_files.collect())
+    MULTIQC(
+        ch_multiqc_files.collect(),
+        ch_multiqc_config.collect().ifEmpty([]),
+        ch_multiqc_custom_config.collect().ifEmpty([]),
+        ch_multiqc_logo.collect().ifEmpty([])
+    )
     multiqc_report       = MULTIQC.out.report.toList()
-    ch_software_versions = ch_software_versions.mix(MULTIQC.out.version.ifEmpty(null))
+    ch_software_versions = ch_software_versions.mix(MULTIQC.out.versions.ifEmpty(null))
 
 }
 
@@ -268,15 +266,18 @@ workflow ASSEMBLY {
     ch_workflow_summary = Channel.value(workflow_summary)
 
     ch_multiqc_files = Channel.empty()
-    ch_multiqc_files = ch_multiqc_files.mix(Channel.from(ch_multiqc_config))
-    ch_multiqc_files = ch_multiqc_files.mix(ch_multiqc_custom_config.collect().ifEmpty([]))
     ch_multiqc_files = ch_multiqc_files.mix(ch_workflow_summary.collectFile(name: 'workflow_summary_mqc.yaml'))
     ch_multiqc_files = ch_multiqc_files.mix(ASSEMBLE_SHORTREADS.out.multiqc)
     //ch_multiqc_files = ch_multiqc_files.mix(PROKKA.out.txt.collect{it[1]}.ifEmpty([]))
 
-    MULTIQC(ch_multiqc_files.collect())
+    MULTIQC(
+        ch_multiqc_files.collect(),
+        ch_multiqc_config.collect().ifEmpty([]),
+        ch_multiqc_custom_config.collect().ifEmpty([]),
+        ch_multiqc_logo.collect().ifEmpty([])
+    )
     multiqc_report       = MULTIQC.out.report.toList()
-    ch_software_versions = ch_software_versions.mix(MULTIQC.out.version.ifEmpty(null))
+    ch_software_versions = ch_software_versions.mix(MULTIQC.out.versions.ifEmpty(null))
 
 }
 
@@ -388,16 +389,19 @@ workflow ANNOTATION {
     //Mix QUAST results into one report file
 
     ch_multiqc_files = Channel.empty()
-    ch_multiqc_files = ch_multiqc_files.mix(Channel.from(ch_multiqc_config))
-    ch_multiqc_files = ch_multiqc_files.mix(ch_multiqc_custom_config.collect().ifEmpty([]))
     ch_multiqc_files = ch_multiqc_files.mix(ch_workflow_summary.collectFile(name: 'workflow_summary_mqc.yaml'))
     ch_multiqc_files = ch_multiqc_files.mix(GET_SOFTWARE_VERSIONS.out.yaml.collect())
     //ch_multiqc_files = ch_multiqc_files.mix(PROKKA.out.txt.collect{it[1]}.ifEmpty([]))
     ch_multiqc_files = ch_multiqc_files.mix(ANNOTATE_ASSEMBLIES.out.multiqc)
 
-    MULTIQC(ch_multiqc_files.collect())
+    MULTIQC(
+        ch_multiqc_files.collect(),
+        ch_multiqc_config.collect().ifEmpty([]),
+        ch_multiqc_custom_config.collect().ifEmpty([]),
+        ch_multiqc_logo.collect().ifEmpty([])
+    )
     multiqc_report       = MULTIQC.out.report.toList()
-    ch_software_versions = ch_software_versions.mix(MULTIQC.out.version.ifEmpty(null))
+    ch_software_versions = ch_software_versions.mix(MULTIQC.out.versions.ifEmpty(null))
 
 }
 
@@ -426,19 +430,19 @@ workflow QUALITYCHECK{
     if (!params.skip_kraken) {
         if(db_cache) {
             GET_DB_CACHE(db_cache)
-            KRAKEN2_RUN(ANNOTATION_INPUT_CHECK.out.genomes, GET_DB_CACHE.out.minikraken)
+            KRAKEN2_RUN(ANNOTATION_INPUT_CHECK.out.genomes, GET_DB_CACHE.out.minikraken, false, true)
         } else {
             KRAKEN2_DB()
-            KRAKEN2_RUN(ANNOTATION_INPUT_CHECK.out.genomes, KRAKEN2_DB.out.minikraken)
+            KRAKEN2_RUN(ANNOTATION_INPUT_CHECK.out.genomes, KRAKEN2_DB.out.minikraken, false, true)
         }
 
         ch_software_versions = ch_software_versions.mix(KRAKEN2_RUN.out.versions.first().ifEmpty(null))
-        ch_multiqc_files = ch_multiqc_files.mix(KRAKEN2_RUN.out.txt.collect{it[1]}.ifEmpty([]))
+        ch_multiqc_files = ch_multiqc_files.mix(KRAKEN2_RUN.out.report.collect{it[1]}.ifEmpty([]))
     }
     /*
     * Module: CheckM Quality Check
     */
-    CHECKM_LINEAGEWF(ANNOTATION_INPUT_CHECK.out.genomes, "fna") //todo figure out a way to infer the file extension during input check
+    CHECKM_LINEAGEWF(ANNOTATION_INPUT_CHECK.out.genomes, "fna", []) //todo figure out a way to infer the file extension during input check
     ch_software_versions = ch_software_versions.mix(CHECKM_LINEAGEWF.out.versions.first().ifEmpty(null))
     /*
      * Module: QUAST quality check
@@ -454,11 +458,16 @@ workflow QUALITYCHECK{
     QUAST(ch_to_quast, ch_reference_genome, [], use_reference_genome, false)
     ch_software_versions = ch_software_versions.mix(QUAST.out.versions.first().ifEmpty(null))
 
-    ch_multiqc_files = ch_multiqc_files.mix(Channel.from(ch_multiqc_config))
     ch_multiqc_files = ch_multiqc_files.mix(QUAST.out.tsv.collect())
-    MULTIQC(ch_multiqc_files.collect())
+
+    MULTIQC(
+        ch_multiqc_files.collect(),
+        ch_multiqc_config.collect().ifEmpty([]),
+        ch_multiqc_custom_config.collect().ifEmpty([]),
+        ch_multiqc_logo.collect().ifEmpty([])
+    )
     multiqc_report       = MULTIQC.out.report.toList()
-    ch_software_versions = ch_software_versions.mix(MULTIQC.out.version.ifEmpty(null))
+    ch_software_versions = ch_software_versions.mix(MULTIQC.out.versions.ifEmpty(null))
 
     // Get unique list of files containing version information
     ch_software_versions

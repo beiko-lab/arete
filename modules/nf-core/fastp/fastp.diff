@@ -1,0 +1,31 @@
+Changes in module 'nf-core/fastp'
+--- modules/nf-core/fastp/main.nf
++++ modules/nf-core/fastp/main.nf
+@@ -2,7 +2,7 @@
+     tag "$meta.id"
+     label 'process_medium'
+ 
+-    conda "bioconda::fastp=0.23.2"
++    conda (params.enable_conda ? "bioconda::fastp=0.23.2" : null)
+     container "${ workflow.containerEngine == 'singularity' && !task.ext.singularity_pull_docker_container ?
+         'https://depot.galaxyproject.org/singularity/fastp:0.23.2--h79da9fb_0' :
+         'quay.io/biocontainers/fastp:0.23.2--h79da9fb_0' }"
+@@ -100,4 +100,16 @@
+         END_VERSIONS
+         """
+     }
++    stub:
++    def prefix = task.ext.prefix ?: "${meta.id}"
++    """
++    touch ${prefix}.trim.fastq.gz
++    touch ${prefix}.trim.fastp.html
++    touch ${prefix}.trim.fastp.json
++    touch ${prefix}.trim.fastp.log
++    cat <<-END_VERSIONS > versions.yml
++    "${task.process}":
++        fastp: \$(fastp --version 2>&1 | sed -e "s/fastp //g")
++    END_VERSIONS
++    """
+ }
+
+************************************************************

@@ -1,24 +1,24 @@
 //
 // MODULE: Installed directly from nf-core/modules
 //
-include { PROKKA                } from '../../modules/nf-core/modules/prokka/main' addParams( options: [:] )
-include { BAKTA } from '../../modules/nf-core/modules/bakta/main' addParams( options: [:] )
+include { PROKKA                } from '../../modules/nf-core/prokka/main'
+include { BAKTA } from '../../modules/nf-core/bakta/main'
 include { GET_CAZYDB;
           GET_VFDB;
           GET_BACMET} from '../../modules/local/blast_databases.nf'
 include { DIAMOND_MAKEDB as DIAMOND_MAKE_CAZY;
           DIAMOND_MAKEDB as DIAMOND_MAKE_VFDB;
-          DIAMOND_MAKEDB as DIAMOND_MAKE_BACMET } from '../../modules/nf-core/modules/diamond/makedb/main'  addParams( options: [:] )
+          DIAMOND_MAKEDB as DIAMOND_MAKE_BACMET } from '../../modules/nf-core/diamond/makedb/main'
 include { DIAMOND_BLASTX as DIAMOND_BLAST_CAZY;
           DIAMOND_BLASTX as DIAMOND_BLAST_VFDB;
-          DIAMOND_BLASTX as DIAMOND_BLAST_BACMET } from '../../modules/nf-core/modules/diamond/blastx/main'  addParams( options: [args:'--evalue 1e-06 --outfmt 6 qseqid sseqid pident slen qlen length mismatch gapopen qstart qend sstart send evalue bitscore full_qseq --max-target-seqs 25 --more-sensitive'] )
+          DIAMOND_BLASTX as DIAMOND_BLAST_BACMET } from '../../modules/nf-core/diamond/blastx/main'
 //
 // MODULE: Local to the pipeline
 //
-include { GET_SOFTWARE_VERSIONS } from '../../modules/local/get_software_versions' addParams( options: [publish_files : ['tsv':'']] )
+include { GET_SOFTWARE_VERSIONS } from '../../modules/local/get_software_versions'
 include { RGI;
-          UPDATE_RGI_DB } from '../../modules/local/rgi'  addParams( options: [:] )
-include { MOB_RECON } from '../../modules/local/mobsuite'  addParams( options: [:] )
+          UPDATE_RGI_DB } from '../../modules/local/rgi'
+include { MOB_RECON } from '../../modules/local/mobsuite'
 
 workflow ANNOTATE_ASSEMBLIES {
     take:
@@ -123,15 +123,16 @@ workflow ANNOTATE_ASSEMBLIES {
         /*
         * Run DIAMOND blast annotation with databases
         */
+        def blast_columns = "qseqid sseqid pident slen qlen length mismatch gapopen qstart qend sstart send evalue bitscore full_qseq"
         DIAMOND_MAKE_CAZY(ch_cazy_db)
         ch_software_versions = ch_software_versions.mix(DIAMOND_MAKE_CAZY.out.versions.ifEmpty(null))
-        DIAMOND_BLAST_CAZY(ch_ffn_files, DIAMOND_MAKE_CAZY.out.db, "CAZYDB")
+        DIAMOND_BLAST_CAZY(ch_ffn_files, DIAMOND_MAKE_CAZY.out.db, "txt", blast_columns)
 
         DIAMOND_MAKE_VFDB(ch_vfdb)
-        DIAMOND_BLAST_VFDB(ch_ffn_files, DIAMOND_MAKE_VFDB.out.db, "VFDB")
+        DIAMOND_BLAST_VFDB(ch_ffn_files, DIAMOND_MAKE_VFDB.out.db, "txt", blast_columns)
 
         DIAMOND_MAKE_BACMET(ch_bacmet_db)
-        DIAMOND_BLAST_BACMET(ch_ffn_files, DIAMOND_MAKE_BACMET.out.db, "BACMET")
+        DIAMOND_BLAST_BACMET(ch_ffn_files, DIAMOND_MAKE_BACMET.out.db, "txt", blast_columns)
 
         ch_multiqc_files = Channel.empty()
         if(!bakta_db){

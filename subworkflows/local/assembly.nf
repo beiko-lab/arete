@@ -2,14 +2,14 @@
 // MODULE: Installed directly from nf-core/modules
 //
 
-include { FASTQC  } from '../../modules/nf-core/modules/fastqc/main'  addParams( options: [:]  )
-include { FASTQC as TRIM_FASTQC } from '../../modules/nf-core/modules/fastqc/main'  addParams( options: [:]  )
-include { FASTP                 } from '../../modules/nf-core/modules/fastp/main'  addParams( options: [:] )
-include { UNICYCLER             } from '../../modules/nf-core/modules/unicycler/main'  addParams( options: [:] )
-include { KRAKEN2_KRAKEN2 as KRAKEN2_RUN } from '../../modules/nf-core/modules/kraken2/kraken2/main' addParams( options: [:] )
+include { FASTQC  } from '../../modules/nf-core/fastqc/main'
+include { FASTQC as TRIM_FASTQC } from '../../modules/nf-core/fastqc/main'
+include { FASTP                 } from '../../modules/nf-core/fastp/main'
+include { UNICYCLER             } from '../../modules/nf-core/unicycler/main'
+include { KRAKEN2_KRAKEN2 as KRAKEN2_RUN } from '../../modules/nf-core/kraken2/kraken2/main'
 
-include { QUAST                 } from '../../modules/nf-core/modules/quast/main'  addParams( options: [:] )
-include { CHECKM_LINEAGEWF } from '../../modules/nf-core/modules/checkm/lineagewf/main' addParams( options: [:] )
+include { QUAST                 } from '../../modules/nf-core/quast/main'
+include { CHECKM_LINEAGEWF } from '../../modules/nf-core/checkm/lineagewf/main'
 
 //
 // MODULE: Local to the pipeline
@@ -40,20 +40,20 @@ workflow ASSEMBLE_SHORTREADS{
         * MODULE: Run FastQC
         */
         ch_software_versions = Channel.empty()
-        FASTQC(reads, "raw_fastqc")
-        ch_software_versions = ch_software_versions.mix(FASTQC.out.version.first().ifEmpty(null))
+        FASTQC(reads)
+        ch_software_versions = ch_software_versions.mix(FASTQC.out.versions.first().ifEmpty(null))
 
         /*
         * MODULE: Trim Reads
         */
-        FASTP(reads, false, false)
+        FASTP(reads, [], false, false)
         ch_software_versions = ch_software_versions.mix(FASTP.out.versions.first().ifEmpty(null))
 
         /*
         * MODULE: Run FastQC on trimmed reads
         */
-        TRIM_FASTQC(FASTP.out.reads, "trim_fastqc")
-        ch_software_versions = ch_software_versions.mix(TRIM_FASTQC.out.version.first().ifEmpty(null))
+        TRIM_FASTQC(FASTP.out.reads)
+        ch_software_versions = ch_software_versions.mix(TRIM_FASTQC.out.versions.first().ifEmpty(null))
 
         ///*
         // * MODULE: Run Kraken2
@@ -68,9 +68,9 @@ workflow ASSEMBLE_SHORTREADS{
             }
 
 
-            KRAKEN2_RUN(FASTP.out.reads, ch_kraken_db)
+            KRAKEN2_RUN(FASTP.out.reads, ch_kraken_db, true, true)
             ch_software_versions = ch_software_versions.mix(KRAKEN2_RUN.out.versions.first().ifEmpty(null))
-            ch_multiqc_files = ch_multiqc_files.mix(KRAKEN2_RUN.out.txt.collect{it[1]}.ifEmpty([]))
+            ch_multiqc_files = ch_multiqc_files.mix(KRAKEN2_RUN.out.report.collect{it[1]}.ifEmpty([]))
         }
         /////////////////// ASSEMBLE /////////////////////////////
         /*

@@ -1,67 +1,133 @@
 {
-    "name": "ARETE",
-    "homePage": "https://github.com/fmaguire/arete",
+    "name": "beiko-lab/ARETE",
+    "homePage": "https://github.com/beiko-lab/arete",
     "repos": {
-        "nf-core/modules": {
-            "bakta": {
-                "git_sha": "dfbb0bc17cb6799892e1d4d2de2f4e08abae92b6"
+        "https://github.com/nf-core/modules.git": {
+            "modules": {
+                "nf-core": {
+                    "bakta": {
+                        "branch": "master",
+                        "git_sha": "ade45f05a2659b5c130a483e09f50b7f33d075b2",
+                        "installed_by": ["modules"]
+                    },
+                    "blast/blastn": {
+                        "branch": "master",
+                        "git_sha": "c8e35eb2055c099720a75538d1b8adb3fb5a464c",
+                        "installed_by": ["modules"],
+                        "patch": "modules/nf-core/blast/blastn/blast-blastn.diff"
+                    },
+                    "blast/makeblastdb": {
+                        "branch": "master",
+                        "git_sha": "c8e35eb2055c099720a75538d1b8adb3fb5a464c",
+                        "installed_by": ["modules"],
+                        "patch": "modules/nf-core/blast/makeblastdb/blast-makeblastdb.diff"
+                    },
+                    "checkm/lineagewf": {
+                        "branch": "master",
+                        "git_sha": "c8e35eb2055c099720a75538d1b8adb3fb5a464c",
+                        "installed_by": ["modules"],
+                        "patch": "modules/nf-core/checkm/lineagewf/checkm-lineagewf.diff"
+                    },
+                    "diamond/blastp": {
+                        "branch": "master",
+                        "git_sha": "c8e35eb2055c099720a75538d1b8adb3fb5a464c",
+                        "installed_by": ["modules"],
+                        "patch": "modules/nf-core/diamond/blastp/diamond-blastp.diff"
+                    },
+                    "diamond/blastx": {
+                        "branch": "master",
+                        "git_sha": "c8e35eb2055c099720a75538d1b8adb3fb5a464c",
+                        "installed_by": ["modules"],
+                        "patch": "modules/nf-core/diamond/blastx/diamond-blastx.diff"
+                    },
+                    "diamond/makedb": {
+                        "branch": "master",
+                        "git_sha": "c8e35eb2055c099720a75538d1b8adb3fb5a464c",
+                        "installed_by": ["modules"],
+                        "patch": "modules/nf-core/diamond/makedb/diamond-makedb.diff"
+                    },
+                    "fastp": {
+                        "branch": "master",
+                        "git_sha": "c8e35eb2055c099720a75538d1b8adb3fb5a464c",
+                        "installed_by": ["modules"],
+                        "patch": "modules/nf-core/fastp/fastp.diff"
+                    },
+                    "fastqc": {
+                        "branch": "master",
+                        "git_sha": "c8e35eb2055c099720a75538d1b8adb3fb5a464c",
+                        "installed_by": ["modules"],
+                        "patch": "modules/nf-core/fastqc/fastqc.diff"
+                    },
+                    "fasttree": {
+                        "branch": "master",
+                        "git_sha": "c8e35eb2055c099720a75538d1b8adb3fb5a464c",
+                        "installed_by": ["modules"],
+                        "patch": "modules/nf-core/fasttree/fasttree.diff"
+                    },
+                    "gubbins": {
+                        "branch": "master",
+                        "git_sha": "c8e35eb2055c099720a75538d1b8adb3fb5a464c",
+                        "installed_by": ["modules"],
+                        "patch": "modules/nf-core/gubbins/gubbins.diff"
+                    },
+                    "iqtree": {
+                        "branch": "master",
+                        "git_sha": "c8e35eb2055c099720a75538d1b8adb3fb5a464c",
+                        "installed_by": ["modules"],
+                        "patch": "modules/nf-core/iqtree/iqtree.diff"
+                    },
+                    "kraken2/kraken2": {
+                        "branch": "master",
+                        "git_sha": "c8e35eb2055c099720a75538d1b8adb3fb5a464c",
+                        "installed_by": ["modules"],
+                        "patch": "modules/nf-core/kraken2/kraken2/kraken2-kraken2.diff"
+                    },
+                    "mafft": {
+                        "branch": "master",
+                        "git_sha": "b265b4ff6a35b133b963b4eaddfca0ffb3395236",
+                        "installed_by": ["modules"],
+                        "patch": "modules/nf-core/mafft/mafft.diff"
+                    },
+                    "multiqc": {
+                        "branch": "master",
+                        "git_sha": "ee80d14721e76e2e079103b8dcd5d57129e584ba",
+                        "installed_by": ["modules"],
+                        "patch": "modules/nf-core/multiqc/multiqc.diff"
+                    },
+                    "panaroo/run": {
+                        "branch": "master",
+                        "git_sha": "c8e35eb2055c099720a75538d1b8adb3fb5a464c",
+                        "installed_by": ["modules"],
+                        "patch": "modules/nf-core/panaroo/run/panaroo-run.diff"
+                    },
+                    "prokka": {
+                        "branch": "master",
+                        "git_sha": "c8e35eb2055c099720a75538d1b8adb3fb5a464c",
+                        "installed_by": ["modules"],
+                        "patch": "modules/nf-core/prokka/prokka.diff"
+                    },
+                    "quast": {
+                        "branch": "master",
+                        "git_sha": "c8e35eb2055c099720a75538d1b8adb3fb5a464c",
+                        "installed_by": ["modules"],
+                        "patch": "modules/nf-core/quast/quast.diff"
+                    },
+                    "snpsites": {
+                        "branch": "master",
+                        "git_sha": "c8e35eb2055c099720a75538d1b8adb3fb5a464c",
+                        "installed_by": ["modules"],
+                        "patch": "modules/nf-core/snpsites/snpsites.diff"
+                    },
+                    "unicycler": {
+                        "branch": "master",
+                        "git_sha": "c8e35eb2055c099720a75538d1b8adb3fb5a464c",
+                        "installed_by": ["modules"],
+                        "patch": "modules/nf-core/unicycler/unicycler.diff"
+                    }
+                }
             },
-            "blast/blastn": {
-                "git_sha": "3aacd46da2b221ed47aaa05c413a828538d2c2ae"
-            },
-            "blast/makeblastdb": {
-                "git_sha": "3aacd46da2b221ed47aaa05c413a828538d2c2ae"
-            },
-            "checkm/lineagewf": {
-                "git_sha": "e745e167c1020928ef20ea1397b6b4d230681b4d"
-            },
-            "diamond/blastp": {
-                "git_sha": "bd3bfe0817246082525ab93707976676b1fe208b"
-            },
-            "diamond/blastx": {
-                "git_sha": "49da8642876ae4d91128168cd0db4f1c858d7792"
-            },
-            "diamond/makedb": {
-                "git_sha": "49da8642876ae4d91128168cd0db4f1c858d7792"
-            },
-            "fastp": {
-                "git_sha": "3aacd46da2b221ed47aaa05c413a828538d2c2ae"
-            },
-            "fastqc": {
-                "git_sha": "e937c7950af70930d1f34bb961403d9d2aa81c7d"
-            },
-            "fasttree": {
-                "git_sha": "e745e167c1020928ef20ea1397b6b4d230681b4d"
-            },
-            "gubbins": {
-                "git_sha": "e745e167c1020928ef20ea1397b6b4d230681b4d"
-            },
-            "iqtree": {
-                "git_sha": "49da8642876ae4d91128168cd0db4f1c858d7792"
-            },
-            "kraken2/kraken2": {
-                "git_sha": "3aacd46da2b221ed47aaa05c413a828538d2c2ae"
-            },
-            "mafft": {
-                "git_sha": "f0800157544a82ae222931764483331a81812012"
-            },
-            "multiqc": {
-                "git_sha": "e937c7950af70930d1f34bb961403d9d2aa81c7d"
-            },
-            "panaroo/run": {
-                "git_sha": "d16f1ea4d75a179bb672c8e8aec5948d3ee5f0bd"
-            },
-            "prokka": {
-                "git_sha": "49da8642876ae4d91128168cd0db4f1c858d7792"
-            },
-            "quast": {
-                "git_sha": "3aacd46da2b221ed47aaa05c413a828538d2c2ae"
-            },
-            "snpsites": {
-                "git_sha": "3aacd46da2b221ed47aaa05c413a828538d2c2ae"
-            },
-            "unicycler": {
-                "git_sha": "171a2a2dbf6008cf00b0aac6b981f182aba968c7"
+            "subworkflows": {
+                "nf-core": {}
             }
         }
     }
