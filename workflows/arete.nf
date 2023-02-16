@@ -54,7 +54,7 @@ include { PHYLOGENOMICS } from '../subworkflows/local/phylo' addParams( options:
 //
 // MODULE: Installed directly from nf-core/modules
 //
-include { FASTQC  } from '../modules/nf-core/fastqc/main'
+include { FASTQC as RAW_FASTQC  } from '../modules/nf-core/fastqc/main'
 include { MULTIQC } from '../modules/nf-core/multiqc/main'
 include { FASTQC as TRIM_FASTQC } from '../modules/nf-core/fastqc/main'
 include { FASTP                 } from '../modules/nf-core/fastp/main'
@@ -456,7 +456,7 @@ workflow QUALITYCHECK{
         .collect()
         .set { ch_to_quast }
     QUAST(ch_to_quast, ch_reference_genome, [], use_reference_genome, false)
-    ch_software_versions = ch_software_versions.mix(QUAST.out.versions.first().ifEmpty(null))
+    ch_software_versions = ch_software_versions.mix(QUAST.out.versions.ifEmpty(null))
 
     ch_multiqc_files = ch_multiqc_files.mix(QUAST.out.tsv.collect())
 
