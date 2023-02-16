@@ -2,7 +2,7 @@
 // MODULE: Installed directly from nf-core/modules
 //
 
-include { FASTQC  } from '../../modules/nf-core/fastqc/main'
+include { FASTQC as RAW_FASTQC  } from '../../modules/nf-core/fastqc/main'
 include { FASTQC as TRIM_FASTQC } from '../../modules/nf-core/fastqc/main'
 include { FASTP                 } from '../../modules/nf-core/fastp/main'
 include { UNICYCLER             } from '../../modules/nf-core/unicycler/main'
@@ -40,8 +40,8 @@ workflow ASSEMBLE_SHORTREADS{
         * MODULE: Run FastQC
         */
         ch_software_versions = Channel.empty()
-        FASTQC(reads)
-        ch_software_versions = ch_software_versions.mix(FASTQC.out.versions.first().ifEmpty(null))
+        RAW_FASTQC(reads)
+        ch_software_versions = ch_software_versions.mix(RAW_FASTQC.out.versions.first().ifEmpty(null))
 
         /*
         * MODULE: Trim Reads
@@ -94,9 +94,9 @@ workflow ASSEMBLE_SHORTREADS{
         * Module: Evaluate Assembly
         */
         QUAST(ch_to_quast, ch_reference_genome, [], use_reference_genome, false)
-        ch_software_versions = ch_software_versions.mix(QUAST.out.versions.first().ifEmpty(null))
+        ch_software_versions = ch_software_versions.mix(QUAST.out.versions.ifEmpty(null))
 
-        ch_multiqc_files = ch_multiqc_files.mix(FASTQC.out.zip.collect{it[1]}.ifEmpty([]))
+        ch_multiqc_files = ch_multiqc_files.mix(RAW_FASTQC.out.zip.collect{it[1]}.ifEmpty([]))
         ch_multiqc_files = ch_multiqc_files.mix(TRIM_FASTQC.out.zip.collect{it[1]}.ifEmpty([]))
         ch_multiqc_files = ch_multiqc_files.mix(QUAST.out.tsv.collect())
 
