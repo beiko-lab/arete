@@ -8,16 +8,15 @@
 def summary_params = NfcoreSchema.paramsSummaryMap(workflow, params)
 
 // Validate input parameters
-// TODO redo this
-//WorkflowArete.initialise(params, log)
+WorkflowArete.initialise(params, log)
 
-// TODO nf-core: Add all file path parameters for the pipeline to the list below
+// TODO nf-core: Add all file path parameters for the pipeline to the lis below
 // Check input path parameters to see if they exist
 def checkPathParamList = [ params.input_sample_table, params.multiqc_config, params.reference_genome ]
 for (param in checkPathParamList) { if (param) { file(param, checkIfExists: true) } }
 
 // Check mandatory parameters
-//if (params.input) { ch_input = file(params.input) } else { exit 1, 'Input samplesheet not specified!' }
+if (params.input_sample_table) { ch_input = file(params.input_sample_table) } else { exit 1, 'Input samplesheet not specified!' }
 
 /*
 ========================================================================================
