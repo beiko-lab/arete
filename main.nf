@@ -23,7 +23,7 @@ nextflow.enable.dsl = 2
 ========================================================================================
 */
 // TODO new function to validate our params
-//WorkflowMain.initialise(workflow, params, log)
+WorkflowArete.initialise(workflow, params, log)
 
 /*
 ========================================================================================

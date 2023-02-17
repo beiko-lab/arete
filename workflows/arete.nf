@@ -7,9 +7,6 @@
 
 def summary_params = NfcoreSchema.paramsSummaryMap(workflow, params)
 
-// Validate input parameters
-WorkflowArete.initialise(params, log)
-
 // TODO nf-core: Add all file path parameters for the pipeline to the lis below
 // Check input path parameters to see if they exist
 def checkPathParamList = [ params.input_sample_table, params.multiqc_config, params.reference_genome ]
