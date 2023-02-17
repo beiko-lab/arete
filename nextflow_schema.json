@@ -10,9 +10,7 @@
             "type": "object",
             "fa_icon": "fas fa-terminal",
             "description": "Define where the pipeline should find input data and save output data.",
-            "required": [
-                "input_sample_table"
-            ],
+            "required": ["input_sample_table"],
             "properties": {
                 "input_sample_table": {
                     "type": "string",
@@ -34,7 +32,7 @@
                     "type": "string",
                     "default": "None",
                     "fa_icon": "fas fa-database",
-                    "help_text": "Directory where the databases are located"
+                    "description": "Directory where the databases are located"
                 },
                 "email": {
                     "type": "string",
@@ -76,7 +74,6 @@
             "properties": {
                 "skip_kraken": {
                     "type": "boolean",
-                    "default": false,
                     "description": "Don't run Kraken2 taxonomic classification"
                 }
             },
@@ -92,7 +89,7 @@
                 "use_bakta": {
                     "type": "string",
                     "default": "None",
-                    "help_text": "Location to the bakta database"
+                    "description": "Location to the bakta database"
                 }
             }
         },
@@ -105,7 +102,8 @@
             "properties": {
                 "use_full_alignment": {
                     "type": "boolean",
-                    "description": "Use full alignment"
+                    "description": "Use full alignment",
+                    "help_text": ""
                 },
                 "use_fasttree": {
                     "type": "boolean",
@@ -221,14 +219,7 @@
                     "description": "Method used to save pipeline results to output directory.",
                     "help_text": "The Nextflow `publishDir` option specifies which intermediate files should be saved to the output directory. This option tells the pipeline what method should be used to move these files. See [Nextflow docs](https://www.nextflow.io/docs/latest/process.html#publishdir) for details.",
                     "fa_icon": "fas fa-copy",
-                    "enum": [
-                        "symlink",
-                        "rellink",
-                        "link",
-                        "copy",
-                        "copyNoFollow",
-                        "move"
-                    ],
+                    "enum": ["symlink", "rellink", "link", "copy", "copyNoFollow", "move"],
                     "hidden": true
                 },
                 "email_on_fail": {
@@ -298,6 +289,12 @@
                     "hidden": true,
                     "fa_icon": "fas fa-toolbox",
                     "help_text": "This may be useful for example if you are unable to directly pull Singularity containers to run the pipeline due to http/https proxy issues."
+                },
+                "multiqc_logo": {
+                    "type": "string",
+                    "default": null,
+                    "fa_icon": "fas fa-image",
+                    "hidden": true
                 }
             }
         }
