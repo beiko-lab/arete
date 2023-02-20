@@ -14,7 +14,7 @@ workflow FILTER_ALIGNMENT {
             .filter{ id, path -> path.size() > 0 }
             .set { results }
 
-        ADD_COLUMN(result, db_name)
+        ADD_COLUMN(results, db_name)
         ADD_COLUMN.out.txt.set { diamond_added_column }
 
         diamond_added_column
