@@ -18,7 +18,7 @@ workflow FILTER_ALIGNMENT {
         ADD_COLUMN.out.txt.set { diamond_added_column }
 
         diamond_added_column
-            .collect()
+            .collect{ id, paths -> paths }
             .set { paths }
 
         CONCAT_ALIGNMENT(paths, db_name, blast_columns)
