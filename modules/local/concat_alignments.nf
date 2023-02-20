@@ -21,10 +21,10 @@ process CONCAT_ALIGNMENT {
     def prefix = task.ext.prefix ?: "${dbname}"
 
     """
-    cat ${aln} > temp.txt
-    echo ${header} > header.txt
-    tr ' ' '\\t' < header.txt > header_tabs.txt
-    cat header_tabs.txt temp.txt > ${prefix}.txt
+    cat ${aln} > temp.temp
+    echo ${header} > header.temp
+    tr ' ' '\\t' < header.temp > header_tabs.temp
+    cat header_tabs.temp temp.temp > ${prefix}.txt
     """
 
     stub:
