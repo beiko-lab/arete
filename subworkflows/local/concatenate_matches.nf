@@ -21,7 +21,9 @@ workflow FILTER_ALIGNMENT {
             .collect{ id, paths -> paths }
             .set { paths }
 
-        CONCAT_ALIGNMENT(paths, db_name, blast_columns)
+        def full_header = blast_columns + " genome_id"
+
+        CONCAT_ALIGNMENT(paths, db_name, full_header)
         CONCAT_ALIGNMENT.out.txt.set { concatenated }
 
     emit:
