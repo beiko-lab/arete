@@ -25,7 +25,7 @@ include { MOB_RECON } from '../../modules/local/mobsuite'
 //
 include { FILTER_ALIGNMENT as CAZY_FILTER;
           FILTER_ALIGNMENT as VFDB_FILTER;
-          FILTER_ALIGNMENT as BACMET_FILTER; } from './subworkflows/local/concatenate_matches'
+          FILTER_ALIGNMENT as BACMET_FILTER; } from './concatenate_matches'
 
 
 
