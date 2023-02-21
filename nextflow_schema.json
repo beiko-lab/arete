@@ -92,8 +92,7 @@
                     "description": "Location to the bakta database"
                 },
                 "light": {
-                    "type": "string",
-                    "default": "false",
+                    "type": "boolean",
                     "description": "Only run one DIAMOND annotation step - against VFDB",
                     "hidden": true
                 }
