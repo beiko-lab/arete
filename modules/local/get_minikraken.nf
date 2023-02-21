@@ -8,6 +8,7 @@ process KRAKEN2_DB {
     //publishDir 'dbcache/', mode:'copy'
     tag "minikraken"
     label 'process_high'
+    label 'error_retry_delay'
 
     output:
     path("""k2_standard_8gb_20201202"""), emit: minikraken

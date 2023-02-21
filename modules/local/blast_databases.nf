@@ -1,4 +1,7 @@
 process GET_CAZYDB {
+    label 'process_low'
+    label 'error_retry_delay'
+
     output:
     path "CAZyDB.07312020.fa", emit: cazydb
 
@@ -9,6 +12,9 @@ process GET_CAZYDB {
 }
 
 process GET_VFDB{
+    label 'process_low'
+    label 'error_retry_delay'
+
     output:
     path "VFDB_setA_pro.fas.gz", emit: vfdb
 
@@ -23,6 +29,9 @@ process GET_VFDB{
 }
 
 process GET_BACMET{
+    label 'process_low'
+    label 'error_retry_delay'
+
     output:
     path "BacMet2_EXP_database.fasta", emit: bacmet
 

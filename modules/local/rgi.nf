@@ -7,6 +7,7 @@ options        = initOptions(params.options)
 process UPDATE_RGI_DB {
     tag "CARD"
     label 'process_low'
+    label 'error_retry_delay'
 
     output:
     path "card.json", emit: card_json
