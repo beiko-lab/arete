@@ -8,9 +8,7 @@ process KRAKEN2_DB {
     //publishDir 'dbcache/', mode:'copy'
     tag "minikraken"
     label 'process_high'
-
-    errorStrategy { sleep(Math.pow(2, task.attempt) * 200 as long); return 'retry' }
-    maxRetries 3
+    label 'error_retry_delay'
 
     output:
     path("""k2_standard_8gb_20201202"""), emit: minikraken

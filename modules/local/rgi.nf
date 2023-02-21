@@ -7,9 +7,7 @@ options        = initOptions(params.options)
 process UPDATE_RGI_DB {
     tag "CARD"
     label 'process_low'
-
-    errorStrategy { sleep(Math.pow(2, task.attempt) * 200 as long); return 'retry' }
-    maxRetries 3
+    label 'error_retry_delay'
 
     output:
     path "card.json", emit: card_json
