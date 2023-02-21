@@ -19,10 +19,10 @@ nextflow_workflow {
                     [[id:'SRR14022764'], '$baseDir/test/SRR14022764_T1.gff'],
                     [[id:'SRR14022754'], '$baseDir/test/SRR14022754_T1.gff']
                 ])
-                // Don't use full alignment
-                input[1] = false
-                // Use fasttree
-                input[2] = true
+                // Use full alignment
+                input[1] = true
+                // Don't use fasttree
+                input[2] = false
                 """
             }
         }
