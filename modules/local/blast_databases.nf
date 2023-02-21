@@ -1,4 +1,7 @@
 process GET_CAZYDB {
+    errorStrategy { sleep(Math.pow(2, task.attempt) * 200 as long); return 'retry' }
+    maxRetries 3
+
     output:
     path "CAZyDB.07312020.fa", emit: cazydb
 
@@ -9,6 +12,9 @@ process GET_CAZYDB {
 }
 
 process GET_VFDB{
+    errorStrategy { sleep(Math.pow(2, task.attempt) * 200 as long); return 'retry' }
+    maxRetries 3
+
     output:
     path "VFDB_setA_pro.fas.gz", emit: vfdb
 
@@ -23,6 +29,9 @@ process GET_VFDB{
 }
 
 process GET_BACMET{
+    errorStrategy { sleep(Math.pow(2, task.attempt) * 200 as long); return 'retry' }
+    maxRetries 3
+
     output:
     path "BacMet2_EXP_database.fasta", emit: bacmet
 
