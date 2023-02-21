@@ -55,19 +55,21 @@ workflow ANNOTATE_ASSEMBLIES {
             GET_VFDB()
             GET_VFDB.out.vfdb.set { ch_vfdb }
         }
-        if(bacmet_cache){
-            bacmet_cache.set { ch_bacmet_db }
-        }
-        else{
-            GET_BACMET()
-            GET_BACMET.out.bacmet.set { ch_bacmet_db }
-        }
-        if (cazydb_cache){
-            cazydb_cache.set{ ch_cazy_db }
-        }
-        else{
-            GET_CAZYDB()
-            GET_CAZYDB.out.cazydb.set { ch_cazy_db }
+        if (!params.light) {
+            if(bacmet_cache){
+                bacmet_cache.set { ch_bacmet_db }
+            }
+            else{
+                GET_BACMET()
+                GET_BACMET.out.bacmet.set { ch_bacmet_db }
+            }
+            if (cazydb_cache){
+                cazydb_cache.set{ ch_cazy_db }
+            }
+            else{
+                GET_CAZYDB()
+                GET_CAZYDB.out.cazydb.set { ch_cazy_db }
+            }
         }
         /*
         * Load RGI for AMR annotation
@@ -124,16 +126,19 @@ workflow ANNOTATE_ASSEMBLIES {
         * Run DIAMOND blast annotation with databases
         */
         def blast_columns = "qseqid sseqid pident slen qlen length mismatch gapopen qstart qend sstart send evalue bitscore full_qseq"
-        DIAMOND_MAKE_CAZY(ch_cazy_db)
-        ch_software_versions = ch_software_versions.mix(DIAMOND_MAKE_CAZY.out.versions.ifEmpty(null))
-        DIAMOND_BLAST_CAZY(ch_ffn_files, DIAMOND_MAKE_CAZY.out.db, "txt", blast_columns)
-
         DIAMOND_MAKE_VFDB(ch_vfdb)
         DIAMOND_BLAST_VFDB(ch_ffn_files, DIAMOND_MAKE_VFDB.out.db, "txt", blast_columns)
 
-        DIAMOND_MAKE_BACMET(ch_bacmet_db)
-        DIAMOND_BLAST_BACMET(ch_ffn_files, DIAMOND_MAKE_BACMET.out.db, "txt", blast_columns)
+        if (!params.light) {
+            DIAMOND_MAKE_CAZY(ch_cazy_db)
+            DIAMOND_BLAST_CAZY(ch_ffn_files, DIAMOND_MAKE_CAZY.out.db, "txt", blast_columns)
 
+
+            DIAMOND_MAKE_BACMET(ch_bacmet_db)
+            DIAMOND_BLAST_BACMET(ch_ffn_files, DIAMOND_MAKE_BACMET.out.db, "txt", blast_columns)
+        }
+
+        ch_software_versions = ch_software_versions.mix(DIAMOND_MAKE_VFDB.out.versions.ifEmpty(null))
         ch_multiqc_files = Channel.empty()
         if(!bakta_db){
             ch_multiqc_files = ch_multiqc_files.mix(PROKKA.out.txt.collect{it[1]}.ifEmpty([]))

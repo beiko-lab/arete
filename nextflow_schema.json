@@ -90,6 +90,12 @@
                     "type": "string",
                     "default": "None",
                     "description": "Location to the bakta database"
+                },
+                "light": {
+                    "type": "string",
+                    "default": "false",
+                    "description": "Only run one DIAMOND annotation step - against VFDB",
+                    "hidden": true
                 }
             }
         },
@@ -102,8 +108,7 @@
             "properties": {
                 "use_full_alignment": {
                     "type": "boolean",
-                    "description": "Use full alignment",
-                    "help_text": ""
+                    "description": "Use full alignment"
                 },
                 "use_fasttree": {
                     "type": "boolean",
@@ -292,7 +297,7 @@
                 },
                 "multiqc_logo": {
                     "type": "string",
-                    "default": null,
+                    "default": "None",
                     "fa_icon": "fas fa-image",
                     "hidden": true
                 }
