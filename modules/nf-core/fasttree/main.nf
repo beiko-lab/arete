@@ -4,7 +4,7 @@ process FASTTREE {
     conda (params.enable_conda ? "bioconda::fasttree=2.1.10" : null)
     container "${ workflow.containerEngine == 'singularity' && !task.ext.singularity_pull_docker_container ?
         'https://depot.galaxyproject.org/singularity/fasttree:2.1.10--h516909a_4' :
-        'quay.io/biocontainers/fasttree:2.1.10--h516909a_4' }"
+        'quay.io/biocontainers/fasttree:2.1.10--h779adbc_6' }"
 
     input:
     path alignment
