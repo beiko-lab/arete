@@ -1,5 +1,6 @@
-include { ADD_COLUMN } from '../../modules/local/add_column.nf'
-include { CONCAT_ALIGNMENT } from '../../modules/local/concat_alignments.nf'
+include { ADD_COLUMN } from '../../modules/local/add_column'
+include { CONCAT_ALIGNMENT } from '../../modules/local/concat_alignments'
+include { FILTER_MATCHES } from '../../modules/local/filter_matches'
 
 
 workflow FILTER_ALIGNMENT {
@@ -19,10 +20,12 @@ workflow FILTER_ALIGNMENT {
         ADD_COLUMN(results, db_name, full_header)
         ADD_COLUMN.out.txt.set { diamond_added_column }
 
-        diamond_added_column
+        FILTER_MATCHES(diamond_added_column, db_name)
+        FILTER_MATCHES.out.txt.set { diamond_filtered }
+
+        diamond_filtered
             .collect{ id, paths -> paths }
             .set { paths }
-
 
         CONCAT_ALIGNMENT(paths, db_name)
         CONCAT_ALIGNMENT.out.txt.set { concatenated }
