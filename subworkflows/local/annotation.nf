@@ -20,6 +20,15 @@ include { RGI;
           UPDATE_RGI_DB } from '../../modules/local/rgi'
 include { MOB_RECON } from '../../modules/local/mobsuite'
 
+//
+// SUBWORKFLOWS
+//
+include { FILTER_ALIGNMENT as CAZY_FILTER;
+          FILTER_ALIGNMENT as VFDB_FILTER;
+          FILTER_ALIGNMENT as BACMET_FILTER; } from './concatenate_matches'
+
+
+
 workflow ANNOTATE_ASSEMBLIES {
     take:
         assemblies
@@ -126,18 +135,21 @@ workflow ANNOTATE_ASSEMBLIES {
         * Run DIAMOND blast annotation with databases
         */
         def blast_columns = "qseqid sseqid pident slen qlen length mismatch gapopen qstart qend sstart send evalue bitscore full_qseq"
+
+
         DIAMOND_MAKE_VFDB(ch_vfdb)
         DIAMOND_BLAST_VFDB(ch_ffn_files, DIAMOND_MAKE_VFDB.out.db, "txt", blast_columns)
+        VFDB_FILTER(DIAMOND_BLAST_VFDB.out.txt, "VFDB", blast_columns)
 
         if (!params.light) {
-            DIAMOND_MAKE_CAZY(ch_cazy_db)
-            DIAMOND_BLAST_CAZY(ch_ffn_files, DIAMOND_MAKE_CAZY.out.db, "txt", blast_columns)
-
-
             DIAMOND_MAKE_BACMET(ch_bacmet_db)
             DIAMOND_BLAST_BACMET(ch_ffn_files, DIAMOND_MAKE_BACMET.out.db, "txt", blast_columns)
-        }
+            BACMET_FILTER(DIAMOND_BLAST_BACMET.out.txt, "BACMET", blast_columns)
 
+            DIAMOND_MAKE_CAZY(ch_cazy_db)
+            DIAMOND_BLAST_CAZY(ch_ffn_files, DIAMOND_MAKE_CAZY.out.db, "txt", blast_columns)
+            CAZY_FILTER(DIAMOND_BLAST_CAZY.out.txt, "CAZY", blast_columns)
+        }
         ch_software_versions = ch_software_versions.mix(DIAMOND_MAKE_VFDB.out.versions.ifEmpty(null))
         ch_multiqc_files = Channel.empty()
         if(!bakta_db){
