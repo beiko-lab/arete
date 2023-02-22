@@ -15,12 +15,7 @@ workflow FILTER_ALIGNMENT {
             .filter{ id, path -> path.size() > 0 }
             .set { results }
 
-        def full_header = blast_columns + " genome_id"
-
-        ADD_COLUMN(results, db_name, full_header)
-        ADD_COLUMN.out.txt.set { diamond_added_column }
-
-        FILTER_MATCHES(diamond_added_column, db_name)
+        FILTER_MATCHES(results, db_name, blast_columns)
         FILTER_MATCHES.out.txt.set { diamond_filtered }
 
         diamond_filtered

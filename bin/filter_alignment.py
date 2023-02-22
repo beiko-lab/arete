@@ -9,17 +9,20 @@ from pandas import read_csv
 
 def parse_args(args=None):
     Description = "Filter alignment results."
-    Epilog = "Example usage: python filter_alignment.py <FILE_IN> <FILE_OUT>"
+    Epilog = "Example usage: python filter_alignment.py <FILE_IN> <GENOME> <HEADER> <FILE_OUT>"
 
     parser = argparse.ArgumentParser(description=Description, epilog=Epilog)
     parser.add_argument("FILE_IN", help="Input alignment file.")
+    parser.add_argument("GENOME", help="Genome identifier.")
+    parser.add_argument("HEADER", help="Header for the output file.")
     parser.add_argument("FILE_OUT", help="Output file.")
     return parser.parse_args(args)
 
 
-def filter_alignment(file_in, file_out):
-    df = read_csv(file_in, sep="\t")
+def filter_alignment(file_in, genome_id, header, file_out):
+    df = read_csv(file_in, sep="\t", names=header.split(" "))
 
+    df["genome_id"] = genome_id
     df["qcover"] = df["length"] / df["slen"]
     filtered_df = (
         df.sort_values("pident", ascending=False)
@@ -32,7 +35,7 @@ def filter_alignment(file_in, file_out):
 
 def main(args=None):
     args = parse_args(args)
-    filter_alignment(args.FILE_IN, args.FILE_OUT)
+    filter_alignment(args.FILE_IN, args.GENOME, args.HEADER, args.FILE_OUT)
 
 
 if __name__ == "__main__":
