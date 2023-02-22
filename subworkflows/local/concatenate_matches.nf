@@ -14,16 +14,17 @@ workflow FILTER_ALIGNMENT {
             .filter{ id, path -> path.size() > 0 }
             .set { results }
 
-        ADD_COLUMN(results, db_name)
+        def full_header = blast_columns + " genome_id"
+
+        ADD_COLUMN(results, db_name, full_header)
         ADD_COLUMN.out.txt.set { diamond_added_column }
 
         diamond_added_column
             .collect{ id, paths -> paths }
             .set { paths }
 
-        def full_header = blast_columns + " genome_id"
 
-        CONCAT_ALIGNMENT(paths, db_name, full_header)
+        CONCAT_ALIGNMENT(paths, db_name)
         CONCAT_ALIGNMENT.out.txt.set { concatenated }
 
     emit:

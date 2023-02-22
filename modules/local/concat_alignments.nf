@@ -11,7 +11,6 @@ process CONCAT_ALIGNMENT {
     input:
     path(aln)
     val dbname
-    val header
 
     output:
     path("*.txt"), emit: txt
@@ -21,10 +20,7 @@ process CONCAT_ALIGNMENT {
     def prefix = task.ext.prefix ?: "${dbname}"
 
     """
-    cat ${aln} > temp.temp
-    echo ${header} > header.temp
-    tr ' ' '\\t' < header.temp > header_tabs.temp
-    cat header_tabs.temp temp.temp > ${prefix}.txt
+    cat ${aln} > ${prefix}.txt
     """
 
     stub:

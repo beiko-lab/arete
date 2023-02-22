@@ -12,6 +12,7 @@ process ADD_COLUMN {
     input:
     tuple val(meta), path(aln)
     val dbname
+    val header
 
     output:
     tuple val(meta), path("*.txt"), emit: txt
@@ -21,7 +22,10 @@ process ADD_COLUMN {
     def prefix = task.ext.prefix ?: "${meta.id}_${dbname}"
 
     """
-    sed "s/\$/\\t${meta.id}/" ${aln} > ${prefix}_addedcol.txt
+    sed "s/\$/\\t${meta.id}/" ${aln} > ${prefix}_addedcol.temp
+    echo ${header} > header.temp
+    tr ' ' '\\t' < header.temp > header_tabs.temp
+    cat header_tabs.temp ${prefix}_addedcol.temp > ${prefix}_addedcol.txt
     """
 
     stub:
