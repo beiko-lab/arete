@@ -1,4 +1,3 @@
-include { ADD_COLUMN } from '../../modules/local/add_column'
 include { CONCAT_ALIGNMENT } from '../../modules/local/concat_alignments'
 include { FILTER_MATCHES } from '../../modules/local/filter_matches'
 
