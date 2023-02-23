@@ -22,10 +22,10 @@ process POPPUNK_MAKE_SAMPLESHEET {
 process POPPUNK_MAKEDB {
     label 'process_high'
 
-    conda (params.enable_conda ? "bioconda::poppunk=2.4.0" : null)
+    conda (params.enable_conda ? "bioconda::poppunk=2.6.0" : null)
     container "${ workflow.containerEngine == 'singularity' && !task.ext.singularity_pull_docker_container ?
-        'https://depot.galaxyproject.org/singularity/poppunk:2.4.0--py39h8884e85_2':
-        'quay.io/biocontainers/poppunk:2.4.0--py38hf6d6cf9_1' }"
+        'https://depot.galaxyproject.org/singularity/poppunk:2.6.0--py39h9b916c0_0':
+        'quay.io/biocontainers/poppunk:2.6.0--py39h9b916c0_0' }"
 
     input:
 
@@ -54,32 +54,70 @@ process POPPUNK_MAKEDB {
     """
 }
 
-process POPPUNK_FITMODEL {
+process POPPUNK_QCDB {
     label 'process_high'
 
-    conda (params.enable_conda ? "bioconda::poppunk=2.4.0" : null)
+    conda (params.enable_conda ? "bioconda::poppunk=2.6.0" : null)
     container "${ workflow.containerEngine == 'singularity' && !task.ext.singularity_pull_docker_container ?
-        'https://depot.galaxyproject.org/singularity/poppunk:2.4.0--py39h8884e85_2':
-        'quay.io/biocontainers/poppunk:2.4.0--py38hf6d6cf9_1' }"
+        'https://depot.galaxyproject.org/singularity/poppunk:2.6.0--py39h9b916c0_0':
+        'quay.io/biocontainers/poppunk:2.6.0--py39h9b916c0_0' }"
 
     input:
 
     path(poppunk_db)
+    val  type_isolate
+
 
     output:
 
-    path("popdb_dbscan"), emit: popdb_dbscan
+    path("popdb"), emit: poppunk_db
     path "versions.yml", emit: versions
 
     script:
     def args = task.ext.args ?: ''
+    def isolate_arg = type_isolate ? "--type-isolate ${type_isolate}" : ""
 
     """
     poppunk \\
-        --fit-model bgmm \\
+        --qc-db \\
+        --ref-db  $poppunk_db \\
+        $isolate_arg \\
+        $args
+
+    cat <<-END_VERSIONS > versions.yml
+    "${task.process}":
+        poppunk: \$(echo \$(poppunk --version 2>&1) | sed 's/^.*poppunk //;')
+    END_VERSIONS
+    """
+}
+
+process POPPUNK_FITMODEL {
+    label 'process_high'
+
+    conda (params.enable_conda ? "bioconda::poppunk=2.6.0" : null)
+    container "${ workflow.containerEngine == 'singularity' && !task.ext.singularity_pull_docker_container ?
+        'https://depot.galaxyproject.org/singularity/poppunk:2.6.0--py39h9b916c0_0':
+        'quay.io/biocontainers/poppunk:2.6.0--py39h9b916c0_0' }"
+
+    input:
+
+    path(poppunk_db)
+    val model
+
+    output:
+
+    path("popdb_*"), emit: popdb_dbscan
+    path "versions.yml", emit: versions
+
+    script:
+    def args = task.ext.args ?: ''
+    def prefix = task.ext.prefix ?: "popdb_${model}"
+
+    """
+    poppunk \\
+        --fit-model $model \\
         --ref-db $poppunk_db \\
-        --output popdb_dbscan \\
-        --max-a-dist 0.9 \\
+        --output ${prefix} \\
         --threads $task.cpus \\
         $args
 

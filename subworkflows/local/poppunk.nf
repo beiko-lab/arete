@@ -1,5 +1,6 @@
 include { POPPUNK_MAKE_SAMPLESHEET } from '../../modules/local/poppunk'
 include { POPPUNK_MAKEDB } from '../../modules/local/poppunk'
+include { POPPUNK_QCDB } from '../../modules/local/poppunk'
 include { POPPUNK_FITMODEL } from '../../modules/local/poppunk'
 
 workflow RUN_POPPUNK {
@@ -25,5 +26,8 @@ workflow RUN_POPPUNK {
 
     POPPUNK_MAKEDB.out.poppunk_db.set { poppunk_db }
 
-    POPPUNK_FITMODEL(poppunk_db)
+    POPPUNK_QCDB(poppunk_db, [])
+    POPPUNK_QCDB.out.poppunk_db.set{ poppunk_db_qc }
+
+    POPPUNK_FITMODEL(poppunk_db_qc, "bgmm")
 }
