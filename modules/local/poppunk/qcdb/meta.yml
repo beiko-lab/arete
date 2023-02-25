@@ -1,0 +1,40 @@
+name: poppunk_qcdb
+description: Runs Quality Control on the PopPunk database
+keywords:
+  - genomes
+  - poppunk
+  - database
+  - qc
+tools:
+  - poppunk:
+    description: Population partitioning using nucleotide k-mers
+    homepage: https://poppunk.net/
+    documentation: https://poppunk.readthedocs.io/en/latest/
+    tool_dev_url: https://github.com/bacpop/PopPUNK
+    doi: "doi:10.1101/gr.241455.118"
+    licence: ["Apache-2.0"]
+
+input:
+  - poppunk_db:
+      type: directory
+      description: Directory containing the PopPunk database
+  - type_isolate:
+      type: string
+      description: |
+        Genome of the taxon being studied.
+        PopPunk will removal outlier samples that may not be part of this target taxon.
+        If not provided, PopPunk will automatically select the first genome on the original
+        samplesheet.
+
+output:
+  - poppunk_db:
+      type: directory
+      description: Directory containing the PopPunk database
+      pattern: "popdb"
+  - versions:
+      type: file
+      description: File containing software versions
+      pattern: "versions.yml"
+
+authors:
+  - "@jvfe"

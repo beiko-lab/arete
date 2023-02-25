@@ -13,18 +13,17 @@ process POPPUNK_FITMODEL {
 
     output:
 
-    path("popdb_*"), emit: popdb_dbscan
+    path("poppunk_*"), emit: poppunk_results
     path "versions.yml", emit: versions
 
     script:
     def args = task.ext.args ?: ''
-    def prefix = task.ext.prefix ?: "popdb_${model}"
 
     """
     poppunk \\
         --fit-model $model \\
         --ref-db $poppunk_db \\
-        --output ${prefix} \\
+        --output poppunk_${model} \\
         --threads $task.cpus \\
         $args
 

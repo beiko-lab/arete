@@ -1,0 +1,33 @@
+name: poppunk_makedb
+description: Build PopPunk database
+keywords:
+  - genomes
+  - poppunk
+  - database
+  - distances
+tools:
+  - poppunk:
+    description: Population partitioning using nucleotide k-mers
+    homepage: https://poppunk.net/
+    documentation: https://poppunk.readthedocs.io/en/latest/
+    tool_dev_url: https://github.com/bacpop/PopPUNK
+    doi: "doi:10.1101/gr.241455.118"
+    licence: ["Apache-2.0"]
+
+input:
+  - filesheet:
+      type: file
+      description: Input tab-separated file containing genomes and their identifiers
+
+output:
+  - poppunk_db:
+      type: directory
+      description: Directory containing the PopPunk database
+      pattern: "popdb"
+  - versions:
+      type: file
+      description: File containing software versions
+      pattern: "versions.yml"
+
+authors:
+  - "@jvfe"
