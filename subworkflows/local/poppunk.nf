@@ -1,7 +1,7 @@
-include { POPPUNK_MAKE_SAMPLESHEET } from '../../modules/local/poppunk'
-include { POPPUNK_MAKEDB } from '../../modules/local/poppunk'
-include { POPPUNK_QCDB } from '../../modules/local/poppunk'
-include { POPPUNK_FITMODEL } from '../../modules/local/poppunk'
+include { POPPUNK_MAKE_SAMPLESHEET } from '../../modules/local/poppunk_samplesheet'
+include { POPPUNK_MAKEDB } from '../../modules/local/poppunk/makedb/main'
+include { POPPUNK_QCDB } from '../../modules/local/poppunk/qcdb/main'
+include { POPPUNK_FITMODEL } from '../../modules/local/poppunk/fitmodel/main'
 
 workflow RUN_POPPUNK {
     Channel
