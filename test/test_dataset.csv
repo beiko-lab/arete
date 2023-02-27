@@ -1,5 +1,5 @@
 sample,fastq_1,fastq_2
-test_1,https://github.com/beiko-lab/arete/raw/add-poppunk/test/NZ_CP013325_1.fq.gz,https://github.com/beiko-lab/arete/raw/add-poppunk/test/NZ_CP013325_2.fq.gz
-test_2,https://github.com/beiko-lab/arete/raw/add-poppunk/test/NZ_CP013326_1.fq.gz,https://github.com/beiko-lab/arete/raw/add-poppunk/test/NZ_CP013326_2.fq.gz
-test_3,https://github.com/beiko-lab/arete/raw/add-poppunk/test/NZ_CP013323_1.fq.gz,https://github.com/beiko-lab/arete/raw/add-poppunk/test/NZ_CP013323_2.fq.gz
-test_4,https://github.com/beiko-lab/arete/raw/add-poppunk/test/NZ_CP013324_1.fq.gz,https://github.com/beiko-lab/arete/raw/add-poppunk/test/NZ_CP013324_2.fq.gz
+test_1,https://github.com/beiko-lab/arete/raw/master/test/NZ_CP013325_1.fq.gz,https://github.com/beiko-lab/arete/raw/master/test/NZ_CP013325_2.fq.gz
+test_2,https://github.com/beiko-lab/arete/raw/master/test/NZ_CP013325_1.fq.gz,https://github.com/beiko-lab/arete/raw/master/test/NZ_CP013325_2.fq.gz
+test_3,https://github.com/beiko-lab/arete/raw/master/test/NZ_CP013325_1.fq.gz,https://github.com/beiko-lab/arete/raw/master/test/NZ_CP013325_2.fq.gz
+test_4,https://github.com/beiko-lab/arete/raw/master/test/NZ_CP013325_1.fq.gz,https://github.com/beiko-lab/arete/raw/master/test/NZ_CP013325_2.fq.gz
