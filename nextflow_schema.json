@@ -123,8 +123,7 @@
             "fa_icon": "fas fa-object-group",
             "properties": {
                 "skip_poppunk": {
-                    "type": "string",
-                    "default": "false",
+                    "type": "boolean",
                     "description": "Skip PopPunk"
                 }
             }
