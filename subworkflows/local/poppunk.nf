@@ -9,11 +9,6 @@ workflow RUN_POPPUNK {
         genome_assemblies
 
     main:
-        // Channel
-        //     .fromPath("../assemblies/ann_samplesheet.csv")
-        //     .splitCsv(header: true)
-        //     .map { row -> [[id: row.sample], file(row.fna_file_path)]}
-        //     .set { scaffolds }
 
         genome_assemblies
             .map { meta, path -> [meta.id, path.toString()] }
