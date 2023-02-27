@@ -169,8 +169,10 @@ workflow ARETE {
     ch_software_versions = ch_software_versions.mix(ANNOTATE_ASSEMBLIES.out.annotation_software)
     ch_software_versions = ch_software_versions.mix(ASSEMBLE_SHORTREADS.out.assembly_software)
 
-    RUN_POPPUNK(ASSEMBLE_SHORTREADS.out.scaffolds)
-    ch_software_versions = ch_software_versions.mix(RUN_POPPUNK.out.poppunk_version)
+    if (!params.skip_poppunk) {
+        RUN_POPPUNK(ASSEMBLE_SHORTREADS.out.scaffolds)
+        ch_software_versions = ch_software_versions.mix(RUN_POPPUNK.out.poppunk_version)
+    }
 
     ////////////////////////// PANGENOME /////////////////////////////////////
     PHYLOGENOMICS(ANNOTATE_ASSEMBLIES.out.gff, use_full_alignment, use_fasttree)

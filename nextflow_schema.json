@@ -115,6 +115,20 @@
                 }
             }
         },
+        "Lineage": {
+            "title": "Lineage",
+            "type": "object",
+            "description": "Parameters for the lineage subworkflow",
+            "default": "",
+            "fa_icon": "fas fa-object-group",
+            "properties": {
+                "skip_poppunk": {
+                    "type": "string",
+                    "default": "false",
+                    "description": "Skip PopPunk"
+                }
+            }
+        },
         "institutional_config_options": {
             "title": "Institutional config options",
             "type": "object",
@@ -318,6 +332,9 @@
         },
         {
             "$ref": "#/definitions/phylogenomics"
+        },
+        {
+            "$ref": "#/definitions/new_group_1"
         },
         {
             "$ref": "#/definitions/institutional_config_options"
