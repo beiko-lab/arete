@@ -115,7 +115,7 @@
                 }
             }
         },
-        "Lineage": {
+        "lineage": {
             "title": "Lineage",
             "type": "object",
             "description": "Parameters for the lineage subworkflow",
@@ -334,7 +334,7 @@
             "$ref": "#/definitions/phylogenomics"
         },
         {
-            "$ref": "#/definitions/new_group_1"
+            "$ref": "#/definitions/lineage"
         },
         {
             "$ref": "#/definitions/institutional_config_options"
