@@ -10,5 +10,18 @@ Changes in module 'nf-core/fasttree'
      container "${ workflow.containerEngine == 'singularity' && !task.ext.singularity_pull_docker_container ?
          'https://depot.galaxyproject.org/singularity/fasttree:2.1.10--h516909a_4' :
          'quay.io/biocontainers/fasttree:2.1.10--h516909a_4' }"
+@@ -30,4 +30,12 @@
+         fasttree: \$(fasttree -help 2>&1 | head -1  | sed 's/^FastTree \\([0-9\\.]*\\) .*\$/\\1/')
+     END_VERSIONS
+     """
++    stub:
++    """
++    touch fasttree_phylogeny.tre
++    cat <<-END_VERSIONS > versions.yml
++    "${task.process}":
++        fasttree: \$(fasttree -help 2>&1 | head -1  | sed 's/^FastTree \\([0-9\\.]*\\) .*\$/\\1/')
++    END_VERSIONS
++    """
+ }
 
 ************************************************************

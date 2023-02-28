@@ -24,7 +24,7 @@ process GET_VFDB{
     """
     stub:
     """
-    touch VFDB_setB_pro.fas.gz
+    touch VFDB_setA_pro.fas.gz
     """
 }
 
