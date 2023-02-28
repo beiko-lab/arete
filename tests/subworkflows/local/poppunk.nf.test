@@ -8,7 +8,7 @@ nextflow_workflow {
 
         when {
             params {
-                // define parameters here. Example:
+                run_poppunk_qc = true
                 poppunk_model = "bgmm"
                 outdir = "$outputDir"
             }
