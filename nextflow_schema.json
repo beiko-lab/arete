@@ -128,7 +128,12 @@
                 },
                 "poppunk_model": {
                     "type": "string",
-                    "default": null
+                    "default": "None",
+                    "description": "Which PopPunk model to use (bgmm, dbscan, refine, threshold or lineage)"
+                },
+                "run_poppunk_qc": {
+                    "type": "boolean",
+                    "description": "Whether to run the QC step for PopPunk"
                 }
             }
         },
