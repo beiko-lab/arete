@@ -43,9 +43,10 @@ process QUAST {
     END_VERSIONS
     """
     stub:
-    def prefix   = task.ext.prefix ?: 'quast'
+    prefix   = task.ext.prefix ?: 'quast'
     """
     mkdir ${prefix}
+    touch ${prefix}/report.tsv
     touch ${prefix}_quast_stub.tsv
     cat <<-END_VERSIONS > versions.yml
     "${task.process}":

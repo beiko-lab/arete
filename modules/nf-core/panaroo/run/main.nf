@@ -33,4 +33,15 @@ process PANAROO_RUN {
         panaroo: \$(echo \$(panaroo --version 2>&1) | sed 's/^.*panaroo //' ))
     END_VERSIONS
     """
+    stub:
+    def args = task.ext.args ?: ''
+    def prefix = task.ext.prefix ?: "${meta.id}"
+    """
+    mkdir results
+    touch results/core_gene_alignment.aln
+    cat <<-END_VERSIONS > versions.yml
+    "${task.process}":
+        panaroo: \$(echo \$(panaroo --version 2>&1) | sed 's/^.*panaroo //' ))
+    END_VERSIONS
+    """
 }
