@@ -125,6 +125,10 @@
                 "skip_poppunk": {
                     "type": "boolean",
                     "description": "Skip PopPunk"
+                },
+                "poppunk_model": {
+                    "type": "string",
+                    "default": null
                 }
             }
         },

@@ -14,6 +14,7 @@ for (param in checkPathParamList) { if (param) { file(param, checkIfExists: true
 
 // Check mandatory parameters
 if (params.input_sample_table) { ch_input = file(params.input_sample_table) } else { exit 1, 'Input samplesheet not specified!' }
+if (!params.skip_poppunk && params.poppunk_model == null) { exit 1, 'A model must be specified in order to run PopPunk' }
 
 /*
 ========================================================================================

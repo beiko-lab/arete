@@ -29,7 +29,7 @@ workflow RUN_POPPUNK {
         POPPUNK_QCDB(poppunk_db, [])
         POPPUNK_QCDB.out.poppunk_db.set{ poppunk_db_qc }
 
-        POPPUNK_FITMODEL(poppunk_db_qc, "bgmm")
+        POPPUNK_FITMODEL(poppunk_db_qc, params.poppunk_model)
 
     emit:
         poppunk_version = POPPUNK_FITMODEL.out.versions.ifEmpty(null)
