@@ -362,6 +362,11 @@ workflow ANNOTATION {
     // ANNOTATE_ASSEMBLIES(ASSEMBLE_SHORTREADS.out.scaffolds, ch_bakta_db, db_cache)
     // ch_software_versions = ch_software_versions.mix(ANNOTATE_ASSEMBLIES.out.annotation_software)
 
+    if (!params.skip_poppunk) {
+        RUN_POPPUNK(ASSEMBLE_SHORTREADS.out.scaffolds)
+        ch_software_versions = ch_software_versions.mix(RUN_POPPUNK.out.poppunk_version)
+    }
+
     ////////////////////////// PANGENOME /////////////////////////////////////
     PHYLOGENOMICS(ANNOTATE_ASSEMBLIES.out.gff, use_full_alignment, use_fasttree)
     ch_software_versions = ch_software_versions.mix(PHYLOGENOMICS.out.phylo_software)
