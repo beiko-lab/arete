@@ -363,7 +363,7 @@ workflow ANNOTATION {
     // ch_software_versions = ch_software_versions.mix(ANNOTATE_ASSEMBLIES.out.annotation_software)
 
     if (!params.skip_poppunk) {
-        RUN_POPPUNK(ASSEMBLE_SHORTREADS.out.scaffolds)
+        RUN_POPPUNK(ANNOTATION_INPUT_CHECK.out.genomes)
         ch_software_versions = ch_software_versions.mix(RUN_POPPUNK.out.poppunk_version)
     }
 
