@@ -11,6 +11,18 @@ workflow RUN_POPPUNK {
 
     main:
 
+        if (params.reference_genome) {
+            Channel.fromList([
+                [[id:'reference_genome'], [file(params.reference_genome)]]
+            ])
+                .set { ref_genome }
+
+            genome_assemblies
+                .mix(ref_genome)
+                .map { it -> [ it[0], it[1][0] ] }
+                .set { genome_assemblies }
+        }
+
         genome_assemblies
             .map { meta, path -> [meta.id, path.toString()] }
             .collectFile(newLine: true) { item ->
@@ -28,7 +40,8 @@ workflow RUN_POPPUNK {
         POPPUNK_CREATEDB.out.poppunk_db.set { poppunk_db }
 
         if (params.run_poppunk_qc) {
-            POPPUNK_QCDB(poppunk_db, [])
+            type_isolate = params.reference_genome ? "reference_genome" : []
+            POPPUNK_QCDB(poppunk_db, type_isolate)
             POPPUNK_QCDB.out.poppunk_db.set{ poppunk_db }
         }
 
