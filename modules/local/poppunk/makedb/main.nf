@@ -8,11 +8,11 @@ process POPPUNK_MAKEDB {
 
     input:
 
-    path(filesheet)
+    path filesheet
 
     output:
 
-    path("popdb"), emit: poppunk_db
+    path "poppunk_db", emit: poppunk_db
     path "versions.yml", emit: versions
 
     script:
@@ -21,7 +21,7 @@ process POPPUNK_MAKEDB {
     """
     poppunk \\
         --create-db \\
-        --output popdb \\
+        --output poppunk_db \\
         --r-files $filesheet  \\
         --threads $task.cpus \\
         $args

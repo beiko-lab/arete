@@ -8,13 +8,12 @@ process POPPUNK_QCDB {
 
     input:
 
-    path(poppunk_db)
+    path poppunk_db
     val  type_isolate
-
 
     output:
 
-    path("popdb"), emit: poppunk_db
+    path "poppunk_db", emit: poppunk_db
     path "versions.yml", emit: versions
 
     script:

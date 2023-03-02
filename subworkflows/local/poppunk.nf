@@ -2,6 +2,7 @@ include { POPPUNK_MAKE_SAMPLESHEET } from '../../modules/local/poppunk_sampleshe
 include { POPPUNK_MAKEDB } from '../../modules/local/poppunk/makedb/main'
 include { POPPUNK_QCDB } from '../../modules/local/poppunk/qcdb/main'
 include { POPPUNK_FITMODEL } from '../../modules/local/poppunk/fitmodel/main'
+include { POPPUNK_VISUALISE } from '../../modules/local/poppunk/visualise/main'
 
 workflow RUN_POPPUNK {
 
@@ -33,7 +34,12 @@ workflow RUN_POPPUNK {
 
         POPPUNK_FITMODEL(poppunk_db, params.poppunk_model)
 
+        POPPUNK_FITMODEL.out.poppunk_results.set { poppunk_results }
+
+        POPPUNK_VISUALISE(poppunk_results, poppunk_db)
+
     emit:
         poppunk_version = POPPUNK_FITMODEL.out.versions.ifEmpty(null)
-        poppunk_results = POPPUNK_FITMODEL.out.poppunk_results
+        poppunk_results = poppunk_results
+        poppunk_visualisations = POPPUNK_VISUALISE.out.poppunk_visualizations
 }

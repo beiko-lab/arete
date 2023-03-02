@@ -1,5 +1,5 @@
-process POPPUNK_FITMODEL {
-    label 'process_high'
+process POPPUNK_VISUALISE {
+    label 'process_medium'
 
     conda (params.enable_conda ? "bioconda::poppunk=2.6.0" : null)
     container "${ workflow.containerEngine == 'singularity' && !task.ext.singularity_pull_docker_container ?
@@ -8,28 +8,28 @@ process POPPUNK_FITMODEL {
 
     input:
 
-    path poppunk_db
-    val model
+    path poppunk_refdb
+    path poppunk_querydb
 
     output:
 
-    path "poppunk_${model}" , emit: poppunk_results
+    path "poppunk_visualizations" , emit: poppunk_visualizations
     path "versions.yml", emit: versions
 
     script:
     def args = task.ext.args ?: ''
 
     """
-    poppunk \\
-        --fit-model $model \\
-        --ref-db $poppunk_db \\
-        --output poppunk_${model} \\
+    poppunk_visualise \\
+        --ref-db $poppunk_refdb \\
+        --query-db $poppunk_querydb \\
+        --output poppunk_visualizations \\
         --threads $task.cpus \\
         $args
 
     cat <<-END_VERSIONS > versions.yml
     "${task.process}":
-        poppunk: \$(echo \$(poppunk --version 2>&1) | sed 's/^.*poppunk //;')
+        poppunk: \$(echo \$(poppunk_visualise --version 2>&1) | sed 's/^.*poppunk_visualise //;')
     END_VERSIONS
     """
 }

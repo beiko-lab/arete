@@ -1,10 +1,10 @@
-name: poppunk_fitmodel
-description: Fit a model to your dataset
+name: poppunk_visualise
+description: Create visualisations from PopPUNK results
 keywords:
   - genomes
   - poppunk
   - database
-  - qc
+  - tree
 tools:
   - poppunk:
     description: Population partitioning using nucleotide k-mers
@@ -15,20 +15,18 @@ tools:
     licence: ["Apache-2.0"]
 
 input:
-  - poppunk_db:
+  - poppunk_refdb:
       type: directory
-      description: Reference PopPunk database
-  - model:
-      type: string
-      description: |
-        Model to use. There are five different modules available for PopPunk:
-        'bgmm', 'dbscan', 'refine', 'threshold' and 'lineage'.
+      description: Built reference database (From fit-model)
+  - poppunk_querydb:
+      type: directory
+      description: Query database, if distances are from ref-query (From create-db)
 
 output:
-  - poppunk_results:
+  - poppunk_visualizations:
       type: directory
-      description: Output directory containing PopPunk results
-      pattern: "poppunk_*"
+      description: Output directory containing PopPunk visualizations
+      pattern: "poppunk_visualizations"
   - versions:
       type: file
       description: File containing software versions

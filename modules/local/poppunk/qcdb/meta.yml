@@ -30,7 +30,7 @@ output:
   - poppunk_db:
       type: directory
       description: Directory containing the PopPunk database
-      pattern: "popdb"
+      pattern: "poppunk_db"
   - versions:
       type: file
       description: File containing software versions
