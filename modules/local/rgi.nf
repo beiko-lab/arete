@@ -19,6 +19,12 @@ process UPDATE_RGI_DB {
     tar xvf card.tar.bz2
     python -c "import json;fh = open('card.json');card=json.load(fh);print(card['_version'])" > card.version.txt
     """
+
+    stub:
+    """
+    touch card.json
+    touch card.version.txt
+    """
 }
 
 process RGI {
