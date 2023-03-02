@@ -1,4 +1,4 @@
-process POPPUNK_MAKEDB {
+process POPPUNK_CREATEDB {
     label 'process_high'
 
     conda (params.enable_conda ? "bioconda::poppunk=2.6.0" : null)

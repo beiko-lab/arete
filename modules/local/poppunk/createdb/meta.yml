@@ -1,4 +1,4 @@
-name: poppunk_makedb
+name: poppunk_createdb
 description: Build PopPunk database
 keywords:
   - genomes

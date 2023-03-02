@@ -1,5 +1,5 @@
 include { POPPUNK_MAKE_SAMPLESHEET } from '../../modules/local/poppunk_samplesheet'
-include { POPPUNK_MAKEDB } from '../../modules/local/poppunk/makedb/main'
+include { POPPUNK_CREATEDB } from '../../modules/local/poppunk/createdb/main'
 include { POPPUNK_QCDB } from '../../modules/local/poppunk/qcdb/main'
 include { POPPUNK_FITMODEL } from '../../modules/local/poppunk/fitmodel/main'
 include { POPPUNK_VISUALISE } from '../../modules/local/poppunk/visualise/main'
@@ -23,9 +23,9 @@ workflow RUN_POPPUNK {
 
         POPPUNK_MAKE_SAMPLESHEET.out.full_samplesheet.set { poppunk_samplesheet }
 
-        POPPUNK_MAKEDB(poppunk_samplesheet)
+        POPPUNK_CREATEDB(poppunk_samplesheet)
 
-        POPPUNK_MAKEDB.out.poppunk_db.set { poppunk_db }
+        POPPUNK_CREATEDB.out.poppunk_db.set { poppunk_db }
 
         if (params.run_poppunk_qc) {
             POPPUNK_QCDB(poppunk_db, [])
