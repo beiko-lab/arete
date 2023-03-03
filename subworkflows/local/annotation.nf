@@ -2,7 +2,7 @@
 // MODULE: Installed directly from nf-core/modules
 //
 include { PROKKA                } from '../../modules/nf-core/prokka/main'
-include { BAKTA_BAKTA as BAKTA } from '../modules/nf-core/bakta/bakta/main'
+include { BAKTA_BAKTA as BAKTA } from '../../modules/nf-core/bakta/bakta/main'
 include { GET_CAZYDB;
           GET_VFDB;
           GET_BACMET} from '../../modules/local/blast_databases.nf'
