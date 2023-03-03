@@ -11,15 +11,15 @@ workflow RUN_POPPUNK {
 
     main:
 
-        if (params.reference_genome) {
+        if (params.reference_genome && params.run_poppunk_qc) {
             Channel.fromList([
-                [[id:'reference_genome'], [file(params.reference_genome)]]
+                [[id:'reference_genome'], file(params.reference_genome)]
             ])
                 .set { ref_genome }
 
             genome_assemblies
                 .mix(ref_genome)
-                .map { it -> [ it[0], it[1][0] ] }
+                .map { it -> [ it[0], it[1] ] }
                 .set { genome_assemblies }
         }
 
