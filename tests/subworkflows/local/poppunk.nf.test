@@ -1,0 +1,37 @@
+nextflow_workflow {
+
+    name "Test Workflow RUN_POPPUNK"
+    script "subworkflows/local/poppunk.nf"
+    workflow "RUN_POPPUNK"
+
+    test("PopPunk subworkflow runs without failures") {
+
+        when {
+            params {
+                run_poppunk_qc = true
+                poppunk_model = "bgmm"
+                outdir = "$outputDir"
+            }
+            workflow {
+                """
+                // define inputs of the workflow here. Example:
+                input[0] = Channel.from([
+                    [[id:'SRR14022735'], "$baseDir/test/SRR14022735_T1.scaffolds.fa"],
+                    [[id:'SRR14022737'], "$baseDir/test/SRR14022737_T1.scaffolds.fa"],
+                    [[id:'SRR14022754'], "$baseDir/test/SRR14022754_T1.scaffolds.fa"],
+                    [[id:'SRR14022764'], "$baseDir/test/SRR14022764_T1.scaffolds.fa"],
+                ])
+                """
+            }
+        }
+
+        then {
+            assert workflow.success
+            assert workflow.trace.tasks().size() >= 4
+            assert workflow.out.poppunk_results.size() == 1
+            assert workflow.out.poppunk_results.get(0) ==~ ".*/poppunk_bgmm"
+        }
+
+    }
+
+}

@@ -1,0 +1,36 @@
+name: poppunk_visualise
+description: Create visualisations from PopPUNK results
+keywords:
+  - genomes
+  - poppunk
+  - database
+  - tree
+tools:
+  - poppunk:
+    description: Population partitioning using nucleotide k-mers
+    homepage: https://poppunk.net/
+    documentation: https://poppunk.readthedocs.io/en/latest/
+    tool_dev_url: https://github.com/bacpop/PopPUNK
+    doi: "doi:10.1101/gr.241455.118"
+    licence: ["Apache-2.0"]
+
+input:
+  - poppunk_refdb:
+      type: directory
+      description: Built reference database (From fit-model)
+  - poppunk_querydb:
+      type: directory
+      description: Query database, if distances are from ref-query (From create-db)
+
+output:
+  - poppunk_visualizations:
+      type: directory
+      description: Output directory containing PopPunk visualizations
+      pattern: "poppunk_visualizations"
+  - versions:
+      type: file
+      description: File containing software versions
+      pattern: "versions.yml"
+
+authors:
+  - "@jvfe"

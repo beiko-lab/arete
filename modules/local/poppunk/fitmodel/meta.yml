@@ -1,0 +1,38 @@
+name: poppunk_fitmodel
+description: Fit a model to your dataset
+keywords:
+  - genomes
+  - poppunk
+  - database
+  - qc
+tools:
+  - poppunk:
+    description: Population partitioning using nucleotide k-mers
+    homepage: https://poppunk.net/
+    documentation: https://poppunk.readthedocs.io/en/latest/
+    tool_dev_url: https://github.com/bacpop/PopPUNK
+    doi: "doi:10.1101/gr.241455.118"
+    licence: ["Apache-2.0"]
+
+input:
+  - poppunk_db:
+      type: directory
+      description: Reference PopPunk database
+  - model:
+      type: string
+      description: |
+        Model to use. There are five different modules available for PopPunk:
+        'bgmm', 'dbscan', 'refine', 'threshold' and 'lineage'.
+
+output:
+  - poppunk_results:
+      type: directory
+      description: Output directory containing PopPunk results
+      pattern: "poppunk_*"
+  - versions:
+      type: file
+      description: File containing software versions
+      pattern: "versions.yml"
+
+authors:
+  - "@jvfe"

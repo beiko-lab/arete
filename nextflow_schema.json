@@ -115,6 +115,28 @@
                 }
             }
         },
+        "lineage": {
+            "title": "Lineage",
+            "type": "object",
+            "description": "Parameters for the lineage subworkflow",
+            "default": "",
+            "fa_icon": "fas fa-object-group",
+            "properties": {
+                "skip_poppunk": {
+                    "type": "boolean",
+                    "description": "Skip PopPunk"
+                },
+                "poppunk_model": {
+                    "type": "string",
+                    "default": "None",
+                    "description": "Which PopPunk model to use (bgmm, dbscan, refine, threshold or lineage)"
+                },
+                "run_poppunk_qc": {
+                    "type": "boolean",
+                    "description": "Whether to run the QC step for PopPunk"
+                }
+            }
+        },
         "institutional_config_options": {
             "title": "Institutional config options",
             "type": "object",
@@ -318,6 +340,9 @@
         },
         {
             "$ref": "#/definitions/phylogenomics"
+        },
+        {
+            "$ref": "#/definitions/lineage"
         },
         {
             "$ref": "#/definitions/institutional_config_options"

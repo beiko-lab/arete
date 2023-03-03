@@ -14,6 +14,7 @@ for (param in checkPathParamList) { if (param) { file(param, checkIfExists: true
 
 // Check mandatory parameters
 if (params.input_sample_table) { ch_input = file(params.input_sample_table) } else { exit 1, 'Input samplesheet not specified!' }
+if (!params.skip_poppunk && params.poppunk_model == null) { exit 1, 'A model must be specified in order to run PopPunk' }
 
 /*
 ========================================================================================
@@ -36,11 +37,12 @@ ch_multiqc_logo            = params.multiqc_logo   ? Channel.fromPath( params.mu
 // SUBWORKFLOW: Consisting of a mix of local and nf-core/modules
 //
 include { INPUT_CHECK;
-          ANNOTATION_INPUT_CHECK } from '../subworkflows/local/input_check' addParams( options: [:] )
+          ANNOTATION_INPUT_CHECK } from '../subworkflows/local/input_check'
 
-include { ASSEMBLE_SHORTREADS } from '../subworkflows/local/assembly' addParams( options: [:] )
-include { ANNOTATE_ASSEMBLIES } from '../subworkflows/local/annotation' addParams( options: [:] )
-include { PHYLOGENOMICS } from '../subworkflows/local/phylo' addParams( options: [:] )
+include { ASSEMBLE_SHORTREADS } from '../subworkflows/local/assembly'
+include { ANNOTATE_ASSEMBLIES } from '../subworkflows/local/annotation'
+include { PHYLOGENOMICS } from '../subworkflows/local/phylo'
+include { RUN_POPPUNK } from '../subworkflows/local/poppunk'
 /*
 ========================================================================================
     IMPORT NF-CORE MODULES/SUBWORKFLOWS
@@ -168,13 +170,10 @@ workflow ARETE {
     ch_software_versions = ch_software_versions.mix(ANNOTATE_ASSEMBLIES.out.annotation_software)
     ch_software_versions = ch_software_versions.mix(ASSEMBLE_SHORTREADS.out.assembly_software)
 
-    // /////////////////// ASSEMBLY ///////////////////////////
-    // ASSEMBLE_SHORTREADS(INPUT_CHECK.out.reads, ch_reference_genome, use_reference_genome, db_cache)
-    // ch_software_versions = ch_software_versions.mix(ASSEMBLE_SHORTREADS.out.assembly_software)
-
-    // /////////////////// ANNOTATION ///////////////////////////
-    // ANNOTATE_ASSEMBLIES(ASSEMBLE_SHORTREADS.out.scaffolds, ch_bakta_db, db_cache)
-    // ch_software_versions = ch_software_versions.mix(ANNOTATE_ASSEMBLIES.out.annotation_software)
+    if (!params.skip_poppunk) {
+        RUN_POPPUNK(ASSEMBLE_SHORTREADS.out.scaffolds)
+        ch_software_versions = ch_software_versions.mix(RUN_POPPUNK.out.poppunk_version)
+    }
 
     ////////////////////////// PANGENOME /////////////////////////////////////
     PHYLOGENOMICS(ANNOTATE_ASSEMBLIES.out.gff, use_full_alignment, use_fasttree)
@@ -362,6 +361,11 @@ workflow ANNOTATION {
     // /////////////////// ANNOTATION ///////////////////////////
     // ANNOTATE_ASSEMBLIES(ASSEMBLE_SHORTREADS.out.scaffolds, ch_bakta_db, db_cache)
     // ch_software_versions = ch_software_versions.mix(ANNOTATE_ASSEMBLIES.out.annotation_software)
+
+    if (!params.skip_poppunk) {
+        RUN_POPPUNK(ANNOTATION_INPUT_CHECK.out.genomes)
+        ch_software_versions = ch_software_versions.mix(RUN_POPPUNK.out.poppunk_version)
+    }
 
     ////////////////////////// PANGENOME /////////////////////////////////////
     PHYLOGENOMICS(ANNOTATE_ASSEMBLIES.out.gff, use_full_alignment, use_fasttree)
