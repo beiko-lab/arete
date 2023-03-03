@@ -71,7 +71,7 @@ def get_sample_info_assemblies(LinkedHashMap row) {
         print("***")
         exit 1, "ERROR: Please check input samplesheet -> Sequence file does not exist!\n${row.fastq_1}"
     }
-    array = [ meta, [file(row.path)]]
+    array = [ meta, file(row.path)]
 
     return array
 }
