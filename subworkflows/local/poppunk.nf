@@ -28,12 +28,8 @@ workflow RUN_POPPUNK {
             .collectFile(newLine: true) { item ->
                 [ "${item[0]}.txt", item[0] + '\t' + item[1] ]
             }
-            .collect()
-            .set { samplesheets }
-
-        POPPUNK_MAKE_SAMPLESHEET(samplesheets)
-
-        POPPUNK_MAKE_SAMPLESHEET.out.full_samplesheet.set { poppunk_samplesheet }
+            .collectFile(name: 'poppunk_samplesheet.tsv')
+            .set { poppunk_samplesheet }
 
         POPPUNK_CREATEDB(poppunk_samplesheet)
 
