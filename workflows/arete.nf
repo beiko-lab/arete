@@ -108,7 +108,7 @@ workflow ARETE {
         use_reference_genome = false
     }
 
-    ch_bakta_db = params.use_bakta ? file(params.use_bakta) : false
+    ch_bakta_db = params.bakta_db ? file(params.bakta_db) : null
     db_cache = params.db_cache ? params.db_cache : false
     use_full_alignment = params.use_full_alignment
     use_fasttree = params.use_fasttree
@@ -288,12 +288,8 @@ workflow ANNOTATION {
         ch_reference_genome = []
         use_reference_genome = false
     }
-    if (params.use_bakta){
-        ch_bakta_db = file(params.use_bakta)
-    }
-    else{
-        ch_bakta_db = false
-    }
+
+    ch_bakta_db = params.bakta_db ? file(params.bakta_db) : null
 
     //db_cache = params.db_cache ? params.db_cache: false
     //ch_db_cache = Channel.empty()
@@ -353,14 +349,6 @@ workflow ANNOTATION {
             )
     }
     ch_software_versions = ch_software_versions.mix(ANNOTATE_ASSEMBLIES.out.annotation_software)
-
-    // /////////////////// ASSEMBLY ///////////////////////////
-    // ASSEMBLE_SHORTREADS(INPUT_CHECK.out.reads, ch_reference_genome, use_reference_genome, db_cache)
-    // ch_software_versions = ch_software_versions.mix(ASSEMBLE_SHORTREADS.out.assembly_software)
-
-    // /////////////////// ANNOTATION ///////////////////////////
-    // ANNOTATE_ASSEMBLIES(ASSEMBLE_SHORTREADS.out.scaffolds, ch_bakta_db, db_cache)
-    // ch_software_versions = ch_software_versions.mix(ANNOTATE_ASSEMBLIES.out.annotation_software)
 
     if (!params.skip_poppunk) {
         RUN_POPPUNK(ANNOTATION_INPUT_CHECK.out.genomes)
