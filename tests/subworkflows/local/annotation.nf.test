@@ -9,6 +9,8 @@ nextflow_workflow {
         when {
             params {
                 // define parameters here. Example:
+                light = true
+                use_bakta = true
                 outdir = "$outputDir"
             }
             workflow {
