@@ -10,6 +10,7 @@ nextflow_workflow {
             params {
                 // define parameters here. Example:
                 light = true
+                use_prokka = true
                 outdir = "$outputDir"
             }
             workflow {

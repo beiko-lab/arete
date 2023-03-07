@@ -106,7 +106,20 @@ workflow ANNOTATE_ASSEMBLIES {
         /*
         * Run gene finding software (Prokka or Bakta)
         */
-        if (params.use_bakta) {
+        if (params.use_prokka) {
+
+            PROKKA (
+            assemblies,
+            [],
+            []
+            ) //Assembly, protein file, pre-trained prodigal
+            ch_software_versions = ch_software_versions.mix(PROKKA.out.versions.first().ifEmpty(null))
+            ch_ffn_files = PROKKA.out.ffn
+            ch_gff_files = PROKKA.out.gff
+            ch_multiqc_files = ch_multiqc_files.mix(PROKKA.out.txt.collect{it[1]}.ifEmpty([]))
+
+        }
+        else {
 
             if (bakta_db){
                 BAKTA(assemblies, bakta_db, [], [])
@@ -119,17 +132,7 @@ workflow ANNOTATE_ASSEMBLIES {
             ch_software_versions = ch_software_versions.mix(BAKTA.out.versions.first().ifEmpty(null))
             ch_ffn_files = BAKTA.out.ffn
             ch_gff_files = BAKTA.out.gff
-        }
-        else {
-            PROKKA (
-            assemblies,
-            [],
-            []
-            ) //Assembly, protein file, pre-trained prodigal
-            ch_software_versions = ch_software_versions.mix(PROKKA.out.versions.first().ifEmpty(null))
-            ch_ffn_files = PROKKA.out.ffn
-            ch_gff_files = PROKKA.out.gff
-            ch_multiqc_files = ch_multiqc_files.mix(PROKKA.out.txt.collect{it[1]}.ifEmpty([]))
+
         }
 
         /*

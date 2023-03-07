@@ -87,15 +87,9 @@
             "default": "",
             "fa_icon": "fas fa-edit",
             "properties": {
-                "use_bakta": {
-                    "type": "boolean",
-                    "description": "Use Bakta for annotating assemblies",
-                    "fa_icon": "fas fa-bacterium",
-                    "help_text": "Set --bakta_db if you already have a Bakta database."
-                },
                 "bakta_db": {
                     "type": "string",
-                    "default": null,
+                    "default": "None",
                     "fa_icon": "fas fa-database"
                 },
                 "light": {
@@ -103,6 +97,11 @@
                     "description": "Only run one DIAMOND annotation step - against VFDB",
                     "hidden": true,
                     "fa_icon": "fas fa-feather-alt"
+                },
+                "use_prokka": {
+                    "type": "boolean",
+                    "fa_icon": "fas fa-bacterium",
+                    "description": "Use Prokka (not Bakta) for annotating assemblies"
                 }
             }
         },
