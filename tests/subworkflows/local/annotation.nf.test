@@ -9,6 +9,7 @@ nextflow_workflow {
         when {
             params {
                 // define parameters here. Example:
+                light = true
                 outdir = "$outputDir"
             }
             workflow {
