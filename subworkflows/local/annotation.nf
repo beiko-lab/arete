@@ -2,7 +2,8 @@
 // MODULE: Installed directly from nf-core/modules
 //
 include { PROKKA                } from '../../modules/nf-core/prokka/main'
-include { BAKTA } from '../../modules/nf-core/bakta/main'
+include { BAKTA_BAKTA as BAKTA } from '../../modules/nf-core/bakta/bakta/main'
+include { BAKTA_BAKTADBDOWNLOAD as BAKTADBDOWNLOAD } from '../../modules/nf-core/bakta/baktadbdownload/main'
 include { GET_CAZYDB;
           GET_VFDB;
           GET_BACMET} from '../../modules/local/blast_databases.nf'
@@ -43,6 +44,7 @@ workflow ANNOTATE_ASSEMBLIES {
     main:
 
         //if (params.input_sample_table){ ch_input = file(params.input_sample_table) } else { exit 1, 'Input samplesheet not specified!' }
+        ch_multiqc_files = Channel.empty()
         ch_software_versions = Channel.empty()
         /*
         * SUBWORKFLOW: Read in samplesheet, validate and stage input files
@@ -104,23 +106,33 @@ workflow ANNOTATE_ASSEMBLIES {
         /*
         * Run gene finding software (Prokka or Bakta)
         */
-        ch_ffn_files = Channel.empty()
-        ch_gff_files = Channel.empty()
-        if (bakta_db){
-            BAKTA(assemblies, bakta_db, [], [])
-            ch_software_versions = ch_software_versions.mix(BAKTA.out.versions.first().ifEmpty(null))
-            ch_ffn_files = ch_ffn_files.mix(BAKTA.out.ffn)
-            ch_gff_files = ch_gff_files.mix(BAKTA.out.gff)
-        }
-        else{
+        if (params.use_prokka) {
+
             PROKKA (
             assemblies,
             [],
             []
             ) //Assembly, protein file, pre-trained prodigal
             ch_software_versions = ch_software_versions.mix(PROKKA.out.versions.first().ifEmpty(null))
-            ch_ffn_files = ch_ffn_files.mix(PROKKA.out.ffn)
-            ch_gff_files = ch_gff_files.mix(PROKKA.out.gff)
+            ch_ffn_files = PROKKA.out.ffn
+            ch_gff_files = PROKKA.out.gff
+            ch_multiqc_files = ch_multiqc_files.mix(PROKKA.out.txt.collect{it[1]}.ifEmpty([]))
+
+        }
+        else {
+
+            if (bakta_db){
+                BAKTA(assemblies, bakta_db, [], [])
+            } else {
+                BAKTADBDOWNLOAD()
+                BAKTADBDOWNLOAD.out.db.set { bakta_db }
+                BAKTA(assemblies, bakta_db, [], [])
+            }
+
+            ch_software_versions = ch_software_versions.mix(BAKTA.out.versions.first().ifEmpty(null))
+            ch_ffn_files = BAKTA.out.ffn
+            ch_gff_files = BAKTA.out.gff
+
         }
 
         /*
@@ -151,10 +163,6 @@ workflow ANNOTATE_ASSEMBLIES {
             CAZY_FILTER(DIAMOND_BLAST_CAZY.out.txt, "CAZY", blast_columns)
         }
         ch_software_versions = ch_software_versions.mix(DIAMOND_MAKE_VFDB.out.versions.ifEmpty(null))
-        ch_multiqc_files = Channel.empty()
-        if(!bakta_db){
-            ch_multiqc_files = ch_multiqc_files.mix(PROKKA.out.txt.collect{it[1]}.ifEmpty([]))
-        }
 
     emit:
         annotation_software = ch_software_versions

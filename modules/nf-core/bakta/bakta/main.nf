@@ -1,11 +1,11 @@
-process BAKTA {
+process BAKTA_BAKTA {
     tag "$meta.id"
     label 'process_medium'
 
-    conda (params.enable_conda ? "bioconda::bakta=1.4.0" : null)
+    conda "bioconda::bakta=1.7.0"
     container "${ workflow.containerEngine == 'singularity' && !task.ext.singularity_pull_docker_container ?
-        'https://depot.galaxyproject.org/singularity/bakta:1.4.0--pyhdfd78af_1' :
-        'quay.io/biocontainers/bakta:1.4.0--pyhdfd78af_1' }"
+        'https://depot.galaxyproject.org/singularity/bakta:1.7.0--pyhdfd78af_1' :
+        'quay.io/biocontainers/bakta:1.7.0--pyhdfd78af_1' }"
 
     input:
     tuple val(meta), path(fasta)
@@ -33,20 +33,20 @@ process BAKTA {
     def args = task.ext.args   ?: ''
     prefix   = task.ext.prefix ?: "${meta.id}"
     def proteins_opt = proteins ? "--proteins ${proteins[0]}" : ""
-    def prodigal_opt = prodigal_tf ? "--prodigal-tf ${prodigal_tf[0]}" : ""
+    def prodigal_tf = prodigal_tf ? "--prodigal-tf ${prodigal_tf[0]}" : ""
     """
     bakta \\
+        $fasta \\
         $args \\
         --threads $task.cpus \\
         --prefix $prefix \\
-        --db $db \\
         $proteins_opt \\
         $prodigal_tf \\
-        $fasta
+        --db $db
 
     cat <<-END_VERSIONS > versions.yml
     "${task.process}":
-        bakta: \$( echo \$(bakta --version 2>&1) | sed 's/^.*bakta //' )
+        bakta: \$(echo \$(bakta --version) 2>&1 | cut -f '2' -d ' ')
     END_VERSIONS
     """
 
@@ -66,7 +66,7 @@ process BAKTA {
 
     cat <<-END_VERSIONS > versions.yml
     "${task.process}":
-        bakta: \$( echo \$(bakta --version 2>&1) | sed 's/^.*bakta //' )
+        bakta: \$(echo \$(bakta --version) 2>&1 | cut -f '2' -d ' ')
     END_VERSIONS
     """
 }

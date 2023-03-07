@@ -74,7 +74,8 @@
             "properties": {
                 "skip_kraken": {
                     "type": "boolean",
-                    "description": "Don't run Kraken2 taxonomic classification"
+                    "description": "Don't run Kraken2 taxonomic classification",
+                    "fa_icon": "fas fa-forward"
                 }
             },
             "fa_icon": "fas fa-align-left"
@@ -86,15 +87,21 @@
             "default": "",
             "fa_icon": "fas fa-edit",
             "properties": {
-                "use_bakta": {
+                "bakta_db": {
                     "type": "string",
                     "default": "None",
-                    "description": "Location to the bakta database"
+                    "fa_icon": "fas fa-database"
                 },
                 "light": {
                     "type": "boolean",
                     "description": "Only run one DIAMOND annotation step - against VFDB",
-                    "hidden": true
+                    "hidden": true,
+                    "fa_icon": "fas fa-feather-alt"
+                },
+                "use_prokka": {
+                    "type": "boolean",
+                    "fa_icon": "fas fa-bacterium",
+                    "description": "Use Prokka (not Bakta) for annotating assemblies"
                 }
             }
         },
@@ -107,11 +114,14 @@
             "properties": {
                 "use_full_alignment": {
                     "type": "boolean",
-                    "description": "Use full alignment"
+                    "description": "Use full alignment",
+                    "fa_icon": "fas fa-align-justify"
                 },
                 "use_fasttree": {
                     "type": "boolean",
-                    "description": "Use FastTree"
+                    "description": "Use FastTree",
+                    "fa_icon": "fas fa-tree",
+                    "default": true
                 }
             }
         },
@@ -124,16 +134,19 @@
             "properties": {
                 "skip_poppunk": {
                     "type": "boolean",
-                    "description": "Skip PopPunk"
+                    "description": "Skip PopPunk",
+                    "fa_icon": "fas fa-forward"
                 },
                 "poppunk_model": {
                     "type": "string",
                     "default": "None",
-                    "description": "Which PopPunk model to use (bgmm, dbscan, refine, threshold or lineage)"
+                    "description": "Which PopPunk model to use (bgmm, dbscan, refine, threshold or lineage)",
+                    "fa_icon": "fas fa-indent"
                 },
                 "run_poppunk_qc": {
                     "type": "boolean",
-                    "description": "Whether to run the QC step for PopPunk"
+                    "description": "Whether to run the QC step for PopPunk",
+                    "fa_icon": "fas fa-industry"
                 }
             }
         },
