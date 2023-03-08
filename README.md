@@ -28,35 +28,39 @@ On release, automated continuous integration tests run the pipeline on a full-si
 
 Read processing:
 
-1. Raw Read QC ([`FastQC`](https://www.bioinformatics.babraham.ac.uk/projects/fastqc/))
-2. Read Trimming ([`fastp`](https://github.com/OpenGene/fastp))
-3. Trimmed Read QC ([`FastQC`](https://www.bioinformatics.babraham.ac.uk/projects/fastqc/))
-4. Taxonomic Profiling ([`kraken2`](http://ccb.jhu.edu/software/kraken2/))
+- Raw Read QC ([`FastQC`](https://www.bioinformatics.babraham.ac.uk/projects/fastqc/))
+- Read Trimming ([`fastp`](https://github.com/OpenGene/fastp))
+- Trimmed Read QC ([`FastQC`](https://www.bioinformatics.babraham.ac.uk/projects/fastqc/))
+- Taxonomic Profiling ([`kraken2`](http://ccb.jhu.edu/software/kraken2/))
 
 Assembly:
 
-1. Unicycler ([`unicycler`](https://github.com/rrwick/Unicycler))
-2. QUAST QC ([`quast`](http://quast.sourceforge.net/))
-3. CheckM QC ([`checkm`](https://github.com/Ecogenomics/CheckM))
+- Unicycler ([`unicycler`](https://github.com/rrwick/Unicycler))
+- QUAST QC ([`quast`](http://quast.sourceforge.net/))
+- CheckM QC ([`checkm`](https://github.com/Ecogenomics/CheckM))
 
 Annotation:
 
-1. Prokka ([`prokka`](https://github.com/tseemann/prokka))
-2. AMR ([`RGI`](https://github.com/arpcard/rgi))
-3. Plasmids ([`mob_suite`](https://github.com/phac-nml/mob-suite))
-4. CAZY, VFDB, and BacMet query using DIAMOND ([`diamond`](https://github.com/bbuchfink/diamond))
+- Bakta ([`bakta`](https://github.com/oschwengers/bakta))
+- (_optionally_) Prokka ([`prokka`](https://github.com/tseemann/prokka))
+- AMR ([`RGI`](https://github.com/arpcard/rgi))
+- Plasmids ([`mob_suite`](https://github.com/phac-nml/mob-suite))
+- CAZY, VFDB, and BacMet query using DIAMOND ([`diamond`](https://github.com/bbuchfink/diamond))
 
 Phylogeny:
 
-1. Panaroo ([`panaroo`](https://github.com/gtonkinhill/panaroo))
-2. SNP-sites([`SNPsites`](https://github.com/sanger-pathogens/snp-sites))
-3. IQTree ([`iqtree`](http://www.iqtree.org/))
+- Panaroo ([`panaroo`](https://github.com/gtonkinhill/panaroo))
+- FastTree ([`fasttree`](http://www.microbesonline.org/fasttree/))
+- (_optionally_) SNP-sites([`SNPsites`](https://github.com/sanger-pathogens/snp-sites))
+- (_optionally_) IQTree ([`iqtree`](http://www.iqtree.org/))
+
+Lineage:
+
+- PopPUNK ([`poppunk`](https://poppunk.net/))
 
 ### Future Development Targets
 
 A list in no particular order of outstanding development features, both in-progress and planned:
-
-- CI/CD testing of local modules and pipeline logic
 
 - Sensible default QC parameters to allow automated end-to-end execution with little-to-no required user intervention
 
@@ -79,7 +83,7 @@ Note: this workflow should also support [`Podman`](https://podman.io/), [`Shifte
 3.  Download the pipeline and test with a `stub-run`. The `stub-run` will ensure that the pipeline is able to download and use containers as well as execute in the proper logic.
 
     ```bash
-    nextflow run arete/ --input_sample_table samplesheet.csv -profile <docker/singularity/conda> -stub-run
+    nextflow run beiko-lab/ARETE -profile test,<docker/singularity/conda> -stub-run
     ```
 
     - Please check [nf-core/configs](https://github.com/nf-core/configs#documentation) to see if a custom config file to run nf-core pipelines already exists for your Institute. If so, you can simply use `-profile <institute>` in your command. This will enable either `docker` or `singularity` and set the appropriate execution settings for your local compute environment.
@@ -88,7 +92,7 @@ Note: this workflow should also support [`Podman`](https://podman.io/), [`Shifte
 4.  Start running your own analysis (ideally using `-profile docker` or `-profile singularity` for stability)!
 
         ```bash
-        nextflow run arete -profile <docker/singularity> --input_sample_table samplesheet.csv
+        nextflow run beiko-lab/ARETE -profile <docker/singularity> --input_sample_table samplesheet.csv --poppunk_model bgmm
         ```
 
     `samplesheet.csv` must be formatted `sample,fastq_1,fastq_2`
@@ -102,14 +106,14 @@ See [usage docs](docs/usage.md) for all of the available options when running th
 To test the worklow on a minimal dataset you can use the test configuration (with either docker, conda, or singularity - replace `docker` below as appropriate):
 
     ```bash
-    nextflow run arete -profile test,docker
+    nextflow run beiko-lab/ARETE -profile test,docker
     ```
 
-Due to download speed of the Kraken2 database and CAZY database this will take ~25 minutes.
-However to accelerate it you can download/cache the database files to a folder (e.g., `test/db_cache`) and provide a database cache parameter.
+Due to download speed of the Kraken2, Bakta and CAZY databases this will take ~35 minutes.
+However to accelerate it you can download/cache the database files to a folder (e.g., `test/db_cache`) and provide a database cache parameter. As well as set `--bakta_db` to the directory containing the Bakta database.
 
     ```bash
-    nextflow run arete -profile test,docker --db_cache $PWD/test/db_cache
+    nextflow run beiko-lab/ARETE -profile test,docker --db_cache $PWD/test/db_cache --bakta_db $PWD/baktadb/db-light
     ```
 
 ## Documentation
@@ -118,7 +122,7 @@ The ARETE pipeline comes with documentation about the pipeline: [usage](docs/usa
 
 ## Credits
 
-ARETE was written by [Finlay Maguire](https://github.com/fmaguire) and is currently developed by [Alex Manuele](https://github.com/alexmanuele).
+ARETE was originally written by [Finlay Maguire](https://github.com/fmaguire) and [Alex Manuele](https://github.com/alexmanuele), and is currently developed by [João Cavalcante](https://github.com/jvfe).
 
 ## Contributions and Support
 
@@ -129,7 +133,6 @@ Thank you for your interest in contributing to ARETE. We are currently in the pr
 ## Citations
 
 <!-- TODO nf-core: Add citation for pipeline after first release. Uncomment lines below and update Zenodo doi and badge at the top of this file. -->
-<!-- If you use  nf-core/arete for your analysis, please cite it using the following doi: [10.5281/zenodo.XXXXXX](https://doi.org/10.5281/zenodo.XXXXXX) -->
 
 This pipeline uses code and infrastructure developed and maintained by the [nf-core](https://nf-co.re) initative, and reused here under the [MIT license](https://github.com/nf-core/tools/blob/master/LICENSE).
 
