@@ -1,6 +1,5 @@
-<!--[![GitHub Actions CI Status](https://github.com/fmaguire/arete/workflows/nf-core%20CI/badge.svg)](https://github.com/fmaguire/arete/actions?query=workflow%3A%22nf-core+CI%22)-->
-<!--[![GitHub Actions Linting Status](https://github.com/fmaguire/arete/workflows/nf-core%20linting/badge.svg)](https://github.com/fmaguire/arete/actions?query=workflow%3A%22nf-core+linting%22)-->
-<!--[![Cite with Zenodo](http://img.shields.io/badge/DOI-10.5281/zenodo.XXXXXXX-1073c8?labelColor=000000)](https://doi.org/10.5281/zenodo.XXXXXXX)-->
+[![GitHub Actions CI Status](https://github.com/beiko-lab/arete/workflows/nf-core%20CI/badge.svg)](https://github.com/beiko-lab/arete/actions?query=workflow%3A%22nf-core+CI%22)
+[![GitHub Actions CI (test) Status](https://github.com/beiko-lab/arete/workflows/nf-test%20CI/badge.svg)](https://github.com/beiko-lab/arete/actions?query=workflow%3A%22nf-test+CI%22)
 
 [![Nextflow](https://img.shields.io/badge/nextflow%20DSL2-%E2%89%A521.03.0--edge-23aa62.svg?labelColor=000000)](https://www.nextflow.io/)
 [![run with conda](http://img.shields.io/badge/run%20with-conda-3EB049?labelColor=000000&logo=anaconda)](https://docs.conda.io/en/latest/)
@@ -11,62 +10,47 @@
 
 ## Introduction
 
-<!-- TODO nf-core: Write a 1-2 sentence summary of what data the pipeline is for and what it does -->
-
 **ARETE** is a bioinformatics best-practice analysis pipeline for AMR/VF LGT-focused bacterial genomics workflow.
 
 The pipeline is built using [Nextflow](https://www.nextflow.io), a workflow tool to run tasks across multiple compute infrastructures in a very portable manner. It uses Docker / Singularity containers making installation trivial and results highly reproducible.
 Like other workflow languages it provides [useful features](https://www.nextflow.io/docs/latest/getstarted.html#modify-and-resume) like `-resume` to only rerun tasks that haven't already been completed (e.g., allowing editing of inputs/tasks and recovery from crashes without a full re-run).
 The [nf-core](https://nf-cor.re) project provided overall project template, pre-written software modules when available, and general best practice recommendations.
 
-<!-- TODO nf-core: Add full-sized test dataset and amend the paragraph below if applicable
-On release, automated continuous integration tests run the pipeline on a full-sized dataset on the AWS cloud infrastructure. This ensures that the pipeline runs on AWS, has sensible resource allocation defaults set to run on real-world datasets, and permits the persistent storage of results to benchmark between pipeline releases and other analysis sources. -->
-
 ## Pipeline summary
-
-<!-- TODO nf-core: Fill in short bullet-pointed list of the default steps in the pipeline -->
 
 Read processing:
 
-1. Raw Read QC ([`FastQC`](https://www.bioinformatics.babraham.ac.uk/projects/fastqc/))
-2. Read Trimming ([`fastp`](https://github.com/OpenGene/fastp))
-3. Trimmed Read QC ([`FastQC`](https://www.bioinformatics.babraham.ac.uk/projects/fastqc/))
-4. Taxonomic Profiling ([`kraken2`](http://ccb.jhu.edu/software/kraken2/))
+- Raw Read QC ([`FastQC`](https://www.bioinformatics.babraham.ac.uk/projects/fastqc/))
+- Read Trimming ([`fastp`](https://github.com/OpenGene/fastp))
+- Trimmed Read QC ([`FastQC`](https://www.bioinformatics.babraham.ac.uk/projects/fastqc/))
+- Taxonomic Profiling ([`kraken2`](http://ccb.jhu.edu/software/kraken2/))
 
 Assembly:
 
-1. Unicycler ([`unicycler`](https://github.com/rrwick/Unicycler))
-2. QUAST QC ([`quast`](http://quast.sourceforge.net/))
-3. CheckM QC ([`checkm`](https://github.com/Ecogenomics/CheckM))
+- Unicycler ([`unicycler`](https://github.com/rrwick/Unicycler))
+- QUAST QC ([`quast`](http://quast.sourceforge.net/))
+- CheckM QC ([`checkm`](https://github.com/Ecogenomics/CheckM))
 
 Annotation:
 
-1. Prokka ([`prokka`](https://github.com/tseemann/prokka))
-2. AMR ([`RGI`](https://github.com/arpcard/rgi))
-3. Plasmids ([`mob_suite`](https://github.com/phac-nml/mob-suite))
-4. CAZY, VFDB, and BacMet query using DIAMOND ([`diamond`](https://github.com/bbuchfink/diamond))
+- Bakta ([`bakta`](https://github.com/oschwengers/bakta))
+- (_optionally_) Prokka ([`prokka`](https://github.com/tseemann/prokka))
+- AMR ([`RGI`](https://github.com/arpcard/rgi))
+- Plasmids ([`mob_suite`](https://github.com/phac-nml/mob-suite))
+- CAZY, VFDB, and BacMet query using DIAMOND ([`diamond`](https://github.com/bbuchfink/diamond))
 
 Phylogeny:
 
-1. Panaroo ([`panaroo`](https://github.com/gtonkinhill/panaroo))
-2. SNP-sites([`SNPsites`](https://github.com/sanger-pathogens/snp-sites))
-3. IQTree ([`iqtree`](http://www.iqtree.org/))
+- Panaroo ([`panaroo`](https://github.com/gtonkinhill/panaroo))
+- FastTree ([`fasttree`](http://www.microbesonline.org/fasttree/))
+- (_optionally_) SNP-sites([`SNPsites`](https://github.com/sanger-pathogens/snp-sites))
+- (_optionally_) IQTree ([`iqtree`](http://www.iqtree.org/))
 
-### Future Development Targets
+Other:
 
-A list in no particular order of outstanding development features, both in-progress and planned:
+- PopPUNK ([`poppunk`](https://poppunk.net/))
 
-- CI/CD testing of local modules and pipeline logic
-
-- Sensible default QC parameters to allow automated end-to-end execution with little-to-no required user intervention
-
-- Integration of additional tools and scripts:
-
-1. Genomic island detection (e.g., IslandCompare)
-2. Inference of recombination events (e.g. Gubbins, CFML)
-3. Phylogenetic inference of lateral gene transfer events using [`rspr`](https://github.com/cwhidden/rspr)
-4. Inference of concerted gain and loss of genes and mobile genetic elements using [`the Community Coevolution Model`](https://github.com/beiko-lab/evolCCM)
-5. Partner applications for analysis and visualization of phylogenetic distributions of genes and MGEs and gene-order clustering.
+See our [roadmap](ROADMAP.md) for future development targets.
 
 ## Quick Start
 
@@ -79,7 +63,7 @@ Note: this workflow should also support [`Podman`](https://podman.io/), [`Shifte
 3.  Download the pipeline and test with a `stub-run`. The `stub-run` will ensure that the pipeline is able to download and use containers as well as execute in the proper logic.
 
     ```bash
-    nextflow run arete/ --input_sample_table samplesheet.csv -profile <docker/singularity/conda> -stub-run
+    nextflow run beiko-lab/ARETE -profile test,<docker/singularity/conda> -stub-run
     ```
 
     - Please check [nf-core/configs](https://github.com/nf-core/configs#documentation) to see if a custom config file to run nf-core pipelines already exists for your Institute. If so, you can simply use `-profile <institute>` in your command. This will enable either `docker` or `singularity` and set the appropriate execution settings for your local compute environment.
@@ -88,7 +72,7 @@ Note: this workflow should also support [`Podman`](https://podman.io/), [`Shifte
 4.  Start running your own analysis (ideally using `-profile docker` or `-profile singularity` for stability)!
 
         ```bash
-        nextflow run arete -profile <docker/singularity> --input_sample_table samplesheet.csv
+        nextflow run beiko-lab/ARETE -profile <docker/singularity> --input_sample_table samplesheet.csv --poppunk_model bgmm
         ```
 
     `samplesheet.csv` must be formatted `sample,fastq_1,fastq_2`
@@ -102,14 +86,14 @@ See [usage docs](docs/usage.md) for all of the available options when running th
 To test the worklow on a minimal dataset you can use the test configuration (with either docker, conda, or singularity - replace `docker` below as appropriate):
 
     ```bash
-    nextflow run arete -profile test,docker
+    nextflow run beiko-lab/ARETE -profile test,docker
     ```
 
-Due to download speed of the Kraken2 database and CAZY database this will take ~25 minutes.
-However to accelerate it you can download/cache the database files to a folder (e.g., `test/db_cache`) and provide a database cache parameter.
+Due to download speed of the Kraken2, Bakta and CAZY databases this will take ~35 minutes.
+However to accelerate it you can download/cache the database files to a folder (e.g., `test/db_cache`) and provide a database cache parameter. As well as set `--bakta_db` to the directory containing the Bakta database.
 
     ```bash
-    nextflow run arete -profile test,docker --db_cache $PWD/test/db_cache
+    nextflow run beiko-lab/ARETE -profile test,docker --db_cache $PWD/test/db_cache --bakta_db $PWD/baktadb/db-light
     ```
 
 ## Documentation
@@ -118,7 +102,7 @@ The ARETE pipeline comes with documentation about the pipeline: [usage](docs/usa
 
 ## Credits
 
-ARETE was written by [Finlay Maguire](https://github.com/fmaguire) and is currently developed by [Alex Manuele](https://github.com/alexmanuele).
+ARETE was originally written and developed by [Finlay Maguire](https://github.com/fmaguire) and [Alex Manuele](https://github.com/alexmanuele), and is currently developed by [João Cavalcante](https://github.com/jvfe).
 
 ## Contributions and Support
 
@@ -129,7 +113,6 @@ Thank you for your interest in contributing to ARETE. We are currently in the pr
 ## Citations
 
 <!-- TODO nf-core: Add citation for pipeline after first release. Uncomment lines below and update Zenodo doi and badge at the top of this file. -->
-<!-- If you use  nf-core/arete for your analysis, please cite it using the following doi: [10.5281/zenodo.XXXXXX](https://doi.org/10.5281/zenodo.XXXXXX) -->
 
 This pipeline uses code and infrastructure developed and maintained by the [nf-core](https://nf-co.re) initative, and reused here under the [MIT license](https://github.com/nf-core/tools/blob/master/LICENSE).
 

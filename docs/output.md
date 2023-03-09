@@ -1,38 +1,29 @@
-# fmaguire/arete: Output
+# beiko-lab/ARETE: Output
 
 ## Introduction
 
-This document describes the output produced by the pipeline. Most of the plots are taken from the MultiQC report, which summarises results at the end of the pipeline.
-
 The directories listed below will be created in the results directory after the pipeline has finished. All paths are relative to the top-level results directory.
-
-<!-- TODO nf-core: Write this documentation describing your workflow's output -->
-
-```bash
-
-
-
-```
-
-** NEEDS UPDATED FOR CURRENT WORKFLOW **
 
 ## Pipeline overview
 
-The pipeline is built using [Nextflow](https://www.nextflow.io/) and processes data using the following steps:
+The pipeline is built using [Nextflow](https://www.nextflow.io/) and processes data using the following steps (steps in _italics_ don't run by default):
 
-- [FastQC](#fastqc) - Raw read QC
+- [FastQC](#fastqc) - Raw and trimmed read QC
 - [FastP](#fastp) - Read trimming
 - [Kraken2](#kraken) - Taxonomic assignment
 - [Unicycler](#unicycler) - Short read assembly
 - [Quast](#quast) - Assembly quality score
-- [Prokka](#prokka) - Gene detection and annotation
+- [Bakta](#bakta) or [_Prokka_](#prokka) - Gene detection and annotation
 - [Panaroo](#panaroo) - Pangenome alignment
+- [MobRecon](#mobrecon) - Reconstruction and typing of plasmids
 - [RGI](#rgi) - Detection and annotation of AMR determinants
 - [Diamond](#diamond) - Detection and annotation of genes using external databases.
   - [CAZy](#cazy): Carbohydrate metabolism
   - [VFDB](#vfdb): Virulence factors
   - [BacMet](#bacmet): Metal resistance determinants
-- [IqTree](#IQTree) - Maximum likelihood core genome phylogenetic tree
+- [PopPUNK](#poppunk) - Genome clustering
+- [FastTree](#FastTree) or [_IQTree_](#IQTree) - Maximum likelihood core genome phylogenetic tree
+- [_SNPsites_](#SNPsites) - Extracts SNPs from a multi-FASTA alignment
 - [MultiQC](#multiqc) - Aggregate report describing results and QC from the whole pipeline
 - [Pipeline information](#pipeline-information) - Report metrics generated during the workflow execution
 
@@ -43,7 +34,7 @@ The pipeline is built using [Nextflow](https://www.nextflow.io/) and processes d
 <details markdown="1">
 <summary>Output files</summary>
 
-- `fastqc/`
+- `read_processing/*_fastqc/`
   - `*_fastqc.html`: FastQC report containing quality metrics for your untrimmed raw fastq files.
   - `*_fastqc.zip`: Zip archive containing the FastQC report, tab-delimited data file and plot images.
 
@@ -66,7 +57,7 @@ The pipeline is built using [Nextflow](https://www.nextflow.io/) and processes d
 <details markdown="1">
 <summary>Output files</summary>
 
-- `kraken2/`
+- `read_processing/kraken2/`
   - `*.kraken2.report.txt` : Text file containing genome-wise information of Kraken2 findings. See [here](https://github.com/DerrickWood/kraken2/blob/master/docs/MANUAL.markdown#output-formats) for details.
   - `*.classified(_(1|2))?.fastq.gz` : Fasta file containing classified reads. If paired-end, one file per end.
   - `*.unclassified(_(1|2))?.fastq.gz` : Fasta file containing unclassified reads. If paired-end, one file per end.
@@ -80,21 +71,21 @@ Kraken2 is a read classification software which will assign taxonomy to each rea
 <details markdown="1">
 <summary>Output files</summary>
 
-- `unicycler/`
+- `assembly/unicycler/`
   - `*.assembly.gfa`
   - `*.scaffolds.fa`
   - `*.unicycler.log`
 
 </details>
 
-Short/hybrid read assembler. For now only handles short reads in arete.
+Short/hybrid read assembler. For now only handles short reads in ARETE.
 
 ### Quast
 
 <details markdown="1">
 <summary>Output files</summary>
 
-- `quast/`
+- `assembly/quast/`
   - `report.tsv` : A tab-seperated report compiling all QC metrics recorded over all genomes
   - `quast/`
     - `report.(html|tex|pdf|tsv|txt)`: The Quast report in different file formats
@@ -106,25 +97,49 @@ Short/hybrid read assembler. For now only handles short reads in arete.
 
 </details>
 
-### Prokka
+### Bakta
 
 <details markdown="1">
 <summary>Output files</summary>
 
-- `prokka/`
-  - `*/` : Prokka results will be in one directory per genome.
-    - `*.err` : Unacceptable annotations
-    - `*.faa` : Protein FASTA file of translated CDS sequences
-    - `*.ffn` : Nucleotide FASTA file of all the prediction transcripts (CDS, rRNA, tRNA, tmRNA, misc_RNA)
-    - `*.fna` : Nucleotide FASTA file of input contig sequences
-    - `*.fsa` : Nucleotide FASTA file of the input contig sequences, used by "tbl2asn" to create the .sqn file. It is mostly the same as the .fna file, but with extra Sequin tags in the sequence description lines.
-    - `*.gff` : This is the master annotation in GFF3 format, containing both sequences and annotations.
-    - `*.gbk` : This is a standard Genbank file derived from the master .gff.
-    - `*.log` : Contains all the output that Prokka produced during its run. This is a record of what settings used, even if the --quiet option was enabled.
-    - `*.sqn` : An ASN1 format "Sequin" file for submission to Genbank. It needs to be edited to set the correct taxonomy, authors, related publication etc.
-    - `*.tbl` : Feature Table file, used by "tbl2asn" to create the .sqn file.
-    - `*.tsv` : Tab-separated file of all features: locus_tag,ftype,len_bp,gene,EC_number,COG,product
-    - `*.txt` : Statistics relating to the annotated features found.
+- `annotation/bakta/`
+  - `${sample_id}/` : Bakta results will be in one directory per genome.
+    - `${sample_id}.tsv`: annotations as simple human readble TSV
+    - `${sample_id}.gff3`: annotations & sequences in GFF3 format
+    - `${sample_id}.gbff`: annotations & sequences in (multi) GenBank format
+    - `${sample_id}.embl`: annotations & sequences in (multi) EMBL format
+    - `${sample_id}.fna`: replicon/contig DNA sequences as FASTA
+    - `${sample_id}.ffn`: feature nucleotide sequences as FASTA
+    - `${sample_id}.faa`: CDS/sORF amino acid sequences as FASTA
+    - `${sample_id}.hypotheticals.tsv`: further information on hypothetical protein CDS as simple human readble tab separated values
+    - `${sample_id}.hypotheticals.faa`: hypothetical protein CDS amino acid sequences as FASTA
+    - `${sample_id}.txt`: summary as TXT
+    - `${sample_id}.png`: circular genome annotation plot as PNG
+    - `${sample_id}.svg`: circular genome annotation plot as SVG
+
+</details>
+
+Bakta is a tool for the rapid & standardized annotation of bacterial genomes and plasmids from both isolates and MAGs
+
+### _Prokka_
+
+<details markdown="1">
+<summary>Output files</summary>
+
+- `annotation/prokka/`
+  - `${sample_id}/` : Prokka results will be in one directory per genome.
+    - `${sample_id}.err` : Unacceptable annotations
+    - `${sample_id}.faa` : Protein FASTA file of translated CDS sequences
+    - `${sample_id}.ffn` : Nucleotide FASTA file of all the prediction transcripts (CDS, rRNA, tRNA, tmRNA, misc_RNA)
+    - `${sample_id}.fna` : Nucleotide FASTA file of input contig sequences
+    - `${sample_id}.fsa` : Nucleotide FASTA file of the input contig sequences, used by "tbl2asn" to create the .sqn file. It is mostly the same as the .fna file, but with extra Sequin tags in the sequence description lines.
+    - `${sample_id}.gff` : This is the master annotation in GFF3 format, containing both sequences and annotations.
+    - `${sample_id}.gbk` : This is a standard Genbank file derived from the master .gff.
+    - `${sample_id}.log` : Contains all the output that Prokka produced during its run. This is a record of what settings used, even if the --quiet option was enabled.
+    - `${sample_id}.sqn` : An ASN1 format "Sequin" file for submission to Genbank. It needs to be edited to set the correct taxonomy, authors, related publication etc.
+    - `${sample_id}.tbl` : Feature Table file, used by "tbl2asn" to create the .sqn file.
+    - `${sample_id}.tsv` : Tab-separated file of all features: locus_tag,ftype,len_bp,gene,EC_number,COG,product
+    - `${sample_id}.txt` : Statistics relating to the annotated features found.
 
 </details>
 
@@ -135,36 +150,105 @@ Prokka is a software tool to annotate bacterial, archaeal and viral genomes quic
 <details markdown="1">
 <summary>Output files</summary>
 
-- `rgi/`
-  - `*_rgi.txt` : A TSV report containing all AMR predictions for a given genome. For more info see [here](https://github.com/arpcard/rgi#rgi-main-tab-delimited-output-details)
+- `annotation/rgi/`
+  - `${sample_id}_rgi.txt` : A TSV report containing all AMR predictions for a given genome. For more info see [here](https://github.com/arpcard/rgi#rgi-main-tab-delimited-output-details)
 
 </details>
 
 RGI predicts AMR determinants using the CARD ontology and various trained models.
+
+### MobRecon
+
+<details markdown="1">
+<summary>Output files</summary>
+
+- `annotation/mob_recon`
+  - `${sample_id}_mob_recon/` : MobRecon results will be in one directory per genome.
+    - `contig_report.txt` - This file describes the assignment of the contig to chromosome or a particular plasmid grouping.
+    - `mge.report.txt` - Blast HSP of detected MGE's/repetitive elements with contextual information.
+    - `chromosome.fasta` - Fasta file of all contigs found to belong to the chromosome.
+    - `plasmid_*.fasta` - Each plasmid group is written to an individual fasta file which contains the assigned contigs.
+    - `mobtyper_results` - Aggregate MOB-typer report files for all identified plasmid.
+
+</details>
+
+MobRecon reconstructs individual plasmid sequences from draft genome assemblies using the clustered plasmid reference databases
 
 ### DIAMOND
 
 <details markdown="1">
 <summary>Output files</summary>
 
-- `diamond/`
-  - `*_(VFDB|BACMET|CAZYDB).txt` : Blast6 formatted TSVs indicating BlastX results of the genes from each genome against VFDB, BacMet, and CAZy databases.
+- `annotation/(vfdb|bacmet|cazy)/`
+  - `${sample_id}/${sample_id}_(VFDB|BACMET|CAZYDB).txt` : Blast6 formatted TSVs indicating BlastX results of the genes from each genome against VFDB, BacMet, and CAZy databases.
+  - `(VFDB|BACMET|CAZYDB).txt` : Table with all hits to this database, with a column describing which genome the match originates from. Sorted and filtered by the match's coverage.
 
 </details>
 
 [Diamond](https://github.com/bbuchfink/diamond) is a sequence aligner for protein and translated DNA searches, designed for high performance analysis of big sequence data. We use DIAMOND to predict the presence of virulence factors, heavy metal resistance determinants, and carbohydrate-active enzymes using [VFDB](http://www.mgc.ac.cn/VFs/), [BacMet](http://bacmet.biomedicine.gu.se/), and [CAZy](http://www.cazy.org/) respectively.
 
-### IQTree
+### Panaroo
 
 <details markdown="1">
 <summary>Output files</summary>
 
-- `iqtree/`
+- `pangenomics/panaroo/results/`
+
+See [the panaroo documentation](https://gtonkinhill.github.io/panaroo/#/gettingstarted/output) for an extensive description of output provided.
+
+</details>
+
+[Panaroo](https://gtonkinhill.github.io/panaroo/) is a Bacterial Pangenome Analysis Pipeline.
+
+### FastTree
+
+<details markdown="1">
+<summary>Output files</summary>
+
+- `phylogenomics/fasttree/`
+  - `*.tre` : Newick formatted maximum likelihood tree of core-genome alignment.
+
+</details>
+
+[FastTree](http://www.microbesonline.org/fasttree/) infers approximately-maximum-likelihood phylogenetic trees from alignments of nucleotide or protein sequences
+
+### _IQTree_
+
+<details markdown="1">
+<summary>Output files</summary>
+
+- `phylogenomics/iqtree/`
   - `*.treefile` : Newick formatted maximum likelihood tree of core-genome alignment.
 
 </details>
 
 [IQTree](http://www.iqtree.org/) is a fast and effective stochastic algorithm to infer phylogenetic trees by maximum likelihood.
+
+### _SNPsites_
+
+<details markdown="1">
+<summary>Output files</summary>
+
+- `phylogenomics/snpsites/`
+  - `filtered_alignment.fas` : Variant fasta file.
+  - `constant.sites.txt` : Text file containing counts of constant sites.
+
+</details>
+
+[SNPsites](https://github.com/sanger-pathogens/snp-sites) is a tool to rapidly extract SNPs from a multi-FASTA alignment.
+
+### PopPUNK
+
+<details markdown="1">
+<summary>Output files</summary>
+
+- `poppunk_results/`
+  - `poppunk_${poppunk_model}/` - Results from PopPUNK's fit-model command
+  - `poppunk_visualizations/` - Results from the poppunk_visualise command
+
+</details>
+
+[PopPUNK](https://poppunk.net/) is a tool for clustering genomes.
 
 ### MultiQC
 
