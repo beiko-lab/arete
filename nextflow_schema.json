@@ -143,8 +143,7 @@
                     "description": "Whether to run the QC step for PopPunk",
                     "fa_icon": "fas fa-industry"
                 }
-            },
-            "required": ["poppunk_model"]
+            }
         },
         "institutional_config_options": {
             "title": "Institutional config options",
