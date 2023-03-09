@@ -1,6 +1,5 @@
-<!--[![GitHub Actions CI Status](https://github.com/fmaguire/arete/workflows/nf-core%20CI/badge.svg)](https://github.com/fmaguire/arete/actions?query=workflow%3A%22nf-core+CI%22)-->
-<!--[![GitHub Actions Linting Status](https://github.com/fmaguire/arete/workflows/nf-core%20linting/badge.svg)](https://github.com/fmaguire/arete/actions?query=workflow%3A%22nf-core+linting%22)-->
-<!--[![Cite with Zenodo](http://img.shields.io/badge/DOI-10.5281/zenodo.XXXXXXX-1073c8?labelColor=000000)](https://doi.org/10.5281/zenodo.XXXXXXX)-->
+[![GitHub Actions CI Status](https://github.com/beiko-lab/arete/workflows/nf-core%20CI/badge.svg)](https://github.com/beiko-lab/arete/actions?query=workflow%3A%22nf-core+CI%22)
+[![GitHub Actions CI (test) Status](https://github.com/beiko-lab/arete/workflows/nf-test%20CI/badge.svg)](https://github.com/beiko-lab/arete/actions?query=workflow%3A%22nf-test+CI%22)
 
 [![Nextflow](https://img.shields.io/badge/nextflow%20DSL2-%E2%89%A521.03.0--edge-23aa62.svg?labelColor=000000)](https://www.nextflow.io/)
 [![run with conda](http://img.shields.io/badge/run%20with-conda-3EB049?labelColor=000000&logo=anaconda)](https://docs.conda.io/en/latest/)
@@ -11,20 +10,13 @@
 
 ## Introduction
 
-<!-- TODO nf-core: Write a 1-2 sentence summary of what data the pipeline is for and what it does -->
-
 **ARETE** is a bioinformatics best-practice analysis pipeline for AMR/VF LGT-focused bacterial genomics workflow.
 
 The pipeline is built using [Nextflow](https://www.nextflow.io), a workflow tool to run tasks across multiple compute infrastructures in a very portable manner. It uses Docker / Singularity containers making installation trivial and results highly reproducible.
 Like other workflow languages it provides [useful features](https://www.nextflow.io/docs/latest/getstarted.html#modify-and-resume) like `-resume` to only rerun tasks that haven't already been completed (e.g., allowing editing of inputs/tasks and recovery from crashes without a full re-run).
 The [nf-core](https://nf-cor.re) project provided overall project template, pre-written software modules when available, and general best practice recommendations.
 
-<!-- TODO nf-core: Add full-sized test dataset and amend the paragraph below if applicable
-On release, automated continuous integration tests run the pipeline on a full-sized dataset on the AWS cloud infrastructure. This ensures that the pipeline runs on AWS, has sensible resource allocation defaults set to run on real-world datasets, and permits the persistent storage of results to benchmark between pipeline releases and other analysis sources. -->
-
 ## Pipeline summary
-
-<!-- TODO nf-core: Fill in short bullet-pointed list of the default steps in the pipeline -->
 
 Read processing:
 
@@ -54,7 +46,7 @@ Phylogeny:
 - (_optionally_) SNP-sites([`SNPsites`](https://github.com/sanger-pathogens/snp-sites))
 - (_optionally_) IQTree ([`iqtree`](http://www.iqtree.org/))
 
-Lineage:
+Other:
 
 - PopPUNK ([`poppunk`](https://poppunk.net/))
 
@@ -110,7 +102,7 @@ The ARETE pipeline comes with documentation about the pipeline: [usage](docs/usa
 
 ## Credits
 
-ARETE was originally written by [Finlay Maguire](https://github.com/fmaguire) and [Alex Manuele](https://github.com/alexmanuele), and is currently developed by [João Cavalcante](https://github.com/jvfe).
+ARETE was originally written and developed by [Finlay Maguire](https://github.com/fmaguire) and [Alex Manuele](https://github.com/alexmanuele), and is currently developed by [João Cavalcante](https://github.com/jvfe).
 
 ## Contributions and Support
 
