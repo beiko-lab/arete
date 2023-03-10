@@ -143,6 +143,7 @@ workflow ARETE {
             GET_DB_CACHE.out.vfdb,
             GET_DB_CACHE.out.cazydb,
             GET_DB_CACHE.out.bacmet,
+            GET_DB_CACHE.out.iceberg,
             GET_DB_CACHE.out.card_json,
             GET_DB_CACHE.out.card_version
             )
@@ -161,6 +162,7 @@ workflow ARETE {
         ANNOTATE_ASSEMBLIES(
             ASSEMBLE_SHORTREADS.out.scaffolds,
             ch_bakta_db,
+            [],
             [],
             [],
             [],
@@ -330,6 +332,7 @@ workflow ANNOTATION {
             GET_DB_CACHE.out.vfdb,
             GET_DB_CACHE.out.cazydb,
             GET_DB_CACHE.out.bacmet,
+            GET_DB_CACHE.out.iceberg,
             GET_DB_CACHE.out.card_json,
             GET_DB_CACHE.out.card_version
             )
@@ -342,6 +345,7 @@ workflow ANNOTATION {
         ANNOTATE_ASSEMBLIES(
             ANNOTATION_INPUT_CHECK.out.genomes,
             ch_bakta_db,
+            [],
             [],
             [],
             [],
