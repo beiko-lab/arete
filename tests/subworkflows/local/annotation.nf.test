@@ -23,6 +23,7 @@ nextflow_workflow {
                 input[4] = []
                 input[5] = []
                 input[6] = []
+                input[7] = []
                 """
             }
         }
