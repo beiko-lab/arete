@@ -166,6 +166,7 @@ workflow ARETE {
             [],
             [],
             [],
+            [],
             []
             )
     }
@@ -344,6 +345,7 @@ workflow ANNOTATION {
         ANNOTATE_ASSEMBLIES(
             ANNOTATION_INPUT_CHECK.out.genomes,
             ch_bakta_db,
+            [],
             [],
             [],
             [],
