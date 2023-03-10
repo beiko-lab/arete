@@ -15,7 +15,7 @@ process GET_DB_CACHE {
         path "VFDB_setA_pro.fas.gz", emit: vfdb
         path "CAZyDB.07312020.fa", emit: cazydb
         path "BacMet2_predicted_database.fasta.gz", emit: bacmet
-        path "ICE_aa_all.fas", emit: iceberg
+        path "ICE_aa_experimental.fas", emit: iceberg
         path "card.json", emit: card_json
         path "card.version.txt", emit: card_version
         path("""k2_standard_8gb_20201202"""), emit: minikraken
@@ -25,7 +25,7 @@ process GET_DB_CACHE {
         cp $dbcache/VFDB_setA_pro.fas.gz .
         cp $dbcache/CAZyDB.07312020.fa .
         cp $dbcache/BacMet2_predicted_database.fasta.gz .
-        cp $dbcache/ICE_aa_all.fas .
+        cp $dbcache/ICE_aa_experimental.fas .
         cp $dbcache/card.json .
         cp $dbcache/card.version.txt .
         cp -r $dbcache/k2_standard_8gb_20201202 .

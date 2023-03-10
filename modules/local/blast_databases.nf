@@ -50,14 +50,14 @@ process GET_ICEBERG {
     label 'error_retry_delay'
 
     output:
-    path "ICE_aa_all.fas", emit: iceberg
+    path "ICE_aa_experimental.fas", emit: iceberg
 
     script:
     """
-    curl https://bioinfo-mml.sjtu.edu.cn/ICEberg2/download/ICE_aa_all.fas --output ICE_aa_all.fas
+    curl https://bioinfo-mml.sjtu.edu.cn/ICEberg2/download/ICE_aa_experimental.fas --output ICE_aa_experimental.fas
     """
     stub:
     """
-    touch ICE_aa_all.fas
+    touch ICE_aa_experimental.fas
     """
 }
