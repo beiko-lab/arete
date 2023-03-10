@@ -44,3 +44,20 @@ process GET_BACMET{
     touch BacMet2_EXP_database.fasta
     """
 }
+
+process GET_ICEBERG {
+    label 'process_low'
+    label 'error_retry_delay'
+
+    output:
+    path "ICE_aa_all.fas", emit: iceberg
+
+    script:
+    """
+    curl https://bioinfo-mml.sjtu.edu.cn/ICEberg2/download/ICE_aa_all.fas --output ICE_aa_all.fas
+    """
+    stub:
+    """
+    touch ICE_aa_all.fas
+    """
+}

@@ -6,13 +6,16 @@ include { BAKTA_BAKTA as BAKTA } from '../../modules/nf-core/bakta/bakta/main'
 include { BAKTA_BAKTADBDOWNLOAD as BAKTADBDOWNLOAD } from '../../modules/nf-core/bakta/baktadbdownload/main'
 include { GET_CAZYDB;
           GET_VFDB;
-          GET_BACMET} from '../../modules/local/blast_databases.nf'
+          GET_BACMET;
+          GET_ICEBERG } from '../../modules/local/blast_databases.nf'
 include { DIAMOND_MAKEDB as DIAMOND_MAKE_CAZY;
           DIAMOND_MAKEDB as DIAMOND_MAKE_VFDB;
-          DIAMOND_MAKEDB as DIAMOND_MAKE_BACMET } from '../../modules/nf-core/diamond/makedb/main'
+          DIAMOND_MAKEDB as DIAMOND_MAKE_BACMET;
+          DIAMOND_MAKEDB as DIAMOND_MAKE_ICEBERG } from '../../modules/nf-core/diamond/makedb/main'
 include { DIAMOND_BLASTX as DIAMOND_BLAST_CAZY;
           DIAMOND_BLASTX as DIAMOND_BLAST_VFDB;
-          DIAMOND_BLASTX as DIAMOND_BLAST_BACMET } from '../../modules/nf-core/diamond/blastx/main'
+          DIAMOND_BLASTX as DIAMOND_BLAST_BACMET;
+          DIAMOND_BLASTX as DIAMOND_BLAST_ICEBERG } from '../../modules/nf-core/diamond/blastx/main'
 //
 // MODULE: Local to the pipeline
 //
@@ -26,7 +29,8 @@ include { MOB_RECON } from '../../modules/local/mobsuite'
 //
 include { FILTER_ALIGNMENT as CAZY_FILTER;
           FILTER_ALIGNMENT as VFDB_FILTER;
-          FILTER_ALIGNMENT as BACMET_FILTER; } from './concatenate_matches'
+          FILTER_ALIGNMENT as BACMET_FILTER;
+          FILTER_ALIGNMENT as ICEBERG_FILTER } from './concatenate_matches'
 
 
 
@@ -37,6 +41,7 @@ workflow ANNOTATE_ASSEMBLIES {
         vfdb_cache
         cazydb_cache
         bacmet_cache
+        icebergdb_cache
         card_json_cache
         card_version_cache
 
@@ -80,6 +85,13 @@ workflow ANNOTATE_ASSEMBLIES {
             else{
                 GET_CAZYDB()
                 GET_CAZYDB.out.cazydb.set { ch_cazy_db }
+            }
+            if (icebergdb_cache){
+                icebergdb_cache.set{ ch_iceberg_db }
+            }
+            else{
+                GET_ICEBERG()
+                GET_ICEBERG.out.iceberg.set { ch_iceberg_db }
             }
         }
         /*
@@ -161,7 +173,12 @@ workflow ANNOTATE_ASSEMBLIES {
             DIAMOND_MAKE_CAZY(ch_cazy_db)
             DIAMOND_BLAST_CAZY(ch_ffn_files, DIAMOND_MAKE_CAZY.out.db, "txt", blast_columns)
             CAZY_FILTER(DIAMOND_BLAST_CAZY.out.txt, "CAZY", blast_columns)
+
+            DIAMOND_MAKE_ICEBERG(ch_iceberg_db)
+            DIAMOND_BLAST_ICEBERG(ch_ffn_files, DIAMOND_MAKE_ICEBERG.out.db, "txt", blast_columns)
+            ICEBERG_FILTER(DIAMOND_BLAST_ICEBERG.out.txt, "ICEBERG", blast_columns)
         }
+
         ch_software_versions = ch_software_versions.mix(DIAMOND_MAKE_VFDB.out.versions.ifEmpty(null))
 
     emit:
