@@ -27,8 +27,8 @@ process VIBRANT_VIBRANTRUN {
     """
     VIBRANT_run.py \\
         -i $fasta \\
-        -d \$PWD/$db/databases/ \\
-        -m \$PWD/$db/files/ \\
+        -d $PWD/$db/databases/ \\
+        -m $PWD/$db/files/ \\
         -folder $prefix
 
     cat <<-END_VERSIONS > versions.yml
