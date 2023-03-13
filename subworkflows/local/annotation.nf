@@ -151,7 +151,7 @@ workflow ANNOTATE_ASSEMBLIES {
         }
 
         if (params.vibrant_db){
-            VIBRANT_VIBRANTRUN(assemblies, params.vibrant_db)
+            VIBRANT_VIBRANTRUN(assemblies, file(params.vibrant_db))
         } else {
             VIBRANT_DOWNLOADDB()
             VIBRANT_DOWNLOADDB.out.db.set { vibrant_db }
