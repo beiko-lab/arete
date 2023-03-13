@@ -24,8 +24,8 @@ include { RGI;
           UPDATE_RGI_DB } from '../../modules/local/rgi'
 include { MOB_RECON } from '../../modules/local/mobsuite'
 include { ISLANDPATH } from '../../modules/local/islandpath/main'
-include { VIBRANT_DOWNLOADDB } from '../../modules/local/vibrant/downloaddb/main'
-include { VIBRANT_VIBRANTRUN } from '../../modules/local/vibrant/vibrantrun/main'
+include { VIBRANT_DOWNLOADDB } from '../../modules/local/vibrant/downloadb/main.nf'
+include { VIBRANT_VIBRANTRUN } from '../../modules/local/vibrant/vibrantrun/main.nf'
 
 //
 // SUBWORKFLOWS
