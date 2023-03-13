@@ -26,5 +26,9 @@ process VIBRANT_DOWNLOADDB {
     stub:
     """
     mkdir vibrant_db
+    cat <<-END_VERSIONS > versions.yml
+    "${task.process}":
+        VIBRANT: \$(echo \$(VIBRANT_run.py --version 2>&1) | sed 's/^.*VIBRANT v//;')
+    END_VERSIONS
     """
 }
