@@ -85,7 +85,13 @@
                 "bakta_db": {
                     "type": "string",
                     "default": "None",
-                    "fa_icon": "fas fa-database"
+                    "fa_icon": "fas fa-database",
+                    "description": "Path to the BAKTA database"
+                },
+                "vibrant_db": {
+                    "type": "string",
+                    "default": null,
+                    "fa_icon": "fas fa-virus"
                 },
                 "light": {
                     "type": "boolean",
