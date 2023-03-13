@@ -4,8 +4,8 @@ process VIBRANT_VIBRANTRUN {
 
     conda (params.enable_conda ? "bioconda::vibrant=1.2.1" : null)
     container "${ workflow.containerEngine == 'singularity' && !task.ext.singularity_pull_docker_container ?
-        'https://depot.galaxyproject.org/singularity/vibrant:1.2.1--hdfd78af_2':
-        'quay.io/biocontainers/vibrant:1.2.1--hdfd78af_2' }"
+        'https://depot.galaxyproject.org/singularity/vibrant:1.2.1--1':
+        'quay.io/biocontainers/vibrant:1.2.1--1' }"
 
     input:
 
@@ -27,8 +27,8 @@ process VIBRANT_VIBRANTRUN {
     """
     VIBRANT_run.py \\
         -i $fasta \\
-        -d $PWD/$db/databases/ \\
-        -m $PWD/$db/files/ \\
+        -d $db/databases/ \\
+        -m $db/files/ \\
         -folder $prefix
 
     cat <<-END_VERSIONS > versions.yml
