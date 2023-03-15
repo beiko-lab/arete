@@ -3,6 +3,7 @@ include { POPPUNK_CREATEDB } from '../../modules/local/poppunk/createdb/main'
 include { POPPUNK_QCDB } from '../../modules/local/poppunk/qcdb/main'
 include { POPPUNK_FITMODEL } from '../../modules/local/poppunk/fitmodel/main'
 include { POPPUNK_VISUALISE } from '../../modules/local/poppunk/visualise/main'
+include { POPPUNK_EXTRACT_DISTANCES } from '../../modules/local/poppunk/extractdistances/main'
 
 workflow RUN_POPPUNK {
 
@@ -41,6 +42,8 @@ workflow RUN_POPPUNK {
             POPPUNK_QCDB.out.poppunk_db.set{ poppunk_db }
         }
 
+        POPPUNK_EXTRACT_DISTANCES(poppunk_db)
+
         POPPUNK_FITMODEL(poppunk_db, params.poppunk_model)
 
         POPPUNK_FITMODEL.out.poppunk_results.set { poppunk_results }
@@ -51,4 +54,5 @@ workflow RUN_POPPUNK {
         poppunk_version = POPPUNK_FITMODEL.out.versions.ifEmpty(null)
         poppunk_results = poppunk_results
         poppunk_visualisations = POPPUNK_VISUALISE.out.poppunk_visualizations
+        poppunk_distances = POPPUNK_EXTRACT_DISTANCES.out.poppunk_distances
 }

@@ -1,0 +1,33 @@
+name: poppunk_extract_distances
+description: Extract pairwise distances between genomes
+keywords:
+  - genomes
+  - poppunk
+  - database
+  - distances
+tools:
+  - poppunk:
+    description: Population partitioning using nucleotide k-mers
+    homepage: https://poppunk.net/
+    documentation: https://poppunk.readthedocs.io/en/latest/
+    tool_dev_url: https://github.com/bacpop/PopPUNK
+    doi: "doi:10.1101/gr.241455.118"
+    licence: ["Apache-2.0"]
+
+input:
+  - poppunk_db:
+      type: directory
+      description: Directory containing the PopPunk database
+
+output:
+  - poppunk_distances:
+      type: file
+      description: TSV file containing pairwise distances
+      pattern: "poppunk_db_distances.tsv"
+  - versions:
+      type: file
+      description: File containing software versions
+      pattern: "versions.yml"
+
+authors:
+  - "@jvfe"
