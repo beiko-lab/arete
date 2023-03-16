@@ -10,7 +10,6 @@ nextflow_workflow {
             params {
                 run_poppunk_qc = true
                 poppunk_model = "bgmm"
-                enable_subsetting = true
                 outdir = "$outputDir"
             }
             workflow {

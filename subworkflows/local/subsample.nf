@@ -1,10 +1,15 @@
+include { POPPUNK_EXTRACT_DISTANCES } from '../../modules/local/poppunk/extractdistances/main'
+
 workflow SUBSET_GENOMES {
 
     take:
         genome_assemblies
-        poppunk_distances
+        poppunk_db
 
     main:
+
+        POPPUNK_EXTRACT_DISTANCES(poppunk_db)
+        POPPUNK_EXTRACT_DISTANCES.out.poppunk_distances.set{ poppunk_distances }
 
         def core_threshold = 100.0 - params.core_similarity
         def accessory_threshold = 100.0 - params.accessory_similarity

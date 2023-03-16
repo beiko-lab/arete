@@ -158,7 +158,7 @@ workflow ARETE {
 
             SUBSET_GENOMES(
                 assemblies,
-                RUN_POPPUNK.out.poppunk_distances
+                RUN_POPPUNK.out.poppunk_db
             )
 
             SUBSET_GENOMES.out.filtered_genomes.set { assemblies }
@@ -342,14 +342,14 @@ workflow ANNOTATION {
     ANNOTATION_INPUT_CHECK.out.genomes.set { assemblies }
 
     if (!params.skip_poppunk) {
-        RUN_POPPUNK(ANNOTATION_INPUT_CHECK.out.genomes)
+        RUN_POPPUNK(assemblies)
         ch_software_versions = ch_software_versions.mix(RUN_POPPUNK.out.poppunk_version)
 
         if (params.enable_subsetting) {
 
             SUBSET_GENOMES(
                 assemblies,
-                RUN_POPPUNK.out.poppunk_distances
+                RUN_POPPUNK.out.poppunk_db
             )
 
             SUBSET_GENOMES.out.filtered_genomes.set { assemblies }
