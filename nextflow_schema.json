@@ -148,6 +148,23 @@
                     "type": "boolean",
                     "description": "Whether to run the QC step for PopPunk",
                     "fa_icon": "fas fa-industry"
+                },
+                "enable_subsetting": {
+                    "type": "boolean",
+                    "fa_icon": "fas fa-tasks",
+                    "description": "Enable subsetting workflow based on genome similarity"
+                },
+                "core_similarity": {
+                    "type": "number",
+                    "default": 99.99,
+                    "fa_icon": "fas fa-clone",
+                    "description": "Similarity threshold for core genomes"
+                },
+                "accessory_similarity": {
+                    "type": "number",
+                    "default": 99,
+                    "fa_icon": "far fa-clone",
+                    "description": "Similarity threshold for accessory genes"
                 }
             }
         },
