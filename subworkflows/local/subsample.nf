@@ -14,8 +14,7 @@ workflow SUBSET_GENOMES {
         def core_threshold = 100.0 - params.core_similarity
         def accessory_threshold = 100.0 - params.accessory_similarity
 
-        Channel
-            .fromPath(poppunk_distances)
+        poppunk_distances
             .splitCsv(header: true, sep: '\t')
             .filter { row -> row.Core.toFloat() < core_threshold  && row.Accessory.toFloat() < accessory_threshold}
             .map { row -> row.Query }

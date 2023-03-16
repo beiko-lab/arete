@@ -20,7 +20,7 @@ nextflow_workflow {
                     [[id:'SRR14022754'], "$baseDir/test/SRR14022754_T1.scaffolds.fa"],
                     [[id:'SRR14022764'], "$baseDir/test/SRR14022764_T1.scaffolds.fa"],
                 )
-                input[1] = "$baseDir/test/poppunk_dists.tsv"
+                input[1] = Channel.fromPath("$baseDir/test/popdb")
                 """
             }
         }
