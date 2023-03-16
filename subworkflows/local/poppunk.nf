@@ -42,6 +42,7 @@ workflow RUN_POPPUNK {
             POPPUNK_QCDB.out.poppunk_db.set{ poppunk_db }
         }
 
+        poppunk_distances = Channel.empty()
         if (params.enable_subsetting) {
             POPPUNK_EXTRACT_DISTANCES(poppunk_db).set{ poppunk_distances }
         }
@@ -56,5 +57,5 @@ workflow RUN_POPPUNK {
         poppunk_version = POPPUNK_FITMODEL.out.versions.ifEmpty(null)
         poppunk_results = poppunk_results
         poppunk_visualisations = POPPUNK_VISUALISE.out.poppunk_visualizations
-        poppunk_distances = poppunk_distances.ifEmpty(null)
+        poppunk_distances = poppunk_distances
 }
