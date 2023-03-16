@@ -25,17 +25,3 @@ workflow SUBSET_GENOMES {
     emit:
         filtered_genomes = filtered_genomes
 }
-
-// workflow {
-//     Channel.of(
-//                     [[id:'SRR14022735'], "$baseDir/test/SRR14022735_T1.scaffolds.fa"],
-//                     [[id:'SRR14022737'], "$baseDir/test/SRR14022737_T1.scaffolds.fa"],
-//                     [[id:'SRR14022754'], "$baseDir/test/SRR14022754_T1.scaffolds.fa"],
-//                     [[id:'SRR14022764'], "$baseDir/test/SRR14022764_T1.scaffolds.fa"],
-//                 )
-//                 .set { sample_channel }
-
-//     SUBSET_GENOMES(sample_channel, "../poppunk_bgmm.dists.out")
-
-//     SUBSET_GENOMES.out.filtered_genomes.view()
-// }
