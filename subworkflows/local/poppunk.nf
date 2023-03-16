@@ -43,7 +43,7 @@ workflow RUN_POPPUNK {
         }
 
         if (params.enable_subsetting) {
-            POPPUNK_EXTRACT_DISTANCES(poppunk_db)
+            POPPUNK_EXTRACT_DISTANCES(poppunk_db).set{ poppunk_distances }
         }
 
         POPPUNK_FITMODEL(poppunk_db, params.poppunk_model)
@@ -56,5 +56,5 @@ workflow RUN_POPPUNK {
         poppunk_version = POPPUNK_FITMODEL.out.versions.ifEmpty(null)
         poppunk_results = poppunk_results
         poppunk_visualisations = POPPUNK_VISUALISE.out.poppunk_visualizations
-        poppunk_distances = POPPUNK_EXTRACT_DISTANCES.out.poppunk_distances.ifEmpty(null)
+        poppunk_distances = poppunk_distances.ifEmpty(null)
 }
