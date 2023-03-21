@@ -187,6 +187,21 @@ MobRecon reconstructs individual plasmid sequences from draft genome assemblies 
 
 [Diamond](https://github.com/bbuchfink/diamond) is a sequence aligner for protein and translated DNA searches, designed for high performance analysis of big sequence data. We use DIAMOND to predict the presence of virulence factors, heavy metal resistance determinants, and carbohydrate-active enzymes using [VFDB](http://www.mgc.ac.cn/VFs/), [BacMet](http://bacmet.biomedicine.gu.se/), and [CAZy](http://www.cazy.org/) respectively.
 
+### IslandPath
+
+<details markdown="1">
+<summary>Output files</summary>
+
+- `annotation/islandpath/`
+  - `${sample_id}/` : IslandPath results will be in one directory per genome.
+    - `${sample_id}.tsv` : IslandPath results
+    - `Dimob.log` : IslandPath execution log
+
+</details>
+
+[IslandPath](https://github.com/brinkmanlab/islandpath) is a standalone software to predict genomic islands
+in bacterial and archaeal genomes based on the presence of dinucleotide biases and mobility genes.
+
 ### Panaroo
 
 <details markdown="1">
