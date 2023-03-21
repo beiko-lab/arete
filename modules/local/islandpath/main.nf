@@ -39,6 +39,7 @@ process ISLANDPATH {
     def VERSION = '1.0.6'
     """
     touch ${prefix}.tsv
+    touch Dimob.log
 
     cat <<-END_VERSIONS > versions.yml
     "${task.process}":
