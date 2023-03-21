@@ -11,7 +11,7 @@ process ISLANDPATH {
     tuple val(meta), path(genome)
 
     output:
-    tuple val(meta), path("${prefix}.tsv"), emit: gi_list
+    tuple val(meta), path("${prefix}.gff"), emit: gff
     path "Dimob.log"                      , emit: log
     path "versions.yml"                   , emit: versions
 
@@ -26,7 +26,7 @@ process ISLANDPATH {
     """
     islandpath \\
         $genome \\
-        ${prefix}.tsv \\
+        ${prefix}.gff \\
         $args
 
     cat <<-END_VERSIONS > versions.yml
@@ -38,7 +38,7 @@ process ISLANDPATH {
     prefix = task.ext.prefix ?: "${meta.id}"
     def VERSION = '1.0.6'
     """
-    touch ${prefix}.tsv
+    touch ${prefix}.gff
     touch Dimob.log
 
     cat <<-END_VERSIONS > versions.yml

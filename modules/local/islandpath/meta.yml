@@ -25,10 +25,10 @@ input:
         Genome file in .gbk or .embl format.
 
 output:
-  - gi_list:
+  - gff:
       type: file
-      description: TSV file listing the predicted genomic islands and their coordinates
-      pattern: "*.tsv"
+      description: GFF file listing the predicted genomic islands and their coordinates
+      pattern: "*.gff"
   - versions:
       type: file
       description: File containing software versions
