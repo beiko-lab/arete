@@ -12,6 +12,7 @@ process ISLANDPATH {
 
     output:
     tuple val(meta), path("${prefix}.tsv"), emit: gi_list
+    path "Dimob.log"                      , emit: log
     path "versions.yml"                   , emit: versions
 
     when:
