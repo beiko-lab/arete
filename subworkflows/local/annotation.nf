@@ -145,7 +145,7 @@ workflow ANNOTATE_ASSEMBLIES {
             ch_software_versions = ch_software_versions.mix(BAKTA.out.versions.first().ifEmpty(null))
             ch_ffn_files = BAKTA.out.ffn
             ch_gff_files = BAKTA.out.gff
-            ch_gbk_files = PROKKA.out.gbff
+            ch_gbk_files = BAKTA.out.gbff
         }
 
         /*
