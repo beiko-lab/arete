@@ -21,7 +21,7 @@ process ISLANDPATH {
     def args = task.ext.args ?: ''
     prefix = task.ext.prefix ?: "${meta.id}"
     // WARN: Version information not provided by tool on CLI. Please update this string when bumping container versions.
-    def VERSION = '4.11'
+    def VERSION = '1.0.6'
     """
     islandpath \\
         $genome \\
@@ -35,7 +35,7 @@ process ISLANDPATH {
     """
     stub:
     prefix = task.ext.prefix ?: "${meta.id}"
-    def VERSION = '4.11'
+    def VERSION = '1.0.6'
     """
     touch ${prefix}.tsv
 
