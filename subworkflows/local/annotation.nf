@@ -23,6 +23,7 @@ include { GET_SOFTWARE_VERSIONS } from '../../modules/local/get_software_version
 include { RGI;
           UPDATE_RGI_DB } from '../../modules/local/rgi'
 include { MOB_RECON } from '../../modules/local/mobsuite'
+include { ISLANDPATH } from '../../modules/local/islandpath/main'
 
 //
 // SUBWORKFLOWS
@@ -128,8 +129,8 @@ workflow ANNOTATE_ASSEMBLIES {
             ch_software_versions = ch_software_versions.mix(PROKKA.out.versions.first().ifEmpty(null))
             ch_ffn_files = PROKKA.out.ffn
             ch_gff_files = PROKKA.out.gff
+            ch_gbk_files = PROKKA.out.gbk
             ch_multiqc_files = ch_multiqc_files.mix(PROKKA.out.txt.collect{it[1]}.ifEmpty([]))
-
         }
         else {
 
@@ -144,7 +145,7 @@ workflow ANNOTATE_ASSEMBLIES {
             ch_software_versions = ch_software_versions.mix(BAKTA.out.versions.first().ifEmpty(null))
             ch_ffn_files = BAKTA.out.ffn
             ch_gff_files = BAKTA.out.gff
-
+            ch_gbk_files = BAKTA.out.gbff
         }
 
         /*
@@ -153,7 +154,8 @@ workflow ANNOTATE_ASSEMBLIES {
         MOB_RECON(assemblies)
         ch_software_versions = ch_software_versions.mix(MOB_RECON.out.version.first().ifEmpty(null))
 
-
+        ISLANDPATH(ch_gbk_files)
+        ch_software_versions = ch_software_versions.mix(ISLANDPATH.out.versions.first())
 
         /*
         * Run DIAMOND blast annotation with databases

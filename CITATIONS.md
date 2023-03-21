@@ -74,7 +74,11 @@
   > Page AJ, Taylor B, Delaney AJ, Soares J, Seemann T, Keane JA, Harris SR. SNP-sites: rapid efficient extraction of SNPs from multi-FASTA alignments. Microb Genom. 2016 Apr 29;2(4):e000056. doi: 10.1099/mgen.0.000056. PMID: 28348851; PMCID: PMC5320690.
 
 - [Unicycler](https://pubmed.ncbi.nlm.nih.gov/28594827/)
+
   > Wick RR, Judd LM, Gorrie CL, Holt KE. Unicycler: Resolving bacterial genome assemblies from short and long sequencing reads. PLoS Comput Biol. 2017 Jun 8;13(6):e1005595. doi: 10.1371/journal.pcbi.1005595. PMID: 28594827; PMCID: PMC5481147.
+
+- [IslandPath](https://doi.org/10.1093/bioinformatics/bty095)
+  > Claire Bertelli, Fiona S L Brinkman, Improved genomic island predictions with IslandPath-DIMOB, Bioinformatics, Volume 34, Issue 13, 01 July 2018, Pages 2161–2167, https://doi.org/10.1093/bioinformatics/bty095
 
 ## Software packaging/containerisation tools
 

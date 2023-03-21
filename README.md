@@ -37,6 +37,7 @@ Annotation:
 - (_optionally_) Prokka ([`prokka`](https://github.com/tseemann/prokka))
 - AMR ([`RGI`](https://github.com/arpcard/rgi))
 - Plasmids ([`mob_suite`](https://github.com/phac-nml/mob-suite))
+- Genomic Islands ([`IslandPath`](https://github.com/brinkmanlab/islandpath))
 - CAZY, VFDB, and BacMet query using DIAMOND ([`diamond`](https://github.com/bbuchfink/diamond))
 
 Phylogeny:
