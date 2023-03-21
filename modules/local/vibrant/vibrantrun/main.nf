@@ -29,7 +29,8 @@ process VIBRANT_VIBRANTRUN {
         -i $fasta \\
         -d $db/databases/ \\
         -m $db/files/ \\
-        -folder $prefix
+        -folder $prefix \\
+        -t $task.cpus
 
     cat <<-END_VERSIONS > versions.yml
     "${task.process}":
