@@ -20,6 +20,11 @@ workflow SUBSET_GENOMES {
             .map { row -> row.Query }
             .set { genomes_to_remove }
 
+        genomes_to_remove
+            .unique()
+            .collectFile(newLine: true)
+            .collectFile(name: 'removed_genomes.txt', storeDir: "${params.outdir}/poppunk_results")
+
         genome_assemblies
             .combine (genomes_to_remove.collect().map { [it] })
             .filter { meta, path, to_remove -> !(meta.id in to_remove) }
