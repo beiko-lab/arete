@@ -517,7 +517,7 @@ workflow POPPUNK {
     ANNOTATION_INPUT_CHECK.out.genomes.set { assemblies }
 
     RUN_POPPUNK(assemblies)
-    ch_software_versions = ch_software_versions.mix(RUN_POPPUNK.out.poppunk_version)
+    ch_software_versions = RUN_POPPUNK.out.poppunk_version
 
     if (params.enable_subsetting) {
 
