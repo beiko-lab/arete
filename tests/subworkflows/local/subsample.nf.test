@@ -10,6 +10,7 @@ nextflow_workflow {
             params {
                 // define parameters here. Example:
                 outdir = "$outputDir"
+                core_similarity = 99.99
             }
             workflow {
                 """
