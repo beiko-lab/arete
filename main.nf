@@ -35,6 +35,7 @@ include { ARETE } from './workflows/arete'
 include { ASSEMBLY } from './workflows/arete'
 include { ANNOTATION } from './workflows/arete'
 include { QUALITYCHECK } from './workflows/arete'
+include { POPPUNK } from './workflows/arete'
 
 
 //
@@ -57,6 +58,11 @@ workflow annotation {
 workflow assembly_qc {
     QUALITYCHECK()
 }
+
+workflow poppunk {
+    POPPUNK()
+}
+
 /*
 ========================================================================================
     RUN ALL WORKFLOWS

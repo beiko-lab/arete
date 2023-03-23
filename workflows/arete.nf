@@ -504,6 +504,33 @@ workflow QUALITYCHECK{
     workflow_summary    = WorkflowArete.paramsSummaryMultiqc(workflow, summary_params)
     ch_workflow_summary = Channel.value(workflow_summary)
 }
+
+workflow POPPUNK {
+
+    if (params.input_sample_table) { ch_input = file(params.input_sample_table) } else { exit 1, 'Input samplesheet not specified!' }
+
+    /*
+    * SUBWORKFLOW: Read in samplesheet, validate and stage input files
+    */
+    ANNOTATION_INPUT_CHECK(ch_input)
+
+    ANNOTATION_INPUT_CHECK.out.genomes.set { assemblies }
+
+    RUN_POPPUNK(assemblies)
+    ch_software_versions = ch_software_versions.mix(RUN_POPPUNK.out.poppunk_version)
+
+    if (params.enable_subsetting) {
+
+        SUBSET_GENOMES(
+            assemblies,
+            RUN_POPPUNK.out.poppunk_db
+        )
+
+    }
+
+    GET_SOFTWARE_VERSIONS(ch_software_versions)
+}
+
 /*
 ========================================================================================
     COMPLETION EMAIL AND SUMMARY
