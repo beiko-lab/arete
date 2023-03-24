@@ -24,6 +24,8 @@ include { RGI;
           UPDATE_RGI_DB } from '../../modules/local/rgi'
 include { MOB_RECON } from '../../modules/local/mobsuite'
 include { ISLANDPATH } from '../../modules/local/islandpath/main'
+include { VIBRANT_DOWNLOADDB } from '../../modules/local/vibrant/downloadb/main.nf'
+include { VIBRANT_VIBRANTRUN } from '../../modules/local/vibrant/vibrantrun/main.nf'
 
 //
 // SUBWORKFLOWS
@@ -146,6 +148,14 @@ workflow ANNOTATE_ASSEMBLIES {
             ch_ffn_files = BAKTA.out.ffn
             ch_gff_files = BAKTA.out.gff
             ch_gbk_files = BAKTA.out.gbff
+        }
+
+        if (params.vibrant_db){
+            VIBRANT_VIBRANTRUN(assemblies, file(params.vibrant_db))
+        } else {
+            VIBRANT_DOWNLOADDB()
+            VIBRANT_DOWNLOADDB.out.db.set { vibrant_db }
+            VIBRANT_VIBRANTRUN(assemblies, vibrant_db)
         }
 
         /*

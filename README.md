@@ -38,6 +38,7 @@ Annotation:
 - AMR ([`RGI`](https://github.com/arpcard/rgi))
 - Plasmids ([`mob_suite`](https://github.com/phac-nml/mob-suite))
 - Genomic Islands ([`IslandPath`](https://github.com/brinkmanlab/islandpath))
+- Virus identification ([`VIBRANT`](https://github.com/AnantharamanLab/VIBRANT))
 - CAZY, VFDB, and BacMet query using DIAMOND ([`diamond`](https://github.com/bbuchfink/diamond))
 
 Phylogeny:
@@ -91,10 +92,11 @@ To test the worklow on a minimal dataset you can use the test configuration (wit
     ```
 
 Due to download speed of the Kraken2, Bakta and CAZY databases this will take ~35 minutes.
-However to accelerate it you can download/cache the database files to a folder (e.g., `test/db_cache`) and provide a database cache parameter. As well as set `--bakta_db` to the directory containing the Bakta database.
+However to accelerate it you can download/cache the database files to a folder (e.g., `test/db_cache`) and provide a database cache parameter. As well as set `--bakta_db` to the directory containing the Bakta database and `--vibrant_db`
+to the directory containing the VIBRANT database.
 
     ```bash
-    nextflow run beiko-lab/ARETE -profile test,docker --db_cache $PWD/test/db_cache --bakta_db $PWD/baktadb/db-light
+    nextflow run beiko-lab/ARETE -profile test,docker --db_cache $PWD/test/db_cache --bakta_db $PWD/baktadb/db-light --vibrant_db $PWD/vibrant/
     ```
 
 ## Documentation

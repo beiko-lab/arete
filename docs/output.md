@@ -202,6 +202,20 @@ MobRecon reconstructs individual plasmid sequences from draft genome assemblies 
 [IslandPath](https://github.com/brinkmanlab/islandpath) is a standalone software to predict genomic islands
 in bacterial and archaeal genomes based on the presence of dinucleotide biases and mobility genes.
 
+### VIBRANT
+
+<details markdown="1">
+<summary>Output files</summary>
+
+- `annotation/vibrant/`
+  - `${sample_id}/` : VIBRANT results will be in one directory per genome.
+
+See the [VIBRANT documentation](https://github.com/AnantharamanLab/VIBRANT/blob/master/output_explanations.pdf) for an extensive description of the output.
+
+</details>
+
+[VIBRANT](https://github.com/AnantharamanLab/VIBRANT) is a tool for automated recovery and annotation of bacterial and archaeal viruses, determination of genome completeness, and characterization of viral community function from metagenomic assemblies.
+
 ### Panaroo
 
 <details markdown="1">
