@@ -78,7 +78,11 @@
   > Wick RR, Judd LM, Gorrie CL, Holt KE. Unicycler: Resolving bacterial genome assemblies from short and long sequencing reads. PLoS Comput Biol. 2017 Jun 8;13(6):e1005595. doi: 10.1371/journal.pcbi.1005595. PMID: 28594827; PMCID: PMC5481147.
 
 - [IslandPath](https://doi.org/10.1093/bioinformatics/bty095)
+
   > Claire Bertelli, Fiona S L Brinkman, Improved genomic island predictions with IslandPath-DIMOB, Bioinformatics, Volume 34, Issue 13, 01 July 2018, Pages 2161–2167, https://doi.org/10.1093/bioinformatics/bty095
+
+- [VIBRANT](https://doi.org/10.1186/s40168-020-00867-0)
+  > Kieft, K., Zhou, Z. & Anantharaman, K. VIBRANT: automated recovery, annotation and curation of microbial viruses, and evaluation of viral community function from genomic sequences. Microbiome 8, 90 (2020). https://doi.org/10.1186/s40168-020-00867-0
 
 ## Software packaging/containerisation tools
 
