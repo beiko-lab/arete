@@ -10,7 +10,8 @@ nextflow_workflow {
             params {
                 // define parameters here. Example:
                 outdir = "$outputDir"
-                core_similarity = 99.99
+                core_similarity = 99
+                accessory_similarity = 95
             }
             workflow {
                 """
@@ -28,11 +29,14 @@ nextflow_workflow {
 
         then {
             assert workflow.success
-            assert workflow.out.filtered_genomes.size() == 2
+            assert workflow.out.filtered_genomes.size() == 3
             assert workflow.out.filtered_genomes.toList() == [
+                [['id':'SRR14022735'], "$baseDir/test/SRR14022735_T1.scaffolds.fa"],
                 [['id':'SRR14022754'], "$baseDir/test/SRR14022754_T1.scaffolds.fa"],
                 [['id':'SRR14022764'], "$baseDir/test/SRR14022764_T1.scaffolds.fa"]
             ]
+
+
         }
 
     }

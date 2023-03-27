@@ -16,7 +16,7 @@ workflow SUBSET_GENOMES {
 
         poppunk_distances
             .splitCsv(header: true, sep: '\t')
-            .filter { row -> (row.Core.toFloat() * 100) < core_threshold  && (row.Accessory.toFloat() * 100) < accessory_threshold}
+            .filter { row -> (row.Core.toFloat() * 100) < core_threshold  && (row.Accessory.toFloat() * 100) < accessory_threshold }
             .map { row -> row.Query }
             .set { genomes_to_remove }
 
