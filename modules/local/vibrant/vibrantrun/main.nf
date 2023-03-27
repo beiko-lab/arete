@@ -30,7 +30,8 @@ process VIBRANT_VIBRANTRUN {
         -d $db/databases/ \\
         -m $db/files/ \\
         -folder $prefix \\
-        -t $task.cpus
+        -t $task.cpus \\
+        $args
 
     cat <<-END_VERSIONS > versions.yml
     "${task.process}":
