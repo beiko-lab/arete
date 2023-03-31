@@ -3,8 +3,8 @@ process VIBRANT_DOWNLOADDB {
 
     conda (params.enable_conda ? "bioconda::vibrant=1.2.1" : null)
     container "${ workflow.containerEngine == 'singularity' && !task.ext.singularity_pull_docker_container ?
-        'https://depot.galaxyproject.org/singularity/vibrant:1.2.1--hdfd78af_3':
-        'quay.io/biocontainers/vibrant:1.2.1--hdfd78af_3' }"
+        'https://depot.galaxyproject.org/singularity/vibrant:1.2.1--hdfd78af_4':
+        'quay.io/biocontainers/vibrant:1.2.1--hdfd78af_4' }"
 
     output:
 
