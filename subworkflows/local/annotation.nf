@@ -26,6 +26,7 @@ include { MOB_RECON } from '../../modules/local/mobsuite'
 include { ISLANDPATH } from '../../modules/local/islandpath/main'
 include { VIBRANT_DOWNLOADDB } from '../../modules/local/vibrant/downloadb/main.nf'
 include { VIBRANT_VIBRANTRUN } from '../../modules/local/vibrant/vibrantrun/main.nf'
+include { INTEGRON_FINDER } from '../../modules/local/integronfinder/main.nf'
 
 //
 // SUBWORKFLOWS
@@ -163,6 +164,9 @@ workflow ANNOTATE_ASSEMBLIES {
         */
         MOB_RECON(assemblies)
         ch_software_versions = ch_software_versions.mix(MOB_RECON.out.version.first().ifEmpty(null))
+
+        INTEGRON_FINDER(assemblies)
+        ch_software_versions = ch_software_versions.mix(INTEGRON_FINDER.out.versions.first())
 
         ISLANDPATH(ch_gbk_files)
         ch_software_versions = ch_software_versions.mix(ISLANDPATH.out.versions.first())

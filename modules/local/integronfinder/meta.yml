@@ -1,0 +1,38 @@
+name: integron_finder
+description: Finds integrons in DNA sequences
+keywords:
+  - genomes
+  - integron
+  - annotation
+tools:
+  - vibrant:
+    description: Bioinformatics tool to find integrons in bacterial genomes
+    homepage: https://github.com/gem-pasteur/Integron_Finder
+    documentation: https://integronfinder.readthedocs.io/en/latest/
+    tool_dev_url: https://github.com/gem-pasteur/Integron_Finder
+    doi: "doi:10.3390/microorganisms10040700"
+    licence: ["GPL-3"]
+
+input:
+  - meta:
+      type: map
+      description: |
+        Groovy Map containing sample information
+        e.g. [ id:'test', single_end:false ]
+  - fasta:
+      type: file
+      description: |
+        FASTA file to be annotated. Has to contain at least a non-empty string dummy value.
+
+output:
+  - results:
+      type: directory
+      description: Path to Integron_Finder's results
+      pattern: "Results_Integron_Finder_*/"
+  - versions:
+      type: file
+      description: File containing software versions
+      pattern: "versions.yml"
+
+authors:
+  - "@jvfe"
