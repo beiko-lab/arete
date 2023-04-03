@@ -23,7 +23,7 @@ process INTEGRON_FINDER {
     """
     integron_finder \\
         $args \\
-        --cpus $task.cpus \\
+        --cpu $task.cpus \\
         $fasta
 
     cat <<-END_VERSIONS > versions.yml
