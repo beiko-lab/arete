@@ -28,7 +28,7 @@ process INTEGRON_FINDER {
 
     cat <<-END_VERSIONS > versions.yml
     "${task.process}":
-        integron_finder: \$(echo \$(integron_finder --version 2>&1 | sed -n 's/integron_finder version \\([0-9.]\\+\\).*/\\1/p')
+        integron_finder: \$(echo \$(integron_finder --version 2>&1) | sed -n 's/integron_finder version \\([0-9.]\\+\\).*/\\1/p')
     END_VERSIONS
     """
     stub:
@@ -38,7 +38,7 @@ process INTEGRON_FINDER {
 
     cat <<-END_VERSIONS > versions.yml
     "${task.process}":
-        integron_finder: \$(echo \$(integron_finder --version 2>&1 | sed -n 's/integron_finder version \\([0-9.]\\+\\).*/\\1/p')
+        integron_finder: \$(echo \$(integron_finder --version 2>&1) | sed -n 's/integron_finder version \\([0-9.]\\+\\).*/\\1/p')
     END_VERSIONS
     """
 }
