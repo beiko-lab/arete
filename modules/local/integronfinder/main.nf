@@ -4,8 +4,8 @@ process INTEGRON_FINDER {
 
     conda "bioconda::integron_finder=2.0.2"
     container "${ workflow.containerEngine == 'singularity' && !task.ext.singularity_pull_docker_container ?
-        'https://depot.galaxyproject.org/singularity/Integron_Finder:2.0.2--pyhdfd78af_0':
-        'quay.io/biocontainers/Integron_Finder:2.0.2--pyhdfd78af_0' }"
+        'https://depot.galaxyproject.org/singularity/integron_finder:2.0.2--pyhdfd78af_0':
+        'quay.io/biocontainers/integron_finder:2.0.2--pyhdfd78af_0' }"
 
     input:
     tuple val(meta), path(fasta)
