@@ -165,8 +165,10 @@ workflow ANNOTATE_ASSEMBLIES {
         MOB_RECON(assemblies)
         ch_software_versions = ch_software_versions.mix(MOB_RECON.out.version.first().ifEmpty(null))
 
-        INTEGRON_FINDER(assemblies)
-        ch_software_versions = ch_software_versions.mix(INTEGRON_FINDER.out.versions.first())
+        if (params.run_integronfinder){
+            INTEGRON_FINDER(assemblies)
+            ch_software_versions = ch_software_versions.mix(INTEGRON_FINDER.out.versions.first())
+        }
 
         ISLANDPATH(ch_gbk_files)
         ch_software_versions = ch_software_versions.mix(ISLANDPATH.out.versions.first())
