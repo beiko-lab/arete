@@ -28,7 +28,7 @@ output:
   - results:
       type: directory
       description: Path to Integron_Finder's results
-      pattern: "Results_Integron_Finder_*/"
+      pattern: "Results_Integron_Finder_*"
   - versions:
       type: file
       description: File containing software versions
