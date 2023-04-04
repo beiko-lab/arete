@@ -90,7 +90,7 @@
                 },
                 "vibrant_db": {
                     "type": "string",
-                    "default": null,
+                    "default": "None",
                     "fa_icon": "fas fa-virus"
                 },
                 "light": {
@@ -108,6 +108,11 @@
                     "type": "boolean",
                     "fa_icon": "fas fa-virus-slash",
                     "description": "Don't run VIBRANT"
+                },
+                "run_integronfinder": {
+                    "type": "boolean",
+                    "fa_icon": "fas fa-puzzle-piece",
+                    "description": "Run Integron Finder as part of the annotation workflow"
                 }
             }
         },
