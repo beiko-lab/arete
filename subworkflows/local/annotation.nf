@@ -150,12 +150,14 @@ workflow ANNOTATE_ASSEMBLIES {
             ch_gbk_files = BAKTA.out.gbff
         }
 
-        if (params.vibrant_db){
-            VIBRANT_VIBRANTRUN(assemblies, file(params.vibrant_db))
-        } else {
-            VIBRANT_DOWNLOADDB()
-            VIBRANT_DOWNLOADDB.out.db.set { vibrant_db }
-            VIBRANT_VIBRANTRUN(assemblies, vibrant_db)
+        if (!params.skip_vibrant){
+            if (params.vibrant_db){
+                VIBRANT_VIBRANTRUN(assemblies, file(params.vibrant_db))
+            } else {
+                VIBRANT_DOWNLOADDB()
+                VIBRANT_DOWNLOADDB.out.db.set { vibrant_db }
+                VIBRANT_VIBRANTRUN(assemblies, vibrant_db)
+            }
         }
 
         /*
