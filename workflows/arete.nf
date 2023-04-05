@@ -44,6 +44,7 @@ include { ASSEMBLE_SHORTREADS } from '../subworkflows/local/assembly'
 include { ANNOTATE_ASSEMBLIES } from '../subworkflows/local/annotation'
 include { PHYLOGENOMICS } from '../subworkflows/local/phylo'
 include { RUN_POPPUNK } from '../subworkflows/local/poppunk'
+include { SUBSET_GENOMES } from '../subworkflows/local/subsample'
 /*
 ========================================================================================
     IMPORT NF-CORE MODULES/SUBWORKFLOWS
@@ -135,20 +136,6 @@ workflow ARETE {
             use_reference_genome,
             GET_DB_CACHE.out.minikraken
             )
-
-        /////////////////// ANNOTATION ///////////////////////////
-        ANNOTATE_ASSEMBLIES(
-            ASSEMBLE_SHORTREADS.out.scaffolds,
-            ch_bakta_db,
-            GET_DB_CACHE.out.vfdb,
-            GET_DB_CACHE.out.cazydb,
-            GET_DB_CACHE.out.bacmet,
-            GET_DB_CACHE.out.iceberg,
-            GET_DB_CACHE.out.card_json,
-            GET_DB_CACHE.out.card_version
-            )
-
-
     }
     else{
         ASSEMBLE_SHORTREADS(
@@ -158,9 +145,42 @@ workflow ARETE {
             []
             )
 
+
+    }
+
+    ASSEMBLE_SHORTREADS.out.scaffolds.set { assemblies }
+
+    if (!params.skip_poppunk) {
+        RUN_POPPUNK(assemblies)
+        ch_software_versions = ch_software_versions.mix(RUN_POPPUNK.out.poppunk_version)
+
+        if (params.enable_subsetting) {
+
+            SUBSET_GENOMES(
+                assemblies,
+                RUN_POPPUNK.out.poppunk_db
+            )
+
+            SUBSET_GENOMES.out.filtered_genomes.set { assemblies }
+        }
+    }
+
+    if (db_cache) {
         /////////////////// ANNOTATION ///////////////////////////
         ANNOTATE_ASSEMBLIES(
-            ASSEMBLE_SHORTREADS.out.scaffolds,
+            assemblies,
+            ch_bakta_db,
+            GET_DB_CACHE.out.vfdb,
+            GET_DB_CACHE.out.cazydb,
+            GET_DB_CACHE.out.bacmet,
+            GET_DB_CACHE.out.iceberg,
+            GET_DB_CACHE.out.card_json,
+            GET_DB_CACHE.out.card_version
+        )
+    } else {
+        /////////////////// ANNOTATION ///////////////////////////
+        ANNOTATE_ASSEMBLIES(
+            assemblies,
             ch_bakta_db,
             [],
             [],
@@ -170,13 +190,10 @@ workflow ARETE {
             []
             )
     }
+
+
     ch_software_versions = ch_software_versions.mix(ANNOTATE_ASSEMBLIES.out.annotation_software)
     ch_software_versions = ch_software_versions.mix(ASSEMBLE_SHORTREADS.out.assembly_software)
-
-    if (!params.skip_poppunk) {
-        RUN_POPPUNK(ASSEMBLE_SHORTREADS.out.scaffolds)
-        ch_software_versions = ch_software_versions.mix(RUN_POPPUNK.out.poppunk_version)
-    }
 
     ////////////////////////// PANGENOME /////////////////////////////////////
     PHYLOGENOMICS(ANNOTATE_ASSEMBLIES.out.gff, use_full_alignment, use_fasttree)
@@ -322,12 +339,29 @@ workflow ANNOTATION {
      */
     ANNOTATION_INPUT_CHECK(ch_input)
 
+    ANNOTATION_INPUT_CHECK.out.genomes.set { assemblies }
+
+    if (!params.skip_poppunk) {
+        RUN_POPPUNK(assemblies)
+        ch_software_versions = ch_software_versions.mix(RUN_POPPUNK.out.poppunk_version)
+
+        if (params.enable_subsetting) {
+
+            SUBSET_GENOMES(
+                assemblies,
+                RUN_POPPUNK.out.poppunk_db
+            )
+
+            SUBSET_GENOMES.out.filtered_genomes.set { assemblies }
+        }
+    }
+
     if(db_cache){
         GET_DB_CACHE(db_cache)
 
         /////////////////// ANNOTATION ///////////////////////////
         ANNOTATE_ASSEMBLIES(
-            ANNOTATION_INPUT_CHECK.out.genomes,
+            assemblies,
             ch_bakta_db,
             GET_DB_CACHE.out.vfdb,
             GET_DB_CACHE.out.cazydb,
@@ -343,7 +377,7 @@ workflow ANNOTATION {
 
         /////////////////// ANNOTATION ///////////////////////////
         ANNOTATE_ASSEMBLIES(
-            ANNOTATION_INPUT_CHECK.out.genomes,
+            assemblies,
             ch_bakta_db,
             [],
             [],
@@ -354,11 +388,6 @@ workflow ANNOTATION {
             )
     }
     ch_software_versions = ch_software_versions.mix(ANNOTATE_ASSEMBLIES.out.annotation_software)
-
-    if (!params.skip_poppunk) {
-        RUN_POPPUNK(ANNOTATION_INPUT_CHECK.out.genomes)
-        ch_software_versions = ch_software_versions.mix(RUN_POPPUNK.out.poppunk_version)
-    }
 
     ////////////////////////// PANGENOME /////////////////////////////////////
     PHYLOGENOMICS(ANNOTATE_ASSEMBLIES.out.gff, use_full_alignment, use_fasttree)
@@ -475,6 +504,33 @@ workflow QUALITYCHECK{
     workflow_summary    = WorkflowArete.paramsSummaryMultiqc(workflow, summary_params)
     ch_workflow_summary = Channel.value(workflow_summary)
 }
+
+workflow POPPUNK {
+
+    if (params.input_sample_table) { ch_input = file(params.input_sample_table) } else { exit 1, 'Input samplesheet not specified!' }
+
+    /*
+    * SUBWORKFLOW: Read in samplesheet, validate and stage input files
+    */
+    ANNOTATION_INPUT_CHECK(ch_input)
+
+    ANNOTATION_INPUT_CHECK.out.genomes.set { assemblies }
+
+    RUN_POPPUNK(assemblies)
+    ch_software_versions = RUN_POPPUNK.out.poppunk_version
+
+    if (params.enable_subsetting) {
+
+        SUBSET_GENOMES(
+            assemblies,
+            RUN_POPPUNK.out.poppunk_db
+        )
+
+    }
+
+    GET_SOFTWARE_VERSIONS(ch_software_versions)
+}
+
 /*
 ========================================================================================
     COMPLETION EMAIL AND SUMMARY
