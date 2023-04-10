@@ -31,10 +31,12 @@ workflow CHECK_ASSEMBLIES {
             ch_multiqc_files = ch_multiqc_files.mix(KRAKEN2_RUN.out.report.collect{it[1]}.ifEmpty([]))
         }
 
+        fasta_extension = assemblies.map{ id, path -> path.getExtension() }.first()
+
         /*
         * Module: CheckM Quality Check
         */
-        CHECKM_LINEAGEWF(assemblies, "fna", []) //todo figure out a way to infer the file extension during input check
+        CHECKM_LINEAGEWF(assemblies, fasta_extension, [])
         ch_software_versions = ch_software_versions.mix(CHECKM_LINEAGEWF.out.versions.first().ifEmpty(null))
         /*
         * Module: QUAST quality check
