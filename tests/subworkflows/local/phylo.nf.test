@@ -14,7 +14,7 @@ nextflow_workflow {
             workflow {
                 """
                 // define inputs of the workflow here. Example:
-                input[0] = ch = Channel.of(
+                input[0] = Channel.of(
                     [[id:'SRR14022735'], '$baseDir/test/SRR14022735_T1.gff'],
                     [[id:'SRR14022764'], '$baseDir/test/SRR14022764_T1.gff'],
                     [[id:'SRR14022754'], '$baseDir/test/SRR14022754_T1.gff']
