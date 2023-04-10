@@ -1,7 +1,7 @@
-include { GET_DB_CACHE } from '../modules/local/get_db_cache'
-include { QUAST } from '../modules/nf-core/quast/main'
-include { KRAKEN2_KRAKEN2 as KRAKEN2_RUN } from '../modules/nf-core/kraken2/kraken2/main'
-include { CHECKM_LINEAGEWF } from '../modules/nf-core/checkm/lineagewf/main'
+include { GET_DB_CACHE } from '../../modules/local/get_db_cache'
+include { QUAST } from '../../modules/nf-core/quast/main'
+include { KRAKEN2_KRAKEN2 as KRAKEN2_RUN } from '../../modules/nf-core/kraken2/kraken2/main'
+include { CHECKM_LINEAGEWF } from '../../modules/nf-core/checkm/lineagewf/main'
 
 workflow CHECK_ASSEMBLIES {
     take:
