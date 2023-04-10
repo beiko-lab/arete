@@ -16,7 +16,7 @@ nextflow_workflow {
             workflow {
                 """
                 // define inputs of the workflow here. Example:
-                input[0] = [[id:'SRR14022735'], '$baseDir/test/SRR14022735_T1.scaffolds.fa.gz']
+                input[0] = [[id:'SRR14022735'], '$baseDir/test/SRR14022735_T1.scaffolds.fa']
                 input[1] = []
                 input[2] = []
                 input[3] = []
