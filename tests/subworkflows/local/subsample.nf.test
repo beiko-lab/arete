@@ -17,10 +17,10 @@ nextflow_workflow {
                 """
                 // define inputs of the workflow here. Example:
                 input[0] = Channel.of(
-                    [[id:'SRR14022735'], "$baseDir/test/SRR14022735_T1.scaffolds.fa"],
-                    [[id:'SRR14022737'], "$baseDir/test/SRR14022737_T1.scaffolds.fa"],
-                    [[id:'SRR14022754'], "$baseDir/test/SRR14022754_T1.scaffolds.fa"],
-                    [[id:'SRR14022764'], "$baseDir/test/SRR14022764_T1.scaffolds.fa"],
+                    [[id:'SRR14022735'], "$baseDir/test/SRR14022735_T1.scaffolds.fa.gz"],
+                    [[id:'SRR14022737'], "$baseDir/test/SRR14022737_T1.scaffolds.fa.gz"],
+                    [[id:'SRR14022754'], "$baseDir/test/SRR14022754_T1.scaffolds.fa.gz"],
+                    [[id:'SRR14022764'], "$baseDir/test/SRR14022764_T1.scaffolds.fa.gz"],
                 )
                 input[1] = Channel.fromPath("$baseDir/test/popdb")
                 """
