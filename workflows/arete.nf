@@ -42,6 +42,7 @@ include { INPUT_CHECK;
 
 include { ASSEMBLE_SHORTREADS } from '../subworkflows/local/assembly'
 include { ANNOTATE_ASSEMBLIES } from '../subworkflows/local/annotation'
+include { CHECK_ASSEMBLIES } from '../subworkflows/local/assemblyqc'
 include { PHYLOGENOMICS } from '../subworkflows/local/phylo'
 include { RUN_POPPUNK } from '../subworkflows/local/poppunk'
 include { SUBSET_GENOMES } from '../subworkflows/local/subsample'
@@ -59,8 +60,6 @@ include { MULTIQC } from '../modules/nf-core/multiqc/main'
 include { FASTQC as TRIM_FASTQC } from '../modules/nf-core/fastqc/main'
 include { FASTP                 } from '../modules/nf-core/fastp/main'
 include { UNICYCLER             } from '../modules/nf-core/unicycler/main'
-include { QUAST                 } from '../modules/nf-core/quast/main'
-include { KRAKEN2_KRAKEN2 as KRAKEN2_RUN } from '../modules/nf-core/kraken2/kraken2/main'
 include { PROKKA                } from '../modules/nf-core/prokka/main'
 include { GET_CAZYDB;
           GET_VFDB;
@@ -73,7 +72,6 @@ include { DIAMOND_BLASTX as DIAMOND_BLAST_CAZY;
           DIAMOND_BLASTX as DIAMOND_BLAST_BACMET } from '../modules/nf-core/diamond/blastx/main'
 include { IQTREE } from '../modules/nf-core/iqtree/main'
 include { SNPSITES } from '../modules/nf-core/snpsites/main'
-include { CHECKM_LINEAGEWF } from '../modules/nf-core/checkm/lineagewf/main'
 //
 // MODULE: Local to the pipeline
 //
@@ -446,41 +444,14 @@ workflow QUALITYCHECK{
      */
     ANNOTATION_INPUT_CHECK(ch_input)
 
-    ///*
-    // * MODULE: Run Kraken2
-    // */
-    if (!params.skip_kraken) {
-        if(db_cache) {
-            GET_DB_CACHE(db_cache)
-            KRAKEN2_RUN(ANNOTATION_INPUT_CHECK.out.genomes, GET_DB_CACHE.out.minikraken, false, true)
-        } else {
-            KRAKEN2_DB()
-            KRAKEN2_RUN(ANNOTATION_INPUT_CHECK.out.genomes, KRAKEN2_DB.out.minikraken, false, true)
-        }
-
-        ch_software_versions = ch_software_versions.mix(KRAKEN2_RUN.out.versions.first().ifEmpty(null))
-        ch_multiqc_files = ch_multiqc_files.mix(KRAKEN2_RUN.out.report.collect{it[1]}.ifEmpty([]))
-    }
-    /*
-    * Module: CheckM Quality Check
-    */
-    CHECKM_LINEAGEWF(ANNOTATION_INPUT_CHECK.out.genomes, "fna", []) //todo figure out a way to infer the file extension during input check
-    ch_software_versions = ch_software_versions.mix(CHECKM_LINEAGEWF.out.versions.first().ifEmpty(null))
-    /*
-     * Module: QUAST quality check
-     */
-    // Need to reformat assembly channel for QUAST
-    // pattern adapted from nf-core/bacass
-    ch_assembly = Channel.empty()
-    ch_assembly = ch_assembly.mix(ANNOTATION_INPUT_CHECK.out.genomes.dump(tag: 'assembly'))
-    ch_assembly
-        .map { meta, fasta -> fasta } //QUAST doesn't take the meta tag
-        .collect()
-        .set { ch_to_quast }
-    QUAST(ch_to_quast, ch_reference_genome, [], use_reference_genome, false)
-    ch_software_versions = ch_software_versions.mix(QUAST.out.versions.ifEmpty(null))
-
-    ch_multiqc_files = ch_multiqc_files.mix(QUAST.out.tsv.collect())
+    CHECK_ASSEMBLIES(
+        ANNOTATION_INPUT_CHECK.out.genomes,
+        db_cache,
+        ch_reference_genome,
+        use_reference_genome
+    )
+    ch_software_versions = ch_software_versions.mix(CHECK_ASSEMBLIES.out.assemblyqc_software)
+    ch_multiqc_files = ch_multiqc_files.mix(CHECK_ASSEMBLIES.out.multiqc)
 
     MULTIQC(
         ch_multiqc_files.collect(),
