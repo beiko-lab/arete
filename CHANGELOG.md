@@ -3,6 +3,17 @@
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## v2.0.1 dev - April 10, 2023
+
+### `Fixed`
+
+- Makes CheckM auto-detect FASTA file extensions
+  - So it doesn't fail with files without `.fna`
+
+### `Added`
+
+- Moves Assembly QC subworkflow into its own file
+
 ## v2.0 dev - April 5, 2023
 
 ### `Added`
