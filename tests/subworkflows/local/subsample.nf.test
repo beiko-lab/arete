@@ -29,11 +29,9 @@ nextflow_workflow {
 
         then {
             assert workflow.success
-            assert workflow.out.genomes_to_remove.size() == 3
+            assert workflow.out.genomes_to_remove.size() == 1
             assert workflow.out.genomes_to_remove.toList() == [
-                'SRR14022735',
-                'SRR14022754',
-                'SRR14022764'
+                'SRR14022737',
             ]
         }
 
