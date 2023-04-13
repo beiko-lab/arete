@@ -29,14 +29,12 @@ nextflow_workflow {
 
         then {
             assert workflow.success
-            assert workflow.out.filtered_genomes.size() == 3
-            assert workflow.out.filtered_genomes.toList() == [
-                [['id':'SRR14022735'], "$baseDir/test/SRR14022735_T1.scaffolds.fa"],
-                [['id':'SRR14022754'], "$baseDir/test/SRR14022754_T1.scaffolds.fa"],
-                [['id':'SRR14022764'], "$baseDir/test/SRR14022764_T1.scaffolds.fa"]
+            assert workflow.out.genomes_to_remove.size() == 3
+            assert workflow.out.genomes_to_remove.toList() == [
+                'SRR14022735',
+                'SRR14022754',
+                'SRR14022764'
             ]
-
-
         }
 
     }
