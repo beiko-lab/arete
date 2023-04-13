@@ -7,14 +7,12 @@
 
 def summary_params = NfcoreSchema.paramsSummaryMap(workflow, params)
 
-// TODO nf-core: Add all file path parameters for the pipeline to the lis below
 // Check input path parameters to see if they exist
 def checkPathParamList = [ params.input_sample_table, params.multiqc_config, params.reference_genome ]
 for (param in checkPathParamList) { if (param) { file(param, checkIfExists: true) } }
 
 // Check mandatory parameters
 if (params.input_sample_table) { ch_input = file(params.input_sample_table) } else { exit 1, 'Input samplesheet not specified!' }
-if (!params.skip_poppunk && params.poppunk_model == null) { exit 1, 'A model must be specified with --poppunk_model in order to run PopPunk' }
 
 
 /*
@@ -83,9 +81,6 @@ include { KRAKEN2_DB } from '../modules/local/get_minikraken'
 include { GET_DB_CACHE } from '../modules/local/get_db_cache'
 
 
-// Usage pattern from nf-core/rnaseq: Empty dummy file for optional inputs
-ch_dummy_input = file("$projectDir/assets/dummy_file.txt", checkIfExists: true)
-
 /*
 ========================================================================================
     RUN MAIN WORKFLOW
@@ -107,6 +102,7 @@ workflow ARETE {
         ch_reference_genome = []
         use_reference_genome = false
     }
+    if (!params.skip_poppunk && params.poppunk_model == null) { exit 1, 'A model must be specified with --poppunk_model in order to run PopPunk' }
 
     ch_bakta_db = params.bakta_db ? file(params.bakta_db) : null
     db_cache = params.db_cache ? params.db_cache : false
@@ -218,7 +214,6 @@ workflow ARETE {
     ch_multiqc_files = ch_multiqc_files.mix(ch_workflow_summary.collectFile(name: 'workflow_summary_mqc.yaml'))
     ch_multiqc_files = ch_multiqc_files.mix(GET_SOFTWARE_VERSIONS.out.yaml.collect())
     ch_multiqc_files = ch_multiqc_files.mix(ASSEMBLE_SHORTREADS.out.multiqc)
-    //ch_multiqc_files = ch_multiqc_files.mix(PROKKA.out.txt.collect{it[1]}.ifEmpty([]))
     ch_multiqc_files = ch_multiqc_files.mix(ANNOTATE_ASSEMBLIES.out.multiqc)
 
     MULTIQC(
@@ -281,7 +276,6 @@ workflow ASSEMBLY {
     ch_multiqc_files = Channel.empty()
     ch_multiqc_files = ch_multiqc_files.mix(ch_workflow_summary.collectFile(name: 'workflow_summary_mqc.yaml'))
     ch_multiqc_files = ch_multiqc_files.mix(ASSEMBLE_SHORTREADS.out.multiqc)
-    //ch_multiqc_files = ch_multiqc_files.mix(PROKKA.out.txt.collect{it[1]}.ifEmpty([]))
 
     MULTIQC(
         ch_multiqc_files.collect(),
@@ -306,21 +300,10 @@ workflow ANNOTATION {
         ch_reference_genome = []
         use_reference_genome = false
     }
+    if (!params.skip_poppunk && params.poppunk_model == null) { exit 1, 'A model must be specified with --poppunk_model in order to run PopPunk' }
 
     ch_bakta_db = params.bakta_db ? file(params.bakta_db) : null
 
-    //db_cache = params.db_cache ? params.db_cache: false
-    //ch_db_cache = Channel.empty()
-    // ch_assembly_db_cache = Channel.empty()
-    // ch_annotation_db_cache = Channel.empty()
-    // if (params.db_cache){
-    //     ch_assembly_db_cache = GET_ASSEMBLY_DB_CACHE(file(params.db_cache))
-    //     ch_annotation_db_cache = GET_ANNOTATION_DB_CACHE(file(params.db_cache))
-    // }
-    // else{
-    //     ch_assembly_db_cache = false
-    //     ch_annotation_db_cache = false
-    // }
     db_cache = params.db_cache ? params.db_cache : false
     use_full_alignment = params.use_full_alignment ? true : false
     use_fasttree = params.use_fasttree ? true: false
@@ -411,7 +394,6 @@ workflow ANNOTATION {
     ch_multiqc_files = Channel.empty()
     ch_multiqc_files = ch_multiqc_files.mix(ch_workflow_summary.collectFile(name: 'workflow_summary_mqc.yaml'))
     ch_multiqc_files = ch_multiqc_files.mix(GET_SOFTWARE_VERSIONS.out.yaml.collect())
-    //ch_multiqc_files = ch_multiqc_files.mix(PROKKA.out.txt.collect{it[1]}.ifEmpty([]))
     ch_multiqc_files = ch_multiqc_files.mix(ANNOTATE_ASSEMBLIES.out.multiqc)
 
     MULTIQC(
@@ -471,6 +453,7 @@ workflow QUALITYCHECK{
         .collect()
         .set { ch_software_versions }
     GET_SOFTWARE_VERSIONS(ch_software_versions)
+
     //multiqc
     workflow_summary    = WorkflowArete.paramsSummaryMultiqc(workflow, summary_params)
     ch_workflow_summary = Channel.value(workflow_summary)
@@ -479,6 +462,7 @@ workflow QUALITYCHECK{
 workflow POPPUNK {
 
     if (params.input_sample_table) { ch_input = file(params.input_sample_table) } else { exit 1, 'Input samplesheet not specified!' }
+    if (!params.skip_poppunk && params.poppunk_model == null) { exit 1, 'A model must be specified with --poppunk_model in order to run PopPunk' }
 
     /*
     * SUBWORKFLOW: Read in samplesheet, validate and stage input files
