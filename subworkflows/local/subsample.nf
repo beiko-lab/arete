@@ -25,12 +25,6 @@ workflow SUBSET_GENOMES {
             .collectFile(newLine: true)
             .collectFile(name: 'removed_genomes.txt', storeDir: "${params.outdir}/poppunk_results")
 
-        genome_assemblies
-            .combine (genomes_to_remove.collect().map { [it] })
-            .filter { meta, path, to_remove -> !(meta.id in to_remove) }
-            .map { it[0, 1] }
-            .set { filtered_genomes }
-
     emit:
-        filtered_genomes = filtered_genomes
+        genomes_to_remove = genomes_to_remove
 }

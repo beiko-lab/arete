@@ -144,21 +144,6 @@ workflow ARETE {
 
     ASSEMBLE_SHORTREADS.out.scaffolds.set { assemblies }
 
-    if (!params.skip_poppunk) {
-        RUN_POPPUNK(assemblies)
-        ch_software_versions = ch_software_versions.mix(RUN_POPPUNK.out.poppunk_version)
-
-        if (params.enable_subsetting) {
-
-            SUBSET_GENOMES(
-                assemblies,
-                RUN_POPPUNK.out.poppunk_db
-            )
-
-            SUBSET_GENOMES.out.filtered_genomes.set { assemblies }
-        }
-    }
-
     if (db_cache) {
         /////////////////// ANNOTATION ///////////////////////////
         ANNOTATE_ASSEMBLIES(
@@ -185,12 +170,34 @@ workflow ARETE {
             )
     }
 
+    ANNOTATE_ASSEMBLIES.out.gff.set { gffs }
+
+    if (!params.skip_poppunk) {
+        RUN_POPPUNK(assemblies)
+        ch_software_versions = ch_software_versions.mix(RUN_POPPUNK.out.poppunk_version)
+
+        if (params.enable_subsetting) {
+
+            SUBSET_GENOMES(
+                assemblies,
+                RUN_POPPUNK.out.poppunk_db
+            )
+
+            SUBSET_GENOMES.out.genomes_to_remove.set { to_remove }
+
+            gffs
+                .combine (to_remove.collect().map { [it] })
+                .filter { meta, path, to_remove -> !(meta.id in to_remove) }
+                .map { it[0, 1] }
+                .set { gffs }
+        }
+    }
 
     ch_software_versions = ch_software_versions.mix(ANNOTATE_ASSEMBLIES.out.annotation_software)
     ch_software_versions = ch_software_versions.mix(ASSEMBLE_SHORTREADS.out.assembly_software)
 
     ////////////////////////// PANGENOME /////////////////////////////////////
-    PHYLOGENOMICS(ANNOTATE_ASSEMBLIES.out.gff, use_full_alignment, use_fasttree)
+    PHYLOGENOMICS(gffs, use_full_alignment, use_fasttree)
     ch_software_versions = ch_software_versions.mix(PHYLOGENOMICS.out.phylo_software)
 
     ch_software_versions
@@ -322,21 +329,6 @@ workflow ANNOTATION {
 
     ANNOTATION_INPUT_CHECK.out.genomes.set { assemblies }
 
-    if (!params.skip_poppunk) {
-        RUN_POPPUNK(assemblies)
-        ch_software_versions = ch_software_versions.mix(RUN_POPPUNK.out.poppunk_version)
-
-        if (params.enable_subsetting) {
-
-            SUBSET_GENOMES(
-                assemblies,
-                RUN_POPPUNK.out.poppunk_db
-            )
-
-            SUBSET_GENOMES.out.filtered_genomes.set { assemblies }
-        }
-    }
-
     if(db_cache){
         GET_DB_CACHE(db_cache)
 
@@ -370,8 +362,32 @@ workflow ANNOTATION {
     }
     ch_software_versions = ch_software_versions.mix(ANNOTATE_ASSEMBLIES.out.annotation_software)
 
+    ANNOTATE_ASSEMBLIES.out.gff.set { gffs }
+
+    if (!params.skip_poppunk) {
+        RUN_POPPUNK(assemblies)
+        ch_software_versions = ch_software_versions.mix(RUN_POPPUNK.out.poppunk_version)
+
+        if (params.enable_subsetting) {
+
+            SUBSET_GENOMES(
+                assemblies,
+                RUN_POPPUNK.out.poppunk_db
+            )
+
+            SUBSET_GENOMES.out.genomes_to_remove.set { to_remove }
+
+            // Filter GFFs not in the to_remove ID list
+            gffs
+                .combine (to_remove.collect().map { [it] })
+                .filter { meta, path, to_remove -> !(meta.id in to_remove) }
+                .map { it[0, 1] }
+                .set { gffs }
+        }
+    }
+
     ////////////////////////// PANGENOME /////////////////////////////////////
-    PHYLOGENOMICS(ANNOTATE_ASSEMBLIES.out.gff, use_full_alignment, use_fasttree)
+    PHYLOGENOMICS(gffs, use_full_alignment, use_fasttree)
     ch_software_versions = ch_software_versions.mix(PHYLOGENOMICS.out.phylo_software)
 
     ch_software_versions
