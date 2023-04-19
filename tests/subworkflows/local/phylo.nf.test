@@ -29,7 +29,7 @@ nextflow_workflow {
 
         then {
             assert workflow.success
-            assert workflow.trace.tasks().size() == 2
+            assert workflow.trace.tasks().size() == 3
             assert workflow.out.core_alignment.size() == 1
             assert workflow.out.core_alignment.get(0).get(0) ==~ ".*/core_gene_alignment.aln"
         }
