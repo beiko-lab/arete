@@ -27,9 +27,10 @@ workflow PHYLOGENOMICS{
         // By default, run panaroo
         PANAROO_RUN(gffs.collect{ meta, gff -> gff}.map( gff -> [[id: 'panaroo'], gff]))
         PANAROO_RUN.out.aln.collect{meta, aln -> aln }.set{ ch_core_gene_alignment }
+        PANAROO_RUN.out.results.map{ id, path -> path }.set { panaroo_res }
         ch_software_versions = ch_software_versions.mix(PANAROO_RUN.out.versions.ifEmpty(null))
 
-        GML2GV(PANAROO_RUN.out.results.map( id, path -> path ))
+        GML2GV(panaroo_res)
 
         /*
         * Maximum likelihood core gene tree. Uses SNPSites by default
