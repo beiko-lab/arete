@@ -7,7 +7,7 @@ process GML2GV {
         'quay.io/biocontainers/perl-graphviz:2.24--pl5321h4b32bfc_1' }"
 
     input:
-    path(panaroo_results)
+    path(graph_gml)
 
     output:
     path("final_graph.dot"), emit: dot
@@ -21,7 +21,7 @@ process GML2GV {
 
     """
     gml2gv \\
-        $panaroo_results/final_graph.gml \\
+        $graph_gml \\
         $args \\
         > final_graph.dot
 
@@ -31,7 +31,6 @@ process GML2GV {
     END_VERSIONS
     """
     stub:
-    prefix   = task.ext.prefix ?: "${meta.id}"
     """
     touch final_graph.dot
 

@@ -12,6 +12,7 @@ process PANAROO_RUN {
 
     output:
     tuple val(meta), path("results/*")                                      , emit: results
+    tuple val(meta), path("results/final_graph.gml")                        , emit: graph_gml
     tuple val(meta), path("results/core_gene_alignment.aln"), optional: true, emit: aln
     path "versions.yml"                                                     , emit: versions
 
