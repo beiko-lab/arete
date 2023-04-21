@@ -12,6 +12,7 @@ process PANAROO_RUN {
 
     output:
     tuple val(meta), path("results/*")                                      , emit: results
+    tuple val(meta), path("results/final_graph.gml")        , optional: true, emit: graph_gml
     tuple val(meta), path("results/core_gene_alignment.aln"), optional: true, emit: aln
     path "versions.yml"                                                     , emit: versions
 
@@ -39,6 +40,7 @@ process PANAROO_RUN {
     """
     mkdir results
     touch results/core_gene_alignment.aln
+    touch results/final_graph.glm
     cat <<-END_VERSIONS > versions.yml
     "${task.process}":
         panaroo: \$(echo \$(panaroo --version 2>&1) | sed 's/^.*panaroo //' ))

@@ -9,6 +9,7 @@ include { FASTTREE } from '../../modules/nf-core/fasttree/main'
 //
 // MODULE: Local to the pipeline
 //
+include { GML2GV } from '../../modules/local/graphviz/gml2gv/main'
 include { GET_SOFTWARE_VERSIONS } from '../../modules/local/get_software_versions' addParams( options: [publish_files : ['tsv':'']] )
 
 
@@ -26,7 +27,10 @@ workflow PHYLOGENOMICS{
         // By default, run panaroo
         PANAROO_RUN(gffs.collect{ meta, gff -> gff}.map( gff -> [[id: 'panaroo'], gff]))
         PANAROO_RUN.out.aln.collect{meta, aln -> aln }.set{ ch_core_gene_alignment }
+        PANAROO_RUN.out.graph_gml.map{ id, path -> path }.set { panaroo_graph }
         ch_software_versions = ch_software_versions.mix(PANAROO_RUN.out.versions.ifEmpty(null))
+
+        GML2GV(panaroo_graph)
 
         /*
         * Maximum likelihood core gene tree. Uses SNPSites by default
