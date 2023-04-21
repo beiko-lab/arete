@@ -58,7 +58,7 @@ workflow ANNOTATION_INPUT_CHECK{
     emit:
     genomes // channel: [ val(meta), [ reads ] ]
 }
-// Function to get list of [ meta, [ fastq_1, fastq_2 ] ]
+// Function to get list of [ meta, [ path ] ]
 def get_sample_info_assemblies(LinkedHashMap row) {
     def meta = [:]
     meta.id           = row.sample
@@ -69,7 +69,7 @@ def get_sample_info_assemblies(LinkedHashMap row) {
         print("***")
         print(row)
         print("***")
-        exit 1, "ERROR: Please check input samplesheet -> Sequence file does not exist!\n${row.fastq_1}"
+        exit 1, "ERROR: Please check input samplesheet -> Sequence file does not exist!\n${row.path}"
     }
     array = [ meta, file(row.path)]
 
