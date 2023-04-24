@@ -13,8 +13,6 @@ process MAKE_HEATMAP {
     path("thresholds_heatmap.pdf"), emit: plot
 
     script:
-    def args = task.ext.args ?: ''
-
     """
     make_heatmap.py ${distances} thresholds_heatmap.pdf
     """

@@ -1,4 +1,5 @@
 include { POPPUNK_EXTRACT_DISTANCES } from '../../modules/local/poppunk/extractdistances/main'
+include { MAKE_HEATMAP } from "../../modules/local/make_heatmap.nf"
 
 workflow SUBSET_GENOMES {
 
@@ -10,6 +11,8 @@ workflow SUBSET_GENOMES {
 
         POPPUNK_EXTRACT_DISTANCES(poppunk_db)
         POPPUNK_EXTRACT_DISTANCES.out.poppunk_distances.set{ poppunk_distances }
+
+        MAKE_HEATMAP(poppunk_distances)
 
         def core_threshold = 100.0 - params.core_similarity
         def accessory_threshold = 100.0 - params.accessory_similarity
