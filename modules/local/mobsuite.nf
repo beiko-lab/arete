@@ -15,9 +15,9 @@ process MOB_RECON {
     //path mob_db
 
     output:
-    tuple val(meta), path("${meta.id}_mob_recon")                  , emit: mob_predictions
-    tuple val(meta), path("${meta.id}_mob_recon/contig_report.txt"), emit: contig_report
-    path "*.version.txt"                                           , emit: version
+    tuple val(meta), path("${meta.id}_mob_recon")                             , emit: mob_predictions
+    tuple val(meta), path("${meta.id}_mob_recon/${meta.id}_contig_report.txt"), emit: contig_report
+    path "versions.yml"                                                       , emit: version
 
     script:
     """
@@ -25,14 +25,23 @@ process MOB_RECON {
     --sample_id ${meta.id} --unicycler_contigs --run_typer \\
     --outdir ${meta.id}_mob_recon \\
     --run_overhang
-    mob_recon --version > ${task.process}.version.txt
+
+    mv ${meta.id}_mob_recon/contig_report.txt ${meta.id}_mob_recon/${meta.id}_contig_report.txt
+
+    cat <<-END_VERSIONS > versions.yml
+    "${task.process}":
+        mobsuite: \$(echo \$(mob_recon --version 2>&1) | sed 's/^.*mob_recon //; s/ .*\$//')
+    END_VERSIONS
     """
     //--database_directory $mob_db  \\
     stub:
     """
     mkdir ${meta.id}_mob_recon
-    touch ${meta.id}_mob_recon/contig_report.txt
-    mob_recon --version > ${task.process}.version.txt
+    touch ${meta.id}_mob_recon/${meta.id}_contig_report.txt
+    cat <<-END_VERSIONS > versions.yml
+    "${task.process}":
+        mobsuite: \$(echo \$(mob_recon --version 2>&1) | sed 's/^.*mob_recon //; s/ .*\$//')
+    END_VERSIONS
     """
 }
 
