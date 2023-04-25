@@ -17,7 +17,7 @@ process CONCAT_ALIGNMENT {
 
     script:
     def args = task.ext.args ?: ''
-    def prefix = task.ext.prefix ?: "${dbname}"
+    prefix = task.ext.prefix ?: "${dbname}"
 
     """
     sed -s 1d ${aln} > no_header.txt
@@ -26,6 +26,7 @@ process CONCAT_ALIGNMENT {
     """
 
     stub:
+    prefix = task.ext.prefix ?: "${dbname}"
     """
     touch ${prefix}.txt
     """
