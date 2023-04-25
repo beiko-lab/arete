@@ -54,13 +54,11 @@ workflow ANNOTATE_ASSEMBLIES {
 
     main:
 
-        //if (params.input_sample_table){ ch_input = file(params.input_sample_table) } else { exit 1, 'Input samplesheet not specified!' }
         ch_multiqc_files = Channel.empty()
         ch_software_versions = Channel.empty()
         /*
         * SUBWORKFLOW: Read in samplesheet, validate and stage input files
         */
-        //ANNOTATION_INPUT_CHECK(ch_input)
 
         /*
         * Load in the databases. Check if they were cached, otherwise run the processes that get them
@@ -172,6 +170,12 @@ workflow ANNOTATE_ASSEMBLIES {
         */
         MOB_RECON(assemblies)
         ch_software_versions = ch_software_versions.mix(MOB_RECON.out.version.first().ifEmpty(null))
+
+        MOB_RECON.out.contig_report
+            .collect{ id, paths -> paths }
+            .set { mobrecon_tsvs }
+
+        CONCAT_MOBSUITE(mobrecon_tsvs, "MOBSUITE")
 
         if (params.run_integronfinder){
             INTEGRON_FINDER(assemblies)
