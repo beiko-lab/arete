@@ -1,11 +1,11 @@
 process CONCAT_ALIGNMENT {
     label "process_low"
 
-    conda (params.enable_conda ? "conda-forge::coreutils=8.31" : null)
+    conda (params.enable_conda ? "conda-forge::sed=4.7.0" : null)
     if (workflow.containerEngine == 'singularity' && !params.singularity_pull_docker_container) {
-        container "https://depot.galaxyproject.org/singularity/coreutils:8.31--h14c3975_0"
+        container "https://depot.galaxyproject.org/singularity/sed:4.7.0"
     } else {
-        container "quay.io/biocontainers/coreutils:8.31--h14c3975_0"
+        container "quay.io/biocontainers/sed:4.7.0"
     }
 
     input:
