@@ -28,7 +28,8 @@ include { VIBRANT_DOWNLOADDB } from '../../modules/local/vibrant/downloadb/main.
 include { VIBRANT_VIBRANTRUN } from '../../modules/local/vibrant/vibrantrun/main.nf'
 include { INTEGRON_FINDER } from '../../modules/local/integronfinder/main.nf'
 include { CONCAT_ALIGNMENT as CONCAT_RGI;
-          CONCAT_ALIGNMENT as CONCAT_MOBSUITE } from '../../modules/local/concat_alignments.nf'
+          CONCAT_ALIGNMENT as CONCAT_MOBSUITE;
+          CONCAT_ALIGNMENT as CONCAT_ISLANDS } from '../../modules/local/concat_alignments.nf'
 
 //
 // SUBWORKFLOWS
@@ -184,6 +185,12 @@ workflow ANNOTATE_ASSEMBLIES {
 
         ISLANDPATH(ch_gbk_files)
         ch_software_versions = ch_software_versions.mix(ISLANDPATH.out.versions.first())
+
+        ISLANDPATH.out.gff
+            .collect{ id, paths -> paths }
+            .set { islandpath_gffs }
+
+        CONCAT_ISLANDS(islandpath_gffs, "ISLANDPATH")
 
         /*
         * Run DIAMOND blast annotation with databases
