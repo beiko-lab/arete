@@ -17,10 +17,14 @@ The pipeline is built using [Nextflow](https://www.nextflow.io/) and processes d
 - [Panaroo](#panaroo) - Pangenome alignment
 - [MobRecon](#mobrecon) - Reconstruction and typing of plasmids
 - [RGI](#rgi) - Detection and annotation of AMR determinants
+- [IslandPath](#islandpath) - Predicts genomic islands in bacterial and archaeal genomes.
+- [VIBRANT](#vibrant) - Automated recovery and annotation of bacterial and archaeal viruses
+- [IntegronFinder](#integronfinder) - Finds integrons in DNA sequences
 - [Diamond](#diamond) - Detection and annotation of genes using external databases.
   - [CAZy](#cazy): Carbohydrate metabolism
   - [VFDB](#vfdb): Virulence factors
   - [BacMet](#bacmet): Metal resistance determinants
+  - [ICEberg](#iceberg): Integrative and conjugative elements
 - [PopPUNK](#poppunk) - Genome clustering
 - [FastTree](#FastTree) or [_IQTree_](#IQTree) - Maximum likelihood core genome phylogenetic tree
 - [_SNPsites_](#SNPsites) - Extracts SNPs from a multi-FASTA alignment
@@ -179,13 +183,13 @@ MobRecon reconstructs individual plasmid sequences from draft genome assemblies 
 <details markdown="1">
 <summary>Output files</summary>
 
-- `annotation/(vfdb|bacmet|cazy)/`
-  - `${sample_id}/${sample_id}_(VFDB|BACMET|CAZYDB).txt` : Blast6 formatted TSVs indicating BlastX results of the genes from each genome against VFDB, BacMet, and CAZy databases.
-  - `(VFDB|BACMET|CAZYDB).txt` : Table with all hits to this database, with a column describing which genome the match originates from. Sorted and filtered by the match's coverage.
+- `annotation/(vfdb|bacmet|cazy|iceberg2)/`
+  - `${sample_id}/${sample_id}_(VFDB|BACMET|CAZYDB|ICEberg2).txt` : Blast6 formatted TSVs indicating BlastX results of the genes from each genome against VFDB, BacMet, and CAZy databases.
+  - `(VFDB|BACMET|CAZYDB|ICEberg2).txt` : Table with all hits to this database, with a column describing which genome the match originates from. Sorted and filtered by the match's coverage.
 
 </details>
 
-[Diamond](https://github.com/bbuchfink/diamond) is a sequence aligner for protein and translated DNA searches, designed for high performance analysis of big sequence data. We use DIAMOND to predict the presence of virulence factors, heavy metal resistance determinants, and carbohydrate-active enzymes using [VFDB](http://www.mgc.ac.cn/VFs/), [BacMet](http://bacmet.biomedicine.gu.se/), and [CAZy](http://www.cazy.org/) respectively.
+[Diamond](https://github.com/bbuchfink/diamond) is a sequence aligner for protein and translated DNA searches, designed for high performance analysis of big sequence data. We use DIAMOND to predict the presence of virulence factors, heavy metal resistance determinants, carbohydrate-active enzymes, and integrative and conjugative elements using [VFDB](http://www.mgc.ac.cn/VFs/), [BacMet](http://bacmet.biomedicine.gu.se/), [CAZy](http://www.cazy.org/), and [ICEberg2](https://bioinfo-mml.sjtu.edu.cn/ICEberg2/index.php) respectively.
 
 ### IslandPath
 
@@ -201,6 +205,20 @@ MobRecon reconstructs individual plasmid sequences from draft genome assemblies 
 
 [IslandPath](https://github.com/brinkmanlab/islandpath) is a standalone software to predict genomic islands
 in bacterial and archaeal genomes based on the presence of dinucleotide biases and mobility genes.
+
+### IntegronFinder
+
+Disabled by default. Enable by adding `--run_integronfinder` to your command.
+
+<details markdown="1">
+<summary>Output files</summary>
+
+- `annotation/integron_finder/`
+  - `Results_Integron_Finder_${sample_id}/` : IntegronFinder results will be in one directory per genome.
+
+</details>
+
+[Integron Finder](https://github.com/gem-pasteur/Integron_Finder) is a bioinformatics tool to find integrons in bacterial genomes.
 
 ### VIBRANT
 

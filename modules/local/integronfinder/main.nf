@@ -11,8 +11,9 @@ process INTEGRON_FINDER {
     tuple val(meta), path(fasta)
 
     output:
-    tuple val(meta), path("Results_Integron_Finder_*"), emit: results
-    path "versions.yml"                                        , emit: versions
+    tuple val(meta), path("Results_Integron_Finder_*")          , emit: results
+    tuple val(meta), path("Results_Integron_Finder_*/*.summary"), emit: summary
+    path "versions.yml"                                         , emit: versions
 
     when:
     task.ext.when == null || task.ext.when

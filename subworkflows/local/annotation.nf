@@ -27,6 +27,10 @@ include { ISLANDPATH } from '../../modules/local/islandpath/main'
 include { VIBRANT_DOWNLOADDB } from '../../modules/local/vibrant/downloadb/main.nf'
 include { VIBRANT_VIBRANTRUN } from '../../modules/local/vibrant/vibrantrun/main.nf'
 include { INTEGRON_FINDER } from '../../modules/local/integronfinder/main.nf'
+include { CONCAT_ALIGNMENT as CONCAT_RGI;
+          CONCAT_ALIGNMENT as CONCAT_MOBSUITE;
+          CONCAT_ALIGNMENT as CONCAT_ISLANDS;
+          CONCAT_ALIGNMENT as CONCAT_INTEGRONS } from '../../modules/local/concat_alignments.nf'
 
 //
 // SUBWORKFLOWS
@@ -52,13 +56,11 @@ workflow ANNOTATE_ASSEMBLIES {
 
     main:
 
-        //if (params.input_sample_table){ ch_input = file(params.input_sample_table) } else { exit 1, 'Input samplesheet not specified!' }
         ch_multiqc_files = Channel.empty()
         ch_software_versions = Channel.empty()
         /*
         * SUBWORKFLOW: Read in samplesheet, validate and stage input files
         */
-        //ANNOTATION_INPUT_CHECK(ch_input)
 
         /*
         * Load in the databases. Check if they were cached, otherwise run the processes that get them
@@ -118,7 +120,11 @@ workflow ANNOTATE_ASSEMBLIES {
         RGI(assemblies, ch_card_json)
         ch_software_versions = ch_software_versions.mix(RGI.out.version.first().ifEmpty(null))
 
+        RGI.out.tsv
+            .collect{ id, paths -> paths }
+            .set { rgi_tsvs }
 
+        CONCAT_RGI(rgi_tsvs, "RGI")
         /*
         * Run gene finding software (Prokka or Bakta)
         */
@@ -167,13 +173,31 @@ workflow ANNOTATE_ASSEMBLIES {
         MOB_RECON(assemblies)
         ch_software_versions = ch_software_versions.mix(MOB_RECON.out.version.first().ifEmpty(null))
 
+        MOB_RECON.out.contig_report
+            .collect{ id, paths -> paths }
+            .set { mobrecon_tsvs }
+
+        CONCAT_MOBSUITE(mobrecon_tsvs, "MOBSUITE")
+
         if (params.run_integronfinder){
             INTEGRON_FINDER(assemblies)
             ch_software_versions = ch_software_versions.mix(INTEGRON_FINDER.out.versions.first())
+
+            INTEGRON_FINDER.out.summary
+                .collect{ id, paths -> paths }
+                .set{ integron_summaries }
+
+            CONCAT_INTEGRONS(integron_summaries, "INTEGRONFINDER")
         }
 
         ISLANDPATH(ch_gbk_files)
         ch_software_versions = ch_software_versions.mix(ISLANDPATH.out.versions.first())
+
+        ISLANDPATH.out.gff
+            .collect{ id, paths -> paths }
+            .set { islandpath_gffs }
+
+        CONCAT_ISLANDS(islandpath_gffs, "ISLANDPATH")
 
         /*
         * Run DIAMOND blast annotation with databases

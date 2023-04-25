@@ -11,6 +11,7 @@ nextflow_workflow {
                 // define parameters here. Example:
                 light = true
                 use_prokka = true
+                run_integronfinder = true
                 outdir = "$outputDir"
             }
             workflow {
@@ -30,7 +31,7 @@ nextflow_workflow {
 
         then {
             assert workflow.success
-            assert workflow.trace.tasks().size() >= 11
+            assert workflow.trace.tasks().size() >= 16
             assert workflow.out.gff.size() == 1
             assert workflow.out.gff.get(0).get(1) ==~ ".*/SRR14022735.gff"
         }
