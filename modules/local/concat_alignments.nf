@@ -20,7 +20,9 @@ process CONCAT_ALIGNMENT {
     def prefix = task.ext.prefix ?: "${dbname}"
 
     """
-    cat ${aln} > ${prefix}.txt
+    sed -s 1d ${aln} > no_header.txt
+    sed -sn 1p ${aln} | uniq > header.txt
+    cat header.txt no_header.txt > ${prefix}.txt
     """
 
     stub:
