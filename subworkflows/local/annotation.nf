@@ -27,6 +27,8 @@ include { ISLANDPATH } from '../../modules/local/islandpath/main'
 include { VIBRANT_DOWNLOADDB } from '../../modules/local/vibrant/downloadb/main.nf'
 include { VIBRANT_VIBRANTRUN } from '../../modules/local/vibrant/vibrantrun/main.nf'
 include { INTEGRON_FINDER } from '../../modules/local/integronfinder/main.nf'
+include { CONCAT_ALIGNMENT as CONCAT_RGI;
+          CONCAT_ALIGNMENT as CONCAT_MOBSUITE } from '../../modules/local/concat_alignments.nf'
 
 //
 // SUBWORKFLOWS
@@ -118,7 +120,11 @@ workflow ANNOTATE_ASSEMBLIES {
         RGI(assemblies, ch_card_json)
         ch_software_versions = ch_software_versions.mix(RGI.out.version.first().ifEmpty(null))
 
+        RGI.out.tsv
+            .collect{ id, paths -> paths }
+            .set { rgi_tsvs }
 
+        CONCAT_RGI(rgi_tsvs, "RGI")
         /*
         * Run gene finding software (Prokka or Bakta)
         */
