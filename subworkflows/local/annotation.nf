@@ -29,7 +29,8 @@ include { VIBRANT_VIBRANTRUN } from '../../modules/local/vibrant/vibrantrun/main
 include { INTEGRON_FINDER } from '../../modules/local/integronfinder/main.nf'
 include { CONCAT_ALIGNMENT as CONCAT_RGI;
           CONCAT_ALIGNMENT as CONCAT_MOBSUITE;
-          CONCAT_ALIGNMENT as CONCAT_ISLANDS } from '../../modules/local/concat_alignments.nf'
+          CONCAT_ALIGNMENT as CONCAT_ISLANDS;
+          CONCAT_ALIGNMENT as CONCAT_INTEGRONS } from '../../modules/local/concat_alignments.nf'
 
 //
 // SUBWORKFLOWS
@@ -181,6 +182,12 @@ workflow ANNOTATE_ASSEMBLIES {
         if (params.run_integronfinder){
             INTEGRON_FINDER(assemblies)
             ch_software_versions = ch_software_versions.mix(INTEGRON_FINDER.out.versions.first())
+
+            INTEGRON_FINDER.out.summary
+                .collect{ id, paths -> paths }
+                .set{ integron_summaries }
+
+            CONCAT_INTEGRONS(integron_summaries, "INTEGRONFINDER")
         }
 
         ISLANDPATH(ch_gbk_files)
