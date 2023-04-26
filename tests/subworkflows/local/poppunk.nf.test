@@ -8,7 +8,6 @@ nextflow_workflow {
 
         when {
             params {
-                run_poppunk_qc = true
                 poppunk_model = "bgmm"
                 outdir = "$outputDir"
             }
