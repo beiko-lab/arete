@@ -30,7 +30,7 @@ def filter_alignment(file_in, genome_id, header, min_pident, min_qcover, file_ou
     df["qcover"] = df["length"] / df["slen"]
     # Filters out every sequence that is below pident identity
     # and qcov coverage
-    filtered_df = df[(df["pident"] >= min_pident) & (df["qcover"] >= min_qcover)]
+    filtered_df = df[(df["pident"] >= int(min_pident)) & (df["qcover"] >= int(min_qcover))]
 
     filtered_df = (
         df.sort_values("pident", ascending=False)
