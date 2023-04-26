@@ -58,6 +58,9 @@ workflow ANNOTATE_ASSEMBLIES {
 
         ch_multiqc_files = Channel.empty()
         ch_software_versions = Channel.empty()
+
+        min_pident = params.min_pident
+        min_qcover = params.min_qcover
         /*
         * SUBWORKFLOW: Read in samplesheet, validate and stage input files
         */
@@ -207,20 +210,44 @@ workflow ANNOTATE_ASSEMBLIES {
 
         DIAMOND_MAKE_VFDB(ch_vfdb)
         DIAMOND_BLAST_VFDB(ch_ffn_files, DIAMOND_MAKE_VFDB.out.db, "txt", blast_columns)
-        VFDB_FILTER(DIAMOND_BLAST_VFDB.out.txt, "VFDB", blast_columns)
+        VFDB_FILTER(
+            DIAMOND_BLAST_VFDB.out.txt,
+            "VFDB",
+            blast_columns,
+            min_pident,
+            min_qcover
+        )
 
         if (!params.light) {
             DIAMOND_MAKE_BACMET(ch_bacmet_db)
             DIAMOND_BLAST_BACMET(ch_ffn_files, DIAMOND_MAKE_BACMET.out.db, "txt", blast_columns)
-            BACMET_FILTER(DIAMOND_BLAST_BACMET.out.txt, "BACMET", blast_columns)
+            BACMET_FILTER(
+                DIAMOND_BLAST_BACMET.out.txt,
+                "BACMET",
+                blast_columns,
+                min_pident,
+                min_qcover
+            )
 
             DIAMOND_MAKE_CAZY(ch_cazy_db)
             DIAMOND_BLAST_CAZY(ch_ffn_files, DIAMOND_MAKE_CAZY.out.db, "txt", blast_columns)
-            CAZY_FILTER(DIAMOND_BLAST_CAZY.out.txt, "CAZY", blast_columns)
+            CAZY_FILTER(
+                DIAMOND_BLAST_CAZY.out.txt,
+                "CAZY",
+                blast_columns,
+                min_pident,
+                min_qcover
+            )
 
             DIAMOND_MAKE_ICEBERG(ch_iceberg_db)
             DIAMOND_BLAST_ICEBERG(ch_ffn_files, DIAMOND_MAKE_ICEBERG.out.db, "txt", blast_columns)
-            ICEBERG_FILTER(DIAMOND_BLAST_ICEBERG.out.txt, "ICEBERG", blast_columns)
+            ICEBERG_FILTER(
+                DIAMOND_BLAST_ICEBERG.out.txt,
+                "ICEBERG",
+                blast_columns,
+                min_pident,
+                min_qcover
+            )
         }
 
         ch_software_versions = ch_software_versions.mix(DIAMOND_MAKE_VFDB.out.versions.ifEmpty(null))
