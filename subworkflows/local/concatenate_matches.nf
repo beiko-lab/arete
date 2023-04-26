@@ -8,13 +8,21 @@ workflow FILTER_ALIGNMENT {
         diamond_results
         db_name
         blast_columns
+        min_pident
+        min_qcover
 
     main:
         diamond_results
             .filter{ id, path -> path.size() > 0 }
             .set { results }
 
-        FILTER_MATCHES(results, db_name, blast_columns)
+        FILTER_MATCHES(
+            results,
+            db_name,
+            blast_columns,
+            min_pident,
+            min_qcover
+        )
         FILTER_MATCHES.out.txt.set { diamond_filtered }
 
         diamond_filtered
