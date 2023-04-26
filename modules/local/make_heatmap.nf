@@ -1,11 +1,10 @@
 process MAKE_HEATMAP {
     label 'process_low'
 
-    // TODO: Change container to seaborn one when available
-    conda (params.enable_conda ? "bioconda::vibrant=1.2.1" : null)
+    conda (params.enable_conda ? "conda-forge::seaborn=0.12.2" : null)
     container "${ workflow.containerEngine == 'singularity' && !task.ext.singularity_pull_docker_container ?
-        'https://depot.galaxyproject.org/singularity/vibrant:1.2.1--hdfd78af_4':
-        'quay.io/biocontainers/vibrant:1.2.1--hdfd78af_4' }"
+        'docker://docker.io/biocontainers/seaborn:0.12.2_cv1':
+        'docker.io/biocontainers/seaborn:0.12.2_cv1' }"
 
     input:
     path distances
