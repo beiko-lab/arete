@@ -8,7 +8,6 @@ nextflow_workflow {
 
         when {
             params {
-                run_poppunk_qc = true
                 poppunk_model = "bgmm"
                 outdir = "$outputDir"
             }
@@ -27,7 +26,7 @@ nextflow_workflow {
 
         then {
             assert workflow.success
-            assert workflow.trace.tasks().size() >= 4
+            assert workflow.trace.tasks().size() >= 3
             assert workflow.out.poppunk_results.size() == 1
             assert workflow.out.poppunk_results.get(0) ==~ ".*/poppunk_bgmm"
         }

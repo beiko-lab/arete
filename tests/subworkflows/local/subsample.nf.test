@@ -29,6 +29,7 @@ nextflow_workflow {
 
         then {
             assert workflow.success
+            assert workflow.trace.tasks().size() == 2
             assert workflow.out.genomes_to_remove.size() == 1
             assert workflow.out.genomes_to_remove.toList() == [
                 'SRR14022737',
