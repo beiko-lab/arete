@@ -113,6 +113,18 @@
                     "type": "boolean",
                     "fa_icon": "fas fa-puzzle-piece",
                     "description": "Run Integron Finder as part of the annotation workflow"
+                },
+                "min_pident": {
+                    "type": "integer",
+                    "default": 60,
+                    "fa_icon": "fas fa-equals",
+                    "description": "Minimum match identity percentage for filtering"
+                },
+                "min_qcover": {
+                    "type": "number",
+                    "default": 0.6,
+                    "fa_icon": "fas fa-equals",
+                    "description": "Minimum coverage of each match for filtering"
                 }
             }
         },

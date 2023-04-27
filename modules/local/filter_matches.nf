@@ -13,6 +13,8 @@ process FILTER_MATCHES {
     tuple val(meta), path(aln)
     val dbname
     val header
+    val pident
+    val qcover
 
     output:
     tuple val(meta), path("*.txt"), emit: txt
@@ -22,7 +24,8 @@ process FILTER_MATCHES {
     def prefix = task.ext.prefix ?: "${meta.id}_${dbname}_filtered"
 
     """
-    filter_alignment.py ${aln} '${meta.id}' '${header}' ${prefix}.txt
+    filter_alignment.py ${aln} '${meta.id}' '${header}' \\
+        ${pident} ${qcover} ${prefix}.txt
     """
 
     stub:
