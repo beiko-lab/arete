@@ -116,18 +116,6 @@ workflow ANNOTATE_ASSEMBLIES {
             ch_software_versions = ch_software_versions.mix(UPDATE_RGI_DB.out.card_version.ifEmpty(null))
         }
 
-
-        /*
-        * Run RGI
-        */
-        RGI(assemblies, ch_card_json)
-        ch_software_versions = ch_software_versions.mix(RGI.out.version.first().ifEmpty(null))
-
-        RGI.out.tsv
-            .collect{ id, paths -> paths }
-            .set { rgi_tsvs }
-
-        CONCAT_RGI(rgi_tsvs, "RGI")
         /*
         * Run gene finding software (Prokka or Bakta)
         */
@@ -169,6 +157,18 @@ workflow ANNOTATE_ASSEMBLIES {
                 VIBRANT_VIBRANTRUN(assemblies, vibrant_db)
             }
         }
+
+        /*
+        * Run RGI
+        */
+        RGI(ch_ffn_files, ch_card_json)
+        ch_software_versions = ch_software_versions.mix(RGI.out.version.first().ifEmpty(null))
+
+        RGI.out.tsv
+            .collect{ id, paths -> paths }
+            .set { rgi_tsvs }
+
+        CONCAT_RGI(rgi_tsvs, "RGI")
 
         /*
         * Module: Mob-Suite. Database is included in singularity container
