@@ -35,7 +35,7 @@ def filter_alignment(file_in, genome_id, header, min_pident, min_qcover, file_ou
     ]
 
     filtered_df = (
-        df.sort_values("pident", ascending=False)
+        filtered_df.sort_values("pident", ascending=False)
         .drop_duplicates(["qseqid", "full_qseq"])
         .sort_values(["qseqid", "pident", "mismatch"], ascending=[True, False, False])
     )
