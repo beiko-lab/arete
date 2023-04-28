@@ -1,40 +1,38 @@
 #!/usr/bin/env python
 
 import sys
-import csv
 import argparse
+from pandas import read_csv
 
 
 def parse_args(args=None):
     Description = "Add genome ID column to annotation results"
-    Epilog = "Example usage: python add_column.py <FILE_IN> <GENOME> <FILE_OUT>"
+    Epilog = (
+        "Example usage: python add_column.py <FILE_IN> <GENOME> <SKIP_ROWS> <FILE_OUT>"
+    )
 
     parser = argparse.ArgumentParser(description=Description, epilog=Epilog)
     parser.add_argument("FILE_IN", help="Input alignment file.")
     parser.add_argument("GENOME", help="Genome identifier.")
+    parser.add_argument(
+        "SKIP_ROWS", help="How many rows of text to skip in the original file."
+    )
     parser.add_argument("FILE_OUT", help="Output file.")
     return parser.parse_args(args)
 
 
-def add_column(file_in, genome, file_out):
-    # Add genome_id column to annotation file
-    with open(file_in, "r") as r_csvfile:
-        with open(file_out, "w", newline="") as w_csvfile:
-            dict_reader = csv.DictReader(r_csvfile, delimiter="\t")
+def add_column(file_in, genome, skip_n_rows, file_out):
+    ann_df = read_csv(file_in, delimiter="\t", skiprows=int(skip_n_rows))
 
-            # Add genome_id column
-            fieldnames = dict_reader.fieldnames + ["genome_id"]
-            writer_csv = csv.DictWriter(w_csvfile, fieldnames, delimiter="\t")
-            writer_csv.writeheader()
+    # Add genome_id column
+    ann_df["genome_id"] = genome
 
-            for row in dict_reader:
-                row["genome_id"] = genome
-                writer_csv.writerow(row)
+    ann_df.to_csv(file_out, sep="\t")
 
 
 def main(args=None):
     args = parse_args(args)
-    add_column(args.FILE_IN, args.GENOME, args.FILE_OUT)
+    add_column(args.FILE_IN, args.GENOME, args.SKIP_ROWS, args.FILE_OUT)
 
 
 if __name__ == "__main__":

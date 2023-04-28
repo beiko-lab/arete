@@ -12,6 +12,7 @@ process ADD_GENOME_COLUMN {
     input:
     tuple val(meta), path(tsv)
     val dbname
+    val skip_n_rows
 
     output:
     tuple val(meta), path("${prefix}.txt"), emit: txt
@@ -21,7 +22,7 @@ process ADD_GENOME_COLUMN {
     prefix = task.ext.prefix ?: "${meta.id}_${dbname}"
 
     """
-    add_column.py $tsv $meta.id ${prefix}.txt
+    add_column.py $tsv $meta.id $skip_n_rows ${prefix}.txt
     """
 
     stub:
