@@ -8,6 +8,7 @@ include { GET_CAZYDB;
           GET_VFDB;
           GET_BACMET;
           GET_ICEBERG } from '../../modules/local/blast_databases.nf'
+include { ADD_GENOME_COLUMN } from '../../modules/local/add_genome_column'
 include { DIAMOND_MAKEDB as DIAMOND_MAKE_CAZY;
           DIAMOND_MAKEDB as DIAMOND_MAKE_VFDB;
           DIAMOND_MAKEDB as DIAMOND_MAKE_BACMET;
@@ -172,7 +173,12 @@ workflow ANNOTATE_ASSEMBLIES {
         RGI(ch_ffn_files, ch_card_json)
         ch_software_versions = ch_software_versions.mix(RGI.out.version.first().ifEmpty(null))
 
-        RGI.out.tsv
+        ADD_GENOME_COLUMN(
+          RGI.out.tsv,
+          "RGI"
+        )
+
+        ADD_GENOME_COLUMN.out.txt
             .collect{ id, paths -> paths }
             .set { rgi_tsvs }
 
