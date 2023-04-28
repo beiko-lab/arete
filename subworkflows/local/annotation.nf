@@ -27,12 +27,12 @@ include { ISLANDPATH } from '../../modules/local/islandpath/main'
 include { VIBRANT_DOWNLOADDB } from '../../modules/local/vibrant/downloadb/main.nf'
 include { VIBRANT_VIBRANTRUN } from '../../modules/local/vibrant/vibrantrun/main.nf'
 include { INTEGRON_FINDER } from '../../modules/local/integronfinder/main.nf'
-include { CONCAT_ALIGNMENT as CONCAT_PROKKA;
-          CONCAT_ALIGNMENT as CONCAT_BAKTA;
-          CONCAT_ALIGNMENT as CONCAT_RGI;
-          CONCAT_ALIGNMENT as CONCAT_MOBSUITE;
-          CONCAT_ALIGNMENT as CONCAT_ISLANDS;
-          CONCAT_ALIGNMENT as CONCAT_INTEGRONS } from '../../modules/local/concat_output.nf'
+include { CONCAT_OUTPUT as CONCAT_PROKKA;
+          CONCAT_OUTPUT as CONCAT_BAKTA;
+          CONCAT_OUTPUT as CONCAT_RGI;
+          CONCAT_OUTPUT as CONCAT_MOBSUITE;
+          CONCAT_OUTPUT as CONCAT_ISLANDS;
+          CONCAT_OUTPUT as CONCAT_INTEGRONS } from '../../modules/local/concat_output.nf'
 
 //
 // SUBWORKFLOWS
