@@ -1,4 +1,4 @@
-process CONCAT_ALIGNMENT {
+process CONCAT_OUTPUT {
     label "process_low"
 
     conda (params.enable_conda ? "conda-forge::sed=4.7.0" : null)
@@ -9,8 +9,9 @@ process CONCAT_ALIGNMENT {
     }
 
     input:
-    path(aln)
+    path(ann_out)
     val dbname
+    val header_line
 
     output:
     path("*.txt"), emit: txt
@@ -20,8 +21,8 @@ process CONCAT_ALIGNMENT {
     prefix = task.ext.prefix ?: "${dbname}"
 
     """
-    sed -s 1d ${aln} > no_header.txt
-    sed -sn 1p ${aln} | uniq > header.txt
+    sed -s '1,${header_line}d' ${ann_out} > no_header.txt
+    sed -sn ${header_line}p ${ann_out} | uniq > header.txt
     cat header.txt no_header.txt > ${prefix}.txt
     """
 

@@ -27,10 +27,12 @@ include { ISLANDPATH } from '../../modules/local/islandpath/main'
 include { VIBRANT_DOWNLOADDB } from '../../modules/local/vibrant/downloadb/main.nf'
 include { VIBRANT_VIBRANTRUN } from '../../modules/local/vibrant/vibrantrun/main.nf'
 include { INTEGRON_FINDER } from '../../modules/local/integronfinder/main.nf'
-include { CONCAT_ALIGNMENT as CONCAT_RGI;
+include { CONCAT_ALIGNMENT as CONCAT_PROKKA;
+          CONCAT_ALIGNMENT as CONCAT_BAKTA;
+          CONCAT_ALIGNMENT as CONCAT_RGI;
           CONCAT_ALIGNMENT as CONCAT_MOBSUITE;
           CONCAT_ALIGNMENT as CONCAT_ISLANDS;
-          CONCAT_ALIGNMENT as CONCAT_INTEGRONS } from '../../modules/local/concat_alignments.nf'
+          CONCAT_ALIGNMENT as CONCAT_INTEGRONS } from '../../modules/local/concat_output.nf'
 
 //
 // SUBWORKFLOWS
@@ -130,7 +132,10 @@ workflow ANNOTATE_ASSEMBLIES {
             ch_ffn_files = PROKKA.out.ffn
             ch_gff_files = PROKKA.out.gff
             ch_gbk_files = PROKKA.out.gbk
+            ch_tsv_files = PROKKA.out.tsv
             ch_multiqc_files = ch_multiqc_files.mix(PROKKA.out.txt.collect{it[1]}.ifEmpty([]))
+
+            CONCAT_PROKKA(ch_tsv_files, "PROKKA", 1)
         }
         else {
 
@@ -146,6 +151,9 @@ workflow ANNOTATE_ASSEMBLIES {
             ch_ffn_files = BAKTA.out.ffn
             ch_gff_files = BAKTA.out.gff
             ch_gbk_files = BAKTA.out.gbff
+            ch_tsv_files = BAKTA.out.tsv
+
+            CONCAT_BAKTA(ch_tsv_files, "BAKTA", 3)
         }
 
         if (!params.skip_vibrant){
@@ -168,7 +176,7 @@ workflow ANNOTATE_ASSEMBLIES {
             .collect{ id, paths -> paths }
             .set { rgi_tsvs }
 
-        CONCAT_RGI(rgi_tsvs, "RGI")
+        CONCAT_RGI(rgi_tsvs, "RGI", 1)
 
         /*
         * Module: Mob-Suite. Database is included in singularity container
@@ -180,7 +188,7 @@ workflow ANNOTATE_ASSEMBLIES {
             .collect{ id, paths -> paths }
             .set { mobrecon_tsvs }
 
-        CONCAT_MOBSUITE(mobrecon_tsvs, "MOBSUITE")
+        CONCAT_MOBSUITE(mobrecon_tsvs, "MOBSUITE", 1)
 
         if (params.run_integronfinder){
             INTEGRON_FINDER(assemblies)
@@ -190,7 +198,7 @@ workflow ANNOTATE_ASSEMBLIES {
                 .collect{ id, paths -> paths }
                 .set{ integron_summaries }
 
-            CONCAT_INTEGRONS(integron_summaries, "INTEGRONFINDER")
+            CONCAT_INTEGRONS(integron_summaries, "INTEGRONFINDER", 2)
         }
 
         ISLANDPATH(ch_gbk_files)
@@ -200,7 +208,7 @@ workflow ANNOTATE_ASSEMBLIES {
             .collect{ id, paths -> paths }
             .set { islandpath_gffs }
 
-        CONCAT_ISLANDS(islandpath_gffs, "ISLANDPATH")
+        CONCAT_ISLANDS(islandpath_gffs, "ISLANDPATH", 1)
 
         /*
         * Run DIAMOND blast annotation with databases
