@@ -132,7 +132,7 @@ workflow ANNOTATE_ASSEMBLIES {
             ch_ffn_files = PROKKA.out.ffn
             ch_gff_files = PROKKA.out.gff
             ch_gbk_files = PROKKA.out.gbk
-            ch_tsv_files = PROKKA.out.tsv
+            ch_tsv_files = PROKKA.out.tsv.collect{ id, path -> path }
             ch_multiqc_files = ch_multiqc_files.mix(PROKKA.out.txt.collect{it[1]}.ifEmpty([]))
 
             CONCAT_PROKKA(ch_tsv_files, "PROKKA", 1)
@@ -151,7 +151,7 @@ workflow ANNOTATE_ASSEMBLIES {
             ch_ffn_files = BAKTA.out.ffn
             ch_gff_files = BAKTA.out.gff
             ch_gbk_files = BAKTA.out.gbff
-            ch_tsv_files = BAKTA.out.tsv
+            ch_tsv_files = BAKTA.out.tsv.collect{ id, path -> path }
 
             CONCAT_BAKTA(ch_tsv_files, "BAKTA", 3)
         }
