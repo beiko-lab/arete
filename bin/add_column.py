@@ -27,7 +27,7 @@ def add_column(file_in, genome, skip_n_rows, file_out):
     # Add genome_id column
     ann_df["genome_id"] = genome
 
-    ann_df.to_csv(file_out, sep="\t")
+    ann_df.to_csv(file_out, sep="\t", index=False)
 
 
 def main(args=None):
