@@ -1,4 +1,4 @@
-include { CONCAT_ALIGNMENT } from '../../modules/local/concat_alignments'
+include { CONCAT_OUTPUT } from '../../modules/local/concat_output'
 include { FILTER_MATCHES } from '../../modules/local/filter_matches'
 
 
@@ -29,8 +29,8 @@ workflow FILTER_ALIGNMENT {
             .collect{ id, paths -> paths }
             .set { paths }
 
-        CONCAT_ALIGNMENT(paths, db_name)
-        CONCAT_ALIGNMENT.out.txt.set { concatenated }
+        CONCAT_OUTPUT(paths, db_name, 1)
+        CONCAT_OUTPUT.out.txt.set { concatenated }
 
     emit:
         concatenated = concatenated

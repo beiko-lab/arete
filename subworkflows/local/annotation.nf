@@ -8,6 +8,9 @@ include { GET_CAZYDB;
           GET_VFDB;
           GET_BACMET;
           GET_ICEBERG } from '../../modules/local/blast_databases.nf'
+include { ADD_GENOME_COLUMN as PROKKA_ADD_COLUMN;
+          ADD_GENOME_COLUMN as BAKTA_ADD_COLUMN;
+          ADD_GENOME_COLUMN as RGI_ADD_COLUMN } from '../../modules/local/add_genome_column'
 include { DIAMOND_MAKEDB as DIAMOND_MAKE_CAZY;
           DIAMOND_MAKEDB as DIAMOND_MAKE_VFDB;
           DIAMOND_MAKEDB as DIAMOND_MAKE_BACMET;
@@ -27,10 +30,12 @@ include { ISLANDPATH } from '../../modules/local/islandpath/main'
 include { VIBRANT_DOWNLOADDB } from '../../modules/local/vibrant/downloadb/main.nf'
 include { VIBRANT_VIBRANTRUN } from '../../modules/local/vibrant/vibrantrun/main.nf'
 include { INTEGRON_FINDER } from '../../modules/local/integronfinder/main.nf'
-include { CONCAT_ALIGNMENT as CONCAT_RGI;
-          CONCAT_ALIGNMENT as CONCAT_MOBSUITE;
-          CONCAT_ALIGNMENT as CONCAT_ISLANDS;
-          CONCAT_ALIGNMENT as CONCAT_INTEGRONS } from '../../modules/local/concat_alignments.nf'
+include { CONCAT_OUTPUT as CONCAT_PROKKA;
+          CONCAT_OUTPUT as CONCAT_BAKTA;
+          CONCAT_OUTPUT as CONCAT_RGI;
+          CONCAT_OUTPUT as CONCAT_MOBSUITE;
+          CONCAT_OUTPUT as CONCAT_ISLANDS;
+          CONCAT_OUTPUT as CONCAT_INTEGRONS } from '../../modules/local/concat_output.nf'
 
 //
 // SUBWORKFLOWS
@@ -130,7 +135,20 @@ workflow ANNOTATE_ASSEMBLIES {
             ch_ffn_files = PROKKA.out.ffn
             ch_gff_files = PROKKA.out.gff
             ch_gbk_files = PROKKA.out.gbk
+            ch_tsv_files = PROKKA.out.tsv
             ch_multiqc_files = ch_multiqc_files.mix(PROKKA.out.txt.collect{it[1]}.ifEmpty([]))
+
+            PROKKA_ADD_COLUMN(
+                ch_tsv_files,
+                "PROKKA",
+                0
+            )
+
+            PROKKA_ADD_COLUMN.out.txt
+                .collect{ id, path -> path }
+                .set{ prokka_tsvs }
+
+            CONCAT_PROKKA(prokka_tsvs, "PROKKA", 1)
         }
         else {
 
@@ -146,6 +164,19 @@ workflow ANNOTATE_ASSEMBLIES {
             ch_ffn_files = BAKTA.out.ffn
             ch_gff_files = BAKTA.out.gff
             ch_gbk_files = BAKTA.out.gbff
+            ch_tsv_files = BAKTA.out.tsv
+
+            BAKTA_ADD_COLUMN(
+                ch_tsv_files,
+                "BAKTA",
+                2
+            )
+
+            BAKTA_ADD_COLUMN.out.txt
+                .collect{ id, path -> path }
+                .set{ bakta_tsvs }
+
+            CONCAT_BAKTA(bakta_tsvs, "BAKTA", 1)
         }
 
         if (!params.skip_vibrant){
@@ -164,11 +195,17 @@ workflow ANNOTATE_ASSEMBLIES {
         RGI(ch_ffn_files, ch_card_json)
         ch_software_versions = ch_software_versions.mix(RGI.out.version.first().ifEmpty(null))
 
-        RGI.out.tsv
+        RGI_ADD_COLUMN(
+          RGI.out.tsv,
+          "RGI",
+          0
+        )
+
+        RGI_ADD_COLUMN.out.txt
             .collect{ id, paths -> paths }
             .set { rgi_tsvs }
 
-        CONCAT_RGI(rgi_tsvs, "RGI")
+        CONCAT_RGI(rgi_tsvs, "RGI", 1)
 
         /*
         * Module: Mob-Suite. Database is included in singularity container
@@ -180,7 +217,7 @@ workflow ANNOTATE_ASSEMBLIES {
             .collect{ id, paths -> paths }
             .set { mobrecon_tsvs }
 
-        CONCAT_MOBSUITE(mobrecon_tsvs, "MOBSUITE")
+        CONCAT_MOBSUITE(mobrecon_tsvs, "MOBSUITE", 1)
 
         if (params.run_integronfinder){
             INTEGRON_FINDER(assemblies)
@@ -190,7 +227,7 @@ workflow ANNOTATE_ASSEMBLIES {
                 .collect{ id, paths -> paths }
                 .set{ integron_summaries }
 
-            CONCAT_INTEGRONS(integron_summaries, "INTEGRONFINDER")
+            CONCAT_INTEGRONS(integron_summaries, "INTEGRONFINDER", 2)
         }
 
         ISLANDPATH(ch_gbk_files)
@@ -200,7 +237,7 @@ workflow ANNOTATE_ASSEMBLIES {
             .collect{ id, paths -> paths }
             .set { islandpath_gffs }
 
-        CONCAT_ISLANDS(islandpath_gffs, "ISLANDPATH")
+        CONCAT_ISLANDS(islandpath_gffs, "ISLANDPATH", 1)
 
         /*
         * Run DIAMOND blast annotation with databases
