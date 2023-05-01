@@ -58,7 +58,7 @@ def create_report(ann, diamond_outs, rgi, mobsuite):
     )
     rgi_sum["orf"] = rgi_sum["orf"].str.rsplit("_", n=1).str.get(0)
 
-    orf_based_anns = diamond_sums.append(rgi_sum)
+    diamond_sums.append(rgi_sum)
 
     # Bakta/Prokka output
     ann_df = read_table(ann)
@@ -79,7 +79,7 @@ def create_report(ann, diamond_outs, rgi, mobsuite):
     # Merge results
     orf_based_merged = reduce(
         lambda left, right: merge(left, right, on=["genome_id", "orf"], how="outer"),
-        orf_based_anns,
+        diamond_sums,
     )
 
     mobsuite_ann = ann_sum.merge(
