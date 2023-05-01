@@ -257,7 +257,7 @@ workflow ANNOTATE_ASSEMBLIES {
             min_qcover
         )
 
-        ch_diamond_outs = ch_diamond_outs.mix(VFDB_FILTER.out.concatenated)
+        ch_diamond_outs.mix(VFDB_FILTER.out.concatenated)
 
         if (!params.light) {
             DIAMOND_MAKE_BACMET(ch_bacmet_db)
@@ -290,7 +290,7 @@ workflow ANNOTATE_ASSEMBLIES {
                 min_qcover
             )
 
-            ch_diamond_outs = ch_diamond_outs
+            ch_diamond_outs
                 .mix(BACMET_FILTER.out.concatenated)
                 .mix(CAZY_FILTER.out.concatenated)
                 .mix(ICEBERG_FILTER.out.concatenated)

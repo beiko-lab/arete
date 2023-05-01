@@ -19,8 +19,11 @@ process CREATE_REPORT {
 
     script:
     """
-    create_report.py $annotation $diamond_results \\
-        $rgi_output $mobsuite_output
+    create_report.py \\
+        --annotation_out $annotation \\
+        --diamond_outs $diamond_results \\
+        --rgi_out $rgi_output \\
+        --mobsuite_out $mobsuite_output
     """
 
     stub:

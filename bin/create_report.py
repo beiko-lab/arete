@@ -12,10 +12,23 @@ def parse_args(args=None):
     Epilog = "Example usage: python filter_alignment.py <ANN> <DIAMOND_OUTS> <RGI> <MOBSUITE>"
 
     parser = argparse.ArgumentParser(description=Description, epilog=Epilog)
-    parser.add_argument("ANN", help="Annotation report (Bakta or Prokka).")
-    parser.add_argument("DIAMOND_OUTS", help="DIAMOND alignment outputs.")
-    parser.add_argument("RGI", help="RGI output.")
-    parser.add_argument("MOBSUITE", help="Mob Recon outputs.")
+    parser.add_argument(
+        "-a",
+        "--annotation_out",
+        dest="ANN",
+        help="Annotation report (Bakta or Prokka).",
+    )
+    parser.add_argument(
+        "-d",
+        "--diamond_outs",
+        dest="DIAMOND_OUTS",
+        help="DIAMOND alignment outputs.",
+        nargs="*",
+    )
+    parser.add_argument("-r", "--rgi_out", dest="RGI", help="RGI output.")
+    parser.add_argument(
+        "-m", "--mobsuite_out", dest="MOBSUITE", help="Mob Recon outputs."
+    )
     return parser.parse_args(args)
 
 
