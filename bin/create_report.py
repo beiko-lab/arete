@@ -58,6 +58,8 @@ def create_report(ann, diamond_outs, rgi, mobsuite):
     )
     rgi_sum["orf"] = rgi_sum["orf"].str.rsplit("_", n=1).str.get(0)
 
+    orf_based_anns = diamond_sums.append(rgi_sum)
+
     # Bakta/Prokka output
     ann_df = read_table(ann)
     ann_sum = ann_df[
@@ -75,18 +77,18 @@ def create_report(ann, diamond_outs, rgi, mobsuite):
     mobrecon_sum["contig_id"] = mobrecon_sum["contig_id"].str.replace(r"(?<=g)0+", "_")
 
     # Merge results
-    diamond_merged = reduce(
+    orf_based_merged = reduce(
         lambda left, right: merge(left, right, on=["genome_id", "orf"], how="outer"),
-        diamond_sums,
+        orf_based_anns,
     )
 
     mobsuite_ann = ann_sum.merge(
         mobrecon_sum, on=["genome_id", "contig_id"], how="inner"
     )
-    diamond_ann = ann_sum.merge(diamond_merged, on=["genome_id", "orf"], how="inner")
+    orf_ann = ann_sum.merge(orf_based_merged, on=["genome_id", "orf"], how="inner")
 
     merged_full = mobsuite_ann.merge(
-        diamond_ann, on=["genome_id", "orf", "contig_id", "Start", "Stop"], how="outer"
+        orf_ann, on=["genome_id", "orf", "contig_id", "Start", "Stop"], how="outer"
     )
     merged_full.to_csv(path_or_buf="annotation_report.tsv", sep="\t", index=False)
 
