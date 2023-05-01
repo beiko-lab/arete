@@ -94,7 +94,7 @@ def create_report(ann, diamond_outs, rgi, mobsuite):
     merged_full = mobsuite_ann.merge(
         orf_ann, on=["genome_id", "orf", "contig_id", "Start", "Stop"], how="outer"
     )
-    merged_full.to_csv(path_or_buf="annotation_report.tsv", sep="\t", index=False)
+    merged_full.to_csv(path_or_buf="annotation_report.tsv.gz", sep="\t", index=False)
 
 
 def main(args=None):
