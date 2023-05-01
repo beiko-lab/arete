@@ -36,6 +36,7 @@ include { CONCAT_OUTPUT as CONCAT_PROKKA;
           CONCAT_OUTPUT as CONCAT_MOBSUITE;
           CONCAT_OUTPUT as CONCAT_ISLANDS;
           CONCAT_OUTPUT as CONCAT_INTEGRONS } from '../../modules/local/concat_output.nf'
+include { CREATE_REPORT } from '../../modules/local/create_report'
 
 //
 // SUBWORKFLOWS
@@ -242,6 +243,7 @@ workflow ANNOTATE_ASSEMBLIES {
         /*
         * Run DIAMOND blast annotation with databases
         */
+        ch_diamond_outs = Channel.empty()
         def blast_columns = "qseqid sseqid pident slen qlen length mismatch gapopen qstart qend sstart send evalue bitscore full_qseq"
 
 
@@ -254,6 +256,8 @@ workflow ANNOTATE_ASSEMBLIES {
             min_pident,
             min_qcover
         )
+
+        ch_diamond_outs = ch_diamond_outs.mix(VFDB_FILTER.out.concatenated)
 
         if (!params.light) {
             DIAMOND_MAKE_BACMET(ch_bacmet_db)
@@ -285,10 +289,23 @@ workflow ANNOTATE_ASSEMBLIES {
                 min_pident,
                 min_qcover
             )
+
+            ch_diamond_outs = ch_diamond_outs
+                .mix(BACMET_FILTER.out.concatenated)
+                .mix(CAZY_FILTER.out.concatenated)
+                .mix(ICEBERG_FILTER.out.concatenated)
         }
 
         ch_software_versions = ch_software_versions.mix(DIAMOND_MAKE_VFDB.out.versions.ifEmpty(null))
 
+        if (!params.use_prokka) {
+            CREATE_REPORT(
+                CONCAT_BAKTA.out.txt,
+                ch_diamond_outs,
+                CONCAT_RGI.out.txt,
+                CONCAT_MOBSUITE.out.txt
+            )
+        }
     emit:
         annotation_software = ch_software_versions
         multiqc = ch_multiqc_files
