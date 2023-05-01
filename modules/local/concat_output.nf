@@ -14,7 +14,7 @@ process CONCAT_OUTPUT {
     val header_line
 
     output:
-    path("*.txt"), emit: txt
+    path("${prefix}.txt"), emit: txt
 
     script:
     def args = task.ext.args ?: ''
