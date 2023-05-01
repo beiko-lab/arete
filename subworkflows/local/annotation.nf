@@ -257,7 +257,7 @@ workflow ANNOTATE_ASSEMBLIES {
             min_qcover
         )
 
-        ch_diamond_outs.mix(VFDB_FILTER.out.concatenated)
+        ch_diamond_outs.mix(VFDB_FILTER.out.concatenated).set{ ch_diamond_outs }
 
         if (!params.light) {
             DIAMOND_MAKE_BACMET(ch_bacmet_db)
@@ -294,6 +294,7 @@ workflow ANNOTATE_ASSEMBLIES {
                 .mix(BACMET_FILTER.out.concatenated)
                 .mix(CAZY_FILTER.out.concatenated)
                 .mix(ICEBERG_FILTER.out.concatenated)
+                .set { ch_diamond_outs }
         }
 
         ch_software_versions = ch_software_versions.mix(DIAMOND_MAKE_VFDB.out.versions.ifEmpty(null))
@@ -301,7 +302,7 @@ workflow ANNOTATE_ASSEMBLIES {
         if (!params.use_prokka) {
             CREATE_REPORT(
                 CONCAT_BAKTA.out.txt,
-                ch_diamond_outs,
+                ch_diamond_outs.collect(),
                 CONCAT_RGI.out.txt,
                 CONCAT_MOBSUITE.out.txt
             )
