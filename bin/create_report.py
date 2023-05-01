@@ -67,10 +67,10 @@ def create_report(ann, diamond_outs, rgi, mobsuite):
 
     # MobRecon output
     mobrecon = read_table(mobsuite)
-    mobrecon_sum = mobrecon[["sample_id", "contig_id", "primary_cluster_id"]].rename(
-        columns={"sample_id": "genome_id", "primary_cluster_id": "plasmid"}
-    )
-    mobrecon_sum = mobrecon_sum[mobrecon_sum["molecule_type"] == "plasmid"]
+    mobrecon_plasmids = mobrecon[mobrecon["molecule_type"] == "plasmid"]
+    mobrecon_sum = mobrecon_plasmids[
+        ["sample_id", "contig_id", "primary_cluster_id"]
+    ].rename(columns={"sample_id": "genome_id", "primary_cluster_id": "plasmid"})
     mobrecon_sum["contig_id"] = mobrecon_sum["contig_id"].str.extract("(contig\d+)")
     mobrecon_sum["contig_id"] = mobrecon_sum["contig_id"].str.replace(r"(?<=g)0+", "_")
 
