@@ -15,7 +15,7 @@ process CREATE_REPORT {
     path mobsuite_output
 
     output:
-    path("annotation_report.tsv"), emit: tsv
+    path("annotation_report.tsv.gz"), emit: tsv
 
     script:
     """
@@ -28,6 +28,6 @@ process CREATE_REPORT {
 
     stub:
     """
-    touch annotation_report.tsv
+    touch annotation_report.tsv.gz
     """
 }
