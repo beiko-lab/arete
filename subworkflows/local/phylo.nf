@@ -21,11 +21,21 @@ workflow PHYLOGENOMICS{
     main:
         ch_software_versions = Channel.empty()
 
+        // Create Panaroo samplesheet
+        gffs
+            .map { meta, path -> [meta.id, path.toString()] }
+            .collectFile(newLine: true) { item ->
+                [ "${item[0]}.txt", item[1] ]
+            }
+            .collectFile(name: 'panaroo_samplesheet.txt')
+            .map{ path -> [[id: 'panaroo'], path] }
+            .set { gff_samplesheet }
+
         /*
         * Core gene identification and alignment
         */
         // By default, run panaroo
-        PANAROO_RUN(gffs.collect{ meta, gff -> gff}.map( gff -> [[id: 'panaroo'], gff]))
+        PANAROO_RUN(gff_samplesheet)
         PANAROO_RUN.out.aln.collect{meta, aln -> aln }.set{ ch_core_gene_alignment }
         PANAROO_RUN.out.graph_gml.map{ id, path -> path }.set { panaroo_graph }
         ch_software_versions = ch_software_versions.mix(PANAROO_RUN.out.versions.ifEmpty(null))
