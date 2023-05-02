@@ -27,7 +27,12 @@ def parse_args(args=None):
     )
     parser.add_argument("-r", "--rgi_out", dest="RGI", help="RGI output.")
     parser.add_argument(
-        "-m", "--mobsuite_out", dest="MOBSUITE", help="Mob Recon outputs."
+        "-m",
+        "--mobsuite_out",
+        dest="MOBSUITE",
+        help="Mob Recon outputs.",
+        nargs="?",
+        const=None,
     )
     return parser.parse_args(args)
 
@@ -65,20 +70,20 @@ def create_report(ann, diamond_outs, rgi, mobsuite):
     diamond_sums.append(rgi_sum)
 
     # Bakta/Prokka output
-    ann_df = read_table(ann)
-    ann_sum = ann_df[
-        ["genome_id", "#Sequence Id", "Start", "Stop", "Locus Tag"]
-    ].rename(columns={"#Sequence Id": "contig_id", "Locus Tag": "orf"})
-    ann_sum = ann_sum[~ann_sum["orf"].isnull()]
+    ann_tool = os.path.basename(ann).strip(".txt").lower()
 
-    # MobRecon output
-    mobrecon = read_table(mobsuite)
-    mobrecon_plasmids = mobrecon[mobrecon["molecule_type"] == "plasmid"]
-    mobrecon_sum = mobrecon_plasmids[
-        ["sample_id", "contig_id", "primary_cluster_id"]
-    ].rename(columns={"sample_id": "genome_id", "primary_cluster_id": "plasmid"})
-    mobrecon_sum["contig_id"] = mobrecon_sum["contig_id"].str.extract("(contig\d+)")
-    mobrecon_sum["contig_id"] = mobrecon_sum["contig_id"].str.replace(r"(?<=g)0+", "_")
+    ann_df = read_table(ann)
+
+    if ann_tool == "bakta":
+        ann_sum = ann_df[
+            ["genome_id", "#Sequence Id", "Start", "Stop", "Locus Tag"]
+        ].rename(columns={"#Sequence Id": "contig_id", "Locus Tag": "orf"})
+    else:
+        ann_sum = ann_df[["genome_id", "locus_tag", "length_bp"]].rename(
+            columns={"locus_tag": "orf"}
+        )
+
+    ann_sum = ann_sum[~ann_sum["orf"].isnull()]
 
     # Merge results
     orf_based_merged = reduce(
@@ -86,15 +91,34 @@ def create_report(ann, diamond_outs, rgi, mobsuite):
         diamond_sums,
     )
 
-    mobsuite_ann = ann_sum.merge(
-        mobrecon_sum, on=["genome_id", "contig_id"], how="inner"
-    )
     orf_ann = ann_sum.merge(orf_based_merged, on=["genome_id", "orf"], how="inner")
 
-    merged_full = mobsuite_ann.merge(
-        orf_ann, on=["genome_id", "orf", "contig_id", "Start", "Stop"], how="outer"
-    )
-    merged_full.to_csv(path_or_buf="annotation_report.tsv.gz", sep="\t", index=False)
+    if mobsuite is not None and ann_tool == "bakta":
+        # MobRecon output
+        mobrecon = read_table(mobsuite)
+        mobrecon_plasmids = mobrecon[mobrecon["molecule_type"] == "plasmid"]
+        mobrecon_sum = mobrecon_plasmids[
+            ["sample_id", "contig_id", "primary_cluster_id"]
+        ].rename(columns={"sample_id": "genome_id", "primary_cluster_id": "plasmid"})
+        mobrecon_sum["contig_id"] = mobrecon_sum["contig_id"].str.extract("(contig\d+)")
+        mobrecon_sum["contig_id"] = mobrecon_sum["contig_id"].str.replace(
+            r"(?<=g)0+", "_"
+        )
+
+        mobsuite_ann = ann_sum.merge(
+            mobrecon_sum, on=["genome_id", "contig_id"], how="inner"
+        )
+
+        merged_full = mobsuite_ann.merge(
+            orf_ann, on=["genome_id", "orf", "contig_id", "Start", "Stop"], how="outer"
+        )
+
+        merged_full.to_csv(
+            path_or_buf="annotation_report.tsv.gz", sep="\t", index=False
+        )
+
+    else:
+        orf_ann.to_csv(path_or_buf="annotation_report.tsv.gz", sep="\t", index=False)
 
 
 def main(args=None):

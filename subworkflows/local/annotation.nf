@@ -306,7 +306,15 @@ workflow ANNOTATE_ASSEMBLIES {
                 CONCAT_RGI.out.txt,
                 CONCAT_MOBSUITE.out.txt
             )
+        } else {
+            CREATE_REPORT(
+                CONCAT_PROKKA.out.txt,
+                ch_diamond_outs.collect(),
+                CONCAT_RGI.out.txt,
+                []
+            )
         }
+
     emit:
         annotation_software = ch_software_versions
         multiqc = ch_multiqc_files
