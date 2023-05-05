@@ -29,7 +29,7 @@ def parse_args(args=None):
     )
     parser.add_argument("-r", "--rgi_out", dest="RGI", help="RGI output.")
     parser.add_argument(
-        "-r", "--vfdb_fasta", dest="VFDB_FASTA", help="VFDB reference FASTA."
+        "-f", "--vfdb_fasta", dest="VFDB_FASTA", help="VFDB reference FASTA."
     )
     parser.add_argument(
         "-m",
