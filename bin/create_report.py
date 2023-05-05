@@ -76,19 +76,23 @@ def parse_vfdb_fasta(vfdb_fasta):
 
 
 def create_vfdb_report(df, vfdb_df):
-    w_vfdb = df.copy().merge(vfdb_df, left_on="vfdb", right_index=True, how="left")
+    if not df["vfdb"].isna().all():
+        w_vfdb = df.copy().merge(vfdb_df, left_on="vfdb", right_index=True, how="left")
 
-    w_vfdb[["vfdb_short_id", "vfdb1", "vfdb2"]] = (
-        w_vfdb["vfdb_desc"].str.extractall("\(([^()]\w+\/?\w+)\)").unstack()
-    )
+        w_vfdb[["vfdb_short_id", "vfdb1", "vfdb2"]] = (
+            w_vfdb["vfdb_desc"].str.extractall("\(([^()]\w+\/?\w+)\)").unstack()
+        )
 
-    w_vfdb["vfdb"] = w_vfdb[["vfdb", "vfdb1", "vfdb2"]].apply(
-        lambda row: "/".join(row.values.astype(str)) if not isna(row.values[0]) else NA,
-        axis=1,
-    )
-    w_vfdb = w_vfdb.drop(columns=["vfdb_desc", "vfdb1", "vfdb2"])
+        w_vfdb["vfdb"] = w_vfdb[["vfdb", "vfdb1", "vfdb2"]].apply(
+            lambda row: "/".join(row.values.astype(str))
+            if not isna(row.values[0])
+            else NA,
+            axis=1,
+        )
+        w_vfdb = w_vfdb.drop(columns=["vfdb_desc", "vfdb1", "vfdb2"])
 
-    return w_vfdb
+        return w_vfdb
+    return df
 
 
 def create_report(ann, diamond_outs, rgi, vfdb_fasta, mobsuite):
