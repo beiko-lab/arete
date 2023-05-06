@@ -304,6 +304,7 @@ workflow ANNOTATE_ASSEMBLIES {
                 CONCAT_BAKTA.out.txt,
                 ch_diamond_outs.collect(),
                 CONCAT_RGI.out.txt,
+                ch_vfdb,
                 CONCAT_MOBSUITE.out.txt
             )
         } else {
@@ -311,6 +312,7 @@ workflow ANNOTATE_ASSEMBLIES {
                 CONCAT_PROKKA.out.txt,
                 ch_diamond_outs.collect(),
                 CONCAT_RGI.out.txt,
+                ch_vfdb,
                 []
             )
         }
