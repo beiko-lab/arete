@@ -107,7 +107,11 @@ def create_report(ann, diamond_outs, rgi, vfdb_fasta, mobsuite):
 
     # RGI output
     rgi_df = read_table(rgi)
-    rgi_sum = rgi_df[rgi_df["Best_Identities"] > 80]
+    rgi_df.columns = rgi_df.columns.str.replace(" ", "_")
+    rgi_sum = rgi_df[
+        (rgi_df["Best_Identities"] > 80)
+        & (rgi_df["Percentage_Length_of_Reference_Sequence"] > 80)
+    ]
     rgi_sum = rgi_sum[["Contig", "Best_Hit_ARO", "Cut_Off", "genome_id"]].rename(
         columns={"Contig": "orf", "Best_Hit_ARO": "AMR", "Cut_Off": "rgi_cutoff"}
     )
