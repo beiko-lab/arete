@@ -137,7 +137,6 @@
             "properties": {
                 "use_ppanggolin": {
                     "type": "boolean",
-                    "default": true,
                     "fa_icon": "fas fa-expand",
                     "description": "Use ppanggolin for calculating the pangenome"
                 },
