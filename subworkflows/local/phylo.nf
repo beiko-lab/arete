@@ -9,6 +9,8 @@ include { FASTTREE } from '../../modules/nf-core/fasttree/main'
 //
 // MODULE: Local to the pipeline
 //
+include { PPANGGOLIN_WORKFLOW } from '../../modules/local/ppanggolin/workflow/main'
+include { PPANGGOLIN_MSA } from '../../modules/local/ppanggolin/msa/main'
 include { GML2GV } from '../../modules/local/graphviz/gml2gv/main'
 include { GET_SOFTWARE_VERSIONS } from '../../modules/local/get_software_versions' addParams( options: [publish_files : ['tsv':'']] )
 
@@ -21,26 +23,48 @@ workflow PHYLOGENOMICS{
     main:
         ch_software_versions = Channel.empty()
 
-        // Create Panaroo samplesheet
         gffs
             .map { meta, path -> [meta.id, path.toString()] }
-            .collectFile(newLine: true) { item ->
-                [ "${item[0]}.txt", item[1] ]
-            }
-            .collectFile(name: 'panaroo_samplesheet.txt')
-            .map{ path -> [[id: 'panaroo'], path] }
-            .set { gff_samplesheet }
+            .set { gff_paths }
 
-        /*
-        * Core gene identification and alignment
-        */
-        // By default, run panaroo
-        PANAROO_RUN(gff_samplesheet)
-        PANAROO_RUN.out.aln.collect{meta, aln -> aln }.set{ ch_core_gene_alignment }
-        PANAROO_RUN.out.graph_gml.map{ id, path -> path }.set { panaroo_graph }
-        ch_software_versions = ch_software_versions.mix(PANAROO_RUN.out.versions.ifEmpty(null))
+        // Create samplesheet
+        if (params.use_ppanggolin) {
+            gff_paths
+                .collectFile(newLine: true) { item ->
+                    [ "${item[0]}.txt", item[0] + '\t' + item[1] ]
+                }
+                .collectFile(name: 'ppanggolin_samplesheet.tsv')
+                .map{ path -> [[id: 'ppanggolin'], path] }
+                .set { gff_samplesheet }
 
-        GML2GV(panaroo_graph)
+            PPANGGOLIN_WORKFLOW(gff_samplesheet)
+
+            PPANGGOLIN_WORKFLOW.out.pangenome.set { pangenome }
+
+            PPANGGOLIN_MSA(pangenome)
+
+            ch_core_gene_alignment = Channel.empty()
+        } else {
+            gff_paths
+                .collectFile(newLine: true) { item ->
+                    [ "${item[0]}.txt", item[1] ]
+                }
+                .collectFile(name: 'panaroo_samplesheet.txt')
+                .map{ path -> [[id: 'panaroo'], path] }
+                .set { gff_samplesheet }
+
+            /*
+            * Core gene identification and alignment
+            */
+            // By default, run panaroo
+            PANAROO_RUN(gff_samplesheet)
+            PANAROO_RUN.out.aln.collect{meta, aln -> aln }.set{ ch_core_gene_alignment }
+            PANAROO_RUN.out.graph_gml.map{ id, path -> path }.set { panaroo_graph }
+            ch_software_versions = ch_software_versions.mix(PANAROO_RUN.out.versions.ifEmpty(null))
+
+            GML2GV(panaroo_graph)
+        }
+
 
         /*
         * Maximum likelihood core gene tree. Uses SNPSites by default

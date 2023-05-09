@@ -135,6 +135,12 @@
             "default": "",
             "fa_icon": "fab fa-pagelines",
             "properties": {
+                "use_ppanggolin": {
+                    "type": "boolean",
+                    "default": true,
+                    "fa_icon": "fas fa-expand",
+                    "description": "Use ppanggolin for calculating the pangenome"
+                },
                 "use_full_alignment": {
                     "type": "boolean",
                     "description": "Use full alignment",

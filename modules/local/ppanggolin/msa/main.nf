@@ -11,9 +11,9 @@ process PPANGGOLIN_MSA {
     tuple val(meta), path(pangenome)
 
     output:
-    tuple val(meta), path("$prefix")   , emit: results
-    path"$prefix/msa_all_protein/*.aln", emit: alignments
-    path "versions.yml"                , emit: versions
+    tuple val(meta), path("${prefix}_msa")    , emit: results
+    path "${prefix}_msa/msa_all_protein/*.aln", emit: alignments
+    path "versions.yml"                       , emit: versions
 
     when:
     task.ext.when == null || task.ext.when
@@ -27,7 +27,7 @@ process PPANGGOLIN_MSA {
         $args \\
         --cpu $task.cpus \\
         --pangenome $pangenome \\
-        --output $prefix \\
+        --output "${prefix}"_msa \\
         --partition all
 
     cat <<-END_VERSIONS > versions.yml
@@ -38,8 +38,8 @@ process PPANGGOLIN_MSA {
     stub:
     prefix = task.ext.prefix ?: "${meta.id}"
     """
-    mkdir -p $prefix/msa_all_protein/
-    touch $prefix/msa_all_protein/sample.aln
+    mkdir -p ${prefix}_msa/msa_all_protein/
+    touch ${prefix}_msa/msa_all_protein/sample.aln
 
     cat <<-END_VERSIONS > versions.yml
     "${task.process}":
