@@ -5,7 +5,7 @@ process PPANGGOLIN_WORKFLOW {
     conda "bioconda::ppanggolin=1.2.105"
     container "${ workflow.containerEngine == 'singularity' && !task.ext.singularity_pull_docker_container ?
         'https://depot.galaxyproject.org/singularity/ppanggolin:1.2.105--py37h8902056_0':
-        'biocontainers/ppanggolin:1.2.105--py37h8902056_0' }"
+        'quay.io/biocontainers/ppanggolin:1.2.105--py37h8902056_0' }"
 
     input:
     tuple val(meta), path(samplesheet)
