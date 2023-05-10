@@ -44,7 +44,7 @@ workflow PHYLOGENOMICS{
             PPANGGOLIN_MSA(pangenome)
 
             ch_software_versions = ch_software_versions.mix(PPANGGOLIN_MSA.out.versions.ifEmpty(null))
-            PPANGGOLIN_MSA.out.alignments.collate( 300 ).set { ch_gene_alignments }
+            PPANGGOLIN_MSA.out.alignments.buffer( size: 300, remainder: true ).set { ch_gene_alignments }
 
         } else {
             gff_paths
