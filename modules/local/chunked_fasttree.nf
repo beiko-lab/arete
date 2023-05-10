@@ -21,7 +21,7 @@ process CHUNKED_FASTTREE {
     """
     for aln in \$(ls $alignment); do
 
-        sampleid=\$(echo "$aln" | cut -f 1 -d '.')
+        sampleid=\$(echo "\$aln" | cut -f 1 -d '.')
 
         fasttree \\
             $args \\
