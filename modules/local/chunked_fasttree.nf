@@ -23,6 +23,7 @@ process CHUNKED_FASTTREE {
     """
     for aln in \$(ls $alignment); do
 
+    if [[ $(wc -l <file.txt) -ge 2 ]]; then
         sampleid=\$(echo "\$aln" | cut -f 1 -d '.')
 
         fasttree \\
@@ -31,6 +32,7 @@ process CHUNKED_FASTTREE {
             $type \\
             \$aln \\
             > \$sampleid".tre"
+    fi
     done
 
     cat <<-END_VERSIONS > versions.yml
