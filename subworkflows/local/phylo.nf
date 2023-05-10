@@ -90,5 +90,5 @@ workflow PHYLOGENOMICS{
 
     emit:
         phylo_software = ch_software_versions
-        core_alignment = ch_core_gene_alignment
+        core_alignment = ch_gene_alignments
 }
