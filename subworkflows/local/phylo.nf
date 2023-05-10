@@ -4,15 +4,15 @@
 include { IQTREE } from '../../modules/nf-core/iqtree/main'
 include { PANAROO_RUN } from '../../modules/nf-core/panaroo/run/main'
 include { SNPSITES } from '../../modules/nf-core/snpsites/main'
-include { FASTTREE } from '../../modules/nf-core/fasttree/main'
 
 //
 // MODULE: Local to the pipeline
 //
+include { CHUNKED_FASTTREE as FASTTREE } from '../../modules/local/chunked_fasttree'
 include { PPANGGOLIN_WORKFLOW } from '../../modules/local/ppanggolin/workflow/main'
 include { PPANGGOLIN_MSA } from '../../modules/local/ppanggolin/msa/main'
 include { GML2GV } from '../../modules/local/graphviz/gml2gv/main'
-include { GET_SOFTWARE_VERSIONS } from '../../modules/local/get_software_versions' addParams( options: [publish_files : ['tsv':'']] )
+include { GET_SOFTWARE_VERSIONS } from '../../modules/local/get_software_versions'
 
 
 workflow PHYLOGENOMICS{
@@ -43,7 +43,9 @@ workflow PHYLOGENOMICS{
 
             PPANGGOLIN_MSA(pangenome)
 
-            ch_core_gene_alignment = Channel.empty()
+            ch_software_versions = ch_software_versions.mix(PPANGGOLIN_MSA.out.versions.ifEmpty(null))
+            PPANGGOLIN_MSA.out.alignments.collate( 300 ).set { ch_gene_alignments }
+
         } else {
             gff_paths
                 .collectFile(newLine: true) { item ->
@@ -58,7 +60,7 @@ workflow PHYLOGENOMICS{
             */
             // By default, run panaroo
             PANAROO_RUN(gff_samplesheet)
-            PANAROO_RUN.out.aln.collect{meta, aln -> aln }.set{ ch_core_gene_alignment }
+            PANAROO_RUN.out.aln.collect{meta, aln -> aln }.set{ ch_gene_alignments }
             PANAROO_RUN.out.graph_gml.map{ id, path -> path }.set { panaroo_graph }
             ch_software_versions = ch_software_versions.mix(PANAROO_RUN.out.versions.ifEmpty(null))
 
@@ -70,18 +72,18 @@ workflow PHYLOGENOMICS{
         * Maximum likelihood core gene tree. Uses SNPSites by default
         */
         if (use_fasttree){
-            FASTTREE(ch_core_gene_alignment)
+            FASTTREE(ch_gene_alignments)
             ch_software_versions = ch_software_versions.mix(FASTTREE.out.versions.ifEmpty(null))
         }
 
-        else{
+        if (!use_fasttree && !params.use_ppanggolin) {
             if (!use_full_alignment){
-                SNPSITES(ch_core_gene_alignment)
+                SNPSITES(ch_gene_alignments)
                 ch_software_versions = ch_software_versions.mix(SNPSITES.out.versions.ifEmpty(null))
                 IQTREE(SNPSITES.out.fasta, SNPSITES.out.constant_sites_string)
             }
             else{
-                IQTREE(ch_core_gene_alignment, false)
+                IQTREE(ch_gene_alignments, false)
             }
             ch_software_versions = ch_software_versions.mix(IQTREE.out.versions.ifEmpty(null))
         }
