@@ -23,7 +23,7 @@ process CHUNKED_FASTTREE {
     """
     for aln in \$(ls $alignment); do
 
-    if [[ $(wc -l <file.txt) -ge 2 ]]; then
+    if [[ \$(wc -l <\$aln) -ge 2 ]]; then
         sampleid=\$(echo "\$aln" | cut -f 1 -d '.')
 
         fasttree \\
