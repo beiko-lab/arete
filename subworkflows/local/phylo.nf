@@ -73,7 +73,8 @@ workflow PHYLOGENOMICS{
         * Maximum likelihood core gene tree. Uses SNPSites by default
         */
         if (use_fasttree){
-            FASTTREE(ch_gene_alignments)
+            def is_nt = params.use_ppanggolin ? false : true
+            FASTTREE(ch_gene_alignments, is_nt)
             ch_software_versions = ch_software_versions.mix(FASTTREE.out.versions.ifEmpty(null))
         }
 

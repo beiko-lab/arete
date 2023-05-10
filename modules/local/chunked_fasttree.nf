@@ -8,6 +8,7 @@ process CHUNKED_FASTTREE {
 
     input:
     path alignment
+    val is_nt
 
     output:
     path "*.tre",         emit: phylogeny
@@ -18,6 +19,7 @@ process CHUNKED_FASTTREE {
 
     script:
     def args = task.ext.args ?: ''
+    def type = is_nt ? '-nt' : ''
     """
     for aln in \$(ls $alignment); do
 
@@ -26,7 +28,8 @@ process CHUNKED_FASTTREE {
         fasttree \\
             $args \\
             -log \$sampleid".tre.log" \\
-            -nt \$aln \\
+            $type \\
+            \$aln \\
             > \$sampleid".tre"
     done
 
