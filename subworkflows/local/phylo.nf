@@ -43,10 +43,9 @@ workflow PHYLOGENOMICS{
 
             PPANGGOLIN_MSA(pangenome)
 
-            ch_software_versions = ch_software_versions.mix(PPANGGOLIN_MSA.out.versions.ifEmpty(null))
-            PPANGGOLIN_MSA.out.alignments.flatten().set{ ppanggolin_msas }
-            ppanggolin_msas.buffer( size: 300, remainder: true ).set { ch_gene_alignments }
+            PPANGGOLIN_MSA.out.alignments.set{ ch_all_alignments }
 
+            ch_software_versions = ch_software_versions.mix(PPANGGOLIN_MSA.out.versions.ifEmpty(null))
         } else {
             gff_paths
                 .collectFile(newLine: true) { item ->
@@ -61,31 +60,40 @@ workflow PHYLOGENOMICS{
             */
             // By default, run panaroo
             PANAROO_RUN(gff_samplesheet)
-            PANAROO_RUN.out.aln.collect{meta, aln -> aln }.set{ ch_gene_alignments }
+            PANAROO_RUN.out.aln.collect{ meta, aln -> aln }.set{ ch_core_alignment }
+            PANAROO_RUN.out.accessory_aln.set{ ch_accessory_alignment }
+
+            ch_core_alignment
+                .mix(ch_accessory_alignment)
+                .set{ ch_all_alignments }
+
             PANAROO_RUN.out.graph_gml.map{ id, path -> path }.set { panaroo_graph }
             ch_software_versions = ch_software_versions.mix(PANAROO_RUN.out.versions.ifEmpty(null))
 
             GML2GV(panaroo_graph)
         }
 
-
+        ch_all_alignments
+            .flatten()
+            .buffer( size: 300, remainder: true )
+            .set { chunked_alignments }
         /*
-        * Maximum likelihood core gene tree. Uses SNPSites by default
+        * Maximum likelihood core gene tree.
         */
         if (use_fasttree){
             def is_nt = params.use_ppanggolin ? false : true
-            FASTTREE(ch_gene_alignments, is_nt)
+            FASTTREE(chunked_alignments, is_nt)
             ch_software_versions = ch_software_versions.mix(FASTTREE.out.versions.ifEmpty(null))
         }
 
         if (!use_fasttree && !params.use_ppanggolin) {
             if (!use_full_alignment){
-                SNPSITES(ch_gene_alignments)
+                SNPSITES(ch_core_alignment)
                 ch_software_versions = ch_software_versions.mix(SNPSITES.out.versions.ifEmpty(null))
                 IQTREE(SNPSITES.out.fasta, SNPSITES.out.constant_sites_string)
             }
             else{
-                IQTREE(ch_gene_alignments, false)
+                IQTREE(ch_core_alignment, false)
             }
             ch_software_versions = ch_software_versions.mix(IQTREE.out.versions.ifEmpty(null))
         }
