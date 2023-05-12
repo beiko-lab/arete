@@ -14,6 +14,7 @@ process PANAROO_RUN {
     tuple val(meta), path("results/*")                                      , emit: results
     tuple val(meta), path("results/final_graph.gml")        , optional: true, emit: graph_gml
     tuple val(meta), path("results/core_gene_alignment.aln"), optional: true, emit: aln
+    path "results/aligned_gene_sequences/*aln.fas"          , optional: true, emit: accessory_aln
     path "versions.yml"                                                     , emit: versions
 
     when:
@@ -38,9 +39,10 @@ process PANAROO_RUN {
     def args = task.ext.args ?: ''
     def prefix = task.ext.prefix ?: "${meta.id}"
     """
-    mkdir results
+    mkdir -p results/aligned_gene_sequences/
     touch results/core_gene_alignment.aln
     touch results/final_graph.glm
+    touch results/aligned_gene_sequences/group_0001.aln.fas
     cat <<-END_VERSIONS > versions.yml
     "${task.process}":
         panaroo: \$(echo \$(panaroo --version 2>&1) | sed 's/^.*panaroo //' ))
