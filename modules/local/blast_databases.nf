@@ -55,6 +55,7 @@ process GET_ICEBERG {
     script:
     """
     curl https://bioinfo-mml.sjtu.edu.cn/ICEberg2/download/ICE_aa_experimental.fas --output ICE_aa_experimental.fas
+    tr -s ' ' '_' < ICE_aa_experimental.fas > ICE_aa_experimental.fas
     """
     stub:
     """
