@@ -148,6 +148,9 @@ def create_report(ann, diamond_outs, rgi, vfdb_fasta, mobsuite):
     if "bacmet" in w_vfdb.columns:
         w_vfdb["bacmet_short_id"] = w_vfdb["bacmet"].str.split("|").str[1]
 
+    if "iceberg" in w_vfdb.columns:
+        w_vfdb["iceberg_short_id"] = w_vfdb["iceberg"].str.extract("\|_(.+)_\[")
+
     if mobsuite is not None and ann_tool == "bakta":
         # MobRecon output
         mobrecon = read_table(mobsuite)
