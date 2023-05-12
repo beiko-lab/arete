@@ -34,11 +34,11 @@ process RGI {
         mode: params.publish_dir_mode,
         saveAs: { filename -> saveFiles(filename:filename, options:params.options, publish_dir:getSoftwareName(task.process), publish_id:meta.id) }
 
-    conda (params.enable_conda ? "bioconda::rgi=5.2.0" : null)
+    conda (params.enable_conda ? "bioconda::rgi=6.0.2" : null)
     if (workflow.containerEngine == 'singularity' && !params.singularity_pull_docker_container) {
-        container "https://depot.galaxyproject.org/singularity/rgi:5.2.0--pyhdfd78af_0"
+        container "https://depot.galaxyproject.org/singularity/rgi:6.0.2--pyha8f3691_0"
     } else {
-        container "quay.io/biocontainers/rgi:5.2.0--pyhdfd78af_0"
+        container "quay.io/biocontainers/rgi:6.0.2--pyha8f3691_0"
     }
 
     input:
