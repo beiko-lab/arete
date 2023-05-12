@@ -145,6 +145,8 @@ def create_report(ann, diamond_outs, rgi, vfdb_fasta, mobsuite):
 
     w_vfdb = create_vfdb_report(orf_ann, vfdb_df)
 
+    w_vfdb["bacmet_short_id"] = w_vfdb["bacmet"].str.split("|").str[1]
+
     if mobsuite is not None and ann_tool == "bakta":
         # MobRecon output
         mobrecon = read_table(mobsuite)
