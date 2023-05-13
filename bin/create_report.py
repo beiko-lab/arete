@@ -150,7 +150,7 @@ def create_report(ann, diamond_outs, rgi, vfdb_fasta, mobsuite):
 
     if "iceberg" in w_vfdb.columns:
         w_vfdb["iceberg_short_id"] = w_vfdb["iceberg"].str.extract(
-            "ICEberg\|\d+_(.+)_\gi"
+            "ICEberg\|\d+_(.+)_gi"
         )
 
     if mobsuite is not None and ann_tool == "bakta":
