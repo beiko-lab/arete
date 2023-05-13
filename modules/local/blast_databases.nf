@@ -55,7 +55,8 @@ process GET_ICEBERG {
     script:
     """
     curl https://bioinfo-mml.sjtu.edu.cn/ICEberg2/download/ICE_aa_experimental.fas --output ICE_aa_experimental.fas
-    sed -E 's/>(ICEberg\|[0-9]+)\s+(gi.*\|)\s+(.*)\s+\[(.*)\]/>\1_\3_\2_[\4]/' <ICE_aa_experimental.fas | \
+
+    sed -E 's/>(ICEberg\\|[0-9]+)\\s+(gi.*\\|)\\s+(.*)\\s+\\[(.*)\\]/>\\1_\\3_\\2_[\\4]/' <ICE_aa_experimental.fas | \
     tr ' ' '_' > ICE_aa_experimental_reformatted.fas
     """
     stub:
