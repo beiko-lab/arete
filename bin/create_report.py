@@ -193,27 +193,24 @@ def create_feature_profile(ann_report):
         "cazy",
     ]
 
-    wide_tables = []
-    for column in columns_to_encode:
-        if column in ann_report.columns:
-            current_columns = ["genome_id", column]
-            long_profile = ann_report[current_columns]
-            feature_name = column.replace("_short_id", "")
-            current_wide = get_dummies(
-                long_profile,
-                columns=[column],
-                prefix=feature_name,
-            )
-            wide_tables.append(current_wide)
+    columns_in_report = [
+        column for column in columns_to_encode if column in ann_report.columns
+    ]
 
-    full_wide_profile = reduce(
-        lambda left, right: merge(left, right, on=["genome_id"], how="outer"),
-        wide_tables,
+    columns_to_keep = ["genome_id", columns_in_report]
+
+    long_profile = ann_report[columns_to_keep]
+
+    # Make prettier prefixes
+    new_col_names = long_profile.columns.str.replace("_short_id", "").to_list()
+    long_profile.columns = new_col_names
+
+    wide_profile = get_dummies(
+        long_profile,
+        columns=new_col_names,
     )
 
-    full_wide_profile.to_csv(
-        path_or_buf="feature_profile.tsv.gz", sep="\t", index=False
-    )
+    wide_profile.to_csv(path_or_buf="feature_profile.tsv.gz", sep="\t", index=False)
 
 
 def main(args=None):
