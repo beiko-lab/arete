@@ -202,7 +202,7 @@ def create_feature_profile(ann_report):
     long_profile = ann_report[columns_to_keep]
 
     # Make prettier prefixes
-    new_col_names = long_profile.columns.str.replace("_short_id_", "").to_list()
+    new_col_names = long_profile.columns.str.replace("_short_id", "").to_list()
     long_profile.columns = new_col_names
     new_col_names.remove("genome_id")
 
