@@ -206,9 +206,13 @@ def create_feature_profile(ann_report):
     long_profile.columns = new_col_names
     new_col_names.remove("genome_id")
 
-    wide_profile = get_dummies(
-        long_profile,
-        columns=new_col_names,
+    wide_profile = (
+        get_dummies(
+            long_profile,
+            columns=new_col_names,
+        )
+        .groupby(["genome_id"], as_index=False)
+        .max()
     )
 
     wide_profile.to_csv(path_or_buf="feature_profile.tsv.gz", sep="\t", index=False)
