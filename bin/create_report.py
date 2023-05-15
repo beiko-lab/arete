@@ -204,6 +204,7 @@ def create_feature_profile(ann_report):
     # Make prettier prefixes
     new_col_names = long_profile.columns.str.replace("_short_id", "").to_list()
     long_profile.columns = new_col_names
+    new_col_names.remove("genome_id")
 
     wide_profile = get_dummies(
         long_profile,
