@@ -16,7 +16,8 @@ process CREATE_REPORT {
     path mobsuite_output
 
     output:
-    path("annotation_report.tsv.gz"), emit: tsv
+    path("annotation_report.tsv.gz"), emit: report
+    path("feature_profile.tsv.gz"), emit: profile
 
     script:
     """

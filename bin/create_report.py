@@ -5,7 +5,7 @@ import sys
 import gzip
 import argparse
 from Bio import SeqIO
-from pandas import read_table, merge, DataFrame, isna, NA
+from pandas import read_table, merge, DataFrame, isna, NA, get_dummies
 from functools import reduce
 
 
@@ -177,13 +177,51 @@ def create_report(ann, diamond_outs, rgi, vfdb_fasta, mobsuite):
             path_or_buf="annotation_report.tsv.gz", sep="\t", index=False
         )
 
+        return merged_full
     else:
         w_vfdb.to_csv(path_or_buf="annotation_report.tsv.gz", sep="\t", index=False)
+
+        return w_vfdb
+
+
+def create_feature_profile(ann_report):
+    columns_to_encode = [
+        "AMR",
+        "bacmet_short_id",
+        "iceberg_short_id",
+        "vfdb_short_id",
+        "cazy",
+    ]
+
+    wide_tables = []
+    for column in columns_to_encode:
+        if column in ann_report.columns:
+            current_columns = ["genome_id", column]
+            long_profile = ann_report[current_columns]
+            feature_name = column.replace("_short_id", "")
+            current_wide = get_dummies(
+                long_profile,
+                columns=[column],
+                prefix=feature_name,
+            )
+            wide_tables.append(current_wide)
+
+    full_wide_profile = reduce(
+        lambda left, right: merge(left, right, on=["genome_id"], how="outer"),
+        wide_tables,
+    )
+
+    full_wide_profile.to_csv(
+        path_or_buf="feature_profile.tsv.gz", sep="\t", index=False
+    )
 
 
 def main(args=None):
     args = parse_args(args)
-    create_report(args.ANN, args.DIAMOND_OUTS, args.RGI, args.VFDB_FASTA, args.MOBSUITE)
+    ann_report = create_report(
+        args.ANN, args.DIAMOND_OUTS, args.RGI, args.VFDB_FASTA, args.MOBSUITE
+    )
+    create_feature_profile(ann_report)
 
 
 if __name__ == "__main__":
