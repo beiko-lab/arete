@@ -197,7 +197,7 @@ def create_feature_profile(ann_report):
         column for column in columns_to_encode if column in ann_report.columns
     ]
 
-    columns_to_keep = ["genome_id", columns_in_report]
+    columns_to_keep = ["genome_id"] + columns_in_report
 
     long_profile = ann_report[columns_to_keep]
 
