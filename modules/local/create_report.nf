@@ -32,5 +32,6 @@ process CREATE_REPORT {
     stub:
     """
     touch annotation_report.tsv.gz
+    touch feature_profile.tsv.gz
     """
 }
