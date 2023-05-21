@@ -5,7 +5,7 @@ import sys
 import gzip
 import argparse
 from Bio import SeqIO
-from pandas import read_table, merge, DataFrame, isna, NA
+from pandas import read_table, merge, DataFrame, isna, NA, get_dummies
 from functools import reduce
 
 
@@ -177,13 +177,53 @@ def create_report(ann, diamond_outs, rgi, vfdb_fasta, mobsuite):
             path_or_buf="annotation_report.tsv.gz", sep="\t", index=False
         )
 
+        return merged_full
     else:
         w_vfdb.to_csv(path_or_buf="annotation_report.tsv.gz", sep="\t", index=False)
+
+        return w_vfdb
+
+
+def create_feature_profile(ann_report):
+    columns_to_encode = [
+        "AMR",
+        "bacmet_short_id",
+        "iceberg_short_id",
+        "vfdb_short_id",
+        "cazy",
+    ]
+
+    columns_in_report = [
+        column for column in columns_to_encode if column in ann_report.columns
+    ]
+
+    columns_to_keep = ["genome_id"] + columns_in_report
+
+    long_profile = ann_report[columns_to_keep]
+
+    # Make prettier prefixes
+    new_col_names = long_profile.columns.str.replace("_short_id", "").to_list()
+    long_profile.columns = new_col_names
+    new_col_names.remove("genome_id")
+
+    wide_profile = (
+        get_dummies(
+            long_profile,
+            columns=new_col_names,
+        )
+        .groupby(["genome_id"], as_index=False)
+        .max()
+    )
+
+    wide_profile.to_csv(path_or_buf="feature_profile.tsv.gz", sep="\t", index=False)
 
 
 def main(args=None):
     args = parse_args(args)
-    create_report(args.ANN, args.DIAMOND_OUTS, args.RGI, args.VFDB_FASTA, args.MOBSUITE)
+    ann_report = create_report(
+        args.ANN, args.DIAMOND_OUTS, args.RGI, args.VFDB_FASTA, args.MOBSUITE
+    )
+    create_feature_profile(ann_report)
 
 
 if __name__ == "__main__":
