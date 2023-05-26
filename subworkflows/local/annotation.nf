@@ -27,6 +27,7 @@ include { RGI;
           UPDATE_RGI_DB } from '../../modules/local/rgi'
 include { MOB_RECON } from '../../modules/local/mobsuite'
 include { ISLANDPATH } from '../../modules/local/islandpath/main'
+include { PHISPY } from '../../modules/nf-core/phispy/main'
 include { VIBRANT_DOWNLOADDB } from '../../modules/local/vibrant/downloadb/main.nf'
 include { VIBRANT_VIBRANTRUN } from '../../modules/local/vibrant/vibrantrun/main.nf'
 include { INTEGRON_FINDER } from '../../modules/local/integronfinder/main.nf'
@@ -230,6 +231,9 @@ workflow ANNOTATE_ASSEMBLIES {
 
             CONCAT_INTEGRONS(integron_summaries, "INTEGRONFINDER", 2)
         }
+
+        PHISPY(ch_gbk_files)
+        ch_software_versions = ch_software_versions.mix(PHISPY.out.versions.first())
 
         ISLANDPATH(ch_gbk_files)
         ch_software_versions = ch_software_versions.mix(ISLANDPATH.out.versions.first())
