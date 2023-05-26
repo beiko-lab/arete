@@ -28,8 +28,6 @@ include { RGI;
 include { MOB_RECON } from '../../modules/local/mobsuite'
 include { ISLANDPATH } from '../../modules/local/islandpath/main'
 include { PHISPY } from '../../modules/nf-core/phispy/main'
-include { VIBRANT_DOWNLOADDB } from '../../modules/local/vibrant/downloadb/main.nf'
-include { VIBRANT_VIBRANTRUN } from '../../modules/local/vibrant/vibrantrun/main.nf'
 include { INTEGRON_FINDER } from '../../modules/local/integronfinder/main.nf'
 include { CONCAT_OUTPUT as CONCAT_PROKKA;
           CONCAT_OUTPUT as CONCAT_BAKTA;
@@ -179,16 +177,6 @@ workflow ANNOTATE_ASSEMBLIES {
                 .set{ bakta_tsvs }
 
             CONCAT_BAKTA(bakta_tsvs, "BAKTA", 1)
-        }
-
-        if (!params.skip_vibrant){
-            if (params.vibrant_db){
-                VIBRANT_VIBRANTRUN(assemblies, file(params.vibrant_db))
-            } else {
-                VIBRANT_DOWNLOADDB()
-                VIBRANT_DOWNLOADDB.out.db.set { vibrant_db }
-                VIBRANT_VIBRANTRUN(assemblies, vibrant_db)
-            }
         }
 
         /*

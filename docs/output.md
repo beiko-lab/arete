@@ -18,7 +18,7 @@ The pipeline is built using [Nextflow](https://www.nextflow.io/) and processes d
 - [MobRecon](#mobrecon) - Reconstruction and typing of plasmids
 - [RGI](#rgi) - Detection and annotation of AMR determinants
 - [IslandPath](#islandpath) - Predicts genomic islands in bacterial and archaeal genomes.
-- [VIBRANT](#vibrant) - Automated recovery and annotation of bacterial and archaeal viruses
+- [PhiSpy](#phispy) - Prediction of prophages from bacterial genomes
 - [IntegronFinder](#integronfinder) - Finds integrons in DNA sequences
 - [Diamond](#diamond) - Detection and annotation of genes using external databases.
   - [CAZy](#cazy): Carbohydrate metabolism
@@ -220,19 +220,19 @@ Disabled by default. Enable by adding `--run_integronfinder` to your command.
 
 [Integron Finder](https://github.com/gem-pasteur/Integron_Finder) is a bioinformatics tool to find integrons in bacterial genomes.
 
-### VIBRANT
+### PhiSpy
 
 <details markdown="1">
 <summary>Output files</summary>
 
-- `annotation/vibrant/`
-  - `${sample_id}/` : VIBRANT results will be in one directory per genome.
+- `annotation/phispy/`
+  - `${sample_id}/` : PhiSpy results will be in one directory per genome.
 
-See the [VIBRANT documentation](https://github.com/AnantharamanLab/VIBRANT/blob/master/output_explanations.pdf) for an extensive description of the output.
+See the [PhiSpy documentation](https://github.com/linsalrob/PhiSpy#output-files) for an extensive description of the output.
 
 </details>
 
-[VIBRANT](https://github.com/AnantharamanLab/VIBRANT) is a tool for automated recovery and annotation of bacterial and archaeal viruses, determination of genome completeness, and characterization of viral community function from metagenomic assemblies.
+[PhiSpy](https://github.com/linsalrob/PhiSpy) is a tool for identification of prophages in Bacterial (and probably Archaeal) genomes. Given an annotated genome it will use several approaches to identify the most likely prophage regions.
 
 ### Panaroo
 

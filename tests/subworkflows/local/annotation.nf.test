@@ -11,7 +11,6 @@ nextflow_workflow {
                 // define parameters here. Example:
                 light = true
                 use_prokka = true
-                skip_vibrant = true
                 min_pident = 80
                 min_qcover = 0.8
                 outdir = "$outputDir"
