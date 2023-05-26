@@ -220,8 +220,10 @@ workflow ANNOTATE_ASSEMBLIES {
             CONCAT_INTEGRONS(integron_summaries, "INTEGRONFINDER", 2)
         }
 
-        PHISPY(ch_gbk_files)
-        ch_software_versions = ch_software_versions.mix(PHISPY.out.versions.first())
+        if (!params.skip_phispy) {
+            PHISPY(ch_gbk_files)
+            ch_software_versions = ch_software_versions.mix(PHISPY.out.versions.first())
+        }
 
         ISLANDPATH(ch_gbk_files)
         ch_software_versions = ch_software_versions.mix(ISLANDPATH.out.versions.first())

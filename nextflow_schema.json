@@ -115,6 +115,10 @@
                     "default": 0.6,
                     "fa_icon": "fas fa-equals",
                     "description": "Minimum coverage of each match for filtering"
+                },
+                "skip_phispy": {
+                    "type": "boolean",
+                    "fa_icon": "fas fa-virus"
                 }
             }
         },
