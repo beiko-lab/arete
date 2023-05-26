@@ -108,7 +108,8 @@
                     "phispy": {
                         "branch": "master",
                         "git_sha": "a60792caf1782dd570ad7a091b61806c592734d7",
-                        "installed_by": ["modules"]
+                        "installed_by": ["modules"],
+                        "patch": "modules/nf-core/phispy/phispy.diff"
                     },
                     "prokka": {
                         "branch": "master",
