@@ -32,6 +32,14 @@ def parse_args(args=None):
         "-f", "--vfdb_fasta", dest="VFDB_FASTA", help="VFDB reference FASTA."
     )
     parser.add_argument(
+        "-p",
+        "--phispy_out",
+        dest="PHISPY",
+        help="PhiSpy output.",
+        nargs="?",
+        const=None,
+    )
+    parser.add_argument(
         "-m",
         "--mobsuite_out",
         dest="MOBSUITE",
@@ -95,7 +103,7 @@ def create_vfdb_report(df, vfdb_df):
     return df
 
 
-def create_report(ann, diamond_outs, rgi, vfdb_fasta, mobsuite):
+def create_report(ann, diamond_outs, rgi, vfdb_fasta, phispy, mobsuite):
     # Summarize DIAMOND outs
     diamond_sums = [
         summarize_alignment(out, os.path.basename(out).strip(".txt").lower())
@@ -165,11 +173,22 @@ def create_report(ann, diamond_outs, rgi, vfdb_fasta, mobsuite):
             r"(?<=g)0+", "_"
         )
 
-        mobsuite_ann = ann_sum.merge(
+        w_contigs = ann_sum.merge(
             mobrecon_sum, on=["genome_id", "contig_id"], how="inner"
         )
 
-        merged_full = mobsuite_ann.merge(
+        if phispy is not None:
+            phispy = read_table(phispy)
+
+            phispy_sum = phispy[
+                ["sample_id", "contig_id", "primary_cluster_id"]
+            ].rename(columns={"Contig": "contig_id", "Prophage number": "phage"})
+
+            w_contigs = w_contigs.merge(
+                phispy_sum, on=["genome_id", "contig_id"], how="inner"
+            )
+
+        merged_full = w_contigs.merge(
             w_vfdb, on=["genome_id", "orf", "contig_id", "Start", "Stop"], how="outer"
         )
 
@@ -177,11 +196,12 @@ def create_report(ann, diamond_outs, rgi, vfdb_fasta, mobsuite):
             path_or_buf="annotation_report.tsv.gz", sep="\t", index=False
         )
 
-        return merged_full
     else:
         w_vfdb.to_csv(path_or_buf="annotation_report.tsv.gz", sep="\t", index=False)
 
         return w_vfdb
+
+    return merged_full
 
 
 def create_feature_profile(ann_report):
@@ -221,7 +241,12 @@ def create_feature_profile(ann_report):
 def main(args=None):
     args = parse_args(args)
     ann_report = create_report(
-        args.ANN, args.DIAMOND_OUTS, args.RGI, args.VFDB_FASTA, args.MOBSUITE
+        args.ANN,
+        args.DIAMOND_OUTS,
+        args.RGI,
+        args.VFDB_FASTA,
+        args.PHISPY,
+        args.MOBSUITE,
     )
     create_feature_profile(ann_report)
 

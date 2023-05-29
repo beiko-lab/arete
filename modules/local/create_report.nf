@@ -13,6 +13,7 @@ process CREATE_REPORT {
     path diamond_results
     path rgi_output
     path vfdb_fasta
+    path phispy_output
     path mobsuite_output
 
     output:
@@ -26,6 +27,7 @@ process CREATE_REPORT {
         --diamond_outs $diamond_results \\
         --rgi_out $rgi_output \\
         --vfdb_fasta $vfdb_fasta \\
+        --phispy_out $phispy_output \\
         --mobsuite_out $mobsuite_output
     """
 
