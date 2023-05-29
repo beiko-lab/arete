@@ -24,7 +24,7 @@ process CHUNKED_FASTTREE {
     for aln in \$(ls $alignment); do
 
     if [[ \$(wc -l <\$aln) -ge 2 ]]; then
-        sampleid=\$(echo "\$aln" | cut -f 1 -d '.')
+        sampleid=\$(basename \$aln .aln)
 
         fasttree \\
             $args \\
