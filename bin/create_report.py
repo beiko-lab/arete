@@ -173,30 +173,22 @@ def create_report(ann, diamond_outs, rgi, vfdb_fasta, phispy, mobsuite):
             r"(?<=g)0+", "_"
         )
 
-        w_mobrecon = ann_sum.merge(
+        w_contigs = ann_sum.merge(
             mobrecon_sum, on=["genome_id", "contig_id"], how="inner"
         )
-
-        full_contigs = w_mobrecon
 
         if phispy is not None:
             phispy_df = read_table(phispy)
 
-            phispy_sum = phispy_df[["genome_id", "Prophage number", "Contig"]].rename(
+            phispy_sum = phispy_df[["Prophage number", "Contig", "genome_id"]].rename(
                 columns={"Contig": "contig_id", "Prophage number": "phage"}
             )
 
-            w_phispy = ann_sum.merge(
+            w_contigs = w_contigs.merge(
                 phispy_sum, on=["genome_id", "contig_id"], how="inner"
             )
 
-            full_contigs = w_phispy.merge(
-                full_contigs,
-                on=["genome_id", "orf", "contig_id", "Start", "Stop"],
-                how="outer",
-            )
-
-        merged_full = full_contigs.merge(
+        merged_full = w_contigs.merge(
             w_vfdb, on=["genome_id", "orf", "contig_id", "Start", "Stop"], how="outer"
         )
 
