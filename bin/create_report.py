@@ -80,7 +80,10 @@ def create_vfdb_report(df, vfdb_df):
         w_vfdb = df.copy().merge(vfdb_df, left_on="vfdb", right_index=True, how="left")
 
         w_vfdb[["vfdb_short_id", "vfdb1", "vfdb2"]] = (
-            w_vfdb["vfdb_desc"].str.extractall("\(([^()]\w+\/?\w+)\)").unstack()
+            w_vfdb["vfdb_desc"]
+            .str.extractall("\(([^()]\w+\/?\w+)\)")
+            .unstack()[0]
+            .iloc[:, 1:4]
         )
 
         w_vfdb["vfdb"] = w_vfdb[["vfdb", "vfdb1", "vfdb2"]].apply(
