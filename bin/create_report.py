@@ -83,7 +83,7 @@ def create_vfdb_report(df, vfdb_df):
             w_vfdb["vfdb_desc"]
             .str.extractall("\(([^()]\w+\/?\w+)\)")
             .unstack()[0]
-            .iloc[:, 1:4]
+            .iloc[:, 0:3]
         )
 
         w_vfdb["vfdb"] = w_vfdb[["vfdb", "vfdb1", "vfdb2"]].apply(
