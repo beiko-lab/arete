@@ -81,8 +81,8 @@
 
   > Claire Bertelli, Fiona S L Brinkman, Improved genomic island predictions with IslandPath-DIMOB, Bioinformatics, Volume 34, Issue 13, 01 July 2018, Pages 2161–2167, https://doi.org/10.1093/bioinformatics/bty095
 
-- [VIBRANT](https://doi.org/10.1186/s40168-020-00867-0)
-  > Kieft, K., Zhou, Z. & Anantharaman, K. VIBRANT: automated recovery, annotation and curation of microbial viruses, and evaluation of viral community function from genomic sequences. Microbiome 8, 90 (2020). https://doi.org/10.1186/s40168-020-00867-0
+- [PhiSpy](https://doi.org/10.1093/nar/gks406)
+  > Sajia Akhter, Ramy K. Aziz, Robert A. Edwards; PhiSpy: a novel algorithm for finding prophages in bacterial genomes that combines similarity- and composition-based strategies. Nucl Acids Res 2012; 40 (16): e126. doi: 10.1093/nar/gks406
 
 ## Software packaging/containerisation tools
 

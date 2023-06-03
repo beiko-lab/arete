@@ -88,11 +88,6 @@
                     "fa_icon": "fas fa-database",
                     "description": "Path to the BAKTA database"
                 },
-                "vibrant_db": {
-                    "type": "string",
-                    "default": "None",
-                    "fa_icon": "fas fa-virus"
-                },
                 "light": {
                     "type": "boolean",
                     "description": "Only run one DIAMOND annotation step - against VFDB",
@@ -103,11 +98,6 @@
                     "type": "boolean",
                     "fa_icon": "fas fa-bacterium",
                     "description": "Use Prokka (not Bakta) for annotating assemblies"
-                },
-                "skip_vibrant": {
-                    "type": "boolean",
-                    "fa_icon": "fas fa-virus-slash",
-                    "description": "Don't run VIBRANT"
                 },
                 "run_integronfinder": {
                     "type": "boolean",
@@ -125,6 +115,10 @@
                     "default": 0.6,
                     "fa_icon": "fas fa-equals",
                     "description": "Minimum coverage of each match for filtering"
+                },
+                "skip_phispy": {
+                    "type": "boolean",
+                    "fa_icon": "fas fa-virus"
                 }
             }
         },

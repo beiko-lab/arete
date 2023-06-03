@@ -9,6 +9,7 @@ include { GET_CAZYDB;
           GET_BACMET;
           GET_ICEBERG } from '../../modules/local/blast_databases.nf'
 include { ADD_GENOME_COLUMN as PROKKA_ADD_COLUMN;
+          ADD_GENOME_COLUMN as PHISPY_ADD_COLUMN;
           ADD_GENOME_COLUMN as BAKTA_ADD_COLUMN;
           ADD_GENOME_COLUMN as RGI_ADD_COLUMN } from '../../modules/local/add_genome_column'
 include { DIAMOND_MAKEDB as DIAMOND_MAKE_CAZY;
@@ -27,15 +28,15 @@ include { RGI;
           UPDATE_RGI_DB } from '../../modules/local/rgi'
 include { MOB_RECON } from '../../modules/local/mobsuite'
 include { ISLANDPATH } from '../../modules/local/islandpath/main'
-include { VIBRANT_DOWNLOADDB } from '../../modules/local/vibrant/downloadb/main.nf'
-include { VIBRANT_VIBRANTRUN } from '../../modules/local/vibrant/vibrantrun/main.nf'
+include { PHISPY } from '../../modules/nf-core/phispy/main'
 include { INTEGRON_FINDER } from '../../modules/local/integronfinder/main.nf'
 include { CONCAT_OUTPUT as CONCAT_PROKKA;
           CONCAT_OUTPUT as CONCAT_BAKTA;
           CONCAT_OUTPUT as CONCAT_RGI;
           CONCAT_OUTPUT as CONCAT_MOBSUITE;
           CONCAT_OUTPUT as CONCAT_ISLANDS;
-          CONCAT_OUTPUT as CONCAT_INTEGRONS } from '../../modules/local/concat_output.nf'
+          CONCAT_OUTPUT as CONCAT_INTEGRONS;
+          CONCAT_OUTPUT as CONCAT_PHISPY } from '../../modules/local/concat_output.nf'
 include { CREATE_REPORT } from '../../modules/local/create_report'
 
 //
@@ -180,16 +181,6 @@ workflow ANNOTATE_ASSEMBLIES {
             CONCAT_BAKTA(bakta_tsvs, "BAKTA", 1)
         }
 
-        if (!params.skip_vibrant){
-            if (params.vibrant_db){
-                VIBRANT_VIBRANTRUN(assemblies, file(params.vibrant_db))
-            } else {
-                VIBRANT_DOWNLOADDB()
-                VIBRANT_DOWNLOADDB.out.db.set { vibrant_db }
-                VIBRANT_VIBRANTRUN(assemblies, vibrant_db)
-            }
-        }
-
         /*
         * Run RGI
         */
@@ -229,6 +220,23 @@ workflow ANNOTATE_ASSEMBLIES {
                 .set{ integron_summaries }
 
             CONCAT_INTEGRONS(integron_summaries, "INTEGRONFINDER", 2)
+        }
+
+        if (!params.skip_phispy) {
+            PHISPY(ch_gbk_files)
+            ch_software_versions = ch_software_versions.mix(PHISPY.out.versions.first())
+
+            PHISPY_ADD_COLUMN(
+                PHISPY.out.prophage_tsv,
+                "PHISPY",
+                0
+            )
+
+            PHISPY_ADD_COLUMN.out.txt
+                .collect{ id, paths -> paths }
+                .set { phispy_tsvs }
+
+            CONCAT_PHISPY(phispy_tsvs, "PHISPY", 1)
         }
 
         ISLANDPATH(ch_gbk_files)
