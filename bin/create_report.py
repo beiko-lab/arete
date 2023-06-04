@@ -194,6 +194,7 @@ def create_report(ann, diamond_outs, rgi, vfdb_fasta, mobsuite):
 
 def create_feature_profile(ann_report):
     columns_to_encode = [
+        "plasmid",
         "AMR",
         "bacmet_short_id",
         "iceberg_short_id",
