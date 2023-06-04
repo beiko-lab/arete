@@ -163,10 +163,15 @@ def create_report(ann, diamond_outs, rgi, vfdb_fasta, mobsuite):
         mobrecon_sum = mobrecon_plasmids[
             ["sample_id", "contig_id", "primary_cluster_id"]
         ].rename(columns={"sample_id": "genome_id", "primary_cluster_id": "plasmid"})
-        mobrecon_sum["contig_id"] = mobrecon_sum["contig_id"].str.extract("(contig\d+)")
+
+        # TODO: Improve contig identifier parsing
+        contig_ids = mobrecon_sum["contig_id"].str.extract("(^\d+)|(contig\d+)")
+        contig_ids_collapsed = contig_ids[0].mask(isna, contig_ids[1])
+        mobrecon_sum["contig_id"] = contig_ids_collapsed
         mobrecon_sum["contig_id"] = mobrecon_sum["contig_id"].str.replace(
-            r"(?<=g)0+", "_"
+            r"[^1-9]", "", regex=True
         )
+        mobrecon_sum["contig_id"] = "contig_" + mobrecon_sum["contig_id"]
 
         mobsuite_ann = ann_sum.merge(
             mobrecon_sum, on=["genome_id", "contig_id"], how="inner"
