@@ -229,6 +229,7 @@ def create_report(ann, diamond_outs, rgi, vfdb_fasta, phispy, mobsuite):
 
 def create_feature_profile(ann_report):
     columns_to_encode = [
+        "phage",
         "plasmid",
         "AMR",
         "bacmet_short_id",
