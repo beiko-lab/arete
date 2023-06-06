@@ -190,8 +190,15 @@ def create_report(ann, diamond_outs, rgi, vfdb_fasta, phispy, mobsuite):
         if phispy is not None:
             phispy_df = read_table(phispy)
 
-            phispy_sum = phispy_df[["genome_id", "Prophage number", "Contig"]].rename(
-                columns={"Contig": "contig_id", "Prophage number": "phage"}
+            phispy_sum = phispy_df[
+                ["genome_id", "Prophage number", "Start", "Stop", "Contig"]
+            ].rename(
+                columns={
+                    "Contig": "contig_id",
+                    "Prophage number": "phage",
+                    "Start": "phage_start",
+                    "Stop": "phage_stop",
+                }
             )
 
             w_phispy = ann_sum.merge(
