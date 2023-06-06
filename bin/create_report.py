@@ -32,6 +32,14 @@ def parse_args(args=None):
         "-f", "--vfdb_fasta", dest="VFDB_FASTA", help="VFDB reference FASTA."
     )
     parser.add_argument(
+        "-p",
+        "--phispy_out",
+        dest="PHISPY",
+        help="PhiSpy output.",
+        nargs="?",
+        const=None,
+    )
+    parser.add_argument(
         "-m",
         "--mobsuite_out",
         dest="MOBSUITE",
@@ -98,7 +106,7 @@ def create_vfdb_report(df, vfdb_df):
     return df
 
 
-def create_report(ann, diamond_outs, rgi, vfdb_fasta, mobsuite):
+def create_report(ann, diamond_outs, rgi, vfdb_fasta, phispy, mobsuite):
     # Summarize DIAMOND outs
     diamond_sums = [
         summarize_alignment(out, os.path.basename(out).strip(".txt").lower())
@@ -173,11 +181,37 @@ def create_report(ann, diamond_outs, rgi, vfdb_fasta, mobsuite):
         )
         mobrecon_sum["contig_id"] = "contig_" + mobrecon_sum["contig_id"]
 
-        mobsuite_ann = ann_sum.merge(
+        w_mobrecon = ann_sum.merge(
             mobrecon_sum, on=["genome_id", "contig_id"], how="inner"
         )
 
-        merged_full = mobsuite_ann.merge(
+        full_contigs = w_mobrecon
+
+        if phispy is not None:
+            phispy_df = read_table(phispy)
+
+            phispy_sum = phispy_df[
+                ["genome_id", "Prophage number", "Start", "Stop", "Contig"]
+            ].rename(
+                columns={
+                    "Contig": "contig_id",
+                    "Prophage number": "phage",
+                    "Start": "phage_start",
+                    "Stop": "phage_stop",
+                }
+            )
+
+            w_phispy = ann_sum.merge(
+                phispy_sum, on=["genome_id", "contig_id"], how="inner"
+            )
+
+            full_contigs = w_phispy.merge(
+                full_contigs,
+                on=["genome_id", "orf", "contig_id", "Start", "Stop"],
+                how="outer",
+            )
+
+        merged_full = full_contigs.merge(
             w_vfdb, on=["genome_id", "orf", "contig_id", "Start", "Stop"], how="outer"
         )
 
@@ -185,15 +219,17 @@ def create_report(ann, diamond_outs, rgi, vfdb_fasta, mobsuite):
             path_or_buf="annotation_report.tsv.gz", sep="\t", index=False
         )
 
-        return merged_full
     else:
         w_vfdb.to_csv(path_or_buf="annotation_report.tsv.gz", sep="\t", index=False)
 
         return w_vfdb
 
+    return merged_full
+
 
 def create_feature_profile(ann_report):
     columns_to_encode = [
+        "phage",
         "plasmid",
         "AMR",
         "bacmet_short_id",
@@ -230,7 +266,12 @@ def create_feature_profile(ann_report):
 def main(args=None):
     args = parse_args(args)
     ann_report = create_report(
-        args.ANN, args.DIAMOND_OUTS, args.RGI, args.VFDB_FASTA, args.MOBSUITE
+        args.ANN,
+        args.DIAMOND_OUTS,
+        args.RGI,
+        args.VFDB_FASTA,
+        args.PHISPY,
+        args.MOBSUITE,
     )
     create_feature_profile(ann_report)
 

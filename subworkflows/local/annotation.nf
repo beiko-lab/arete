@@ -29,6 +29,7 @@ include { RGI;
 include { MOB_RECON } from '../../modules/local/mobsuite'
 include { ISLANDPATH } from '../../modules/local/islandpath/main'
 include { PHISPY } from '../../modules/nf-core/phispy/main'
+include { PHISPY } from '../../modules/nf-core/phispy/main'
 include { INTEGRON_FINDER } from '../../modules/local/integronfinder/main.nf'
 include { CONCAT_OUTPUT as CONCAT_PROKKA;
           CONCAT_OUTPUT as CONCAT_BAKTA;
@@ -222,6 +223,7 @@ workflow ANNOTATE_ASSEMBLIES {
             CONCAT_INTEGRONS(integron_summaries, "INTEGRONFINDER", 2)
         }
 
+        ch_phispy_out = []
         if (!params.skip_phispy) {
             PHISPY(ch_gbk_files)
             ch_software_versions = ch_software_versions.mix(PHISPY.out.versions.first())
@@ -237,6 +239,7 @@ workflow ANNOTATE_ASSEMBLIES {
                 .set { phispy_tsvs }
 
             CONCAT_PHISPY(phispy_tsvs, "PHISPY", 1)
+            CONCAT_PHISPY.out.txt.set{ ch_phispy_out }
         }
 
         ISLANDPATH(ch_gbk_files)
@@ -313,6 +316,7 @@ workflow ANNOTATE_ASSEMBLIES {
                 ch_diamond_outs.collect(),
                 CONCAT_RGI.out.txt,
                 ch_vfdb,
+                ch_phispy_out,
                 CONCAT_MOBSUITE.out.txt
             )
         } else {
@@ -321,6 +325,7 @@ workflow ANNOTATE_ASSEMBLIES {
                 ch_diamond_outs.collect(),
                 CONCAT_RGI.out.txt,
                 ch_vfdb,
+                [],
                 []
             )
         }
