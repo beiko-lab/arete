@@ -3,6 +3,33 @@
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## v0.9 - June 6, 2023
+
+### `Added`
+
+- Make subsampling outputs only be used in Phylogenomics subwf (71240fdf1db73991e9e0ae74cacce3b1007d324b)
+- Add gml2gv module (4775118f113e38741852a718304241bfdb57cb60)
+- Add entry suggestion (47e4f8589c5cc2370033e6f18b9da6251193cb5b)
+- Create concatenated outputs for annotation steps (a15cb80a79311f6ba7a860cc8f716a6f61df1610)
+- Add genome similarity heatmap (1dfa297a1c6236f30d83e884bcc5f2426d7cba07)
+- Add pident and qcover filtering (e289b5caa624f98e1bcde2ac7d105237ce81c7a2)
+- Run RGI on Bakta outputs (de88f6f574b6786eb47bba237894d50baba9886d)
+- **Add report with annotation outputs** (3c96481090a0785fbc280a6818be05df2ab33000)
+- **Add ppanggolin** (1409df676e9c964c972132f8466840a75b5981d9)
+- **Add presence/absence table** (1e43d5032eb026877f18e800ea16bfc8b0821c9d)
+- **Add PhiSpy** (080d88cde7cd05e12e40fa1703f4ab77f28e071f)
+
+### `Fixed`
+
+- Make CheckM detect file extensions (4f2067263f84959f96a203e1b18d1d0832d2efa4)
+- Make poppunk flag only be checked at relevant points (290df03b07479ec20c077bfc926aadb860aaa96d)
+- Change assembly samplesheet message (893c5ace3755e43efafd6ecc075194a7c4eeb614)
+- Use panaroo samplesheet (4bcd83371c32ef93be9604c3de116bf4d0867df0)
+
+- ### `Deprecated`
+
+- **Removed VIBRANT** (080d88cde7cd05e12e40fa1703f4ab77f28e071f)
+
 ## v2.0.1 dev - April 10, 2023
 
 ### `Fixed`
