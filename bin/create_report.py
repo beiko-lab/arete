@@ -88,7 +88,10 @@ def create_vfdb_report(df, vfdb_df):
         w_vfdb = df.copy().merge(vfdb_df, left_on="vfdb", right_index=True, how="left")
 
         w_vfdb[["vfdb_short_id", "vfdb1", "vfdb2"]] = (
-            w_vfdb["vfdb_desc"].str.extractall("\(([^()]\w+\/?\w+)\)").unstack()
+            w_vfdb["vfdb_desc"]
+            .str.extractall("\(([^()]\w+\/?\w+)\)")
+            .unstack()[0]
+            .iloc[:, 0:3]
         )
 
         w_vfdb["vfdb"] = w_vfdb[["vfdb", "vfdb1", "vfdb2"]].apply(
@@ -168,10 +171,15 @@ def create_report(ann, diamond_outs, rgi, vfdb_fasta, phispy, mobsuite):
         mobrecon_sum = mobrecon_plasmids[
             ["sample_id", "contig_id", "primary_cluster_id"]
         ].rename(columns={"sample_id": "genome_id", "primary_cluster_id": "plasmid"})
-        mobrecon_sum["contig_id"] = mobrecon_sum["contig_id"].str.extract("(contig\d+)")
+
+        # TODO: Improve contig identifier parsing
+        contig_ids = mobrecon_sum["contig_id"].str.extract("(^\d+)|(contig\d+)")
+        contig_ids_collapsed = contig_ids[0].mask(isna, contig_ids[1])
+        mobrecon_sum["contig_id"] = contig_ids_collapsed
         mobrecon_sum["contig_id"] = mobrecon_sum["contig_id"].str.replace(
-            r"(?<=g)0+", "_"
+            r"[^1-9]", "", regex=True
         )
+        mobrecon_sum["contig_id"] = "contig_" + mobrecon_sum["contig_id"]
 
         w_mobrecon = ann_sum.merge(
             mobrecon_sum, on=["genome_id", "contig_id"], how="inner"
@@ -214,6 +222,7 @@ def create_report(ann, diamond_outs, rgi, vfdb_fasta, phispy, mobsuite):
 
 def create_feature_profile(ann_report):
     columns_to_encode = [
+        "plasmid",
         "AMR",
         "bacmet_short_id",
         "iceberg_short_id",

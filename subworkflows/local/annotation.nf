@@ -10,6 +10,7 @@ include { GET_CAZYDB;
           GET_ICEBERG } from '../../modules/local/blast_databases.nf'
 include { ADD_GENOME_COLUMN as PROKKA_ADD_COLUMN;
           ADD_GENOME_COLUMN as PHISPY_ADD_COLUMN;
+          ADD_GENOME_COLUMN as PHISPY_ADD_COLUMN;
           ADD_GENOME_COLUMN as BAKTA_ADD_COLUMN;
           ADD_GENOME_COLUMN as RGI_ADD_COLUMN } from '../../modules/local/add_genome_column'
 include { DIAMOND_MAKEDB as DIAMOND_MAKE_CAZY;
@@ -29,12 +30,15 @@ include { RGI;
 include { MOB_RECON } from '../../modules/local/mobsuite'
 include { ISLANDPATH } from '../../modules/local/islandpath/main'
 include { PHISPY } from '../../modules/nf-core/phispy/main'
+include { PHISPY } from '../../modules/nf-core/phispy/main'
 include { INTEGRON_FINDER } from '../../modules/local/integronfinder/main.nf'
 include { CONCAT_OUTPUT as CONCAT_PROKKA;
           CONCAT_OUTPUT as CONCAT_BAKTA;
           CONCAT_OUTPUT as CONCAT_RGI;
           CONCAT_OUTPUT as CONCAT_MOBSUITE;
           CONCAT_OUTPUT as CONCAT_ISLANDS;
+          CONCAT_OUTPUT as CONCAT_INTEGRONS;
+          CONCAT_OUTPUT as CONCAT_PHISPY } from '../../modules/local/concat_output.nf'
           CONCAT_OUTPUT as CONCAT_INTEGRONS;
           CONCAT_OUTPUT as CONCAT_PHISPY } from '../../modules/local/concat_output.nf'
 include { CREATE_REPORT } from '../../modules/local/create_report'
@@ -222,8 +226,6 @@ workflow ANNOTATE_ASSEMBLIES {
             CONCAT_INTEGRONS(integron_summaries, "INTEGRONFINDER", 2)
         }
 
-        ch_phispy_out = []
-
         if (!params.skip_phispy) {
             PHISPY(ch_gbk_files)
             ch_software_versions = ch_software_versions.mix(PHISPY.out.versions.first())
@@ -239,9 +241,6 @@ workflow ANNOTATE_ASSEMBLIES {
                 .set { phispy_tsvs }
 
             CONCAT_PHISPY(phispy_tsvs, "PHISPY", 1)
-
-            CONCAT_PHISPY.out.txt
-                .set { ch_phispy_out }
         }
 
         ISLANDPATH(ch_gbk_files)

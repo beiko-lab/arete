@@ -5,7 +5,7 @@ keywords:
   - integron
   - annotation
 tools:
-  - vibrant:
+  - integron_finder:
     description: Bioinformatics tool to find integrons in bacterial genomes
     homepage: https://github.com/gem-pasteur/Integron_Finder
     documentation: https://integronfinder.readthedocs.io/en/latest/
