@@ -10,7 +10,6 @@ include { GET_CAZYDB;
           GET_ICEBERG } from '../../modules/local/blast_databases.nf'
 include { ADD_GENOME_COLUMN as PROKKA_ADD_COLUMN;
           ADD_GENOME_COLUMN as PHISPY_ADD_COLUMN;
-          ADD_GENOME_COLUMN as PHISPY_ADD_COLUMN;
           ADD_GENOME_COLUMN as BAKTA_ADD_COLUMN;
           ADD_GENOME_COLUMN as RGI_ADD_COLUMN } from '../../modules/local/add_genome_column'
 include { DIAMOND_MAKEDB as DIAMOND_MAKE_CAZY;
@@ -37,8 +36,6 @@ include { CONCAT_OUTPUT as CONCAT_PROKKA;
           CONCAT_OUTPUT as CONCAT_RGI;
           CONCAT_OUTPUT as CONCAT_MOBSUITE;
           CONCAT_OUTPUT as CONCAT_ISLANDS;
-          CONCAT_OUTPUT as CONCAT_INTEGRONS;
-          CONCAT_OUTPUT as CONCAT_PHISPY } from '../../modules/local/concat_output.nf'
           CONCAT_OUTPUT as CONCAT_INTEGRONS;
           CONCAT_OUTPUT as CONCAT_PHISPY } from '../../modules/local/concat_output.nf'
 include { CREATE_REPORT } from '../../modules/local/create_report'
