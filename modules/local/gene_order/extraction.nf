@@ -1,0 +1,33 @@
+process EXTRACTION {
+    tag "extraction"
+    label 'process_medium'
+
+    conda (params.enable_conda ? "conda-forge::python=3.8.3" : null)
+    container "${ workflow.containerEngine == 'singularity' && !task.ext.singularity_pull_docker_container ?
+        'library://jtl-lab-dev/bioinf-workflows/gene-order-workflow' :
+        'jtllab/gene-order-workflow' }"
+
+    input:
+      path input_file_path
+      path extract_path
+      path gbk_path
+      path html_template
+      val num_neighbors
+      val percent_cutoff
+
+    output:
+      path "fasta", emit: fasta_path
+      path "diamond", emit: blast_path
+
+    // This script is bundled with the pipeline, in nf-core/geneorderanalysis/bin
+    script:
+    """
+    extraction.py $input_file_path \\
+        $extract_path \\
+        $gbk_path \\
+        . \\
+        $html_template \\
+        -n $num_neighbors \\
+        -p $percent_cutoff
+    """
+}

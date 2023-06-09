@@ -1,0 +1,4 @@
+Contig = Contig
+Best_Hit_ARO = Gene_Name
+Start = Gene_Start
+Stop = Gene_End
