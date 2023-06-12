@@ -11,11 +11,11 @@ process PPANGGOLIN_WORKFLOW {
     tuple val(meta), path(samplesheet)
 
     output:
-    tuple val(meta), path("$prefix")                          , emit: results
-    tuple val(meta), path("$prefix/partitions/exact_core.txt"), emit: exact_core
-    tuple val(meta), path("$prefix/partitions/soft_core.txt") , emit: soft_core
-    tuple val(meta), path("$prefix/pangenome.h5")             , emit: pangenome
-    path "versions.yml"                                       , emit: versions
+    tuple val(meta), path("$prefix")             , emit: results
+    tuple val(meta), path("$prefix/pangenome.h5"), emit: pangenome
+    path("$prefix/partitions/exact_core.txt")    , emit: exact_core
+    path("$prefix/partitions/soft_core.txt")     , emit: soft_core
+    path "versions.yml"                          , emit: versions
 
     when:
     task.ext.when == null || task.ext.when
