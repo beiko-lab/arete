@@ -239,7 +239,6 @@ workflow ANNOTATE_ASSEMBLIES {
                 .set { phispy_tsvs }
 
             CONCAT_PHISPY(phispy_tsvs, "PHISPY", 1)
-            CONCAT_PHISPY.out.txt.set{ ch_phispy_out }
         }
 
         ISLANDPATH(ch_gbk_files)
