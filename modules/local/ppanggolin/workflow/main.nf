@@ -13,6 +13,8 @@ process PPANGGOLIN_WORKFLOW {
     output:
     tuple val(meta), path("$prefix")             , emit: results
     tuple val(meta), path("$prefix/pangenome.h5"), emit: pangenome
+    path("$prefix/partitions/exact_core.txt")    , emit: exact_core
+    path("$prefix/partitions/soft_core.txt")     , emit: soft_core
     path "versions.yml"                          , emit: versions
 
     when:
@@ -37,7 +39,9 @@ process PPANGGOLIN_WORKFLOW {
     stub:
     prefix = task.ext.prefix ?: "${meta.id}"
     """
-    mkdir $prefix
+    mkdir -p $prefix/partitions
+    touch $prefix/partitions/exact_core.txt
+    touch $prefix/partitions/soft_core.txt
     touch $prefix/pangenome.h5
 
     cat <<-END_VERSIONS > versions.yml

@@ -13,6 +13,7 @@ include { PPANGGOLIN_WORKFLOW } from '../../modules/local/ppanggolin/workflow/ma
 include { PPANGGOLIN_MSA } from '../../modules/local/ppanggolin/msa/main'
 include { GML2GV } from '../../modules/local/graphviz/gml2gv/main'
 include { GET_SOFTWARE_VERSIONS } from '../../modules/local/get_software_versions'
+include { CONCAT_ALIGNMENT } from '../../modules/local/concat_alignment'
 
 
 workflow PHYLOGENOMICS{
@@ -44,6 +45,14 @@ workflow PHYLOGENOMICS{
             PPANGGOLIN_MSA(pangenome)
 
             PPANGGOLIN_MSA.out.alignments.set{ ch_all_alignments }
+
+            CONCAT_ALIGNMENT (
+                ch_all_alignments,
+                PPANGGOLIN_WORKFLOW.out.exact_core,
+                PPANGGOLIN_WORKFLOW.out.soft_core
+            )
+
+            ch_all_alignments = ch_all_alignments.mix(CONCAT_ALIGNMENT.out.core_aln)
 
             ch_software_versions = ch_software_versions.mix(PPANGGOLIN_MSA.out.versions.ifEmpty(null))
         } else {
