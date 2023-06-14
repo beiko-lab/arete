@@ -13,7 +13,8 @@ alignments = defaultdict()
 print("Reading alignments...", file=sys.stderr)
 
 for filepath in sys.stdin:
-    alnName = Path(filepath.strip()).stem
+    filepath = filepath.strip()
+    alnName = Path(filepath).stem
     if os.stat(filepath).st_size != 0:
         curSeq = ""
         with open(filepath, "r") as file:
