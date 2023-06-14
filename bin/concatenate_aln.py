@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 import os
 import sys
+from pathlib import Path
 from collections import defaultdict
 
 sequences = defaultdict()
@@ -11,9 +12,9 @@ alignments = defaultdict()
 
 print("Reading alignments...", file=sys.stderr)
 
-for alnName in sys.stdin:
-    alnName = alnName.strip()
-    filepath = alnName + ".aln"
+for filepath in sys.stdin:
+    filepath = filepath.strip()
+    alnName = Path(filepath).stem
     if os.stat(filepath).st_size != 0:
         curSeq = ""
         with open(filepath, "r") as file:
