@@ -9,7 +9,7 @@ process CONCAT_ALIGNMENT {
     }
 
     input:
-    path alignments
+    path alignment_sheet
     path exact_core
     path soft_core
 
@@ -19,7 +19,8 @@ process CONCAT_ALIGNMENT {
     script:
     """
     cat $exact_core $soft_core | sort | uniq > full_core.txt
-    cat full_core.txt | concatenate_aln.py > core_gene_alignment.aln
+    grep -f full_core.txt $alignment_sheet > file_list.txt
+    cat file_list.txt | concatenate_aln.py > core_gene_alignment.aln
     """
 
     stub:

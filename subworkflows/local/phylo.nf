@@ -46,8 +46,15 @@ workflow PHYLOGENOMICS{
 
             PPANGGOLIN_MSA.out.alignments.set{ ch_all_alignments }
 
+            ch_all_alignments
+                .collect()
+                .flatten()
+                .map{it -> it.toString() }
+                .collectFile(name: 'aln_paths.txt', newLine: true)
+                .set{ alignment_sheet }
+
             CONCAT_ALIGNMENT (
-                ch_all_alignments,
+                alignment_sheet,
                 PPANGGOLIN_WORKFLOW.out.exact_core,
                 PPANGGOLIN_WORKFLOW.out.soft_core
             )
