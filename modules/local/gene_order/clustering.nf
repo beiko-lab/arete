@@ -12,6 +12,8 @@ process CLUSTERING {
       path blast_path
       path faa_path
       path fasta_path
+      path json_path
+      path neighborhood_indices
       val num_neighbors
       val inflation
       val epsilon
@@ -22,6 +24,14 @@ process CLUSTERING {
 
     script:
     """
-    clustering.py $faa_path $fasta_path $blast_path . -n $num_neighbors -i $inflation -e $epsilon -m $minpts
+    clustering.py \\
+        -a $faa_path \\
+        -f $fasta_path \\
+        -b $blast_path \\
+        -o . \\
+        -n $num_neighbors \\
+        -i $inflation \\
+        -e $epsilon \\
+        -m $minpts
     """
 }
