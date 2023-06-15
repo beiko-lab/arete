@@ -32,7 +32,8 @@ def parse_args(args=None):
 
     parser = argparse.ArgumentParser(description=Description, epilog=Epilog)
     parser.add_argument(
-        "INPUT_FILE_PATH",
+        "-i",
+        dest="INPUT_FILE_PATH",
         metavar="in_file",
         type=str,
         help="Path to an input textfile specifying "
@@ -41,22 +42,27 @@ def parse_args(args=None):
         "files or b) gene names to extract.",
     )
     parser.add_argument(
-        "EXTRACT_PATH",
+        "-x",
+        dest="EXTRACT_PATH",
         metavar="extract",
         type=str,
         help="Path to directory containing extract "
         "files. Must have names corresponding to "
         "GBK files.",
+        nargs="*",
     )
     parser.add_argument(
-        "GBK_PATH",
+        "-g",
+        dest="GBK_PATH",
         metavar="gbk",
         type=str,
         help="Path to directory containing GBK files. \
                                                                    Must have names corresponding to extract files.",
+        nargs="*",
     )
     parser.add_argument(
-        "OUTPUT_PATH",
+        "-o",
+        dest="OUTPUT_PATH",
         metavar="output_path",
         type=str,
         help="Path to output directory where "
@@ -64,7 +70,8 @@ def parse_args(args=None):
         " be saved.",
     )
     parser.add_argument(
-        "HTML_TEMPLATE",
+        "-w",
+        dest="HTML_TEMPLATE",
         metavar="html_template",
         type=str,
         help="Path to HTML template.",
@@ -150,41 +157,6 @@ def load_input_file(input_file_path):
         for line in input_data:
             gene_names.append(line.strip("\n"))
         return gene_names
-
-
-def load_filepaths(extract_path_arg, gbk_path_arg):
-    """
-    Loads all extract and GBK filepaths from user provided directory paths and returns them in respective lists.
-    Assumes that extract file names have the following naming convention:
-    xxxxxxxxxxxxxxxxxxx_rgi.txt
-    Assumes that GBK file names have the following naming convention:
-    xxxxxxxxxxxxxxxxxxx_genomic.fna.gbk
-    """
-    # Get paths for extract files
-    try:
-        extract_filepaths = glob.glob(os.path.join(extract_path_arg, "*.txt"))
-    except FileNotFoundError:
-        print(
-            "Error: there are no extract files found in the specified directory. "
-            "Please double-check the provided path."
-        )
-        sys.exit(1)
-
-    # Get paths for GBK files
-    try:
-        gbk_filepaths = glob.glob(os.path.join(gbk_path_arg, "*.gbk"))
-    except FileNotFoundError:
-        print(
-            "Error: there are no GBK files found in the specified directory. Please double-check the provided path."
-        )
-        sys.exit(1)
-
-    # Verify there is an equivalent number of extract and GBK files
-    assert len(extract_filepaths) == len(gbk_filepaths), (
-        "Error: mismatch occurred between number of extract and GBK " "files."
-    )
-
-    return extract_filepaths, gbk_filepaths
 
 
 def get_gbk_data(gbk_filepaths):
@@ -798,7 +770,7 @@ def extract_neighborhoods(
     if type(input_file_data) is dict:
         # 0) Get user path args from pipeline for path to extract files and GBK files
         try:
-            extract_filepaths, gbk_filepaths = load_filepaths(extract_path, gbk_path)
+            extract_filepaths, gbk_filepaths = extract_path, gbk_path
         except IndexError:
             print(
                 "Please provide paths to the extract files and GBK files respectively when running this script."
@@ -1057,9 +1029,6 @@ def extract_neighborhoods(
             "Invalid input file provided. Please double-check the documentation for the proper input file format."
         )
         sys.exit(1)
-
-    # Add output directory for DIAMOND processes as expected by module
-    check_output_path(output_path + "/diamond")
 
 
 def main(args=None):

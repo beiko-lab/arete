@@ -18,15 +18,17 @@ process EXTRACTION {
     output:
       path "fasta", emit: fasta_path
       path "diamond", emit: blast_path
+      path "JSON", emit: json_path
 
     // This script is bundled with the pipeline, in nf-core/geneorderanalysis/bin
     script:
     """
-    extraction.py $input_file_path \\
-        $extract_path \\
-        $gbk_path \\
-        . \\
-        $html_template \\
+    extraction.py \\
+        -i $input_file_path \\
+        -x $extract_path \\
+        -g $gbk_path \\
+        -o . \\
+        -w $html_template \\
         -n $num_neighbors \\
         -p $percent_cutoff
     """

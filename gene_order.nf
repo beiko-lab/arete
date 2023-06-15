@@ -15,15 +15,22 @@ workflow {
 
     ch_versions = Channel.empty()
     assemblyFiles = Channel.fromPath("${params.assembly_path}/*.{fa,faa,fna}")
+    rgiFiles = Channel.fromPath("${params.rgi_out}/*_rgi.txt").collect()
+    gbkFiles = Channel.fromPath("${params.gbk_path}/*.{gbk,gbff}").collect()
 
     // Optional extraction params
     num_neighbors = params.num_neighbors
     percent_cutoff = params.gene_order_percent_cutoff
 
+    // Optional clustering params
+    inflation = params.inflation
+    epsilon = params.epsilon
+    minpts = params.minpts
+
     EXTRACTION (
         file(params.input_file_path),
-        file(params.rgi_out),
-        file(params.gbk_path),
+        rgiFiles,
+        gbkFiles,
         file(params.gene_order_html_template),
         num_neighbors,
         percent_cutoff
@@ -52,9 +59,17 @@ workflow {
         blast_columns
     )
 
-    DIAMOND_BLASTP.out.txt.set { blastFiles }
+    DIAMOND_BLASTP.out.txt.collect{id, path -> path}.set { blastFiles }
 
-
+    // CLUSTERING (
+    //     blastFiles,
+    //     file(params.assembly_path),
+    //     EXTRACTION.out.fasta_path,
+    //     num_neighbors,
+    // 	inflation,
+    // 	epsilon,
+    // 	minpts
+    // )
     // emit:
 
     // versions = ch_versions                     // channel: [ versions.yml ]
