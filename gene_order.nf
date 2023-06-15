@@ -52,9 +52,13 @@ workflow {
         }
         .set { assembly_channel }
 
+    assembly_channel
+        .combine(dbs)
+        .set { all_combs }
+
     DIAMOND_BLASTP (
-        assembly_channel,
-        dbs,
+        all_combs.map{meta, fasta, db -> tuple(meta, fasta)},
+        all_combs.map{meta, fasta, db -> db},
         "txt",
         blast_columns
     )
@@ -62,9 +66,11 @@ workflow {
     DIAMOND_BLASTP.out.txt.collect{id, path -> path}.set { blastFiles }
 
     // CLUSTERING (
-    //     blastFiles,
-    //     file(params.assembly_path),
+    //     assemblyFiles.collect(),
     //     EXTRACTION.out.fasta_path,
+    //     blastFiles,
+    //     EXTRACTION.out.json_path,
+    //     EXTRACTION.out.neighborhood_indices,
     //     num_neighbors,
     // 	inflation,
     // 	epsilon,
