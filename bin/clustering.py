@@ -7,6 +7,7 @@ import argparse
 import itertools
 import os
 import sys
+import csv
 
 import numpy as np
 import pandas as pd
@@ -18,9 +19,12 @@ from sklearn.preprocessing import StandardScaler
 
 import markov_clustering as mcl
 
+from filtering import filter_genes_percent_identity, write_filtered_genomes_textfile
 from scoring import get_normalized_bitscores
-from utils import get_filename, check_output_path, get_full_filepaths, remove_files, generate_alphanumeric_string
-from json_utils import order_JSON_clusters_UPGMA, make_representative_UPGMA_cluster_JSON, update_JSON_links_PI
+from utils import get_filename, check_output_path, get_full_filepaths, remove_files, generate_alphanumeric_string, \
+                  make_fasta_contig_dict
+from json_utils import order_JSON_clusters_UPGMA, make_representative_UPGMA_cluster_JSON, update_JSON_links_PI, \
+                  load_JSON_data, update_cluster_data
 from visualization import plot_similarity_histogram, plot_distance_histogram, plotly_pcoa, \
     plotly_dendrogram, plotly_mcl_network
 
@@ -51,30 +55,6 @@ def parse_args(args=None):
                                                                                                     DBSCAN clustering.')
 
     return parser.parse_args(args)
-
-
-def make_fasta_contig_dict(fasta_path, gene):
-    """
-    Given FASTA neighborhood file, creates a dictionary where keys correspond to indices from 0 to N,
-    and values are contig ids.
-    """
-    fasta_dict = dict()
-    fasta_files = [fasta_file for fasta_file in os.listdir(fasta_path + '/' + gene)
-                   if fasta_file.endswith('.fasta')]
-    for fasta_file in fasta_files:
-        with open(fasta_path + '/' + gene + '/' + fasta_file, 'r') as infile:
-            data = infile.readlines()
-            fasta_file_dict = dict()
-            index = 0
-            contig_lines = [line for line in data if line.startswith('>')]
-            for line in contig_lines:
-                contig_id = line.strip().replace('>', '')
-                fasta_file_dict[index] = contig_id
-                index += 1
-            genome_id = fasta_file.split('.fasta')[0]
-            fasta_dict[genome_id] = fasta_file_dict
-
-    return fasta_dict
 
 
 def get_contig_rows(contig, df, identical=False):
@@ -466,6 +446,53 @@ def get_num_clusters(clustering_labels):
     else:
         return len(set(clustering_labels))
 
+
+def make_clustering_summary_csv(output_path, distance_matrices_df_dict, upgma_num_clusters_dict,
+                                mcl_num_clusters_dict, dbscan_num_clusters_dict):
+    """
+    Creates a CSV summarizing clustering stats obtained for each gene across all genomes it was analyzed within.
+    CSV is tab-delimited and each row represents a gene whose neighborhoods across genomes was analyzed, and columns
+    give the gene name, min distance, max distance, standard deviation, and number of clusters identified with the
+    default hyperparameters for each of the UPGMA, MCL, and DBSCAN clustering algorithms.
+    """
+    row_data = []
+    fields = ['Gene Name', 'Min Distance', 'Max Distance', 'Std Dev Distance',
+              'Num UPGMA clusters', 'Num MCL clusters', 'Num DBSCAN clusters']
+    header = False
+
+    for gene, distance_matrix in distance_matrices_df_dict.items():
+
+        # Get distance stats
+        min_dist = get_minimum_distance_score(distance_matrix)
+        max_dist = get_maximum_distance_score(distance_matrix)
+        std_dev = get_distance_std_dev(distance_matrix)
+
+        # Get number of clusters for each clustering algorithm
+        try:
+            num_upgma = upgma_num_clusters_dict[gene]
+        except KeyError:
+            num_upgma = 0
+        try:
+            num_mcl = mcl_num_clusters_dict[gene]
+        except KeyError:
+            num_mcl = 0
+        try:
+            num_dbscan = dbscan_num_clusters_dict[gene]
+        except KeyError:
+            num_dbscan = 0
+
+        # Keep track of gene's stats
+        gene_row_data = [gene, min_dist, max_dist, std_dev, num_upgma, num_mcl, num_dbscan]
+        row_data.append(gene_row_data)
+
+    with open(output_path + '/' + 'clustering_summary.csv', 'w+') as csv_file:
+        csv_writer = csv.writer(csv_file)
+        if not header:
+            csv_writer.writerow(fields)
+            header = True
+        csv_writer.writerows(row_data)
+
+
 def cluster_neighborhoods(assembly_path, fasta_path, blast_path, output_path,
                           neighborhood_size=10, inflation=2, epsilon=0.5, minpts=5):
     """
@@ -489,15 +516,27 @@ def cluster_neighborhoods(assembly_path, fasta_path, blast_path, output_path,
     update_JSON_links_PI(BLAST_df_dict, output_path, surrogates=False)
     update_JSON_links_PI(BLAST_df_dict, output_path, surrogates=True)
 
-    # Get neighborhoods dict for calculating similarity matrices (needed to compare contig ends)
-    for gene_subdir in os.listdir(fasta_path):
-        # Remove non-FASTA files
-        remove_files(fasta_path + '/' + gene_subdir, '.fasta')
+    # Update gene UIDs to reflect locus tags, filtering based on identical neighborhoods using BLAST results
+    print("Updating JSON surrogates representations...")
+    for gene in os.listdir(fasta_path):
 
+        # Determine representative genomes based on BLAST results and modify existing surrogates files
+        representative_genomes = filter_genes_percent_identity(output_path, fasta_path, gene, final_BLAST_dict[gene])
+        write_filtered_genomes_textfile(representative_genomes, gene, output_path)
+
+        # Update surrogates JSON
+        json_data = load_JSON_data(output_path, gene, surrogates=True)
+        surrogates_json_data = update_cluster_data(json_data, representative_genomes)
+        surrogates_json_data = clean_json_data(surrogates_json_data)
+        with open(output_path + '/JSON/' + gene + '_surrogates.json', 'w+') as outfile:
+            json.dump(surrogates_json_data, outfile)
+
+
+    # Get neighborhoods dict for calculating similarity matrices (needed to compare contig ends)
     neighborhoods = get_neighborhoods_dict(fasta_path)
 
     # Calculate similarity matrix for each gene
-    print("Calculating similarity matrices for each  gene...")
+    print("Calculating similarity matrices for each gene...")
     check_output_path(output_path)
     similarity_matrices_dict, genome_names_dict = get_similarity_matrices(final_BLAST_dict,
                                                                           neighborhoods,
@@ -534,8 +573,8 @@ def cluster_neighborhoods(assembly_path, fasta_path, blast_path, output_path,
     dbscan_num_clusters_dict = dict()
     mcl_num_clusters_dict = dict()
 
-    os.mkdir(output_path + '/clustering/distance_matrices')
-    os.mkdir(output_path + '/clustering/similarity_matrices')
+    check_output_path(output_path + '/clustering/distance_matrices')
+    check_output_path(output_path + '/clustering/similarity_matrices')
 
     for gene, distance_matrix_df in distance_matrices_df_dict.items():
 
@@ -559,7 +598,7 @@ def cluster_neighborhoods(assembly_path, fasta_path, blast_path, output_path,
             # Get UPGMA linkage matrix
             upgma_linkage = UPGMA_clustering(distance_matrix)
 
-            # Use linkage matrix to build dendrogram used for updating JSON data: reorder clusters, make UPGMA view
+            # Use linkage matrix to build dendrogram used for updating JSON data: reorder clusters, make clUPGMA view
             upgma_dendrogram = hierarchy.dendrogram(upgma_linkage)
 
             # Save number of clusters to upgma_num_clusters_dict

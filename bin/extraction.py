@@ -638,7 +638,7 @@ def write_gene_neighborhood_to_FNA(
     """
     for genome_id, genome_neighborhood_df in AMR_gene_neighborhoods_dict.items():
         # Create a new FASTA file to write neighborhood sequence and identifier data to
-        with open(out_path + "/" + genome_id + ".fasta", "w") as output_fasta:
+        with open(out_path + "/" + genome_id + ".fasta", "w+") as output_fasta:
             for locus, protein_seq in zip(
                 locuses_dict[AMR_gene][genome_id],
                 protein_seqs_dict[AMR_gene][genome_id],
@@ -919,7 +919,7 @@ def extract_neighborhoods(
 
         make_gene_HTML(neighborhoods.keys(), html_template, output_path)
 
-        with open(output_path + "/" + "neighborhood_indices.txt", "w") as outfile:
+        with open(output_path + "/" + "neighborhood_indices.txt", "w+") as outfile:
             outfile.write(str(neighborhood_indices))
 
         print("Neighborhood extraction complete.")
@@ -1019,7 +1019,7 @@ def extract_neighborhoods(
 
         make_gene_HTML(neighborhoods.keys(), html_template, output_path)
 
-        with open(output_path + "/" + "neighborhood_indices.txt", "w") as outfile:
+        with open(output_path + "/" + "neighborhood_indices.txt", "w+") as outfile:
             outfile.write(str(neighborhood_indices))
 
         print("Neighborhood extraction complete.")

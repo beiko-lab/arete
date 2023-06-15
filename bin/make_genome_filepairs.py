@@ -57,7 +57,7 @@ def make_filepairs_csv(assembly_path, output_path):
         row_data.append(row)
 
     # Write data to csv file
-    with open(output_path + '/genome_filepairs.csv', 'w') as csv_file:
+    with open(output_path + '/genome_filepairs.csv', 'w+') as csv_file:
         csv_writer = csv.writer(csv_file)
         if not header:
             csv_writer.writerow(fields)

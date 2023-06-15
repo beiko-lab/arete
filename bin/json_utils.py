@@ -609,7 +609,7 @@ def write_neighborhood_JSON(
         outfile.write("}\n")
 
 
-def write_clustermap_JSON_HTML(gene, html_template, out_path, rep_type="standard"):
+def write_clustermap_JSON_HTML(gene, sample_data_path, out_path, rep_type="standard"):
     """
     Generates accompanying HTML file for clustermap compatible JSON representation of neighborhood.
     Creates standalone HTML file for each respective type of neighborhood representation (e.g. standard,
@@ -629,7 +629,7 @@ def write_clustermap_JSON_HTML(gene, html_template, out_path, rep_type="standard
         second_line = '\t\td3.json("' + gene + '.json"' + ")\n"
 
     # Make HTML index file with appropriate JSON
-    with open(file_path, "w") as html_outfile, open(html_template) as template:
+    with open(file_path, "w") as html_outfile, open(sample_data_path) as template:
         for line in template:
             html_outfile.write(line)
 
@@ -656,7 +656,6 @@ def make_gene_HTML(genes_list, sample_data_path, out_path):
     For each AMR gene for which a JSON file was created, generates an accompanying HTML file for rendering its gene
     order visualization using clustermap with. This is done for each gene individually to
     """
-
     for gene in genes_list:
         # Make HTML index file with appropriate JSON
         write_clustermap_JSON_HTML(gene, sample_data_path, out_path)
@@ -926,6 +925,22 @@ def order_JSON_clusters_UPGMA(
         json.dump(json_data, outfile)
 
 
+def update_cluster_data(json_data, representative_cluster_genomes):
+    """
+    Given some JSON data and a list of representative genomes, removes data for all other genomes.
+    """
+    clusters = []
+    for genome in representative_cluster_genomes:
+        for cluster in json_data["clusters"]:
+            if cluster["name"] == genome:
+                clusters.append(cluster)
+
+    # Update JSON data
+    json_data["clusters"] = clusters
+
+    return json_data
+
+
 def clean_json_data(json_data):
     """
     Parses through JSON clustermap representation that has had its cluster data updated to also update links and groups
@@ -961,6 +976,8 @@ def clean_json_data(json_data):
 
     json_data["groups"] = new_groups
 
+    return json_data
+
 
 def make_representative_UPGMA_cluster_JSON(
     output_path, gene, upgma_clusters, genome_to_num_mapping
@@ -992,46 +1009,14 @@ def make_representative_UPGMA_cluster_JSON(
     del cluster_df
 
     # Update cluster data to only include those genomes
-    clusters = []
-    for genome in representative_cluster_genomes:
-        for cluster in json_data["clusters"]:
-            if cluster["name"] == genome:
-                clusters.append(cluster)
+    json_data = update_cluster_data(json_data, representative_cluster_genomes)
 
-    # Update JSON data
-    json_data["clusters"] = clusters
-
-    # Get rid of defunct links: Remove any link that has a target or query uid that is not in the set of cluster uids
-    cluster_uids = set()
-    for cluster in json_data["clusters"]:
-        cluster_uids.add(cluster["uid"])
-
-    new_links = []
-    for link in json_data["links"]:
-        if (
-            link["target"]["uid"] in cluster_uids
-            and link["query"]["uid"] in cluster_uids
-        ):
-            new_links.append(link)
-
-    # Replace the original links with the filtered links
-    json_data["links"] = new_links
-
-    # Get rid of defunct groups: a) remove group genes no longer included in clusters and b) remove newly empty groups
-    new_groups = []
-    for group in json_data["groups"]:
-        new_group_genes = []
-        for gene_uid in group["genes"]:
-            if gene_uid in cluster_uids:
-                new_group_genes.append(gene_uid)
-        group["genes"] = new_group_genes
-        new_groups.append(group)
-
-    json_data["groups"] = new_groups
+    # Get rid of defunct links and gene groups
+    final_json_data = clean_json_data(json_data)
 
     # Update file
-    with open(output_path + "/JSON/" + gene + "_upgma.json", "w") as outfile:
-        json.dump(json_data, outfile)
+    with open(output_path + "/JSON/" + gene + "_upgma.json", "w+") as outfile:
+        json.dump(final_json_data, outfile)
 
     # Make respective HTML file for Coeus
     write_clustermap_JSON_HTML(
