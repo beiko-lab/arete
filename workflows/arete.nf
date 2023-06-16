@@ -197,8 +197,10 @@ workflow ARETE {
     ch_software_versions = ch_software_versions.mix(ASSEMBLE_SHORTREADS.out.assembly_software)
 
     ////////////////////////// PANGENOME /////////////////////////////////////
-    PHYLOGENOMICS(gffs, use_full_alignment, use_fasttree)
-    ch_software_versions = ch_software_versions.mix(PHYLOGENOMICS.out.phylo_software)
+    if (!params.skip_phylo) {
+        PHYLOGENOMICS(gffs, use_full_alignment, use_fasttree)
+        ch_software_versions = ch_software_versions.mix(PHYLOGENOMICS.out.phylo_software)
+    }
 
     ch_software_versions
         .map { it -> if (it) [ it.baseName, it ] }
@@ -387,8 +389,10 @@ workflow ANNOTATION {
     }
 
     ////////////////////////// PANGENOME /////////////////////////////////////
-    PHYLOGENOMICS(gffs, use_full_alignment, use_fasttree)
-    ch_software_versions = ch_software_versions.mix(PHYLOGENOMICS.out.phylo_software)
+    if (!params.skip_phylo) {
+        PHYLOGENOMICS(gffs, use_full_alignment, use_fasttree)
+        ch_software_versions = ch_software_versions.mix(PHYLOGENOMICS.out.phylo_software)
+    }
 
     ch_software_versions
         .map { it -> if (it) [ it.baseName, it ] }
