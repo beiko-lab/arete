@@ -118,7 +118,8 @@
                 },
                 "skip_phispy": {
                     "type": "boolean",
-                    "fa_icon": "fas fa-virus"
+                    "fa_icon": "fas fa-virus",
+                    "description": "Skip PhiSpy phage detection tool"
                 }
             }
         },
@@ -129,6 +130,11 @@
             "default": "",
             "fa_icon": "fab fa-pagelines",
             "properties": {
+                "skip_phylo": {
+                    "type": "boolean",
+                    "fa_icon": "fas fa-forward",
+                    "description": "Skip Pangenomics and Phylogenomics subworkflow"
+                },
                 "use_ppanggolin": {
                     "type": "boolean",
                     "fa_icon": "fas fa-expand",
