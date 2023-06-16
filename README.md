@@ -6,7 +6,8 @@
 [![run with docker](https://img.shields.io/badge/run%20with-docker-0db7ed?labelColor=000000&logo=docker)](https://www.docker.com/)
 [![run with singularity](https://img.shields.io/badge/run%20with-singularity-1d355c.svg?labelColor=000000)](https://sylabs.io/docs/)
 
-![aretelogo](docs/images/arete-logo-transparent.png)
+![ARETE Logo](docs/images/arete-logo-light.png#gh-light-mode-only)
+![ARETE Logo](docs/images/arete-logo-dark.png#gh-dark-mode-only)
 
 ## Introduction
 
