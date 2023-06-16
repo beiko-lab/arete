@@ -1,7 +1,6 @@
 process CLUSTERING {
     tag "clustering"
     label 'process_high'
-    label 'process_high_memory'
 
     conda (params.enable_conda ? "conda-forge::python=3.8.3" : null)
     container "${ workflow.containerEngine == 'singularity' && !task.ext.singularity_pull_docker_container ?
@@ -9,9 +8,9 @@ process CLUSTERING {
         'jtllab/gene-order-workflow' }"
 
     input:
-      path blast_path
       path faa_path
       path fasta_path
+      path blast_path
       path json_path
       path neighborhood_indices
       val num_neighbors

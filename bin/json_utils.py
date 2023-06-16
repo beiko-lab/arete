@@ -782,9 +782,9 @@ def load_JSON_data(output_path, gene, surrogates=False):
     """
     json_data = ""
     if surrogates:
-        gene_path = "../../../" + output_path + "/JSON/" + gene + "_surrogates.json"
+        gene_path = output_path + "/JSON/" + gene + "_surrogates.json"
     else:
-        gene_path = "../../../" + output_path + "/JSON/" + gene + ".json"
+        gene_path = output_path + "/JSON/" + gene + ".json"
 
     with open(gene_path, "r") as infile:
         if len(infile.readlines()) != 0:

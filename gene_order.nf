@@ -65,17 +65,17 @@ workflow {
 
     DIAMOND_BLASTP.out.txt.collect{id, path -> path}.set { blastFiles }
 
-    // CLUSTERING (
-    //     assemblyFiles.collect(),
-    //     EXTRACTION.out.fasta_path,
-    //     blastFiles,
-    //     EXTRACTION.out.json_path,
-    //     EXTRACTION.out.neighborhood_indices,
-    //     num_neighbors,
-    // 	inflation,
-    // 	epsilon,
-    // 	minpts
-    // )
+    CLUSTERING (
+        assemblyFiles.collect(),
+        EXTRACTION.out.fasta_path,
+        blastFiles,
+        EXTRACTION.out.json_path,
+        EXTRACTION.out.neighborhood_indices,
+        num_neighbors,
+    	inflation,
+    	epsilon,
+    	minpts
+    )
     // emit:
 
     // versions = ch_versions                     // channel: [ versions.yml ]
