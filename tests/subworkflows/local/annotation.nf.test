@@ -9,7 +9,7 @@ nextflow_workflow {
         when {
             params {
                 // define parameters here. Example:
-                annotation_tools = 'mobsuite,rgi,vfdb'
+                annotation_tools = 'mobsuite,rgi,vfdb,islandpath'
                 use_prokka = true
                 min_pident = 80
                 min_qcover = 0.8
