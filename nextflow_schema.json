@@ -82,27 +82,23 @@
             "default": "",
             "fa_icon": "fas fa-edit",
             "properties": {
+                "annotation_tools": {
+                    "type": "string",
+                    "default": "mobsuite,rgi,cazy,vfdb,iceberg,bacmet,islandpath,phispy",
+                    "fa_icon": "fas fa-tools",
+                    "description": "Comma-separated list of annotation tools to run",
+                    "pattern": "^((rgi|mobsuite|islandpath|phispy|vfdb|cazy|bacmet|iceberg|integronfinder)?,?)*(?<!,)$"
+                },
                 "bakta_db": {
                     "type": "string",
                     "default": "None",
                     "fa_icon": "fas fa-database",
                     "description": "Path to the BAKTA database"
                 },
-                "light": {
-                    "type": "boolean",
-                    "description": "Only run one DIAMOND annotation step - against VFDB",
-                    "hidden": true,
-                    "fa_icon": "fas fa-feather-alt"
-                },
                 "use_prokka": {
                     "type": "boolean",
                     "fa_icon": "fas fa-bacterium",
                     "description": "Use Prokka (not Bakta) for annotating assemblies"
-                },
-                "run_integronfinder": {
-                    "type": "boolean",
-                    "fa_icon": "fas fa-puzzle-piece",
-                    "description": "Run Integron Finder as part of the annotation workflow"
                 },
                 "min_pident": {
                     "type": "integer",
