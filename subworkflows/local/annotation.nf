@@ -66,6 +66,7 @@ workflow ANNOTATE_ASSEMBLIES {
         ch_multiqc_files = Channel.empty()
         ch_software_versions = Channel.empty()
 
+        tools_to_run = params.annotation_tools.split(',')
         min_pident = params.min_pident
         min_qcover = params.min_qcover
         /*
@@ -83,32 +84,34 @@ workflow ANNOTATE_ASSEMBLIES {
         if (vfdb_cache){
             vfdb_cache.set { ch_vfdb }
         }
-        else{
+        else if (tools_to_run.contains('vfdb')) {
             GET_VFDB()
             GET_VFDB.out.vfdb.set { ch_vfdb }
         }
-        if (!params.light) {
-            if(bacmet_cache){
-                bacmet_cache.set { ch_bacmet_db }
-            }
-            else{
-                GET_BACMET()
-                GET_BACMET.out.bacmet.set { ch_bacmet_db }
-            }
-            if (cazydb_cache){
-                cazydb_cache.set{ ch_cazy_db }
-            }
-            else{
-                GET_CAZYDB()
-                GET_CAZYDB.out.cazydb.set { ch_cazy_db }
-            }
-            if (icebergdb_cache){
-                icebergdb_cache.set{ ch_iceberg_db }
-            }
-            else{
-                GET_ICEBERG()
-                GET_ICEBERG.out.iceberg.set { ch_iceberg_db }
-            }
+
+        if(bacmet_cache){
+            bacmet_cache.set { ch_bacmet_db }
+        }
+        else if (tools_to_run.contains('bacmet')) {
+            GET_BACMET()
+            GET_BACMET.out.bacmet.set { ch_bacmet_db }
+        }
+
+        if (cazydb_cache){
+            cazydb_cache.set{ ch_cazy_db }
+        }
+        else if (tools_to_run.contains('cazy')) {
+            GET_CAZYDB()
+            GET_CAZYDB.out.cazydb.set { ch_cazy_db }
+        }
+
+        if (icebergdb_cache){
+            icebergdb_cache.set{ ch_iceberg_db }
+        }
+
+        else if (tools_to_run.contains('iceberg')){
+            GET_ICEBERG()
+            GET_ICEBERG.out.iceberg.set { ch_iceberg_db }
         }
         /*
         * Load RGI for AMR annotation
@@ -117,7 +120,7 @@ workflow ANNOTATE_ASSEMBLIES {
             card_json_cache.set { ch_card_json }
             ch_software_versions = ch_software_versions.mix(card_version_cache)
         }
-        else{
+        else if (tools_to_run.contains('rgi')) {
             UPDATE_RGI_DB()
             UPDATE_RGI_DB.out.card_json.set { ch_card_json }
             ch_software_versions = ch_software_versions.mix(UPDATE_RGI_DB.out.card_version.ifEmpty(null))
@@ -184,34 +187,37 @@ workflow ANNOTATE_ASSEMBLIES {
         /*
         * Run RGI
         */
-        RGI(ch_ffn_files, ch_card_json)
-        ch_software_versions = ch_software_versions.mix(RGI.out.version.first().ifEmpty(null))
+        if (tools_to_run.contains('rgi')) {
+            RGI(ch_ffn_files, ch_card_json)
+            ch_software_versions = ch_software_versions.mix(RGI.out.version.first().ifEmpty(null))
 
-        RGI_ADD_COLUMN(
-          RGI.out.tsv,
-          "RGI",
-          0
-        )
+            RGI_ADD_COLUMN(
+            RGI.out.tsv,
+            "RGI",
+            0
+            )
 
-        RGI_ADD_COLUMN.out.txt
-            .collect{ id, paths -> paths }
-            .set { rgi_tsvs }
+            RGI_ADD_COLUMN.out.txt
+                .collect{ id, paths -> paths }
+                .set { rgi_tsvs }
 
-        CONCAT_RGI(rgi_tsvs, "RGI", 1)
+            CONCAT_RGI(rgi_tsvs, "RGI", 1)
+        }
 
         /*
         * Module: Mob-Suite. Database is included in singularity container
         */
-        MOB_RECON(assemblies)
-        ch_software_versions = ch_software_versions.mix(MOB_RECON.out.version.first().ifEmpty(null))
+        if (tools_to_run.contains('mobsuite')) {
+            MOB_RECON(assemblies)
+            ch_software_versions = ch_software_versions.mix(MOB_RECON.out.version.first().ifEmpty(null))
 
-        MOB_RECON.out.contig_report
-            .collect{ id, paths -> paths }
-            .set { mobrecon_tsvs }
+            MOB_RECON.out.contig_report
+                .collect{ id, paths -> paths }
+                .set { mobrecon_tsvs }
 
-        CONCAT_MOBSUITE(mobrecon_tsvs, "MOBSUITE", 1)
-
-        if (params.run_integronfinder){
+            CONCAT_MOBSUITE(mobrecon_tsvs, "MOBSUITE", 1)
+        }
+        if (tools_to_run.contains('integronfinder')){
             INTEGRON_FINDER(assemblies)
             ch_software_versions = ch_software_versions.mix(INTEGRON_FINDER.out.versions.first())
 
@@ -223,7 +229,7 @@ workflow ANNOTATE_ASSEMBLIES {
         }
 
         ch_phispy_out = []
-        if (!params.skip_phispy) {
+        if (tools_to_run.contains('phispy')) {
             PHISPY(ch_gbk_files)
             ch_software_versions = ch_software_versions.mix(PHISPY.out.versions.first())
 
@@ -239,36 +245,39 @@ workflow ANNOTATE_ASSEMBLIES {
 
             CONCAT_PHISPY(phispy_tsvs, "PHISPY", 1)
         }
+        if (tools_to_run.contains('islandpath')) {
+            ISLANDPATH(ch_gbk_files)
+            ch_software_versions = ch_software_versions.mix(ISLANDPATH.out.versions.first())
 
-        ISLANDPATH(ch_gbk_files)
-        ch_software_versions = ch_software_versions.mix(ISLANDPATH.out.versions.first())
+            ISLANDPATH.out.gff
+                .collect{ id, paths -> paths }
+                .set { islandpath_gffs }
 
-        ISLANDPATH.out.gff
-            .collect{ id, paths -> paths }
-            .set { islandpath_gffs }
-
-        CONCAT_ISLANDS(islandpath_gffs, "ISLANDPATH", 1)
-
+            CONCAT_ISLANDS(islandpath_gffs, "ISLANDPATH", 1)
+        }
         /*
         * Run DIAMOND blast annotation with databases
         */
         ch_diamond_outs = Channel.empty()
         def blast_columns = "qseqid sseqid pident slen qlen length mismatch gapopen qstart qend sstart send evalue bitscore full_qseq"
 
+        if (tools_to_run.contains('vfdb')) {
+            DIAMOND_MAKE_VFDB(ch_vfdb)
+            DIAMOND_BLAST_VFDB(ch_ffn_files, DIAMOND_MAKE_VFDB.out.db, "txt", blast_columns)
+            VFDB_FILTER(
+                DIAMOND_BLAST_VFDB.out.txt,
+                "VFDB",
+                blast_columns,
+                min_pident,
+                min_qcover
+            )
 
-        DIAMOND_MAKE_VFDB(ch_vfdb)
-        DIAMOND_BLAST_VFDB(ch_ffn_files, DIAMOND_MAKE_VFDB.out.db, "txt", blast_columns)
-        VFDB_FILTER(
-            DIAMOND_BLAST_VFDB.out.txt,
-            "VFDB",
-            blast_columns,
-            min_pident,
-            min_qcover
-        )
+            ch_diamond_outs.mix(VFDB_FILTER.out.concatenated)
+                .set{ ch_diamond_outs }
 
-        ch_diamond_outs.mix(VFDB_FILTER.out.concatenated).set{ ch_diamond_outs }
-
-        if (!params.light) {
+            ch_software_versions = ch_software_versions.mix(DIAMOND_MAKE_VFDB.out.versions.ifEmpty(null))
+        }
+        if (tools_to_run.contains('bacmet')) {
             DIAMOND_MAKE_BACMET(ch_bacmet_db)
             DIAMOND_BLAST_BACMET(ch_ffn_files, DIAMOND_MAKE_BACMET.out.db, "txt", blast_columns)
             BACMET_FILTER(
@@ -279,6 +288,10 @@ workflow ANNOTATE_ASSEMBLIES {
                 min_qcover
             )
 
+            ch_diamond_outs.mix(BACMET_FILTER.out.concatenated)
+                .set{ ch_diamond_outs }
+        }
+        if (tools_to_run.contains('cazy')) {
             DIAMOND_MAKE_CAZY(ch_cazy_db)
             DIAMOND_BLAST_CAZY(ch_ffn_files, DIAMOND_MAKE_CAZY.out.db, "txt", blast_columns)
             CAZY_FILTER(
@@ -289,6 +302,10 @@ workflow ANNOTATE_ASSEMBLIES {
                 min_qcover
             )
 
+            ch_diamond_outs.mix(CAZY_FILTER.out.concatenated)
+                .set{ ch_diamond_outs }
+        }
+        if (tools_to_run.contains('iceberg')) {
             DIAMOND_MAKE_ICEBERG(ch_iceberg_db)
             DIAMOND_BLAST_ICEBERG(ch_ffn_files, DIAMOND_MAKE_ICEBERG.out.db, "txt", blast_columns)
             ICEBERG_FILTER(
@@ -299,16 +316,13 @@ workflow ANNOTATE_ASSEMBLIES {
                 min_qcover
             )
 
-            ch_diamond_outs
-                .mix(BACMET_FILTER.out.concatenated)
-                .mix(CAZY_FILTER.out.concatenated)
-                .mix(ICEBERG_FILTER.out.concatenated)
+            ch_diamond_outs.mix(ICEBERG_FILTER.out.concatenated)
                 .set { ch_diamond_outs }
         }
 
-        ch_software_versions = ch_software_versions.mix(DIAMOND_MAKE_VFDB.out.versions.ifEmpty(null))
 
-        if (!params.use_prokka) {
+        needed_for_report = ['vfdb', 'rgi', 'mobsuite']
+        if (!params.use_prokka && needed_for_report.every { it in tools_to_run }) {
             CREATE_REPORT(
                 CONCAT_BAKTA.out.txt,
                 ch_diamond_outs.collect(),
@@ -317,7 +331,7 @@ workflow ANNOTATE_ASSEMBLIES {
                 ch_phispy_out,
                 CONCAT_MOBSUITE.out.txt
             )
-        } else {
+        } else if (needed_for_report.every { it in tools_to_run }) {
             CREATE_REPORT(
                 CONCAT_PROKKA.out.txt,
                 ch_diamond_outs.collect(),
