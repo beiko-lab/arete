@@ -1,4 +1,4 @@
-include { ASSEMBLYSHEET_CHECK } from '../../modules/local/samplesheet_check' addParams( options: params.options )
+include { ASSEMBLYSHEET_CHECK } from '../../modules/local/samplesheet_check'
 
 // Input to the annotation work flow is different
 // Instead of reads, pass in genomes or assemblies
