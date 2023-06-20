@@ -14,7 +14,6 @@ import sys
 import argparse
 import itertools
 
-from filtering import filter_neighborhoods, write_filtered_genomes_textfile
 from utils import get_filename, check_output_path, strip_brackets
 from json_utils import (
     make_neighborhood_JSON_data,
@@ -481,7 +480,7 @@ def make_gene_neighborhood_df(
             downstream_neighbors = pd.concat([downstream_neighbors, neighbor])
         except IndexError:
             print("Contig end found at position -{} downstream.".format(i + 1))
-            neighborhood_indices.append(i + 1)
+            neighborhood_indices.append(i)
 
     # If there was no contig end, append default N size to neighborhood_indices
     if len(neighborhood_indices) == 0:
@@ -511,7 +510,7 @@ def make_gene_neighborhood_df(
                 print("Contig end found at position {} upstream.".format(i + 1))
                 contig_end_found = True
             if len(neighborhood_indices) < 2:
-                neighborhood_indices.append(i + 1)
+                neighborhood_indices.append(i)
 
     if len(neighborhood_indices) < 2:
         neighborhood_indices.append(neighborhood_size)
@@ -889,38 +888,18 @@ def extract_neighborhoods(
         # 10) Save gene neighborhoods and indices in textfile: needed for JSON representations downstream
         print("Generating neighborhood JSON representations...")
         for AMR_gene, neighborhood_data in neighborhoods.items():
-            # Filter neighborhoods
-            filtered_neighborhoods = filter_neighborhoods(
-                neighborhood_data, num_neighbors
-            )
-            surrogates = list(filtered_neighborhoods.keys())
-            filtered_neighborhoods_dict = {
-                key: value
-                for (key, value) in neighborhood_data.items()
-                if key in surrogates
-            }
-            write_filtered_genomes_textfile(
-                filtered_neighborhoods, AMR_gene, output_path
-            )
-
             # Get data needed to write JSON files
             neighborhood_JSON_dict = make_neighborhood_JSON_data(
                 neighborhood_data, AMR_gene, num_neighbors
             )
-            filtered_neighborhood_JSON_dict = make_neighborhood_JSON_data(
-                filtered_neighborhoods_dict, AMR_gene, num_neighbors
-            )
 
             # Create JSON file
             write_neighborhood_JSON(neighborhood_JSON_dict, AMR_gene, output_path)
-            write_neighborhood_JSON(
-                filtered_neighborhood_JSON_dict, AMR_gene, output_path, True
-            )
 
         make_gene_HTML(neighborhoods.keys(), html_template, output_path)
 
-        with open(output_path + "/" + "neighborhood_indices.txt", "w+") as outfile:
-            outfile.write(str(neighborhood_indices))
+        with open(output_path + "/" + "neighborhood_indices.json", "w+") as outfile:
+            outfile.write(json.dumps(neighborhood_indices, indent=4, sort_keys=True))
 
         print("Neighborhood extraction complete.")
 
@@ -991,31 +970,13 @@ def extract_neighborhoods(
         # 10) Save gene neighborhoods and indices in textfile: needed for JSON representations downstream
         print("Generating neighborhood JSON representations...")
         for gene, neighborhood_data in neighborhoods.items():
-            # Filter neighborhoods
-            filtered_neighborhoods = filter_neighborhoods(
-                neighborhood_data, num_neighbors
-            )
-            surrogates = list(filtered_neighborhoods.keys())
-            filtered_neighborhoods_dict = {
-                key: value
-                for (key, value) in neighborhood_data.items()
-                if key in surrogates
-            }
-            write_filtered_genomes_textfile(filtered_neighborhoods, gene, output_path)
-
             # Get data needed to write JSON files
             neighborhood_JSON_dict = make_neighborhood_JSON_data(
                 neighborhood_data, gene, num_neighbors
             )
-            filtered_neighborhood_JSON_dict = make_neighborhood_JSON_data(
-                filtered_neighborhoods_dict, gene, num_neighbors
-            )
 
             # Create JSON file
             write_neighborhood_JSON(neighborhood_JSON_dict, gene, output_path)
-            write_neighborhood_JSON(
-                filtered_neighborhood_JSON_dict, gene, output_path, True
-            )
 
         make_gene_HTML(neighborhoods.keys(), html_template, output_path)
 

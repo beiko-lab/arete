@@ -74,7 +74,8 @@ workflow {
         num_neighbors,
     	inflation,
     	epsilon,
-    	minpts
+        minpts,
+        file(params.gene_order_html_template),
     )
     // emit:
 

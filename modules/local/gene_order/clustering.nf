@@ -17,6 +17,7 @@ process CLUSTERING {
       val inflation
       val epsilon
       val minpts
+      path html_template
 
     output:
       path "clustering", emit: cluster_path

@@ -18,7 +18,7 @@ process EXTRACTION {
     output:
       path "fasta", emit: fasta_path
       path "JSON", emit: json_path
-      path "neighborhood_indices.txt", emit: neighborhood_indices
+      path "neighborhood_indices.json", emit: neighborhood_indices
       path "Neighborhoods_Extraction_Summary.txt", emit: neighborhood_summary
 
     // This script is bundled with the pipeline, in nf-core/geneorderanalysis/bin

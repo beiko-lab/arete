@@ -268,144 +268,6 @@ def load_surrogates_file(output_path, gene):
     return surrogates_dict
 
 
-def update_UID_JSON_data(json_data, gene, output_path):
-    """
-    Given gene JSON files, revisits all neighborhood genes to cross-check unidentified (UID) genes against other
-    unidentified genes BLAST results to check if they are the same. If they are, updates gene groups and gene links
-    accordingly.
-    """
-    # Load surrogate data
-    surrogate_dict = load_surrogates_file(output_path, gene)
-
-    # Keep track of new groups and links for UIDs
-    group_data = {}
-    link_data = {}
-    uid_count = 1
-    link_id = len(json_data["links"]) + 1
-    group_id = len(json_data["groups"]) + 1
-
-    for genome_id in surrogate_dict.keys():
-        represented_genomes = surrogate_dict[genome_id]
-
-        # Case 1: surrogate genome standing in for multiple genomes and need to check all UIDs
-        if len(represented_genomes) > 0:
-            # Locate UIDs within each surrogate genome's neighborhood if present
-            for gene_key in json_data["clusters"][genome_id]["loci"]["genes"]:
-                if json_data["clusters"][genome_id]["loci"]["genes"][gene_key][
-                    "name"
-                ].startswith("UID"):
-                    # Updating group data ...
-                    # Keep track of all UIDs in this group
-                    genes_list = []
-
-                    # Add the surrogate genome's gene
-                    uid = json_data["clusters"][genome_id]["loci"]["genes"][gene_key][
-                        "uid"
-                    ]
-                    genes_list.append(uid)
-
-                    # Update group data
-                    for i in range(len(represented_genomes)):
-                        genome = represented_genomes[i]
-                        surrogate_uid = json_data["clusters"][genome]["loci"]["genes"][
-                            gene_key
-                        ]["uid"]
-                        genes_list.append(surrogate_uid)
-
-                    # Update group
-                    group = {}
-                    group["uid"] = "group" + str(group_id)
-                    group["label"] = "UID-" + str(uid_count)
-                    group["genes"] = genes_list
-                    group_data[group_id] = group
-                    group_id += 1
-                    uid_count += 1
-
-                    # Updating link data...
-                    possible_genomes = represented_genomes.copy()
-                    possible_genomes.append(genome_id)
-                    for genome_1, genome_2 in itertools.combinations(
-                        possible_genomes, 2
-                    ):
-                        if json_data["clusters"][genome_1]["loci"]["genes"][gene_key][
-                            "name"
-                        ].startswith("UID") and json_data["clusters"][genome_2]["loci"][
-                            "genes"
-                        ][
-                            gene_key
-                        ][
-                            "name"
-                        ].startswith(
-                            "UID"
-                        ):
-                            link = {}
-
-                            target = {}
-                            target["uid"] = json_data["clusters"][genome_1]["loci"][
-                                "genes"
-                            ][gene_key]["uid"]
-                            target["name"] = json_data["clusters"][genome_1]["loci"][
-                                "genes"
-                            ][gene_key]["name"].replace("'", "")
-
-                            query = {}
-                            query["uid"] = json_data["clusters"][genome_2]["loci"][
-                                "genes"
-                            ][gene_key]["uid"]
-                            query["name"] = json_data["clusters"][genome_2]["loci"][
-                                "genes"
-                            ][gene_key]["name"].replace("'", "")
-                            contig_1 = json_data["clusters"][genome_1]["loci"]["genes"][
-                                gene_key
-                            ]["name"].split("-")[1]
-                            contig_2 = json_data["clusters"][genome_2]["loci"]["genes"][
-                                gene_key
-                            ]["name"].split("-")[1]
-                            link["uid"] = (
-                                str(genome_1)
-                                + "_"
-                                + contig_1
-                                + "-"
-                                + str(genome_2)
-                                + "_"
-                                + contig_2
-                            )
-                            link["target"] = target
-                            link["query"] = query
-                            link["identity"] = 0.70
-                            link_data[link_id] = link_data
-                            link_id += 1
-
-        # Case 2: Surrogate genome is representing itself only: only need to update group data
-        else:
-            for gene_key in json_data["clusters"][genome_id]["loci"]["genes"]:
-                if json_data["clusters"][genome_id]["loci"]["genes"][gene_key][
-                    "name"
-                ].startswith("UID"):
-                    genes_list = []
-                    surrogate_uid = json_data["clusters"][genome_id]["loci"]["genes"][
-                        gene_key
-                    ]["uid"]
-                    genes_list.append(surrogate_uid)
-
-                    # Update group
-                    group = {}
-                    group["uid"] = "group" + str(group_id)
-                    group["label"] = "UID-" + str(uid_count)
-                    group["genes"] = genes_list
-                    group_data[group_id] = group
-                    group_id += 1
-                    uid_count += 1
-
-    # Add new groups and links to JSON data
-    for link_id in link_data.keys():
-        json_data["links"][link_id] = link_data[link_id]
-    for group_id in group_data.keys():
-        json_data["groups"][group_id] = group_data[group_id]
-
-    return json_data
-
-
 def write_neighborhood_JSON(
     neighborhood_json_data, gene, output_path, surrogates=False
 ):
@@ -806,59 +668,31 @@ def update_JSON_links_PI(BLAST_df_dict, output_path, surrogates=False):
         # Update each link according to the respective blast results
         for i in range(len(json_data["links"])):
             # Contig identifiers
-            contig_data = json_data["links"][i]["uid"].split("-")
-            contig_id_1 = contig_data[0].split("_")
-            contig_id_2 = contig_data[1].split("_")
-            contig_1 = contig_id_1[1] + "_" + contig_id_1[2]
-            contig_2 = contig_id_2[1] + "_" + contig_id_2[2]
+            locus_data = json_data["links"][i]["uid"].split("-")
+            locus_1 = locus_data[0].split("_")
+            locus_2 = locus_data[1].split("_")
+            locus_tag_1 = locus_1[1] + "_" + locus_1[2]
+            locus_tag_2 = locus_2[1] + "_" + locus_2[2]
 
             # Genome names
-            genome_1 = contig_1.split("_")[0]
-            genome_2 = contig_2.split("_")[0]
+            genome_1 = locus_1[0]
+            genome_2 = locus_2[0]
 
             # Check respective BLAST file dataframe and update percent identity
-            try:
-                df = BLAST_df_dict[gene][genome_1 + "_" + genome_2 + ".blast.txt"]
-                row = df.loc[
-                    ((df["query_id"] == contig_1) & (df["sub_id"] == contig_2))
-                ]
-                PI = row.PI.tolist()[0]
-
-            except KeyError:
-                try:
-                    df = BLAST_df_dict[gene][genome_2 + "_" + genome_1 + ".blast.txt"]
-                    row = df.loc[
-                        ((df["query_id"] == contig_1) & (df["sub_id"] == contig_2))
-                    ]
-                    PI = row.PI.tolist()[0]
-                except KeyError:
-                    PI = 0.70
-                except IndexError:
-                    PI = 0.70
-
-            except IndexError:
-                PI = 0.70
+            if genome_1 + "_" + genome_2 + ".blast.txt" in blast_files_dict.keys():
+                df = blast_files_dict[genome_1 + "_" + genome_2 + ".blast.txt"]
+                row = df.filter(
+                    (df["query_id"] == locus_tag_1) & (df["sub_id"] == locus_tag_2)
+                )
+            else:
+                df = blast_files_dict[genome_2 + "_" + genome_1 + ".blast.txt"]
+                row = df.filter(
+                    (df["query_id"] == locus_tag_2) & (df["sub_id"] == locus_tag_1)
+                )
 
             try:
-                df = BLAST_df_dict[gene][genome_2 + "_" + genome_1 + ".blast.txt"]
-                row = df.loc[
-                    ((df["query_id"] == contig_1) & (df["sub_id"] == contig_2))
-                ]
-                PI = row.PI.tolist()[0]
-
-            except KeyError:
-                try:
-                    df = BLAST_df_dict[gene][genome_1 + "_" + genome_2 + ".blast.txt"]
-                    row = df.loc[
-                        ((df["query_id"] == contig_1) & (df["sub_id"] == contig_2))
-                    ]
-                    PI = row.PI.tolist()[0]
-                except KeyError:
-                    PI = 0.70
-                except IndexError:
-                    PI = 0.70
-
-            except IndexError:
+                PI = row.get_column("PI").item()
+            except ValueError:
                 PI = 0.70
 
             json_data["links"][i]["identity"] = PI
@@ -906,11 +740,6 @@ def order_JSON_clusters_UPGMA(
     # Load AMR gene JSON cluster data
     json_data, gene_path = load_JSON_data(output_path, gene, surrogates)
 
-    with open(gene_path, "r") as infile:
-        if len(infile.readlines()) != 0:
-            infile.seek(0)
-            json_data = json.load(infile)
-
     # Reorder cluster data genomes according to UPGMA leaves ordering
     genome_order = map_genome_id_to_dendrogram_leaves(
         upgma_clusters, genome_to_num_mapping
@@ -943,38 +772,24 @@ def update_cluster_data(json_data, representative_cluster_genomes):
 
 def clean_json_data(json_data):
     """
-    Parses through JSON clustermap representation that has had its cluster data updated to also update links and groups
-    data to reflect changes (e.g. remove links involve genomes no longer included, remove genes from gene groups where
-    the genome was removed, etc).
+    For UPGMA representative clustermap JSON representations created based on original JSON file, after removing all
+    cluster data for genomes no longer included, this function allows us to delete residual links and gene groups that
+    no longer apply.
     """
-    # Get rid of defunct links: Remove any link that has a target or query uid that is not in the set of cluster uids
-    cluster_uids = set()
+    genome_ids = []
     for cluster in json_data["clusters"]:
-        cluster_uids.add(cluster["uid"])
-
-    new_links = []
+        genome_ids.append(cluster["name"])
+    gene_links = []
     for link in json_data["links"]:
-        if (
-            link["target"]["uid"] in cluster_uids
-            and link["query"]["uid"] in cluster_uids
-        ):
-            new_links.append(link)
+        # Get both genome names
+        genome_contig_details = link["uid"].split("-")
+        genome_1 = genome_contig_details[0].split("_")[0]
+        genome_2 = genome_contig_details[1].split("_")[0]
 
-    # Replace the original links with the filtered links
-    json_data["links"] = new_links
+        if genome_1 in genome_ids and genome_2 in genome_ids:
+            gene_links.append(link)
 
-    # Get rid of defunct groups: a) remove group genes no longer included in clusters and b) remove newly empty groups
-    new_groups = []
-    for group in json_data["groups"]:
-        new_group_genes = []
-        for gene_uid in group["genes"]:
-            if gene_uid in cluster_uids:
-                new_group_genes.append(gene_uid)
-        if new_group_genes:
-            group["genes"] = new_group_genes
-            new_groups.append(group)
-
-    json_data["groups"] = new_groups
+    json_data["links"] = gene_links
 
     return json_data
 
@@ -1020,5 +835,5 @@ def make_representative_UPGMA_cluster_JSON(
 
     # Make respective HTML file for Coeus
     write_clustermap_JSON_HTML(
-        gene, "../../../sample_data", output_path, rep_type="upgma"
+        gene, output_path + "/index.html", output_path, rep_type="upgma"
     )
