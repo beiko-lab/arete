@@ -55,6 +55,11 @@ workflow ANNOTATION_INPUT_CHECK{
         .map { get_sample_info_assemblies(it) }
         .set { genomes }
 
+    //Check that no dots "." are in sample ID
+    genomes
+        .map { meta, reads -> meta.id }
+        .subscribe { if ( "$it".contains(".") ) exit 1, "Please review data input, sampleIDs may not contain dots, but \"$it\" does." }
+
     emit:
     genomes // channel: [ val(meta), [ reads ] ]
 }
