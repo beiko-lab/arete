@@ -35,9 +35,8 @@ ch_multiqc_logo            = params.multiqc_logo   ? Channel.fromPath( params.mu
 //
 // SUBWORKFLOW: Consisting of a mix of local and nf-core/modules
 //
-include { INPUT_CHECK;
-          ANNOTATION_INPUT_CHECK } from '../subworkflows/local/input_check'
-
+include { INPUT_CHECK } from '../subworkflows/local/input_check'
+include { ANNOTATION_INPUT_CHECK } from '../subworkflows/local/annotation_input_check'
 include { ASSEMBLE_SHORTREADS } from '../subworkflows/local/assembly'
 include { ANNOTATE_ASSEMBLIES } from '../subworkflows/local/annotation'
 include { CHECK_ASSEMBLIES } from '../subworkflows/local/assemblyqc'

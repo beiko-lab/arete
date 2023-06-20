@@ -1,0 +1,48 @@
+nextflow_workflow {
+
+    name "Test Workflow ANNOTATION_INPUT_CHECK"
+    script "subworkflows/local/annotation_input_check.nf"
+    workflow "ANNOTATION_INPUT_CHECK"
+
+    test("Annotation input check runs without errors") {
+
+        when {
+            params {
+                outdir = "$outputDir"
+            }
+            workflow {
+                """
+                input[0] = '$baseDir/test/test_annotation_dataset.csv'
+                """
+            }
+        }
+
+        then {
+            assert workflow.success
+            assert workflow.out.genomes.size() == 4
+            assert workflow.out.genomes.get(0).get(0) == ['id':'test_1', 'single_end':true]
+        }
+
+    }
+
+    test("Annotation input denies incorrect input") {
+
+        when {
+            params {
+                outdir = "$outputDir"
+            }
+            workflow {
+                """
+                input[0] = '$baseDir/test/test_annotation_dataset_failing.csv'
+                """
+            }
+        }
+
+        then {
+            assert workflow.failed
+            assert workflow.exitStatus == 1
+        }
+
+    }
+
+}

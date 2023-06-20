@@ -1,0 +1,5 @@
+sample,fna_file_path
+test_1,https://github.com/beiko-lab/arete/raw/master/test/SRR14022735_T1.scaffolds.fa
+test_2,https://github.com/beiko-lab/arete/raw/master/test/SRR14022737_T1.scaffolds.fa
+test_3,https://github.com/beiko-lab/arete/raw/master/test/SRR14022754_T1.scaffolds.fa
+test_4,https://github.com/beiko-lab/arete/raw/master/test/SRR14022764_T1.scaffolds.fa
