@@ -2,7 +2,7 @@ include { EXTRACTION } from './modules/local/gene_order/extraction'
 include { CLUSTERING } from './modules/local/gene_order/clustering'
 
 include { DIAMOND_MAKEDB } from './modules/nf-core/diamond/makedb/main'
-include { DIAMOND_BLASTP } from './modules/nf-core/diamond/blastp/main'
+include { DIAMOND_BLASTP as DIAMOND_GENE_ORDER } from './modules/nf-core/diamond/blastp/main'
 
 workflow {
 
@@ -56,14 +56,14 @@ workflow {
         .combine(dbs)
         .set { all_combs }
 
-    DIAMOND_BLASTP (
+    DIAMOND_GENE_ORDER (
         all_combs.map{meta, fasta, db -> tuple(meta, fasta)},
         all_combs.map{meta, fasta, db -> db},
         "txt",
         blast_columns
     )
 
-    DIAMOND_BLASTP.out.txt.collect{id, path -> path}.set { blastFiles }
+    DIAMOND_GENE_ORDER.out.txt.collect{id, path -> path}.set { blastFiles }
 
     CLUSTERING (
         assemblyFiles.collect(),
