@@ -21,6 +21,8 @@ process CLUSTERING {
 
     output:
       path "clustering", emit: cluster_path
+      path "clustering_summary.csv", emit: summary
+      path "JSON", emit: json
 
     script:
     """

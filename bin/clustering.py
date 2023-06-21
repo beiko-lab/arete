@@ -191,7 +191,7 @@ def make_assembly_dict(assembly_path):
     """
     faa_dict = {}
     for filename in assembly_path:
-        key = filename
+        key = filename.split(".")[0]
         faa_dict[key] = filename
 
     return faa_dict
@@ -217,8 +217,8 @@ def get_blast_df(gene, blast_path, assembly_path, fasta_path, fasta_dict):
             }
         )
 
-        genome_1_filename = faa_files.get(genome_1 + ".faa")
-        genome_2_filename = faa_files.get(genome_2 + ".faa")
+        genome_1_filename = faa_files.get(genome_1)
+        genome_2_filename = faa_files.get(genome_2)
 
         # Load comparative BLAST file
         comp1 = genome_1_filename + ".dmnd_" + genome_2_filename + ".txt"
