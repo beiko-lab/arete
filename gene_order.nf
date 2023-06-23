@@ -76,6 +76,7 @@ workflow {
     	epsilon,
         minpts,
         file(params.gene_order_html_template),
+        params.plot_clustering
     )
     // emit:
 

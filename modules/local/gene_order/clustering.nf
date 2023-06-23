@@ -18,6 +18,7 @@ process CLUSTERING {
       val epsilon
       val minpts
       path html_template
+      val plot_clustering
 
     output:
       path "clustering", emit: cluster_path
@@ -25,6 +26,7 @@ process CLUSTERING {
       path "JSON", emit: json
 
     script:
+    def plot_html = plot_clustering ? "--plot_clustering" : ""
     """
     clustering.py \\
         -a $faa_path \\
@@ -34,6 +36,7 @@ process CLUSTERING {
         -n $num_neighbors \\
         -i $inflation \\
         -e $epsilon \\
-        -m $minpts
+        -m $minpts \\
+        $plot_html
     """
 }

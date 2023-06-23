@@ -119,6 +119,9 @@ def parse_args(args=None):
         help="Minimum samples hyperparameter for \
                                                                                                     DBSCAN clustering.",
     )
+    parser.add_argument(
+        "--plot_clustering", dest="plot_clustering", action="store_true"
+    )
 
     return parser.parse_args(args)
 
@@ -637,6 +640,7 @@ def cluster_neighborhoods(
     inflation=2,
     epsilon=0.5,
     minpts=5,
+    plot_clustering=False,
 ):
     """
     Driver script for clustering neighborhoods obtained from extraction module.
@@ -719,7 +723,8 @@ def cluster_neighborhoods(
             pass
 
     print("Clustering neighborhoods...")
-    check_clustering_savepaths(output_path)
+    if plot_clustering:
+        check_clustering_savepaths(output_path)
 
     max_distance_scores_dict = dict()
     upgma_num_clusters_dict = dict()
@@ -777,8 +782,9 @@ def cluster_neighborhoods(
                 output_path, gene, upgma_dendrogram, genome_to_num_mapping
             )
 
-            # Interactive dendrogram visualization
-            plotly_dendrogram(distance_matrix, genome_names, gene, output_path)
+            if plot_clustering:
+                # Interactive dendrogram visualization
+                plotly_dendrogram(distance_matrix, genome_names, gene, output_path)
 
             # Save distance matrix as textfile
             check_output_path(output_path + "/clustering/distance_matrices")
@@ -814,8 +820,9 @@ def cluster_neighborhoods(
             num_dbscan_clusters = get_num_clusters(labels)
             dbscan_num_clusters_dict[gene] = num_dbscan_clusters
 
-            # Plot DBSCAN clusters using distance matrix and PCoA: colour according to cluster assignment
-            plotly_pcoa(distance_matrix_df, genome_names, labels, gene, output_path)
+            if plot_clustering:
+                # Plot DBSCAN clusters using distance matrix and PCoA: colour according to cluster assignment
+                plotly_pcoa(distance_matrix_df, genome_names, labels, gene, output_path)
 
         except IndexError:
             print(
@@ -847,11 +854,12 @@ def cluster_neighborhoods(
             num_mcl_clusters = get_num_clusters(clusters)
             mcl_num_clusters_dict[gene] = num_mcl_clusters
 
-            # Plot MCL clusters
-            sparse_sim_matrix = get_sparse_matrix(similarity_matrix)
-            plotly_mcl_network(
-                sparse_sim_matrix, clusters, genome_names, gene, output_path
-            )
+            if plot_clustering:
+                # Plot MCL clusters
+                sparse_sim_matrix = get_sparse_matrix(similarity_matrix)
+                plotly_mcl_network(
+                    sparse_sim_matrix, clusters, genome_names, gene, output_path
+                )
 
             # Save distance matrix as textfile
             check_output_path(output_path + "/clustering/similarity_matrices")
@@ -905,6 +913,7 @@ def main(args=None):
         args.i,
         args.e,
         args.m,
+        args.plot_clustering,
     )
 
 
