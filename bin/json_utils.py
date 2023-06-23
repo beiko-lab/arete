@@ -666,7 +666,10 @@ def update_JSON_links_PI(BLAST_df_dict, output_path):
     """
     for gene, blast_files_dict in BLAST_df_dict.items():
         # Load AMR gene JSON link data
-        json_data, _ = load_JSON_data(output_path, gene, json_file="temp")
+        json_data, original_gene_path = load_JSON_data(
+            output_path, gene, json_file="temp"
+        )
+        original_gene_path = Path(original_gene_path)
 
         final_gene_path = output_path + "/JSON/" + gene + ".json"
 
@@ -705,6 +708,9 @@ def update_JSON_links_PI(BLAST_df_dict, output_path):
         # Overwrite JSON file with updated data
         with open(final_gene_path, "w") as outfile:
             json.dump(json_data, outfile)
+
+        # Remove 'temp' JSON file
+        original_gene_path.unlink(missing_ok=True)
 
 
 def map_genome_id_to_dendrogram_leaves(upgma_clusters, genome_to_num_mapping):
