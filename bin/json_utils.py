@@ -6,6 +6,7 @@ Methods for generating JSON representations of extracted neighborhoods that can 
 import json
 import itertools
 import pandas as pd
+from pathlib import Path
 from utils import (
     check_output_path,
     generate_alphanumeric_string,
@@ -291,7 +292,7 @@ def write_neighborhood_JSON(
     if surrogates:
         output_file_path = out_path + "/" + gene + "_surrogates.json"
     else:
-        output_file_path = out_path + "/" + gene + ".json"
+        output_file_path = out_path + "/" + gene + "_temp.json"
 
     with open(output_file_path, "w") as outfile:
         outfile.write("{\n")
@@ -583,7 +584,7 @@ def rename_clustermap_genes_contigs(output_path, fasta_path, gene, neighborhood_
     surrogate neighborhood.
     """
     # Load gene JSON surrogate representation
-    json_data, gene_path = load_JSON_data(output_path, gene, surrogates=True)
+    json_data, gene_path = load_JSON_data(output_path, gene, json_file="surrogates")
 
     # Get contig dictionary for gene
     fasta_contigs_dict = make_fasta_contig_dict(fasta_path, gene)
@@ -638,13 +639,15 @@ def rename_clustermap_genes_contigs(output_path, fasta_path, gene, neighborhood_
         json.dump(json_data, outfile)
 
 
-def load_JSON_data(output_path, gene, surrogates=False):
+def load_JSON_data(output_path, gene, json_file="base"):
     """
     Helper function for loading JSON neighborhood data.
     """
     json_data = ""
-    if surrogates:
+    if json_file == "surrogates":
         gene_path = output_path + "/JSON/" + gene + "_surrogates.json"
+    elif json_file == "temp":
+        gene_path = output_path + "/JSON/" + gene + "_temp.json"
     else:
         gene_path = output_path + "/JSON/" + gene + ".json"
 
@@ -656,14 +659,16 @@ def load_JSON_data(output_path, gene, surrogates=False):
     return json_data, gene_path
 
 
-def update_JSON_links_PI(BLAST_df_dict, output_path, surrogates=False):
+def update_JSON_links_PI(BLAST_df_dict, output_path):
     """
     Updates JSON representations of AMR gene neighborhoods created using extraction module so that gene cluster links
     reflect percent identities found in blast results.
     """
     for gene, blast_files_dict in BLAST_df_dict.items():
         # Load AMR gene JSON link data
-        json_data, gene_path = load_JSON_data(output_path, gene, surrogates)
+        json_data, _ = load_JSON_data(output_path, gene, json_file="temp")
+
+        final_gene_path = output_path + "/JSON/" + gene + ".json"
 
         # Update each link according to the respective blast results
         for i in range(len(json_data["links"])):
@@ -698,7 +703,7 @@ def update_JSON_links_PI(BLAST_df_dict, output_path, surrogates=False):
             json_data["links"][i]["identity"] = PI
 
         # Overwrite JSON file with updated data
-        with open(gene_path, "w") as outfile:
+        with open(final_gene_path, "w") as outfile:
             json.dump(json_data, outfile)
 
 

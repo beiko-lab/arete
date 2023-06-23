@@ -659,7 +659,7 @@ def cluster_neighborhoods(
     print(
         "Updating JSON neighborhood representations' links percent identities according to BLAST results..."
     )
-    update_JSON_links_PI(BLAST_df_dict, output_path, surrogates=False)
+    update_JSON_links_PI(BLAST_df_dict, output_path)
 
     # Update gene UIDs to reflect locus tags, filtering based on identical neighborhoods using BLAST results
     print("Updating JSON surrogates representations...")
