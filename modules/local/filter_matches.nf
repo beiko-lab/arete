@@ -1,5 +1,4 @@
-process FILTER_MATCHES {
-    tag "$meta.id"
+process FILTER_AND_CONCAT_MATCHES {
     label "process_low"
 
     conda (params.enable_conda ? "conda-forge::pandas=1.4.3" : null)
@@ -10,25 +9,36 @@ process FILTER_MATCHES {
     }
 
     input:
-    tuple val(meta), path(aln)
+    path aln
     val dbname
     val header
     val pident
     val qcover
+    val header_line
 
     output:
-    tuple val(meta), path("*.txt"), emit: txt
+    path("${prefix}.txt"), emit: txt
 
     script:
     def args = task.ext.args ?: ''
-    def prefix = task.ext.prefix ?: "${meta.id}_${dbname}_filtered"
+    prefix = task.ext.prefix ?: "${dbname}"
 
     """
-    filter_alignment.py ${aln} '${meta.id}' '${header}' \\
-        ${pident} ${qcover} ${prefix}.txt
+    for aln in \$(ls $aln); do
+
+        sampleid=\$(basename \$aln .txt | sed 's/_[[:upper:]]*//g')
+
+        filter_alignment.py \$aln '\$sampleid' '${header}' \\
+            ${pident} ${qcover} "\${sampleid}_filtered.txt"
+    done
+
+    sed -s '1,${header_line}d' *_filtered.txt > no_header.txt
+    sed -sn ${header_line}p *_filtered.txt | uniq > header.txt
+    cat header.txt no_header.txt > ${prefix}.txt
     """
 
     stub:
+    prefix = task.ext.prefix ?: "${dbname}"
     """
     touch ${prefix}.txt
     """

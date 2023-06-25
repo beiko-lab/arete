@@ -1,5 +1,4 @@
-include { CONCAT_OUTPUT } from '../../modules/local/concat_output'
-include { FILTER_MATCHES } from '../../modules/local/filter_matches'
+include { FILTER_AND_CONCAT_MATCHES } from '../../modules/local/filter_matches'
 
 
 workflow FILTER_ALIGNMENT {
@@ -14,24 +13,19 @@ workflow FILTER_ALIGNMENT {
     main:
         diamond_results
             .filter{ id, path -> path.size() > 0 }
+            .collect { id, path -> path }
             .set { results }
 
-        FILTER_MATCHES(
+        FILTER_AND_CONCAT_MATCHES(
             results,
             db_name,
             blast_columns,
             min_pident,
-            min_qcover
+            min_qcover,
+            1
         )
-        FILTER_MATCHES.out.txt.set { diamond_filtered }
-
-        diamond_filtered
-            .collect{ id, paths -> paths }
-            .set { paths }
-
-        CONCAT_OUTPUT(paths, db_name, 1)
-        CONCAT_OUTPUT.out.txt.set { concatenated }
+        FILTER_AND_CONCAT_MATCHES.out.txt.set { diamond_filtered }
 
     emit:
-        concatenated = concatenated
+        concatenated = diamond_filtered
 }
