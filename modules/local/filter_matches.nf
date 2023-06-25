@@ -3,9 +3,9 @@ process FILTER_AND_CONCAT_MATCHES {
 
     conda (params.enable_conda ? "conda-forge::pandas=1.4.3" : null)
     if (workflow.containerEngine == 'singularity' && !params.singularity_pull_docker_container) {
-        container "https://depot.galaxyproject.org/singularity/pandas:1.4.3"
+        container "docker://docker.io/biocontainers/seaborn:0.12.2_cv1"
     } else {
-        container "quay.io/biocontainers/pandas:1.4.3"
+        container "docker.io/biocontainers/seaborn:0.12.2_cv1"
     }
 
     input:
