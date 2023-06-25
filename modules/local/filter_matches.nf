@@ -28,7 +28,7 @@ process FILTER_AND_CONCAT_MATCHES {
 
         sampleid=\$(basename \$aln .txt | sed 's/_[[:upper:]]*//g')
 
-        filter_alignment.py \$aln '\$sampleid' '${header}' \\
+        filter_alignment.py \$aln "\${sampleid}" '${header}' \\
             ${pident} ${qcover} "\${sampleid}_filtered.txt"
     done
 
