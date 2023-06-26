@@ -19,7 +19,7 @@ process CREATE_REPORT {
 
     output:
     path("annotation_report.tsv.gz"), emit: report
-    path("feature_profile.tsv.gz"), emit: profile
+    path("feature_profile.tsv.gz"), emit: profile, optional: true
 
     script:
     def skip = skip_profile ? "--skip_profile" : ""
