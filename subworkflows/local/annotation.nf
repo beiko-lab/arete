@@ -30,13 +30,9 @@ include { MOB_RECON } from '../../modules/local/mobsuite'
 include { ISLANDPATH } from '../../modules/local/islandpath/main'
 include { PHISPY } from '../../modules/nf-core/phispy/main'
 include { INTEGRON_FINDER } from '../../modules/local/integronfinder/main.nf'
-include { CONCAT_OUTPUT as CONCAT_PROKKA;
-          CONCAT_OUTPUT as CONCAT_BAKTA;
-          CONCAT_OUTPUT as CONCAT_RGI;
-          CONCAT_OUTPUT as CONCAT_MOBSUITE;
+include { CONCAT_OUTPUT as CONCAT_MOBSUITE;
           CONCAT_OUTPUT as CONCAT_ISLANDS;
-          CONCAT_OUTPUT as CONCAT_INTEGRONS;
-          CONCAT_OUTPUT as CONCAT_PHISPY } from '../../modules/local/concat_output.nf'
+          CONCAT_OUTPUT as CONCAT_INTEGRONS } from '../../modules/local/concat_output.nf'
 include { CREATE_REPORT } from '../../modules/local/create_report'
 
 //
@@ -144,16 +140,14 @@ workflow ANNOTATE_ASSEMBLIES {
             ch_multiqc_files = ch_multiqc_files.mix(PROKKA.out.txt.collect{it[1]}.ifEmpty([]))
 
             PROKKA_ADD_COLUMN(
-                ch_tsv_files,
+                ch_tsv_files.collect{ id, path -> path },
                 "PROKKA",
-                0
+                0,
+                1
             )
 
             PROKKA_ADD_COLUMN.out.txt
-                .collect{ id, path -> path }
-                .set{ prokka_tsvs }
-
-            CONCAT_PROKKA(prokka_tsvs, "PROKKA", 1)
+                .set{ prokka_tsv }
         }
         else {
 
@@ -172,16 +166,14 @@ workflow ANNOTATE_ASSEMBLIES {
             ch_tsv_files = BAKTA.out.tsv
 
             BAKTA_ADD_COLUMN(
-                ch_tsv_files,
+                ch_tsv_files.collect { id, path -> path },
                 "BAKTA",
-                2
+                2,
+                1
             )
 
             BAKTA_ADD_COLUMN.out.txt
-                .collect{ id, path -> path }
-                .set{ bakta_tsvs }
-
-            CONCAT_BAKTA(bakta_tsvs, "BAKTA", 1)
+                .set{ bakta_tsv }
         }
 
         /*
@@ -192,16 +184,13 @@ workflow ANNOTATE_ASSEMBLIES {
             ch_software_versions = ch_software_versions.mix(RGI.out.version.first().ifEmpty(null))
 
             RGI_ADD_COLUMN(
-            RGI.out.tsv,
-            "RGI",
-            0
+                RGI.out.tsv.collect{ id, paths -> paths },
+                "RGI",
+                0,
+                1
             )
 
-            RGI_ADD_COLUMN.out.txt
-                .collect{ id, paths -> paths }
-                .set { rgi_tsvs }
-
-            CONCAT_RGI(rgi_tsvs, "RGI", 1)
+            RGI_ADD_COLUMN.out.txt.set { rgi_concat }
         }
 
         /*
@@ -234,16 +223,11 @@ workflow ANNOTATE_ASSEMBLIES {
             ch_software_versions = ch_software_versions.mix(PHISPY.out.versions.first())
 
             PHISPY_ADD_COLUMN(
-                PHISPY.out.prophage_tsv,
+                PHISPY.out.prophage_tsv.collect{ id, paths -> paths },
                 "PHISPY",
-                0
+                0,
+                1
             )
-
-            PHISPY_ADD_COLUMN.out.txt
-                .collect{ id, paths -> paths }
-                .set { phispy_tsvs }
-
-            CONCAT_PHISPY(phispy_tsvs, "PHISPY", 1)
         }
         if (tools_to_run.contains('islandpath')) {
             ISLANDPATH(ch_gbk_files)
@@ -324,18 +308,18 @@ workflow ANNOTATE_ASSEMBLIES {
         needed_for_report = ['vfdb', 'rgi', 'mobsuite']
         if (!params.use_prokka && needed_for_report.every { it in tools_to_run }) {
             CREATE_REPORT(
-                CONCAT_BAKTA.out.txt,
+                bakta_tsv,
                 ch_diamond_outs.collect(),
-                CONCAT_RGI.out.txt,
+                rgi_concat,
                 ch_vfdb,
                 ch_phispy_out,
                 CONCAT_MOBSUITE.out.txt
             )
         } else if (needed_for_report.every { it in tools_to_run }) {
             CREATE_REPORT(
-                CONCAT_PROKKA.out.txt,
+                prokka_tsv,
                 ch_diamond_outs.collect(),
-                CONCAT_RGI.out.txt,
+                rgi_concat,
                 ch_vfdb,
                 [],
                 []
