@@ -84,10 +84,10 @@
             "properties": {
                 "annotation_tools": {
                     "type": "string",
-                    "default": "mobsuite,rgi,cazy,vfdb,iceberg,bacmet,islandpath,phispy",
+                    "default": "mobsuite,rgi,cazy,vfdb,iceberg,bacmet,islandpath,phispy,report",
                     "fa_icon": "fas fa-tools",
                     "description": "Comma-separated list of annotation tools to run",
-                    "pattern": "^((rgi|mobsuite|islandpath|phispy|vfdb|cazy|bacmet|iceberg|integronfinder)?,?)*(?<!,)$"
+                    "pattern": "^((rgi|mobsuite|islandpath|phispy|vfdb|cazy|bacmet|iceberg|integronfinder|report)?,?)*(?<!,)$"
                 },
                 "bakta_db": {
                     "type": "string",

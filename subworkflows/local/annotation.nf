@@ -304,26 +304,27 @@ workflow ANNOTATE_ASSEMBLIES {
                 .set { ch_diamond_outs }
         }
 
-
-        needed_for_report = ['vfdb', 'rgi', 'mobsuite']
-        if (!params.use_prokka && needed_for_report.every { it in tools_to_run }) {
-            CREATE_REPORT(
-                bakta_tsv,
-                ch_diamond_outs.collect(),
-                rgi_concat,
-                ch_vfdb,
-                ch_phispy_out,
-                CONCAT_MOBSUITE.out.txt
-            )
-        } else if (needed_for_report.every { it in tools_to_run }) {
-            CREATE_REPORT(
-                prokka_tsv,
-                ch_diamond_outs.collect(),
-                rgi_concat,
-                ch_vfdb,
-                [],
-                []
-            )
+        if (tools_to_run.contains('report')) {
+            needed_for_report = ['vfdb', 'rgi', 'mobsuite']
+            if (!params.use_prokka && needed_for_report.every { it in tools_to_run }) {
+                CREATE_REPORT(
+                    bakta_tsv,
+                    ch_diamond_outs.collect(),
+                    rgi_concat,
+                    ch_vfdb,
+                    ch_phispy_out,
+                    CONCAT_MOBSUITE.out.txt
+                )
+            } else if (needed_for_report.every { it in tools_to_run }) {
+                CREATE_REPORT(
+                    prokka_tsv,
+                    ch_diamond_outs.collect(),
+                    rgi_concat,
+                    ch_vfdb,
+                    [],
+                    []
+                )
+            }
         }
 
     emit:
