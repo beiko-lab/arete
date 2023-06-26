@@ -47,6 +47,7 @@ def parse_args(args=None):
         nargs="?",
         const=None,
     )
+    parser.add_argument("--skip_profile", dest="skip_profile", action="store_true")
     return parser.parse_args(args)
 
 
@@ -118,17 +119,7 @@ def create_report(ann, diamond_outs, rgi, vfdb_fasta, phispy, mobsuite):
 
     # RGI output
     rgi_df = read_table(rgi)
-    rgi_df.columns = rgi_df.columns.str.replace(" ", "_")
-    rgi_sum = rgi_df[
-        (rgi_df["Best_Identities"] > 80)
-        & (rgi_df["Percentage_Length_of_Reference_Sequence"] > 80)
-    ]
-    rgi_sum = rgi_sum[["Contig", "Best_Hit_ARO", "Cut_Off", "genome_id"]].rename(
-        columns={"Contig": "orf", "Best_Hit_ARO": "AMR", "Cut_Off": "rgi_cutoff"}
-    )
-    rgi_sum["orf"] = rgi_sum["orf"].str.rsplit("_", n=1).str.get(0)
-
-    diamond_sums.append(rgi_sum)
+    diamond_sums.append(rgi_df)
 
     # Bakta/Prokka output
     ann_tool = os.path.basename(ann).strip(".txt").lower()
@@ -273,7 +264,9 @@ def main(args=None):
         args.PHISPY,
         args.MOBSUITE,
     )
-    create_feature_profile(ann_report)
+
+    if not args.skip_profile:
+        create_feature_profile(ann_report)
 
 
 if __name__ == "__main__":

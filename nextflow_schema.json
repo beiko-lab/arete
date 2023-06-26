@@ -84,10 +84,10 @@
             "properties": {
                 "annotation_tools": {
                     "type": "string",
-                    "default": "mobsuite,rgi,cazy,vfdb,iceberg,bacmet,islandpath,phispy",
+                    "default": "mobsuite,rgi,cazy,vfdb,iceberg,bacmet,islandpath,phispy,report",
                     "fa_icon": "fas fa-tools",
                     "description": "Comma-separated list of annotation tools to run",
-                    "pattern": "^((rgi|mobsuite|islandpath|phispy|vfdb|cazy|bacmet|iceberg|integronfinder)?,?)*(?<!,)$"
+                    "pattern": "^((rgi|mobsuite|islandpath|phispy|vfdb|cazy|bacmet|iceberg|integronfinder|report)?,?)*(?<!,)$"
                 },
                 "bakta_db": {
                     "type": "string",
@@ -112,10 +112,10 @@
                     "fa_icon": "fas fa-equals",
                     "description": "Minimum coverage of each match for filtering"
                 },
-                "skip_phispy": {
+                "skip_profile_creation": {
                     "type": "boolean",
-                    "fa_icon": "fas fa-virus",
-                    "description": "Skip PhiSpy phage detection tool"
+                    "description": "Skip annotation feature profile creation",
+                    "fa_icon": "fas fa-forward"
                 }
             }
         },
