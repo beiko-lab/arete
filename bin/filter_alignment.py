@@ -33,7 +33,7 @@ def filter_rgi(file_in, genome_id, min_pident, min_qcover, file_out):
         (rgi_df["Best_Identities"] > int(min_pident))
         & (rgi_df["Percentage_Length_of_Reference_Sequence"] > min_qcover_scaled)
     ]
-    rgi_sum = rgi_sum[["Contig", "Best_Hit_ARO", "Cut_Off", "genome_id"]].rename(
+    rgi_sum = rgi_sum[["Contig", "Best_Hit_ARO", "Cut_Off"]].rename(
         columns={"Contig": "orf", "Best_Hit_ARO": "AMR", "Cut_Off": "rgi_cutoff"}
     )
     rgi_sum["orf"] = rgi_sum["orf"].str.rsplit("_", n=1).str.get(0)
