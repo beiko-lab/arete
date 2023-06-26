@@ -313,7 +313,8 @@ workflow ANNOTATE_ASSEMBLIES {
                     rgi_concat,
                     ch_vfdb,
                     ch_phispy_out,
-                    CONCAT_MOBSUITE.out.txt
+                    CONCAT_MOBSUITE.out.txt,
+                    params.skip_profile_creation
                 )
             } else if (needed_for_report.every { it in tools_to_run }) {
                 CREATE_REPORT(
@@ -322,7 +323,8 @@ workflow ANNOTATE_ASSEMBLIES {
                     rgi_concat,
                     ch_vfdb,
                     [],
-                    []
+                    [],
+                    params.skip_profile_creation
                 )
             }
         }

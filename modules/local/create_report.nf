@@ -16,12 +16,14 @@ process CREATE_REPORT {
     path vfdb_fasta
     path phispy_output
     path mobsuite_output
+    val skip_profile
 
     output:
     path("annotation_report.tsv.gz"), emit: report
     path("feature_profile.tsv.gz"), emit: profile
 
     script:
+    def skip = skip_profile ? "--skip_profile" : ""
     """
     create_report.py \\
         --annotation_out $annotation \\
@@ -29,7 +31,8 @@ process CREATE_REPORT {
         --rgi_out $rgi_output \\
         --vfdb_fasta $vfdb_fasta \\
         --phispy_out $phispy_output \\
-        --mobsuite_out $mobsuite_output
+        --mobsuite_out $mobsuite_output \\
+        $skip
     """
 
     stub:

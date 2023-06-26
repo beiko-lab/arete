@@ -47,6 +47,7 @@ def parse_args(args=None):
         nargs="?",
         const=None,
     )
+    parser.add_argument("--skip_profile", dest="skip_profile", action="store_true")
     return parser.parse_args(args)
 
 
@@ -273,7 +274,9 @@ def main(args=None):
         args.PHISPY,
         args.MOBSUITE,
     )
-    create_feature_profile(ann_report)
+
+    if not args.skip_profile:
+        create_feature_profile(ann_report)
 
 
 if __name__ == "__main__":

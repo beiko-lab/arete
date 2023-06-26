@@ -112,10 +112,10 @@
                     "fa_icon": "fas fa-equals",
                     "description": "Minimum coverage of each match for filtering"
                 },
-                "skip_phispy": {
+                "skip_profile_creation": {
                     "type": "boolean",
-                    "fa_icon": "fas fa-virus",
-                    "description": "Skip PhiSpy phage detection tool"
+                    "description": "Skip annotation feature profile creation",
+                    "fa_icon": "fas fa-forward"
                 }
             }
         },
