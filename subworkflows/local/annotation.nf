@@ -33,6 +33,7 @@ include { INTEGRON_FINDER } from '../../modules/local/integronfinder/main.nf'
 include { CONCAT_OUTPUT as CONCAT_MOBSUITE;
           CONCAT_OUTPUT as CONCAT_ISLANDS;
           CONCAT_OUTPUT as CONCAT_INTEGRONS } from '../../modules/local/concat_output.nf'
+include { FILTER_AND_CONCAT_MATCHES as FILTER_RGI } from '../../modules/local/filter_matches'
 include { CREATE_REPORT } from '../../modules/local/create_report'
 
 //
@@ -183,14 +184,17 @@ workflow ANNOTATE_ASSEMBLIES {
             RGI(ch_ffn_files, ch_card_json)
             ch_software_versions = ch_software_versions.mix(RGI.out.version.first().ifEmpty(null))
 
-            RGI_ADD_COLUMN(
+            FILTER_RGI(
                 RGI.out.tsv.collect{ id, paths -> paths },
                 "RGI",
-                0,
-                1
+                "no_header",
+                min_pident,
+                min_qcover,
+                1,
+                true
             )
 
-            RGI_ADD_COLUMN.out.txt.set { rgi_concat }
+            FILTER_RGI.out.txt.set { rgi_concat }
         }
 
         /*

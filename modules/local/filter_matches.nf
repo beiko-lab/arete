@@ -15,11 +15,13 @@ process FILTER_AND_CONCAT_MATCHES {
     val pident
     val qcover
     val header_line
+    val parse_rgi
 
     output:
     path("${prefix}.txt"), emit: txt
 
     script:
+    def is_rgi = parse_rgi ? "--parse_rgi" : ""
     def args = task.ext.args ?: ''
     prefix = task.ext.prefix ?: "${dbname}"
 
@@ -29,7 +31,7 @@ process FILTER_AND_CONCAT_MATCHES {
         sampleid=\$(basename \$aln .txt | sed 's/_${dbname}//g')
 
         filter_alignment.py \$aln "\${sampleid}" '${header}' \\
-            ${pident} ${qcover} "\${sampleid}_filtered.txt"
+            ${pident} ${qcover} "\${sampleid}_filtered.txt" $is_rgi
     done
 
     sed -s '1,${header_line}d' *_filtered.txt > no_header.txt
