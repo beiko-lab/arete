@@ -22,7 +22,8 @@ workflow FILTER_ALIGNMENT {
             blast_columns,
             min_pident,
             min_qcover,
-            1
+            1,
+            false
         )
         FILTER_AND_CONCAT_MATCHES.out.txt.set { diamond_filtered }
 
