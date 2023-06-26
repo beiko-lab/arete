@@ -24,7 +24,7 @@ process ADD_GENOME_COLUMN {
     """
     for table in \$(ls $tsv); do
 
-        sampleid=\$(basename \$table .tsv | sed 's/_[[:upper:]]*\\.t.*//g')
+        sampleid=\$(basename \$table .tsv | sed 's/_${dbname}\\.t.*//g')
 
         add_column.py \$table "\${sampleid}" $skip_n_rows "\${sampleid}_added.txt"
     done
