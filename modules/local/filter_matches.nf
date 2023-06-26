@@ -28,7 +28,7 @@ process FILTER_AND_CONCAT_MATCHES {
     """
     for aln in \$(ls $aln); do
 
-        sampleid=\$(basename \$aln .txt | sed 's/_${dbname}//g')
+        sampleid=\$(basename \$aln .txt | sed 's/_${dbname}//Ig')
 
         filter_alignment.py \$aln "\${sampleid}" '${header}' \\
             ${pident} ${qcover} "\${sampleid}_filtered.txt" $is_rgi
