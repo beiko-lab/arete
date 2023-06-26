@@ -28,9 +28,9 @@ def filter_rgi(file_in, genome_id, min_pident, min_qcover, file_out):
     rgi_df = read_table(file_in)
 
     rgi_df.columns = rgi_df.columns.str.replace(" ", "_")
-    min_qcover_scaled = min_qcover * 100
+    min_qcover_scaled = float(min_qcover) * 100
     rgi_sum = rgi_df[
-        (rgi_df["Best_Identities"] > min_pident)
+        (rgi_df["Best_Identities"] > int(min_pident))
         & (rgi_df["Percentage_Length_of_Reference_Sequence"] > min_qcover_scaled)
     ]
     rgi_sum = rgi_sum[["Contig", "Best_Hit_ARO", "Cut_Off", "genome_id"]].rename(
