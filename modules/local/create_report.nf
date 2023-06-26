@@ -1,5 +1,5 @@
 process CREATE_REPORT {
-    label 'process_high'
+    label 'process_medium'
 
     conda (params.enable_conda ? "conda-forge::pandas=1.4.3" : null)
     if (workflow.containerEngine == 'singularity' && !params.singularity_pull_docker_container) {
