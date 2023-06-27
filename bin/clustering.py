@@ -38,6 +38,7 @@ from json_utils import (
     load_JSON_data,
     update_cluster_data,
     clean_json_data,
+    write_clustermap_JSON_HTML,
 )
 from visualization import (
     plot_similarity_histogram,
@@ -684,6 +685,9 @@ def cluster_neighborhoods(
         surrogates_json_data = clean_json_data(surrogates_json_data)
         with open(output_path + "/JSON/" + gene + "_surrogates.json", "w+") as outfile:
             json.dump(surrogates_json_data, outfile)
+        write_clustermap_JSON_HTML(
+            gene, output_path + "/index.html", output_path, rep_type="surrogates"
+        )
 
     # Get neighborhoods dict for calculating similarity matrices (needed to compare contig ends)
     neighborhoods = get_neighborhoods_dict(fasta_path)

@@ -117,14 +117,14 @@ def make_neighborhood_JSON_data(gene_neighborhoods_dict, gene, neighborhood_size
         for i in neighborhood_df.index:
             gene_data = {}
             gene_data["uid"] = neighborhood_df["Locus_Tag"][i].replace("'", "")
-            gene_data["name"] = neighborhood_df["Gene_Name"][i].replace('"', "")
             if i == focal_gene_index:
                 if gene not in unique_genes:
                     unique_genes.append(gene)
-            elif neighborhood_df["Gene_Name"][i].replace("'", "") not in unique_genes:
-                unique_genes.append(
-                    neighborhood_df["Gene_Name"][i].replace("'", "").replace('"', "")
-                )
+                gene_data["name"] = gene.replace('"', "")
+            else:
+                gene_data["name"] = neighborhood_df["Gene_Name"][i].replace('"', "")
+            if gene_data["name"] not in unique_genes:
+                unique_genes.append(gene_data["name"])
             gene_data["start"] = neighborhood_df["Gene_Start"][i]
             gene_data["end"] = neighborhood_df["Gene_End"][i]
             gene_data["strand"] = neighborhood_df["Gene_Strand"][i]
@@ -196,22 +196,6 @@ def make_neighborhood_JSON_data(gene_neighborhoods_dict, gene, neighborhood_size
                         genome_2_key
                     ]["name"].replace("'", "")
 
-                    # Add to group
-                    if (
-                        cluster_data[genome_1]["loci"]["genes"][genome_1_key]["uid"]
-                        not in gene_group_list
-                    ):
-                        gene_group_list.append(
-                            cluster_data[genome_1]["loci"]["genes"][genome_1_key]["uid"]
-                        )
-                    if (
-                        cluster_data[genome_2]["loci"]["genes"][genome_2_key]["uid"]
-                        not in gene_group_list
-                    ):
-                        gene_group_list.append(
-                            cluster_data[genome_2]["loci"]["genes"][genome_2_key]["uid"]
-                        )
-
                     contig_1 = target["uid"]
                     contig_2 = query["uid"]
                     link_data["uid"] = (
@@ -229,6 +213,23 @@ def make_neighborhood_JSON_data(gene_neighborhoods_dict, gene, neighborhood_size
 
                     links_data[ind] = link_data
                     ind += 1
+
+                if (
+                    genome_1_presence
+                    and not cluster_data[genome_1]["loci"]["genes"][genome_1_key]["uid"]
+                    in gene_group_list
+                ):
+                    gene_group_list.append(
+                        cluster_data[genome_1]["loci"]["genes"][genome_1_key]["uid"]
+                    )
+                if (
+                    genome_2_presence
+                    and not cluster_data[genome_2]["loci"]["genes"][genome_2_key]["uid"]
+                    in gene_group_list
+                ):
+                    gene_group_list.append(
+                        cluster_data[genome_2]["loci"]["genes"][genome_2_key]["uid"]
+                    )
 
             group_data["uid"] = "group" + str(i)
             group_data["label"] = gene
@@ -478,23 +479,42 @@ def write_clustermap_JSON_HTML(gene, sample_data_path, out_path, rep_type="stand
     Creates standalone HTML file for each respective type of neighborhood representation (e.g. standard,
     surrogates, or with representative UPGMA cluster) in case user wants to load individual visualizations.
     """
+    json_filename = ""
+    html_filename = ""
 
     if rep_type == "upgma":
-        file_path = out_path + "/JSON/" + gene + "_upgma.html"
-        second_line = '\t\td3.json("' + gene + '_upgma.json"' + ")\n"
-
+        json_filename = f"{gene}_upgma.json"
+        html_filename = f"{gene}_upgma.html"
     elif rep_type == "surrogates":
-        file_path = out_path + "/JSON/" + gene + "_surrogates.html"
-        second_line = '\t\td3.json("' + gene + '_surrogates.json"' + ")\n"
-
+        json_filename = f"{gene}_surrogates.json"
+        html_filename = f"{gene}_surrogates.html"
     else:  # rep_type == 'standard'
-        file_path = out_path + "/JSON/" + gene + ".html"
-        second_line = '\t\td3.json("' + gene + '.json"' + ")\n"
+        json_filename = f"{gene}_temp.json"
+        html_filename = f"{gene}.html"
+
+    json_path = f"{out_path}/JSON/{json_filename}"
+    file_path = f"{out_path}/JSON/{html_filename}"
+    second_line = f'\t\td3.json("{json_filename}")\n'
 
     # Make HTML index file with appropriate JSON
     with open(file_path, "w") as html_outfile, open(sample_data_path) as template:
         for line in template:
-            html_outfile.write(line)
+            if "height: 100vh;" in line:
+                # Determine number of genomes present
+                with open(json_path, "r") as infile:
+                    if len(infile.readlines()) != 0:
+                        infile.seek(0)
+                        json_data = json.load(infile)
+                num_clusters = len(json_data["clusters"])
+
+                # Calculate optimal canvas height as proportional to number of genomes
+                height = int(64.67 * num_clusters + 100)
+                height_px = str(height) + "px"
+                if height < 900:
+                    height_px = "100vh"
+                html_outfile.write("\t\t\t\theight: {};\n".format(height_px))
+            else:
+                html_outfile.write(line)
 
         html_outfile.write("\n")
         html_outfile.write(second_line)
@@ -517,16 +537,11 @@ def write_clustermap_JSON_HTML(gene, sample_data_path, out_path, rep_type="stand
 def make_gene_HTML(genes_list, sample_data_path, out_path):
     """
     For each AMR gene for which a JSON file was created, generates an accompanying HTML file for rendering its gene
-    order visualization using clustermap with. This is done for each gene individually to
+    order visualization using clustermap with. This is done for each gene individually.
     """
     for gene in genes_list:
         # Make HTML index file with appropriate JSON
         write_clustermap_JSON_HTML(gene, sample_data_path, out_path)
-
-        # Make surrogate HTML
-        write_clustermap_JSON_HTML(
-            gene, sample_data_path, out_path, rep_type="surrogates"
-        )
 
 
 def get_cluster_data_genes_uid_list(json_cluster_data, genome_ids):
@@ -690,12 +705,14 @@ def update_JSON_links_PI(BLAST_df_dict, output_path):
             if genome_1 + "_" + genome_2 + ".blast.txt" in blast_files_dict.keys():
                 df = blast_files_dict[genome_1 + "_" + genome_2 + ".blast.txt"]
                 row = df.filter(
-                    (df["query_id"] == locus_tag_1) & (df["sub_id"] == locus_tag_2)
+                    ((df["query_id"] == locus_tag_1) & (df["sub_id"] == locus_tag_2))
+                    | (df["query_id"] == locus_tag_2) & (df["sub_id"] == locus_tag_1)
                 )
             else:
                 df = blast_files_dict[genome_2 + "_" + genome_1 + ".blast.txt"]
                 row = df.filter(
-                    (df["query_id"] == locus_tag_2) & (df["sub_id"] == locus_tag_1)
+                    ((df["query_id"] == locus_tag_1) & (df["sub_id"] == locus_tag_2))
+                    | (df["query_id"] == locus_tag_2) & (df["sub_id"] == locus_tag_1)
                 )
 
             try:
