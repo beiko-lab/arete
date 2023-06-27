@@ -35,9 +35,8 @@ ch_multiqc_logo            = params.multiqc_logo   ? Channel.fromPath( params.mu
 //
 // SUBWORKFLOW: Consisting of a mix of local and nf-core/modules
 //
-include { INPUT_CHECK;
-          ANNOTATION_INPUT_CHECK } from '../subworkflows/local/input_check'
-
+include { INPUT_CHECK } from '../subworkflows/local/input_check'
+include { ANNOTATION_INPUT_CHECK } from '../subworkflows/local/annotation_input_check'
 include { ASSEMBLE_SHORTREADS } from '../subworkflows/local/assembly'
 include { ANNOTATE_ASSEMBLIES } from '../subworkflows/local/annotation'
 include { CHECK_ASSEMBLIES } from '../subworkflows/local/assemblyqc'
@@ -197,8 +196,10 @@ workflow ARETE {
     ch_software_versions = ch_software_versions.mix(ASSEMBLE_SHORTREADS.out.assembly_software)
 
     ////////////////////////// PANGENOME /////////////////////////////////////
-    PHYLOGENOMICS(gffs, use_full_alignment, use_fasttree)
-    ch_software_versions = ch_software_versions.mix(PHYLOGENOMICS.out.phylo_software)
+    if (!params.skip_phylo) {
+        PHYLOGENOMICS(gffs, use_full_alignment, use_fasttree)
+        ch_software_versions = ch_software_versions.mix(PHYLOGENOMICS.out.phylo_software)
+    }
 
     ch_software_versions
         .map { it -> if (it) [ it.baseName, it ] }
@@ -387,8 +388,10 @@ workflow ANNOTATION {
     }
 
     ////////////////////////// PANGENOME /////////////////////////////////////
-    PHYLOGENOMICS(gffs, use_full_alignment, use_fasttree)
-    ch_software_versions = ch_software_versions.mix(PHYLOGENOMICS.out.phylo_software)
+    if (!params.skip_phylo) {
+        PHYLOGENOMICS(gffs, use_full_alignment, use_fasttree)
+        ch_software_versions = ch_software_versions.mix(PHYLOGENOMICS.out.phylo_software)
+    }
 
     ch_software_versions
         .map { it -> if (it) [ it.baseName, it ] }

@@ -9,7 +9,7 @@ nextflow_workflow {
         when {
             params {
                 // define parameters here. Example:
-                light = true
+                annotation_tools = 'mobsuite,rgi,vfdb,islandpath,report'
                 use_prokka = true
                 min_pident = 80
                 min_qcover = 0.8
@@ -32,7 +32,7 @@ nextflow_workflow {
 
         then {
             assert workflow.success
-            assert workflow.trace.tasks().size() >= 16
+            assert workflow.trace.tasks().size() >= 14
             assert workflow.out.gff.size() == 1
             assert workflow.out.gff.get(0).get(1) ==~ ".*/SRR14022735.gff"
         }
