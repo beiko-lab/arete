@@ -4,8 +4,8 @@ process EXTRACTION {
 
     conda (params.enable_conda ? "conda-forge::python=3.8.3" : null)
     container "${ workflow.containerEngine == 'singularity' && !task.ext.singularity_pull_docker_container ?
-        'library://jtl-lab-dev/bioinf-workflows/gene-order-workflow' :
-        'jtllab/gene-order-workflow' }"
+        'docker://docker.io/jtllab/gene-order-workflow' :
+        'docker.io/jtllab/gene-order-workflow' }"
 
     input:
       path input_file_path
