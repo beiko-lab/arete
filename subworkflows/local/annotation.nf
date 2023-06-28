@@ -135,6 +135,7 @@ workflow ANNOTATE_ASSEMBLIES {
             ) //Assembly, protein file, pre-trained prodigal
             ch_software_versions = ch_software_versions.mix(PROKKA.out.versions.first().ifEmpty(null))
             ch_ffn_files = PROKKA.out.ffn
+            ch_faa_files = PROKKA.out.faa
             ch_gff_files = PROKKA.out.gff
             ch_gbk_files = PROKKA.out.gbk
             ch_tsv_files = PROKKA.out.tsv
@@ -162,6 +163,7 @@ workflow ANNOTATE_ASSEMBLIES {
 
             ch_software_versions = ch_software_versions.mix(BAKTA.out.versions.first().ifEmpty(null))
             ch_ffn_files = BAKTA.out.ffn
+            ch_faa_files = BAKTA.out.faa
             ch_gff_files = BAKTA.out.gff
             ch_gbk_files = BAKTA.out.gbff
             ch_tsv_files = BAKTA.out.tsv
@@ -336,6 +338,9 @@ workflow ANNOTATE_ASSEMBLIES {
     emit:
         annotation_software = ch_software_versions
         multiqc = ch_multiqc_files
+        faa = ch_faa_files
         gff = ch_gff_files
+        gbk = ch_gbk_files
+        rgi = RGI.out.tsv
 
 }

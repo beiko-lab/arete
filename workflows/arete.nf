@@ -43,6 +43,7 @@ include { CHECK_ASSEMBLIES } from '../subworkflows/local/assemblyqc'
 include { PHYLOGENOMICS } from '../subworkflows/local/phylo'
 include { RUN_POPPUNK } from '../subworkflows/local/poppunk'
 include { SUBSET_GENOMES } from '../subworkflows/local/subsample'
+include { GENE_ORDER } from '../subworkflows/local/gene_order'
 /*
 ========================================================================================
     IMPORT NF-CORE MODULES/SUBWORKFLOWS
@@ -199,6 +200,15 @@ workflow ARETE {
     if (!params.skip_phylo) {
         PHYLOGENOMICS(gffs, use_full_alignment, use_fasttree)
         ch_software_versions = ch_software_versions.mix(PHYLOGENOMICS.out.phylo_software)
+    }
+
+    ////////////////////////// GENE ORDER /////////////////////////////////////
+    if (!params.skip_gene_order) {
+        GENE_ORDER (
+            ANNOTATE_ASSEMBLIES.out.faa,
+            ANNOTATE_ASSEMBLIES.out.gbk,
+            ANNOTATE_ASSEMBLIES.out.rgi,
+        )
     }
 
     ch_software_versions
@@ -391,6 +401,15 @@ workflow ANNOTATION {
     if (!params.skip_phylo) {
         PHYLOGENOMICS(gffs, use_full_alignment, use_fasttree)
         ch_software_versions = ch_software_versions.mix(PHYLOGENOMICS.out.phylo_software)
+    }
+
+    ////////////////////////// GENE ORDER /////////////////////////////////////
+    if (!params.skip_gene_order) {
+        GENE_ORDER (
+            ANNOTATE_ASSEMBLIES.out.faa,
+            ANNOTATE_ASSEMBLIES.out.gbk,
+            ANNOTATE_ASSEMBLIES.out.rgi,
+        )
     }
 
     ch_software_versions

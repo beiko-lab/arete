@@ -1,22 +1,20 @@
-include { EXTRACTION } from './modules/local/gene_order/extraction'
-include { CLUSTERING } from './modules/local/gene_order/clustering'
+include { EXTRACTION } from '../../modules/local/gene_order/extraction'
+include { CLUSTERING } from '../../modules/local/gene_order/clustering'
 
-include { DIAMOND_MAKEDB } from './modules/nf-core/diamond/makedb/main'
-include { DIAMOND_BLASTP as DIAMOND_GENE_ORDER } from './modules/nf-core/diamond/blastp/main'
+include { DIAMOND_MAKEDB } from '../../modules/nf-core/diamond/makedb/main'
+include { DIAMOND_BLASTP as DIAMOND_GENE_ORDER } from '../../modules/nf-core/diamond/blastp/main'
 
-workflow {
+workflow GENE_ORDER {
 
-    // take:
-    // assemblies
-    // genbanks
-    // rgi_outs
+    take:
+    assemblies
+    genbanks
+    rgi_outs
 
-    // main:
+    main:
 
-    ch_versions = Channel.empty()
-    assemblyFiles = Channel.fromPath("${params.assembly_path}/*.{fa,faa,fna}")
-    rgiFiles = Channel.fromPath("${params.rgi_out}/*_rgi.txt").collect()
-    gbkFiles = Channel.fromPath("${params.gbk_path}/*.{gbk,gbff}").collect()
+    rgiFiles = rgi_outs.map { meta, path -> path }.collect()
+    gbkFiles = genbanks.map { meta, path -> path }.collect()
 
     // Optional extraction params
     num_neighbors = params.num_neighbors
@@ -40,19 +38,13 @@ workflow {
     def blast_columns = "qseqid sseqid pident bitscore"
 
     DIAMOND_MAKEDB (
-        assemblyFiles
+        assemblies.map { meta, path -> path }
     )
 
     DIAMOND_MAKEDB.out.db.set { dbs }
 
-    assemblyFiles
-        .map {
-            item ->
-                tuple([id: item.getSimpleName()], item)
-        }
-        .set { assembly_channel }
-
-    assembly_channel
+    // Get all possible combinations between assemblies
+    assemblies
         .combine(dbs)
         .set { all_combs }
 
@@ -66,7 +58,7 @@ workflow {
     DIAMOND_GENE_ORDER.out.txt.collect{id, path -> path}.set { blastFiles }
 
     CLUSTERING (
-        assemblyFiles.collect(),
+        assemblies.map { meta, path -> path }.collect(),
         EXTRACTION.out.fasta_path,
         blastFiles,
         EXTRACTION.out.json_path,
@@ -78,8 +70,9 @@ workflow {
         file(params.gene_order_html_template),
         params.plot_clustering
     )
-    // emit:
 
-    // versions = ch_versions                     // channel: [ versions.yml ]
+    emit:
+    clustering_directory = CLUSTERING.out.cluster_path
+    clustering_summary = CLUSTERING.out.summary
 }
 
