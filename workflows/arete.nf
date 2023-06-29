@@ -203,7 +203,7 @@ workflow ARETE {
     }
 
     ////////////////////////// GENE ORDER /////////////////////////////////////
-    if (!params.skip_gene_order) {
+    if (params.run_gene_order) {
         GENE_ORDER (
             ANNOTATE_ASSEMBLIES.out.faa,
             ANNOTATE_ASSEMBLIES.out.gbk,
@@ -404,7 +404,7 @@ workflow ANNOTATION {
     }
 
     ////////////////////////// GENE ORDER /////////////////////////////////////
-    if (!params.skip_gene_order) {
+    if (params.run_gene_order) {
         GENE_ORDER (
             ANNOTATE_ASSEMBLIES.out.faa,
             ANNOTATE_ASSEMBLIES.out.gbk,

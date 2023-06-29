@@ -185,7 +185,7 @@
                 },
                 "accessory_similarity": {
                     "type": "number",
-                    "default": 99,
+                    "default": 99.0,
                     "fa_icon": "far fa-clone",
                     "description": "Similarity threshold for accessory genes"
                 }
