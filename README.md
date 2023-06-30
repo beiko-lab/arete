@@ -43,7 +43,9 @@ Annotation:
 
 Phylogeny:
 
-- Panaroo ([`panaroo`](https://github.com/gtonkinhill/panaroo))
+- (_optionally_) Genome subsetting with PopPUNK ([See documentation](./docs/subsampling.md))
+- PPanGGOLiN ([`PPanGGOLiN`](https://github.com/labgem/PPanGGOLiN))
+- (_optionally_) Panaroo ([`panaroo`](https://github.com/gtonkinhill/panaroo))
 - FastTree ([`fasttree`](http://www.microbesonline.org/fasttree/))
 - (_optionally_) SNP-sites ([`SNPsites`](https://github.com/sanger-pathogens/snp-sites))
 - (_optionally_) IQTree ([`iqtree`](http://www.iqtree.org/))
