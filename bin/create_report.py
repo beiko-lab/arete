@@ -32,6 +32,12 @@ def parse_args(args=None):
         "-f", "--vfdb_fasta", dest="VFDB_FASTA", help="VFDB reference FASTA."
     )
     parser.add_argument(
+        "-c",
+        "--feature_profile_columns",
+        dest="FEATURE_COLUMNS",
+        help="Feature profile columns to include in output",
+    )
+    parser.add_argument(
         "-p",
         "--phispy_out",
         dest="PHISPY",
@@ -218,16 +224,18 @@ def create_report(ann, diamond_outs, rgi, vfdb_fasta, phispy, mobsuite):
     return merged_full
 
 
-def create_feature_profile(ann_report):
-    columns_to_encode = [
-        "phage",
-        "plasmid",
-        "AMR",
-        "bacmet_short_id",
-        "iceberg_short_id",
-        "vfdb_short_id",
-        "cazy",
-    ]
+def create_feature_profile(ann_report, feature_columns):
+    features = feature_columns.split(",")
+    column_mapping = {
+        "mobsuite": "plasmid",
+        "rgi": "AMR",
+        "bacmet": "bacmet_short_id",
+        "iceberg": "iceberg_short_id",
+        "vfdb": "vfdb_short_id",
+        "cazy": "cazy",
+    }
+
+    columns_to_encode = [column_mapping[feature] for feature in features]
 
     columns_in_report = [
         column for column in columns_to_encode if column in ann_report.columns
@@ -266,7 +274,7 @@ def main(args=None):
     )
 
     if not args.skip_profile:
-        create_feature_profile(ann_report)
+        create_feature_profile(ann_report, args.FEATURE_COLUMNS)
 
 
 if __name__ == "__main__":
