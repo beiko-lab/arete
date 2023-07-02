@@ -58,7 +58,7 @@ def parse_args(args=None):
 
 
 def summarize_alignment(path, db_name):
-    df = read_table(path)
+    df = read_table(path, dtype={"genome_id": "str"})
 
     summary = df.copy()[["genome_id", "qseqid", "sseqid", "pident", "qcover"]]
 
@@ -124,13 +124,13 @@ def create_report(ann, diamond_outs, rgi, vfdb_fasta, phispy, mobsuite):
     vfdb_df = parse_vfdb_fasta(vfdb_fasta)
 
     # RGI output
-    rgi_df = read_table(rgi)
+    rgi_df = read_table(rgi, dtype={"genome_id": "str"})
     diamond_sums.append(rgi_df)
 
     # Bakta/Prokka output
     ann_tool = os.path.basename(ann).strip(".txt").lower()
 
-    ann_df = read_table(ann)
+    ann_df = read_table(ann, dtype={"genome_id": "str"})
 
     if ann_tool == "bakta":
         ann_sum = ann_df[
@@ -163,7 +163,7 @@ def create_report(ann, diamond_outs, rgi, vfdb_fasta, phispy, mobsuite):
 
     if mobsuite is not None and ann_tool == "bakta":
         # MobRecon output
-        mobrecon = read_table(mobsuite)
+        mobrecon = read_table(mobsuite, dtype={"genome_id": "str"})
         mobrecon_plasmids = mobrecon[mobrecon["molecule_type"] == "plasmid"]
         mobrecon_sum = mobrecon_plasmids[
             ["sample_id", "contig_id", "primary_cluster_id"]
@@ -185,7 +185,7 @@ def create_report(ann, diamond_outs, rgi, vfdb_fasta, phispy, mobsuite):
         full_contigs = w_mobrecon
 
         if phispy is not None:
-            phispy_df = read_table(phispy)
+            phispy_df = read_table(phispy, dtype={"genome_id": "str"})
 
             phispy_sum = phispy_df[
                 ["genome_id", "Prophage number", "Start", "Stop", "Contig"]
