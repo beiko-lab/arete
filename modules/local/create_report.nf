@@ -16,6 +16,7 @@ process CREATE_REPORT {
     path vfdb_fasta
     path phispy_output
     path mobsuite_output
+    val feature_columns
     val skip_profile
 
     output:
@@ -30,6 +31,7 @@ process CREATE_REPORT {
         --diamond_outs $diamond_results \\
         --rgi_out $rgi_output \\
         --vfdb_fasta $vfdb_fasta \\
+        --feature_profile_columns $feature_columns \\
         --phispy_out $phispy_output \\
         --mobsuite_out $mobsuite_output \\
         $skip

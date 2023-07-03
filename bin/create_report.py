@@ -32,6 +32,12 @@ def parse_args(args=None):
         "-f", "--vfdb_fasta", dest="VFDB_FASTA", help="VFDB reference FASTA."
     )
     parser.add_argument(
+        "-c",
+        "--feature_profile_columns",
+        dest="FEATURE_COLUMNS",
+        help="Feature profile columns to include in output",
+    )
+    parser.add_argument(
         "-p",
         "--phispy_out",
         dest="PHISPY",
@@ -52,7 +58,7 @@ def parse_args(args=None):
 
 
 def summarize_alignment(path, db_name):
-    df = read_table(path)
+    df = read_table(path, dtype={"genome_id": "str"})
 
     summary = df.copy()[["genome_id", "qseqid", "sseqid", "pident", "qcover"]]
 
@@ -118,13 +124,13 @@ def create_report(ann, diamond_outs, rgi, vfdb_fasta, phispy, mobsuite):
     vfdb_df = parse_vfdb_fasta(vfdb_fasta)
 
     # RGI output
-    rgi_df = read_table(rgi)
+    rgi_df = read_table(rgi, dtype={"genome_id": "str"})
     diamond_sums.append(rgi_df)
 
     # Bakta/Prokka output
     ann_tool = os.path.basename(ann).strip(".txt").lower()
 
-    ann_df = read_table(ann)
+    ann_df = read_table(ann, dtype={"genome_id": "str"})
 
     if ann_tool == "bakta":
         ann_sum = ann_df[
@@ -157,7 +163,7 @@ def create_report(ann, diamond_outs, rgi, vfdb_fasta, phispy, mobsuite):
 
     if mobsuite is not None and ann_tool == "bakta":
         # MobRecon output
-        mobrecon = read_table(mobsuite)
+        mobrecon = read_table(mobsuite, dtype={"genome_id": "str"})
         mobrecon_plasmids = mobrecon[mobrecon["molecule_type"] == "plasmid"]
         mobrecon_sum = mobrecon_plasmids[
             ["sample_id", "contig_id", "primary_cluster_id"]
@@ -179,7 +185,7 @@ def create_report(ann, diamond_outs, rgi, vfdb_fasta, phispy, mobsuite):
         full_contigs = w_mobrecon
 
         if phispy is not None:
-            phispy_df = read_table(phispy)
+            phispy_df = read_table(phispy, dtype={"genome_id": "str"})
 
             phispy_sum = phispy_df[
                 ["genome_id", "Prophage number", "Start", "Stop", "Contig"]
@@ -218,16 +224,18 @@ def create_report(ann, diamond_outs, rgi, vfdb_fasta, phispy, mobsuite):
     return merged_full
 
 
-def create_feature_profile(ann_report):
-    columns_to_encode = [
-        "phage",
-        "plasmid",
-        "AMR",
-        "bacmet_short_id",
-        "iceberg_short_id",
-        "vfdb_short_id",
-        "cazy",
-    ]
+def create_feature_profile(ann_report, feature_columns):
+    features = feature_columns.split(",")
+    column_mapping = {
+        "mobsuite": "plasmid",
+        "rgi": "AMR",
+        "bacmet": "bacmet_short_id",
+        "iceberg": "iceberg_short_id",
+        "vfdb": "vfdb_short_id",
+        "cazy": "cazy",
+    }
+
+    columns_to_encode = [column_mapping[feature] for feature in features]
 
     columns_in_report = [
         column for column in columns_to_encode if column in ann_report.columns
@@ -266,7 +274,7 @@ def main(args=None):
     )
 
     if not args.skip_profile:
-        create_feature_profile(ann_report)
+        create_feature_profile(ann_report, args.FEATURE_COLUMNS)
 
 
 if __name__ == "__main__":

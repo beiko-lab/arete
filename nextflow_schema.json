@@ -116,6 +116,13 @@
                     "type": "boolean",
                     "description": "Skip annotation feature profile creation",
                     "fa_icon": "fas fa-forward"
+                },
+                "feature_profile_columns": {
+                    "type": "string",
+                    "default": "mobsuite,rgi,cazy,vfdb,iceberg,bacmet",
+                    "fa_icon": "fas fa-columns",
+                    "description": "Columns to include in the feature profile",
+                    "pattern": "^((rgi|mobsuite|vfdb|cazy|bacmet|iceberg)?,?)*(?<!,)$"
                 }
             }
         },
