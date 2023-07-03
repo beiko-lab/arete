@@ -36,6 +36,7 @@ ch_multiqc_logo            = params.multiqc_logo   ? Channel.fromPath( params.mu
 // SUBWORKFLOW: Consisting of a mix of local and nf-core/modules
 //
 include { INPUT_CHECK } from '../subworkflows/local/input_check'
+include { PHYLO_INPUT_CHECK } from '../subworkflows/local/phylo_input_check'
 include { ANNOTATION_INPUT_CHECK } from '../subworkflows/local/annotation_input_check'
 include { ASSEMBLE_SHORTREADS } from '../subworkflows/local/assembly'
 include { ANNOTATE_ASSEMBLIES } from '../subworkflows/local/annotation'
@@ -426,7 +427,7 @@ workflow ANNOTATION {
 
 }
 
-workflow QUALITYCHECK{
+workflow QUALITYCHECK {
     if (params.input_sample_table){ ch_input = file(params.input_sample_table) } else { exit 1, 'Input samplesheet not specified!' }
     if (params.reference_genome) {
         ch_reference_genome = file(params.reference_genome)
@@ -476,6 +477,35 @@ workflow QUALITYCHECK{
     //multiqc
     workflow_summary    = WorkflowArete.paramsSummaryMultiqc(workflow, summary_params)
     ch_workflow_summary = Channel.value(workflow_summary)
+}
+
+workflow PHYLO {
+    // Check mandatory parameters
+    if (params.input_sample_table) { ch_input = file(params.input_sample_table) } else { exit 1, 'Input samplesheet not specified!' }
+
+    use_full_alignment = params.use_full_alignment ? true : false
+    use_fasttree = params.use_fasttree ? true: false
+
+    ch_software_versions = Channel.empty()
+
+    PHYLO_INPUT_CHECK(ch_input)
+
+    PHYLO_INPUT_CHECK.out.genomes.set { gffs }
+
+    ////////////////////////// PANGENOME /////////////////////////////////////
+    PHYLOGENOMICS(gffs, use_full_alignment, use_fasttree)
+    ch_software_versions = ch_software_versions.mix(PHYLOGENOMICS.out.phylo_software)
+
+
+    ch_software_versions
+        .map { it -> if (it) [ it.baseName, it ] }
+        .groupTuple()
+        .map { it[1][0] }
+        .flatten()
+        .collect()
+        .set { ch_software_versions }
+    GET_SOFTWARE_VERSIONS(ch_software_versions)
+
 }
 
 workflow POPPUNK {

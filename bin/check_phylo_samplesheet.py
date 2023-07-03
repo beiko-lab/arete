@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-# Input check for post-assembly "Annotation" workflow
+# Input check for post-assembly "Phylogenomics" workflow
 
 import os
 import sys
@@ -11,8 +11,8 @@ def check_samplesheet(file_in, file_out):
     """
     This function checks that the samplesheet follows the following structure:
 
-    sample,fna_file_path
-    sample,fna_file_path
+    sample,gff_file_path
+    sample,gff_file_path
 
     """
 
@@ -20,7 +20,7 @@ def check_samplesheet(file_in, file_out):
     with open(file_in, "r") as fin:
         ## Check header
         MIN_COLS = 2
-        HEADER = ["sample", "fna_file_path"]
+        HEADER = ["sample", "gff_file_path"]
         header = [x.strip('"') for x in fin.readline().strip().split(",")]
         if header[: len(HEADER)] != HEADER:
             print(
@@ -52,26 +52,23 @@ def check_samplesheet(file_in, file_out):
                 )
 
             ## Check sample name entries
-            sample, fna_file_path = lspl[: len(HEADER)]
+            sample, gff_file_path = lspl[: len(HEADER)]
             if sample:
                 if sample.find(" ") != -1:
                     print_error("Sample entry contains spaces!", "Line", line)
             else:
                 print_error("Sample entry has not been specified!", "Line", line)
 
-            ## Check assembly fna file extension
+            ## Check assembly gff file extension
 
-            if fna_file_path:
-                if fna_file_path.find(" ") != -1:
-                    print_error("fna file contains spaces!", "Line", line)
-                if (
-                    not fna_file_path.endswith(".fna")
-                    and not fna_file_path.endswith(".fna.gz")
-                    and not fna_file_path.endswith(".fa")
-                    and not fna_file_path.endswith(".fa.gz")
+            if gff_file_path:
+                if gff_file_path.find(" ") != -1:
+                    print_error("gff file path contains spaces!", "Line", line)
+                if not gff_file_path.endswith(".gff") and not gff_file_path.endswith(
+                    ".gff3"
                 ):
                     print_error(
-                        "Assembly files must be one of .fa, .fna, .fa.gz, or .fna.gz.",
+                        "Phylo files must be one of .gff or .gff3.",
                         "Line",
                         line,
                     )
@@ -85,7 +82,7 @@ def check_samplesheet(file_in, file_out):
             else:
                 print_error("Invalid combination of columns provided!", "Line", line)
             """
-            sample_info = fna_file_path
+            sample_info = gff_file_path
 
             ## Create sample mapping dictionary = { sample: path }
             if sample not in sample_mapping_dict:
