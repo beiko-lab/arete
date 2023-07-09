@@ -15,7 +15,7 @@ process QUAST {
 
     output:
     path "${prefix}"    , emit: results
-    path '*.tsv'        , emit: tsv
+    path "${prefix}/transposed_report.tsv", emit: transposed_report
     path "versions.yml" , emit: versions
 
     when:
