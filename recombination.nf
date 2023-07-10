@@ -1,4 +1,5 @@
 include { GET_RECOMB_INPUT } from './modules/local/get_recomb_input'
+include { VERTICALL } from './modules/local/verticall'
 
 
 workflow {
@@ -35,7 +36,7 @@ workflow {
 
         GET_RECOMB_INPUT.out.csv
             .splitCsv(header: true)
-            .map { row -> tuple(row.Cluster, file(row.samplesheet), row.Reference, file(row.reference_path)) }
+            .map { row -> tuple(row.Cluster, file(row.samplesheet), row.Reference, row.reference_path) }
             .set { recomb_input }
 
         assemblies
@@ -45,10 +46,10 @@ workflow {
             .collect { meta, path -> path }
             .set { unduplicated_assemblies }
 
-        // SKA (
-        //     ska_input.map { c, s, r, rf -> tuple(c,s,rf) },
-        //     unduplicated_assemblies
-        //  )
+        VERTICALL (
+            recomb_input.map { c, s, r, rf -> tuple(c,s,rf) },
+            assemblies.collect { meta, path -> path }
+        )
 
 
 
