@@ -16,7 +16,7 @@ jobs:
     strategy:
       matrix:
         NXF_VER:
-          - "latest-everything"
+          - "latest-stable"
         profile: ["docker"] # TODO , "singularity", "conda"]
     steps:
       - name: Check out pipeline code
