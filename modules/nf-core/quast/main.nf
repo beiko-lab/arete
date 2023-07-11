@@ -48,6 +48,7 @@ process QUAST {
     """
     mkdir ${prefix}
     touch ${prefix}/report.tsv
+    touch ${prefix}/transposed_report.tsv
     touch ${prefix}_quast_stub.tsv
     cat <<-END_VERSIONS > versions.yml
     "${task.process}":

@@ -20,7 +20,7 @@ Changes in module 'nf-core/quast'
      path "versions.yml" , emit: versions
  
      when:
-@@ -42,4 +43,15 @@
+@@ -42,4 +43,16 @@
          quast: \$(quast.py --version 2>&1 | sed 's/^.*QUAST v//; s/ .*\$//')
      END_VERSIONS
      """
@@ -29,6 +29,7 @@ Changes in module 'nf-core/quast'
 +    """
 +    mkdir ${prefix}
 +    touch ${prefix}/report.tsv
++    touch ${prefix}/transposed_report.tsv
 +    touch ${prefix}_quast_stub.tsv
 +    cat <<-END_VERSIONS > versions.yml
 +    "${task.process}":
