@@ -1,6 +1,6 @@
 include { GET_RECOMB_INPUT } from './modules/local/get_recomb_input'
 include { VERTICALL } from './modules/local/verticall'
-
+include { QUAST } from './modules/nf-core/quast/main'
 
 workflow {
 
@@ -11,8 +11,11 @@ workflow {
 
     main:
 
+        ch_software_versions = Channel.empty()
+        ch_reference_genome = params.reference_genome ? file(params.reference_genome) : []
+        use_reference_genome = params.reference_genome ? true : false
+
         poppunk_clusters = file(params.poppunk_csv)
-        quast_report = file(params.quast_report)
 
         assemblies = Channel.of(
             [[id:'SRR14022735'], file("${baseDir}/test/SRR14022735_T1.scaffolds.fa")],
@@ -20,6 +23,15 @@ workflow {
             [[id:'SRR14022737'], file("${baseDir}/test/SRR14022737_T1.scaffolds.fa")],
             [[id:'SRR14022754'], file("${baseDir}/test/SRR14022754_T1.scaffolds.fa")]
         )
+
+        QUAST (
+            assemblies.collect { meta, fasta -> fasta },
+            ch_reference_genome,
+            [],
+            use_reference_genome,
+            false
+        )
+        ch_software_versions = ch_software_versions.mix(QUAST.out.versions.ifEmpty(null))
 
         assemblies
             .collectFile(newLine: true) { item ->
@@ -29,7 +41,7 @@ workflow {
             .set { assembly_samplesheet }
 
         GET_RECOMB_INPUT (
-            quast_report,
+            QUAST.out.transposed_report,
             poppunk_clusters,
             assembly_samplesheet
         )
