@@ -19,7 +19,7 @@ jobs:
     strategy:
       matrix:
         NXF_VER:
-          - "latest-everything"
+          - "latest-stable"
     steps:
       - name: Check out pipeline code
         uses: actions/checkout@v2
@@ -42,7 +42,7 @@ jobs:
       matrix:
         profile: ["docker", "singularity"]
         NXF_VER:
-          - "latest-everything"
+          - "latest-stable"
     steps:
       - name: Check out pipeline code
         uses: actions/checkout@v2
