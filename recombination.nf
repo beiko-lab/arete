@@ -1,5 +1,5 @@
 include { GET_RECOMB_INPUT } from './modules/local/get_recomb_input'
-include { VERTICALL } from './modules/local/verticall'
+include { VERTICALL_PAIRWISE } from './modules/local/verticall/pairwise.nf'
 include { QUAST } from './modules/nf-core/quast/main'
 
 workflow {
@@ -58,7 +58,7 @@ workflow {
             .collect { meta, path -> path }
             .set { unduplicated_assemblies }
 
-        VERTICALL (
+        VERTICALL_PAIRWISE (
             recomb_input.map { c, s, r, rf -> tuple(c,s,rf) },
             assemblies.collect { meta, path -> path }
         )

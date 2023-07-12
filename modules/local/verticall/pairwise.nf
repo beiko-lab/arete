@@ -1,4 +1,4 @@
-process VERTICALL {
+process VERTICALL_PAIRWISE {
     tag "$cluster"
     label 'process_high'
 
