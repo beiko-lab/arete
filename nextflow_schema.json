@@ -170,9 +170,9 @@
                 },
                 "poppunk_model": {
                     "type": "string",
-                    "default": "None",
                     "description": "Which PopPunk model to use (bgmm, dbscan, refine, threshold or lineage)",
-                    "fa_icon": "fas fa-indent"
+                    "fa_icon": "fas fa-indent",
+                    "default": "None"
                 },
                 "run_poppunk_qc": {
                     "type": "boolean",
@@ -195,6 +195,20 @@
                     "default": 99,
                     "fa_icon": "far fa-clone",
                     "description": "Similarity threshold for accessory genes"
+                }
+            }
+        },
+        "recombination": {
+            "title": "Recombination",
+            "type": "object",
+            "description": "Parameters for the recombination subworkflow",
+            "default": "",
+            "fa_icon": "fab fa-pagelines",
+            "properties": {
+                "run_recombination": {
+                    "type": "boolean",
+                    "description": "Run Recombination",
+                    "fa_icon": "fas fa-tree"
                 }
             }
         },
@@ -377,6 +391,10 @@
                     "fa_icon": "fas fa-toolbox",
                     "help_text": "This may be useful for example if you are unable to directly pull Singularity containers to run the pipeline due to http/https proxy issues."
                 },
+                "schema_ignore_params": {
+                    "type": "string",
+                    "default": "genomes,modules"
+                },
                 "multiqc_logo": {
                     "type": "string",
                     "default": "None",
@@ -404,6 +422,9 @@
         },
         {
             "$ref": "#/definitions/poppunk"
+        },
+        {
+            "$ref": "#/definitions/recombination"
         },
         {
             "$ref": "#/definitions/institutional_config_options"
