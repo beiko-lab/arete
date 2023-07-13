@@ -1,29 +1,18 @@
-include { GET_RECOMB_INPUT } from './modules/local/get_recomb_input'
-include { VERTICALL_PAIRWISE } from './modules/local/verticall/pairwise.nf'
-include { QUAST } from './modules/nf-core/quast/main'
+include { GET_RECOMB_INPUT } from '../../modules/local/get_recomb_input'
+include { VERTICALL_PAIRWISE } from '../../modules/local/verticall/pairwise.nf'
+include { QUAST } from '../../modules/nf-core/quast/main'
 
-workflow {
+workflow RECOMBINATION {
 
-    // take:
-    //     assemblies
-    //     poppunk_clusters
-    //     quast_report
+    take:
+        assemblies
+        poppunk_clusters
 
     main:
-
-        assemblies = Channel.of(
-            [[id:'SRR14022735'], file("${baseDir}/test/SRR14022735_T1.scaffolds.fa")],
-            [[id:'SRR14022764'], file("${baseDir}/test/SRR14022764_T1.scaffolds.fa")],
-            [[id:'SRR14022737'], file("${baseDir}/test/SRR14022737_T1.scaffolds.fa")],
-            [[id:'SRR14022754'], file("${baseDir}/test/SRR14022754_T1.scaffolds.fa")]
-        )
 
         ch_software_versions = Channel.empty()
         ch_reference_genome = params.reference_genome ? file(params.reference_genome) : []
         use_reference_genome = params.reference_genome ? true : false
-
-        poppunk_clusters = file(params.poppunk_csv)
-
 
         QUAST (
             assemblies.collect { meta, fasta -> fasta },
@@ -66,6 +55,6 @@ workflow {
 
 
 
-    // emit:
-    //     genomes_to_remove = genomes_to_remove
+    emit:
+        verticall_result = VERTICALL_PAIRWISE.out.tsv
 }
