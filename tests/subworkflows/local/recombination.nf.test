@@ -1,0 +1,40 @@
+nextflow_workflow {
+
+    name "Test Workflow RECOMBINATION"
+    script "subworkflows/local/recombination.nf"
+    workflow "RECOMBINATION"
+
+    test("Should run without failures") {
+
+        when {
+            params {
+                outdir = "$outputDir"
+            }
+            workflow {
+                """
+                // define inputs of the workflow here. Example:
+                input[0] = Channel.of(
+                    [[id:'SRR14022735'], "$baseDir/test/SRR14022735_T1.scaffolds.fa"],
+                    [[id:'SRR14022737'], "$baseDir/test/SRR14022737_T1.scaffolds.fa"],
+                    [[id:'SRR14022754'], "$baseDir/test/SRR14022754_T1.scaffolds.fa"],
+                    [[id:'SRR14022764'], "$baseDir/test/SRR14022764_T1.scaffolds.fa"],
+                )
+                input[1] = file("$baseDir/test/poppunk_bgmm_clusters.csv")
+                """
+            }
+        }
+
+        then {
+            assert workflow.success
+            with(workflow.out.verticall_result) {
+                // Should be two results, one per cluster
+                assert size() == 2
+                // Check verticall out number of lines
+                assert path(get(0)[1]).readLines().size() == 2
+                assert path(get(1)[1]).readLines().size() == 2
+            }
+        }
+
+    }
+
+}
