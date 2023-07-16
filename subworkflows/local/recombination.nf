@@ -1,6 +1,8 @@
 include { GET_RECOMB_INPUT } from '../../modules/local/get_recomb_input'
 include { VERTICALL_PAIRWISE } from '../../modules/local/verticall/pairwise.nf'
+include { SKA2 } from '../../modules/local/ska'
 include { QUAST } from '../../modules/nf-core/quast/main'
+include { GUBBINS } from '../../modules/nf-core/gubbins/main'
 
 workflow RECOMBINATION {
 
@@ -41,20 +43,27 @@ workflow RECOMBINATION {
             .map { row -> tuple(row.Cluster, file(row.samplesheet), row.Reference, row.reference_path) }
             .set { recomb_input }
 
-        assemblies
-            .combine (recomb_input.map { c,s,ref,reffile -> ref } | collect | map { [it] })
-            .filter { meta, path, to_remove -> !(meta["id"] in to_remove) }
-            .map { it[0, 1] }
-            .collect { meta, path -> path }
-            .set { unduplicated_assemblies }
+        if (params.run_gubbins) {
+            SKA2 (
+                recomb_input.map { c, s, r, rf -> tuple(c,s,rf) },
+                assemblies.collect { meta, path -> path }
+            )
 
-        VERTICALL_PAIRWISE (
-            recomb_input.map { c, s, r, rf -> tuple(c,s,rf) },
-            assemblies.collect { meta, path -> path }
-        )
+            GUBBINS (
+                SKA2.out.aln
+            )
+        }
+        if (params.run_verticall) {
+            VERTICALL_PAIRWISE (
+                recomb_input.map { c, s, r, rf -> tuple(c,s,rf) },
+                assemblies.collect { meta, path -> path }
+            )
+        }
 
-
+        verticall_result = VERTICALL_PAIRWISE.out.tsv.ifEmpty([])
+        gubbins_result = GUBBINS.out.stats.ifEmpty([])
 
     emit:
-        verticall_result = VERTICALL_PAIRWISE.out.tsv
+        verticall_result
+        gubbins_result
 }

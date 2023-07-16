@@ -1,14 +1,14 @@
-process SKA {
+process SKA2 {
     tag "$cluster"
     label 'process_medium'
 
     conda "bioconda::gubbins=3.3.0"
     container "${ workflow.containerEngine == 'singularity' && !task.ext.singularity_pull_docker_container ?
-        'https://depot.galaxyproject.org/singularity/gubbins:3.3.0--py310pl5321h8472f5a_0':
-        'quay.io/biocontainers/gubbins:3.3.0--py310pl5321h8472f5a_0' }"
+        'docker://jvfe/gubbins:3.3.0':
+        'docker.io/jvfe/gubbins:3.3.0' }"
 
     input:
-    tuple val(cluster), path(assemblies), path(reference)
+    tuple val(cluster), path(assemblies), val(reference)
     path assembly_files
 
     output:

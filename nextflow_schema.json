@@ -209,6 +209,15 @@
                     "type": "boolean",
                     "description": "Run Recombination",
                     "fa_icon": "fas fa-tree"
+                },
+                "run_verticall": {
+                    "type": "boolean",
+                    "default": true,
+                    "description": "Run Verticall recombination tool"
+                },
+                "run_gubbins": {
+                    "type": "boolean",
+                    "description": "Run Gubbins recombination tool"
                 }
             }
         },
