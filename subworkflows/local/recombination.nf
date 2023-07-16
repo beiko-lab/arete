@@ -60,8 +60,8 @@ workflow RECOMBINATION {
             )
         }
 
-        verticall_result = VERTICALL_PAIRWISE.out.tsv.ifEmpty([])
-        gubbins_result = GUBBINS.out.stats.ifEmpty([])
+        gubbins_result = params.run_gubbins ? GUBBINS.out.stats : []
+        verticall_result = params.run_verticall ? VERTICALL_PAIRWISE.out.tsv : []
 
     emit:
         verticall_result
