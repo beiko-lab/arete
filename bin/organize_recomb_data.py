@@ -34,10 +34,10 @@ def get_cluster_samplesheet(df, cluster):
 def create_recomb_input(quast_report, poppunk_clusters, assembly_samplesheet, file_out):
     # Parsing datasets
     quast = read_table(quast_report).loc[:, ["Assembly", "N50"]]
-    quast["Assembly"] = quast["Assembly"].str.replace("_T1.*", "", regex=True)
+    quast["Assembly"] = quast["Assembly"].str.replace("\.(.*)|_T1|$", "", regex=True)
 
     poppunk = read_csv(poppunk_clusters)
-    poppunk["Taxon"] = poppunk["Taxon"].str.replace("_T1.*", "", regex=True)
+    poppunk["Taxon"] = poppunk["Taxon"].str.replace("\.(.*)|_T1|$", "", regex=True)
 
     assemblies = read_csv(assembly_samplesheet, names=["id", "assembly_path"])
     assemblies["assembly_path"] = [
