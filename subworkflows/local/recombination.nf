@@ -1,4 +1,5 @@
 include { GET_RECOMB_INPUT } from '../../modules/local/get_recomb_input'
+include { VERTICALL_REPAIR } from '../../modules/local/verticall/repair.nf'
 include { VERTICALL_PAIRWISE } from '../../modules/local/verticall/pairwise.nf'
 include { SKA2 } from '../../modules/local/ska'
 include { QUAST } from '../../modules/nf-core/quast/main'
@@ -24,6 +25,14 @@ workflow RECOMBINATION {
             false
         )
         ch_software_versions = ch_software_versions.mix(QUAST.out.versions.ifEmpty(null))
+
+        if (params.run_verticall) {
+            VERTICALL_REPAIR (
+                assemblies
+            )
+
+            VERTICALL_REPAIR.out.repaired.set { assemblies }
+        }
 
         assemblies
             .collectFile(newLine: true) { item ->
