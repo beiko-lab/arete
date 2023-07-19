@@ -10,24 +10,27 @@ The pipeline is built using [Nextflow](https://www.nextflow.io/) and processes d
 
 - [FastQC](#fastqc) - Raw and trimmed read QC
 - [FastP](#fastp) - Read trimming
-- [Kraken2](#kraken) - Taxonomic assignment
+- [Kraken2](#kraken2) - Taxonomic assignment
 - [Unicycler](#unicycler) - Short read assembly
-- [Quast](#quast) - Assembly quality score
+- [_Quast_](#quast) - Assembly quality score
 - [Bakta](#bakta) or [_Prokka_](#prokka) - Gene detection and annotation
 - [Panaroo](#panaroo) - Pangenome alignment
 - [MobRecon](#mobrecon) - Reconstruction and typing of plasmids
 - [RGI](#rgi) - Detection and annotation of AMR determinants
 - [IslandPath](#islandpath) - Predicts genomic islands in bacterial and archaeal genomes.
 - [PhiSpy](#phispy) - Prediction of prophages from bacterial genomes
-- [IntegronFinder](#integronfinder) - Finds integrons in DNA sequences
+- [_IntegronFinder_](#integronfinder) - Finds integrons in DNA sequences
 - [Diamond](#diamond) - Detection and annotation of genes using external databases.
-  - [CAZy](#cazy): Carbohydrate metabolism
-  - [VFDB](#vfdb): Virulence factors
-  - [BacMet](#bacmet): Metal resistance determinants
-  - [ICEberg](#iceberg): Integrative and conjugative elements
+  - CAZy: Carbohydrate metabolism
+  - VFDB: Virulence factors
+  - BacMet: Metal resistance determinants
+  - ICEberg: Integrative and conjugative elements
 - [PopPUNK](#poppunk) - Genome clustering
-- [FastTree](#FastTree) or [_IQTree_](#IQTree) - Maximum likelihood core genome phylogenetic tree
-- [_SNPsites_](#SNPsites) - Extracts SNPs from a multi-FASTA alignment
+- [_Verticall_](#verticall) - Conduct pairwise assembly comparisons between genomes in a same PopPUNK cluster
+- [_SKA2_](#ska2) - Generate a whole-genome FASTA alignment for each genome within a cluster.
+- [_Gubbins_](#gubbins) - Detection of recombination events within genomes of the same cluster.
+- [FastTree](#fasttree) or [_IQTree_](#iqtree) - Maximum likelihood core genome phylogenetic tree
+- [_SNPsites_](#snpsites) - Extracts SNPs from a multi-FASTA alignment
 - [MultiQC](#multiqc) - Aggregate report describing results and QC from the whole pipeline
 - [Pipeline information](#pipeline-information) - Report metrics generated during the workflow execution
 
@@ -55,6 +58,18 @@ The pipeline is built using [Nextflow](https://www.nextflow.io/) and processes d
 ![MultiQC - FastQC adapter content plot](images/mqc_fastqc_adapter.png)
 
 > **NB:** The FastQC plots displayed in the MultiQC report shows _untrimmed_ reads. They may contain adapter sequence and potentially regions with low quality.
+
+### fastp
+
+<details markdown="1">
+<summary>Output files</summary>
+
+- `read_processing/fastp/`
+  - `${meta.id}` : Trimmed files and trimming reports for each input sample.
+
+</details>
+
+[fastp](https://github.com/OpenGene/fastp) is a all-in-one fastq preprocessor for read/adapter trimming and quality control. It is used in this pipeline for trimming adapter sequences and discard low-quality reads.
 
 ### Kraken2
 
@@ -296,6 +311,41 @@ See [the panaroo documentation](https://gtonkinhill.github.io/panaroo/#/gettings
 </details>
 
 [PopPUNK](https://poppunk.net/) is a tool for clustering genomes.
+
+### Verticall
+
+<details markdown="1">
+<summary>Output files</summary>
+
+- `recombination/verticall/`
+  - `verticall_cluster*.tsv` - Verticall results for the genomes within this PopPUNK cluster.
+
+</details>
+
+[Verticall](https://github.com/rrwick/Verticall/) is a tool to help produce bacterial genome phylogenies which are not influenced by horizontally acquired sequences such as recombination.
+
+### SKA2
+
+<details markdown="1">
+<summary>Output files</summary>
+
+- `recombination/ska2/`
+  - `cluster_*.aln` - SKA2 results for the genomes within this PopPUNK cluster.
+
+</details>
+
+[SKA2](https://github.com/bacpop/ska.rust) (Split Kmer Analysis) is a toolkit for prokaryotic (and any other small, haploid) DNA sequence analysis using split kmers.
+
+### Gubbins
+
+<details markdown="1">
+<summary>Output files</summary>
+
+- `recombination/gubbins/`
+  - `cluster_*/` - Gubbins results for the genomes within this PopPUNK cluster.
+  </details>
+
+[Gubbins](https://github.com/nickjcroucher/gubbins) is an algorithm that iteratively identifies loci containing elevated densities of base substitutions while concurrently constructing a phylogeny based on the putative point mutations outside of these regions.
 
 ### MultiQC
 

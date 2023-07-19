@@ -43,6 +43,7 @@ include { ANNOTATE_ASSEMBLIES } from '../subworkflows/local/annotation'
 include { CHECK_ASSEMBLIES } from '../subworkflows/local/assemblyqc'
 include { PHYLOGENOMICS } from '../subworkflows/local/phylo'
 include { RUN_POPPUNK } from '../subworkflows/local/poppunk'
+include { RECOMBINATION } from '../subworkflows/local/recombination'
 include { SUBSET_GENOMES } from '../subworkflows/local/subsample'
 /*
 ========================================================================================
@@ -190,6 +191,13 @@ workflow ARETE {
                 .filter { meta, path, to_remove -> !(meta.id in to_remove) }
                 .map { it[0, 1] }
                 .set { gffs }
+        }
+
+        if (params.run_recombination) {
+            RECOMBINATION (
+                assemblies,
+                RUN_POPPUNK.out.clusters
+            )
         }
     }
 
@@ -385,6 +393,13 @@ workflow ANNOTATION {
                 .filter { meta, path, to_remove -> !(meta.id in to_remove) }
                 .map { it[0, 1] }
                 .set { gffs }
+        }
+
+        if (params.run_recombination) {
+            RECOMBINATION (
+                assemblies,
+                RUN_POPPUNK.out.clusters
+            )
         }
     }
 

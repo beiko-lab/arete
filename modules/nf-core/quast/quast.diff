@@ -10,7 +10,17 @@ Changes in module 'nf-core/quast'
      container "${ workflow.containerEngine == 'singularity' && !task.ext.singularity_pull_docker_container ?
          'https://depot.galaxyproject.org/singularity/quast:5.2.0--py39pl5321h2add14b_1' :
          'quay.io/biocontainers/quast:5.2.0--py39pl5321h2add14b_1' }"
-@@ -42,4 +42,15 @@
+@@ -15,7 +15,8 @@
+ 
+     output:
+     path "${prefix}"    , emit: results
+-    path '*.tsv'        , emit: tsv
++    path "*.tsv"        , emit: tsv
++    path "${prefix}/transposed_report.tsv", emit: transposed_report
+     path "versions.yml" , emit: versions
+ 
+     when:
+@@ -42,4 +43,16 @@
          quast: \$(quast.py --version 2>&1 | sed 's/^.*QUAST v//; s/ .*\$//')
      END_VERSIONS
      """
@@ -19,6 +29,7 @@ Changes in module 'nf-core/quast'
 +    """
 +    mkdir ${prefix}
 +    touch ${prefix}/report.tsv
++    touch ${prefix}/transposed_report.tsv
 +    touch ${prefix}_quast_stub.tsv
 +    cat <<-END_VERSIONS > versions.yml
 +    "${task.process}":
