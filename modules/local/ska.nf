@@ -12,8 +12,8 @@ process SKA2 {
     path assembly_files
 
     output:
-    tuple val(cluster), path("${cluster}_alignment.aln"), emit: aln
-    path "versions.yml"                                 , emit: versions
+    tuple val(cluster), path("${cluster}.aln"), emit: aln
+    path "versions.yml"                       , emit: versions
 
     when:
     task.ext.when == null || task.ext.when
@@ -27,7 +27,7 @@ process SKA2 {
         $args \\
         --input $assemblies \\
         --reference $reference \\
-        --out ${cluster}_alignment.aln \\
+        --out ${cluster}.aln \\
         --threads $task.cpus
 
     cat <<-END_VERSIONS > versions.yml
@@ -38,7 +38,7 @@ process SKA2 {
     stub:
     def VERSION = '3.3.0'
     """
-    touch ${cluster}_alignment.aln
+    touch ${cluster}.aln
 
     cat <<-END_VERSIONS > versions.yml
     "${task.process}":
