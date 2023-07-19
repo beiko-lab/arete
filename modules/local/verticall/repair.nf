@@ -1,5 +1,5 @@
 process VERTICALL_REPAIR {
-    tag "$cluster"
+    tag "$meta.id"
     label 'process_high'
 
     conda "bioconda::verticall=0.4.1"
