@@ -53,8 +53,13 @@ workflow RECOMBINATION {
             .set { recomb_input }
 
         if (params.run_gubbins) {
+            recomb_input
+                .map { c, s, r, rf -> tuple(c,s,rf) }
+                .filter { c,s,rf -> file(s).countLines() > 3 }
+                .set { ska_input }
+
             SKA2 (
-                recomb_input.map { c, s, r, rf -> tuple(c,s,rf) },
+                ska_input,
                 assemblies.collect { meta, path -> path }
             )
 
