@@ -54,6 +54,13 @@ Other:
 
 - PopPUNK ([`poppunk`](https://poppunk.net/))
 
+Recombination:
+Check recombination events within each PopPUNK cluster.
+
+- Verticall ([`verticall`](https://github.com/rrwick/Verticall/))
+- SKA2 ([`ska2`](https://github.com/bacpop/ska.rust))
+- Gubbins ([`gubbins`](https://github.com/nickjcroucher/gubbins))
+
 See our [roadmap](ROADMAP.md) for future development targets.
 
 ## Quick Start

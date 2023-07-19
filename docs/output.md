@@ -26,6 +26,9 @@ The pipeline is built using [Nextflow](https://www.nextflow.io/) and processes d
   - [BacMet](#bacmet): Metal resistance determinants
   - [ICEberg](#iceberg): Integrative and conjugative elements
 - [PopPUNK](#poppunk) - Genome clustering
+- [Verticall](#verticall) - Conduct pairwise assembly comparisons between genomes in a same PopPUNK cluster
+- [SKA2](#ska2) - Generate a whole-genome FASTA alignment for each genome within a cluster.
+- [Gubbins](#gubbins) - Detection of recombination events within genomes of the same cluster.
 - [FastTree](#FastTree) or [_IQTree_](#IQTree) - Maximum likelihood core genome phylogenetic tree
 - [_SNPsites_](#SNPsites) - Extracts SNPs from a multi-FASTA alignment
 - [MultiQC](#multiqc) - Aggregate report describing results and QC from the whole pipeline
@@ -296,6 +299,41 @@ See [the panaroo documentation](https://gtonkinhill.github.io/panaroo/#/gettings
 </details>
 
 [PopPUNK](https://poppunk.net/) is a tool for clustering genomes.
+
+### Verticall
+
+<details markdown="1">
+<summary>Output files</summary>
+
+- `recombination/verticall/`
+  - `verticall_cluster*.tsv` - Verticall results for the genomes within this PopPUNK cluster.
+
+</details>
+
+[Verticall](https://github.com/rrwick/Verticall/) is a tool to help produce bacterial genome phylogenies which are not influenced by horizontally acquired sequences such as recombination.
+
+### SKA2
+
+<details markdown="1">
+<summary>Output files</summary>
+
+- `recombination/ska2/`
+  - `cluster_*.aln` - SKA2 results for the genomes within this PopPUNK cluster.
+
+</details>
+
+[SKA2](https://github.com/bacpop/ska.rust) (Split Kmer Analysis) is a toolkit for prokaryotic (and any other small, haploid) DNA sequence analysis using split kmers.
+
+### Gubbins
+
+<details markdown="1">
+<summary>Output files</summary>
+
+- `recombination/gubbins/`
+  - `cluster_*/` - Gubbins results for the genomes within this PopPUNK cluster.
+  </details>
+
+[Gubbins](https://github.com/nickjcroucher/gubbins) is an algorithm that iteratively identifies loci containing elevated densities of base substitutions while concurrently constructing a phylogeny based on the putative point mutations outside of these regions.
 
 ### MultiQC
 
