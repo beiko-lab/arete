@@ -1,6 +1,6 @@
 process SKA2 {
     tag "$cluster"
-    label 'process_medium'
+    label 'process_high'
 
     conda "bioconda::gubbins=3.3.0"
     container "${ workflow.containerEngine == 'singularity' && !task.ext.singularity_pull_docker_container ?

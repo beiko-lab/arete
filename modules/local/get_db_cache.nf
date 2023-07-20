@@ -1,6 +1,6 @@
 //process for acquiring cached databases
 process GET_DB_CACHE {
-    label 'process_medium'
+    label 'process_single'
 
     input:
         path(dbcache)

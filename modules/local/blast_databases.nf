@@ -1,5 +1,5 @@
 process GET_CAZYDB {
-    label 'process_low'
+    label 'process_single'
     label 'error_retry_delay'
 
     output:
@@ -12,7 +12,7 @@ process GET_CAZYDB {
 }
 
 process GET_VFDB{
-    label 'process_low'
+    label 'process_single'
     label 'error_retry_delay'
 
     output:
@@ -29,7 +29,7 @@ process GET_VFDB{
 }
 
 process GET_BACMET{
-    label 'process_low'
+    label 'process_single'
     label 'error_retry_delay'
 
     output:
@@ -46,7 +46,7 @@ process GET_BACMET{
 }
 
 process GET_ICEBERG {
-    label 'process_low'
+    label 'process_single'
     label 'error_retry_delay'
 
     output:
