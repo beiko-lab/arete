@@ -79,6 +79,7 @@ Note: this workflow should also support [`Podman`](https://podman.io/), [`Shifte
 
     - Please check [nf-core/configs](https://github.com/nf-core/configs#documentation) to see if a custom config file to run nf-core pipelines already exists for your Institute. If so, you can simply use `-profile <institute>` in your command. This will enable either `docker` or `singularity` and set the appropriate execution settings for your local compute environment.
     - If you are using `singularity` then the pipeline will auto-detect this and attempt to download the Singularity images directly as opposed to performing a conversion from Docker images. If you are persistently observing issues downloading Singularity images directly due to timeout or network issues then please use the `--singularity_pull_docker_container` parameter to pull and convert the Docker image instead.
+    - In case of input datasets larger than 100 samples, [check our resource profiles documentation](docs/resource_profiles.md), for optimal usage.
 
 4.  Start running your own analysis (ideally using `-profile docker` or `-profile singularity` for stability)!
 
