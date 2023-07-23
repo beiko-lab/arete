@@ -91,6 +91,7 @@ Note: this workflow should also support [`Podman`](https://podman.io/), [`Shifte
 **Note**: If you get this error at the end `` Failed to invoke `workflow.onComplete` event handler `` it isn't a problem, it just means you don't have an sendmail configured and it can't send an email report saying it finished correctly i.e., its not that the workflow failed.
 
 See [usage docs](docs/usage.md) for all of the available options when running the pipeline.
+See the [parameter docs](docs/params.md) for a list of all params currently implemented in the pipeline and which ones are required.
 
 ### Testing
 
