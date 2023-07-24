@@ -6,7 +6,7 @@
 [![run with docker](https://img.shields.io/badge/run%20with-docker-0db7ed?labelColor=000000&logo=docker)](https://www.docker.com/)
 [![run with singularity](https://img.shields.io/badge/run%20with-singularity-1d355c.svg?labelColor=000000)](https://sylabs.io/docs/)
 
-![ARETE Logo](docs/images/arete-logo-transparent.png)
+![ARETE Logo](assets/arete-logo-transparent.png)
 
 ## Introduction
 
@@ -43,7 +43,7 @@ Annotation:
 
 Phylogeny:
 
-- (_optionally_) Genome subsetting with PopPUNK ([See documentation](./docs/subsampling.md))
+- (_optionally_) Genome subsetting with PopPUNK ([See documentation](https://beikolab.github.io/arete/subsampling/))
 - PPanGGOLiN ([`PPanGGOLiN`](https://github.com/labgem/PPanGGOLiN))
 - (_optionally_) Panaroo ([`panaroo`](https://github.com/gtonkinhill/panaroo))
 - FastTree ([`fasttree`](http://www.microbesonline.org/fasttree/))
@@ -90,7 +90,7 @@ Note: this workflow should also support [`Podman`](https://podman.io/), [`Shifte
 
 **Note**: If you get this error at the end `` Failed to invoke `workflow.onComplete` event handler `` it isn't a problem, it just means you don't have an sendmail configured and it can't send an email report saying it finished correctly i.e., its not that the workflow failed.
 
-See [usage docs](docs/usage.md) for all of the available options when running the pipeline.
+See [usage docs](https://beikolab.github.io/arete/usage/) for all of the available options when running the pipeline.
 
 ### Testing
 
@@ -109,7 +109,7 @@ However to accelerate it you can download/cache the database files to a folder (
 
 ## Documentation
 
-The ARETE pipeline comes with documentation about the pipeline: [usage](docs/usage.md) and [output](docs/output.md).
+The ARETE pipeline comes with documentation about the pipeline: [usage](https://beikolab.github.io/arete/usage/) and [output](https://beikolab.github.io/arete/output/).
 
 ## Credits
 
