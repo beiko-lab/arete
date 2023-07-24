@@ -45,7 +45,7 @@ TREATMENT_REP3,AEG588A6_S6_L004_R1_001.fastq.gz,
 | `fastq_1` | Full path to FastQ file for Illumina short reads 1. File has to be gzipped and have the extension ".fastq.gz" or ".fq.gz". |
 | `fastq_2` | Full path to FastQ file for Illumina short reads 2. File has to be gzipped and have the extension ".fastq.gz" or ".fq.gz". |
 
-An [example samplesheet](../assets/samplesheet.csv) has been provided with the pipeline.
+An [example samplesheet](assets/samplesheet.csv) has been provided with the pipeline.
 
 ### Annotation only samplesheet
 
@@ -146,27 +146,40 @@ They are loaded in sequence, so later profiles can overwrite earlier profiles.
 If `-profile` is not specified, the pipeline will run locally and expect all software to be installed and available on the `PATH`. This is _not_ recommended.
 
 - `docker`
-  - A generic configuration profile to be used with [Docker](https://docker.com/)
-  - Pulls software from Docker Hub: [`nfcore/arete`](https://hub.docker.com/r/nfcore/arete/)
+
+      - A generic configuration profile to be used with [Docker](https://docker.com/)
+      - Pulls software from Docker Hub: [`nfcore/arete`](https://hub.docker.com/r/nfcore/arete/)
+
 - `singularity`
-  - A generic configuration profile to be used with [Singularity](https://sylabs.io/docs/)
-  - Pulls software from Docker Hub: [`nfcore/arete`](https://hub.docker.com/r/nfcore/arete/)
+
+      - A generic configuration profile to be used with [Singularity](https://sylabs.io/docs/)
+      - Pulls software from Docker Hub: [`nfcore/arete`](https://hub.docker.com/r/nfcore/arete/)
+
 - `podman`
-  - A generic configuration profile to be used with [Podman](https://podman.io/)
-  - Pulls software from Docker Hub: [`nfcore/arete`](https://hub.docker.com/r/nfcore/arete/)
+
+      - A generic configuration profile to be used with [Podman](https://podman.io/)
+      - Pulls software from Docker Hub: [`nfcore/arete`](https://hub.docker.com/r/nfcore/arete/)
+
 - `shifter`
-  - A generic configuration profile to be used with [Shifter](https://nersc.gitlab.io/development/shifter/how-to-use/)
-  - Pulls software from Docker Hub: [`nfcore/arete`](https://hub.docker.com/r/nfcore/arete/)
+
+      - A generic configuration profile to be used with [Shifter](https://nersc.gitlab.io/development/shifter/how-to-use/)
+      - Pulls software from Docker Hub: [`nfcore/arete`](https://hub.docker.com/r/nfcore/arete/)
+
 - `charliecloud`
-  - A generic configuration profile to be used with [Charliecloud](https://hpc.github.io/charliecloud/)
-  - Pulls software from Docker Hub: [`nfcore/arete`](https://hub.docker.com/r/nfcore/arete/)
+
+      - A generic configuration profile to be used with [Charliecloud](https://hpc.github.io/charliecloud/)
+      - Pulls software from Docker Hub: [`nfcore/arete`](https://hub.docker.com/r/nfcore/arete/)
+
 - `conda`
-  - Please only use Conda as a last resort i.e. when it's not possible to run the pipeline with Docker, Singularity, Podman, Shifter or Charliecloud.
-  - A generic configuration profile to be used with [Conda](https://conda.io/docs/)
-  - Pulls most software from [Bioconda](https://bioconda.github.io/)
+
+      - Please only use Conda as a last resort i.e. when it's not possible to run the pipeline with Docker, Singularity, Podman, Shifter or Charliecloud.
+      - A generic configuration profile to be used with [Conda](https://conda.io/docs/)
+      - Pulls most software from [Bioconda](https://bioconda.github.io/)
+
 - `test`
-  - A profile with a complete configuration for automated testing
-  - Includes links to test data so needs no other parameters
+
+      - A profile with a complete configuration for automated testing
+      - Includes links to test data so needs no other parameters
 
 ### `-resume`
 

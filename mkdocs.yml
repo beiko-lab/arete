@@ -1,0 +1,17 @@
+site_name: ARETE
+site_description: AMR/VF LGT focused bacterial genomics analysis workflow
+site_author: Beiko Lab
+nav:
+  - Home: README.md
+  - Usage: usage.md
+  - Output: output.md
+  - Citations: CITATIONS.md
+  - Roadmap: ROADMAP.md
+  - Reference:
+      - Parameters: params.md
+      - Subsampling: subsampling.md
+repo_url: https://github.com/beiko-lab/arete
+theme:
+  name: "readthedocs"
+plugins:
+  - search
