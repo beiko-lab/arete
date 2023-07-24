@@ -131,7 +131,7 @@ The <a href="https://nf-cor.re">nf-core</a> project provided overall project tem
 </ul>
 <p>Phylogeny:</p>
 <ul>
-<li>(<em>optionally</em>) Genome subsetting with PopPUNK (<a href="https://beikolab.github.io/arete/subsampling/">See documentation</a>)</li>
+<li>(<em>optionally</em>) Genome subsetting with PopPUNK (<a href="https://beiko-lab.github.io/arete/subsampling/">See documentation</a>)</li>
 <li>PPanGGOLiN (<a href="https://github.com/labgem/PPanGGOLiN"><code>PPanGGOLiN</code></a>)</li>
 <li>(<em>optionally</em>) Panaroo (<a href="https://github.com/gtonkinhill/panaroo"><code>panaroo</code></a>)</li>
 <li>FastTree (<a href="http://www.microbesonline.org/fasttree/"><code>fasttree</code></a>)</li>
@@ -176,8 +176,8 @@ The <a href="https://nf-cor.re">nf-core</a> project provided overall project tem
 </code></pre>
 <p><code>samplesheet.csv</code> must be formatted <code>sample,fastq_1,fastq_2</code></p>
 <p><strong>Note</strong>: If you get this error at the end <code>Failed to invoke `workflow.onComplete` event handler</code> it isn't a problem, it just means you don't have an sendmail configured and it can't send an email report saying it finished correctly i.e., its not that the workflow failed.</p>
-<p>See <a href="https://beikolab.github.io/arete/usage/">usage docs</a> for all of the available options when running the pipeline.
-See the <a href="https://beikolab.github.io/arete/params/">parameter docs</a> for a list of all params currently implemented in the pipeline and which ones are required.</p>
+<p>See <a href="https://beiko-lab.github.io/arete/usage/">usage docs</a> for all of the available options when running the pipeline.
+See the <a href="https://beiko-lab.github.io/arete/params/">parameter docs</a> for a list of all params currently implemented in the pipeline and which ones are required.</p>
 <h3 id="testing">Testing</h3>
 <p>To test the worklow on a minimal dataset you can use the test configuration (with either docker, conda, or singularity - replace <code>docker</code> below as appropriate):</p>
 <pre><code class="language-bash">nextflow run beiko-lab/ARETE -profile test,docker
@@ -190,7 +190,7 @@ However to accelerate it you can download/cache the database files to a folder (
   --bakta_db $PWD/baktadb/db-light
 </code></pre>
 <h2 id="documentation">Documentation</h2>
-<p>The ARETE pipeline comes with documentation about the pipeline: <a href="https://beikolab.github.io/arete/usage/">usage</a> and <a href="https://beikolab.github.io/arete/output/">output</a>.</p>
+<p>The ARETE pipeline comes with documentation about the pipeline: <a href="https://beiko-lab.github.io/arete/usage/">usage</a> and <a href="https://beiko-lab.github.io/arete/output/">output</a>.</p>
 <h2 id="credits">Credits</h2>
 <p>ARETE was originally written and developed by <a href="https://github.com/fmaguire">Finlay Maguire</a> and <a href="https://github.com/alexmanuele">Alex Manuele</a>, and is currently developed by <a href="https://github.com/jvfe">João Cavalcante</a>.</p>
 <h2 id="contributions-and-support">Contributions and Support</h2>
@@ -258,5 +258,5 @@ However to accelerate it you can download/cache the database files to a folder (
 
 <!--
 MkDocs version : 1.4.3
-Build Date UTC : 2023-07-24 14:34:57.445935+00:00
+Build Date UTC : 2023-07-24 14:40:45.942110+00:00
 -->
