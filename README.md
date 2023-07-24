@@ -66,28 +66,32 @@ See our [roadmap](ROADMAP.md) for future development targets.
 
 ## Quick Start
 
-1. Install [`nextflow`](https://nf-co.re/usage/installation)
+1.  Install [`nextflow`](https://nf-co.re/usage/installation)
 
-2. Install [`Docker`](https://www.docker.com), [`Singularity`](https://sylabs.io/guides/3.0/user-guide/installation.html), or, as a last resort, [`Conda`](https://conda.io/miniconda.html). Also ensure you have a working `curl` installed (should be present on almost all systems).
+2.  Install [`Docker`](https://www.docker.com), [`Singularity`](https://sylabs.io/guides/3.0/user-guide/installation.html), or, as a last resort, [`Conda`](https://conda.io/miniconda.html). Also ensure you have a working `curl` installed (should be present on almost all systems).
 
-Note: this workflow should also support [`Podman`](https://podman.io/), [`Shifter`](https://nersc.gitlab.io/development/shifter/how-to-use/) or [`Charliecloud`](https://hpc.github.io/charliecloud/) execution for full pipeline reproducibility. We have minimized reliance on `conda` and suggest using it only as a last resort (see [docs](https://nf-co.re/usage/configuration#basic-configuration-profiles)). Configure `mail` on your system to send an email on workflow success/failure (without this you may get a small error at the end `Failed to invoke workflow.onComplete event handler` but this doesn't mean the workflow didn't finish successfully).
+    2.1. Note: this workflow should also support [`Podman`](https://podman.io/), [`Shifter`](https://nersc.gitlab.io/development/shifter/how-to-use/) or [`Charliecloud`](https://hpc.github.io/charliecloud/) execution for full pipeline reproducibility. We have minimized reliance on `conda` and suggest using it only as a last resort (see [docs](https://nf-co.re/usage/configuration#basic-configuration-profiles)). Configure `mail` on your system to send an email on workflow success/failure (without this you may get a small error at the end `Failed to invoke workflow.onComplete event handler` but this doesn't mean the workflow didn't finish successfully).
 
 3.  Download the pipeline and test with a `stub-run`. The `stub-run` will ensure that the pipeline is able to download and use containers as well as execute in the proper logic.
 
-    ```bash
+    ```
     nextflow run beiko-lab/ARETE -profile test,<docker/singularity/conda> -stub-run
     ```
 
-    - Please check [nf-core/configs](https://github.com/nf-core/configs#documentation) to see if a custom config file to run nf-core pipelines already exists for your Institute. If so, you can simply use `-profile <institute>` in your command. This will enable either `docker` or `singularity` and set the appropriate execution settings for your local compute environment.
-    - If you are using `singularity` then the pipeline will auto-detect this and attempt to download the Singularity images directly as opposed to performing a conversion from Docker images. If you are persistently observing issues downloading Singularity images directly due to timeout or network issues then please use the `--singularity_pull_docker_container` parameter to pull and convert the Docker image instead.
+    3.1. Please check [nf-core/configs](https://github.com/nf-core/configs#documentation) to see if a custom config file to run nf-core pipelines already exists for your Institute. If so, you can simply use `-profile <institute>` in your command. This will enable either `docker` or `singularity` and set the appropriate execution settings for your local compute environment.
+
+    3.2. If you are using `singularity` then the pipeline will auto-detect this and attempt to download the Singularity images directly as opposed to performing a conversion from Docker images. If you are persistently observing issues downloading Singularity images directly due to timeout or network issues then please use the `--singularity_pull_docker_container` parameter to pull and convert the Docker image instead.
 
 4.  Start running your own analysis (ideally using `-profile docker` or `-profile singularity` for stability)!
 
-        ```bash
-        nextflow run beiko-lab/ARETE -profile <docker/singularity> --input_sample_table samplesheet.csv --poppunk_model bgmm
-        ```
+```bash
+nextflow run beiko-lab/ARETE \
+  -profile <docker/singularity> \
+  --input_sample_table samplesheet.csv \
+  --poppunk_model bgmm
+```
 
-    `samplesheet.csv` must be formatted `sample,fastq_1,fastq_2`
+`samplesheet.csv` must be formatted `sample,fastq_1,fastq_2`
 
 **Note**: If you get this error at the end `` Failed to invoke `workflow.onComplete` event handler `` it isn't a problem, it just means you don't have an sendmail configured and it can't send an email report saying it finished correctly i.e., its not that the workflow failed.
 
@@ -98,16 +102,19 @@ See the [parameter docs](https://beikolab.github.io/arete/params/) for a list of
 
 To test the worklow on a minimal dataset you can use the test configuration (with either docker, conda, or singularity - replace `docker` below as appropriate):
 
-    ```bash
-    nextflow run beiko-lab/ARETE -profile test,docker
-    ```
+```bash
+nextflow run beiko-lab/ARETE -profile test,docker
+```
 
 Due to download speed of the Kraken2, Bakta and CAZY databases this will take ~35 minutes.
 However to accelerate it you can download/cache the database files to a folder (e.g., `test/db_cache`) and provide a database cache parameter. As well as set `--bakta_db` to the directory containing the Bakta database.
 
-    ```bash
-    nextflow run beiko-lab/ARETE -profile test,docker --db_cache $PWD/test/db_cache --bakta_db $PWD/baktadb/db-light
-    ```
+```bash
+nextflow run beiko-lab/ARETE \
+  -profile test,docker \
+  --db_cache $PWD/test/db_cache \
+  --bakta_db $PWD/baktadb/db-light
+```
 
 ## Documentation
 
