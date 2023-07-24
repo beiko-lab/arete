@@ -43,7 +43,7 @@ Annotation:
 
 Phylogeny:
 
-- (_optionally_) Genome subsetting with PopPUNK ([See documentation](https://beikolab.github.io/arete/subsampling/))
+- (_optionally_) Genome subsetting with PopPUNK ([See documentation](https://beiko-lab.github.io/arete/subsampling/))
 - PPanGGOLiN ([`PPanGGOLiN`](https://github.com/labgem/PPanGGOLiN))
 - (_optionally_) Panaroo ([`panaroo`](https://github.com/gtonkinhill/panaroo))
 - FastTree ([`fasttree`](http://www.microbesonline.org/fasttree/))
@@ -95,8 +95,8 @@ nextflow run beiko-lab/ARETE \
 
 **Note**: If you get this error at the end `` Failed to invoke `workflow.onComplete` event handler `` it isn't a problem, it just means you don't have an sendmail configured and it can't send an email report saying it finished correctly i.e., its not that the workflow failed.
 
-See [usage docs](https://beikolab.github.io/arete/usage/) for all of the available options when running the pipeline.
-See the [parameter docs](https://beikolab.github.io/arete/params/) for a list of all params currently implemented in the pipeline and which ones are required.
+See [usage docs](https://beiko-lab.github.io/arete/usage/) for all of the available options when running the pipeline.
+See the [parameter docs](https://beiko-lab.github.io/arete/params/) for a list of all params currently implemented in the pipeline and which ones are required.
 
 ### Testing
 
@@ -118,7 +118,7 @@ nextflow run beiko-lab/ARETE \
 
 ## Documentation
 
-The ARETE pipeline comes with documentation about the pipeline: [usage](https://beikolab.github.io/arete/usage/) and [output](https://beikolab.github.io/arete/output/).
+The ARETE pipeline comes with documentation about the pipeline: [usage](https://beiko-lab.github.io/arete/usage/) and [output](https://beiko-lab.github.io/arete/output/).
 
 ## Credits
 
