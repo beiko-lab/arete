@@ -8,7 +8,7 @@ nav:
   - Citations: CITATIONS.md
   - Roadmap: ROADMAP.md
   - Reference:
-      # - Parameters: params.md
+      - Parameters: params.md
       - Subsampling: subsampling.md
 repo_url: https://github.com/beiko-lab/arete
 theme:
