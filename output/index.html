@@ -1,0 +1,546 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="author" content="Beiko Lab" />
+      <link rel="shortcut icon" href="../img/favicon.ico" />
+    <title>Output - ARETE</title>
+    <link rel="stylesheet" href="../css/theme.css" />
+    <link rel="stylesheet" href="../css/theme_extra.css" />
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.5.0/styles/github.min.css" />
+    
+      <script>
+        // Current page data
+        var mkdocs_page_name = "Output";
+        var mkdocs_page_input_path = "output.md";
+        var mkdocs_page_url = null;
+      </script>
+    
+    <script src="../js/jquery-3.6.0.min.js" defer></script>
+    <!--[if lt IE 9]>
+      <script src="../js/html5shiv.min.js"></script>
+    <![endif]-->
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.5.0/highlight.min.js"></script>
+      <script>hljs.initHighlightingOnLoad();</script> 
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side stickynav">
+    <div class="wy-side-scroll">
+      <div class="wy-side-nav-search">
+          <a href=".." class="icon icon-home"> ARETE
+        </a><div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="../search.html" method="get">
+      <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" title="Type search term here" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="..">Home</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../usage/">Usage</a>
+                </li>
+              </ul>
+              <ul class="current">
+                <li class="toctree-l1 current"><a class="reference internal current" href="./">Output</a>
+    <ul class="current">
+    <li class="toctree-l2"><a class="reference internal" href="#introduction">Introduction</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#pipeline-overview">Pipeline overview</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#fastqc">FastQC</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#fastp">fastp</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#kraken2">Kraken2</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#unicycler">Unicycler</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#quast">Quast</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#bakta">Bakta</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#prokka">Prokka</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#rgi">RGI</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#mobrecon">MobRecon</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#diamond">DIAMOND</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#islandpath">IslandPath</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#integronfinder">IntegronFinder</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#phispy">PhiSpy</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#panaroo">Panaroo</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#fasttree">FastTree</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#iqtree">IQTree</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#snpsites">SNPsites</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#poppunk">PopPUNK</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#verticall">Verticall</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#ska2">SKA2</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#gubbins">Gubbins</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#multiqc">MultiQC</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#pipeline-information">Pipeline information</a>
+    </li>
+        </ul>
+    </li>
+    </ul>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../CITATIONS/">Citations</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../ROADMAP/">Roadmap</a>
+                </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Reference</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../params/">Parameters</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../subsampling/">Subsampling</a>
+                  </li>
+              </ul>
+      </div>
+    </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+      <nav class="wy-nav-top" role="navigation" aria-label="Mobile navigation menu">
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="..">ARETE</a>
+        
+      </nav>
+      <div class="wy-nav-content">
+        <div class="rst-content"><div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href=".." class="icon icon-home" aria-label="Docs"></a> &raquo;</li>
+      <li>Output</li>
+    <li class="wy-breadcrumbs-aside">
+          <a href="https://github.com/beiko-lab/arete/edit/master/docs/output.md" class="icon icon-github"> Edit on GitHub</a>
+    </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+            <div class="section" itemprop="articleBody">
+              
+                <h1 id="beiko-labarete-output">beiko-lab/ARETE: Output</h1>
+<h2 id="introduction">Introduction</h2>
+<p>The directories listed below will be created in the results directory after the pipeline has finished. All paths are relative to the top-level results directory.</p>
+<h2 id="pipeline-overview">Pipeline overview</h2>
+<p>The pipeline is built using <a href="https://www.nextflow.io/">Nextflow</a> and processes data using the following steps (steps in <em>italics</em> don't run by default):</p>
+<ul>
+<li><a href="#fastqc">FastQC</a> - Raw and trimmed read QC</li>
+<li><a href="#fastp">FastP</a> - Read trimming</li>
+<li><a href="#kraken2">Kraken2</a> - Taxonomic assignment</li>
+<li><a href="#unicycler">Unicycler</a> - Short read assembly</li>
+<li><a href="#quast"><em>Quast</em></a> - Assembly quality score</li>
+<li><a href="#bakta">Bakta</a> or <a href="#prokka"><em>Prokka</em></a> - Gene detection and annotation</li>
+<li><a href="#panaroo">Panaroo</a> - Pangenome alignment</li>
+<li><a href="#mobrecon">MobRecon</a> - Reconstruction and typing of plasmids</li>
+<li><a href="#rgi">RGI</a> - Detection and annotation of AMR determinants</li>
+<li><a href="#islandpath">IslandPath</a> - Predicts genomic islands in bacterial and archaeal genomes.</li>
+<li><a href="#phispy">PhiSpy</a> - Prediction of prophages from bacterial genomes</li>
+<li><a href="#integronfinder"><em>IntegronFinder</em></a> - Finds integrons in DNA sequences</li>
+<li>
+<p><a href="#diamond">Diamond</a> - Detection and annotation of genes using external databases.</p>
+<ul>
+<li>CAZy: Carbohydrate metabolism</li>
+<li>VFDB: Virulence factors</li>
+<li>BacMet: Metal resistance determinants</li>
+<li>ICEberg: Integrative and conjugative elements</li>
+</ul>
+</li>
+<li>
+<p><a href="#poppunk">PopPUNK</a> - Genome clustering</p>
+</li>
+<li><a href="#verticall"><em>Verticall</em></a> - Conduct pairwise assembly comparisons between genomes in a same PopPUNK cluster</li>
+<li><a href="#ska2"><em>SKA2</em></a> - Generate a whole-genome FASTA alignment for each genome within a cluster.</li>
+<li><a href="#gubbins"><em>Gubbins</em></a> - Detection of recombination events within genomes of the same cluster.</li>
+<li><a href="#fasttree">FastTree</a> or <a href="#iqtree"><em>IQTree</em></a> - Maximum likelihood core genome phylogenetic tree</li>
+<li><a href="#snpsites"><em>SNPsites</em></a> - Extracts SNPs from a multi-FASTA alignment</li>
+<li><a href="#multiqc">MultiQC</a> - Aggregate report describing results and QC from the whole pipeline</li>
+<li><a href="#pipeline-information">Pipeline information</a> - Report metrics generated during the workflow execution</li>
+</ul>
+<!-- TODO put all the other crap in below. Can't be arsed today -->
+
+<h3 id="fastqc">FastQC</h3>
+<ul>
+<li>
+<p><code>read_processing/*_fastqc/</code></p>
+<ul>
+<li><code>*_fastqc.html</code>: FastQC report containing quality metrics for your untrimmed raw fastq files.</li>
+<li><code>*_fastqc.zip</code>: Zip archive containing the FastQC report, tab-delimited data file and plot images.</li>
+</ul>
+</li>
+</ul>
+<p><strong>NB:</strong> The FastQC plots in this directory are generated relative to the raw, input reads. They may contain adapter sequence and regions of low quality. To see how your reads look after adapter and quality trimming please refer to the FastQC reports in the <code>trimgalore/fastqc/</code> directory.</p>
+<p><a href="http://www.bioinformatics.babraham.ac.uk/projects/fastqc/">FastQC</a> gives general quality metrics about your sequenced reads. It provides information about the quality score distribution across your reads, per base sequence content (%A/T/G/C), adapter contamination and overrepresented sequences. For further reading and documentation see the <a href="http://www.bioinformatics.babraham.ac.uk/projects/fastqc/Help/">FastQC help pages</a>.</p>
+<p><img alt="MultiQC - FastQC sequence counts plot" src="../assets/mqc_fastqc_counts.png" /></p>
+<p><img alt="MultiQC - FastQC mean quality scores plot" src="../assets/mqc_fastqc_quality.png" /></p>
+<p><img alt="MultiQC - FastQC adapter content plot" src="../assets/mqc_fastqc_adapter.png" /></p>
+<blockquote>
+<p><strong>NB:</strong> The FastQC plots displayed in the MultiQC report shows <em>untrimmed</em> reads. They may contain adapter sequence and potentially regions with low quality.</p>
+</blockquote>
+<h3 id="fastp">fastp</h3>
+<ul>
+<li>
+<p><code>read_processing/fastp/</code></p>
+<ul>
+<li><code>${meta.id}</code> : Trimmed files and trimming reports for each input sample.</li>
+</ul>
+</li>
+</ul>
+<p><a href="https://github.com/OpenGene/fastp">fastp</a> is a all-in-one fastq preprocessor for read/adapter trimming and quality control. It is used in this pipeline for trimming adapter sequences and discard low-quality reads.</p>
+<h3 id="kraken2">Kraken2</h3>
+<ul>
+<li>
+<p><code>read_processing/kraken2/</code></p>
+<ul>
+<li><code>*.kraken2.report.txt</code> : Text file containing genome-wise information of Kraken2 findings. See <a href="https://github.com/DerrickWood/kraken2/blob/master/docs/MANUAL.markdown#output-formats">here</a> for details.</li>
+<li><code>*.classified(_(1|2))?.fastq.gz</code> : Fasta file containing classified reads. If paired-end, one file per end.</li>
+<li><code>*.unclassified(_(1|2))?.fastq.gz</code> : Fasta file containing unclassified reads. If paired-end, one file per end.</li>
+</ul>
+</li>
+</ul>
+<p>Kraken2 is a read classification software which will assign taxonomy to each read comprising a sample. These results may be analyzed as an indicator of contamination.</p>
+<h3 id="unicycler">Unicycler</h3>
+<ul>
+<li>
+<p><code>assembly/unicycler/</code></p>
+<ul>
+<li><code>*.assembly.gfa</code></li>
+<li><code>*.scaffolds.fa</code></li>
+<li><code>*.unicycler.log</code></li>
+</ul>
+</li>
+</ul>
+<p>Short/hybrid read assembler. For now only handles short reads in ARETE.</p>
+<h3 id="quast">Quast</h3>
+<ul>
+<li>
+<p><code>assembly/quast/</code></p>
+<ul>
+<li><code>report.tsv</code> : A tab-seperated report compiling all QC metrics recorded over all genomes</li>
+<li>
+<p><code>quast/</code></p>
+<ul>
+<li><code>report.(html|tex|pdf|tsv|txt)</code>: The Quast report in different file formats</li>
+<li><code>transposed_report.(tsv|txt)</code> : Transpose of the Quast report</li>
+<li><code>quast.log</code> : Log file of all Quast runs</li>
+<li><code>icarus_viewers/</code><ul>
+<li><code>contig_size_viewer.html</code></li>
+</ul>
+</li>
+<li><code>basic_stats/</code>: Directory containing various summary plots generated by Quast.</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h3 id="bakta">Bakta</h3>
+<ul>
+<li>
+<p><code>annotation/bakta/</code></p>
+<ul>
+<li>
+<p><code>${sample_id}/</code> : Bakta results will be in one directory per genome.</p>
+<ul>
+<li><code>${sample_id}.tsv</code>: annotations as simple human readble TSV</li>
+<li><code>${sample_id}.gff3</code>: annotations &amp; sequences in GFF3 format</li>
+<li><code>${sample_id}.gbff</code>: annotations &amp; sequences in (multi) GenBank format</li>
+<li><code>${sample_id}.embl</code>: annotations &amp; sequences in (multi) EMBL format</li>
+<li><code>${sample_id}.fna</code>: replicon/contig DNA sequences as FASTA</li>
+<li><code>${sample_id}.ffn</code>: feature nucleotide sequences as FASTA</li>
+<li><code>${sample_id}.faa</code>: CDS/sORF amino acid sequences as FASTA</li>
+<li><code>${sample_id}.hypotheticals.tsv</code>: further information on hypothetical protein CDS as simple human readble tab separated values</li>
+<li><code>${sample_id}.hypotheticals.faa</code>: hypothetical protein CDS amino acid sequences as FASTA</li>
+<li><code>${sample_id}.txt</code>: summary as TXT</li>
+<li><code>${sample_id}.png</code>: circular genome annotation plot as PNG</li>
+<li><code>${sample_id}.svg</code>: circular genome annotation plot as SVG</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<p>Bakta is a tool for the rapid &amp; standardized annotation of bacterial genomes and plasmids from both isolates and MAGs</p>
+<h3 id="prokka"><em>Prokka</em></h3>
+<ul>
+<li>
+<p><code>annotation/prokka/</code></p>
+<ul>
+<li>
+<p><code>${sample_id}/</code> : Prokka results will be in one directory per genome.</p>
+<ul>
+<li><code>${sample_id}.err</code> : Unacceptable annotations</li>
+<li><code>${sample_id}.faa</code> : Protein FASTA file of translated CDS sequences</li>
+<li><code>${sample_id}.ffn</code> : Nucleotide FASTA file of all the prediction transcripts (CDS, rRNA, tRNA, tmRNA, misc_RNA)</li>
+<li><code>${sample_id}.fna</code> : Nucleotide FASTA file of input contig sequences</li>
+<li><code>${sample_id}.fsa</code> : Nucleotide FASTA file of the input contig sequences, used by "tbl2asn" to create the .sqn file. It is mostly the same as the .fna file, but with extra Sequin tags in the sequence description lines.</li>
+<li><code>${sample_id}.gff</code> : This is the master annotation in GFF3 format, containing both sequences and annotations.</li>
+<li><code>${sample_id}.gbk</code> : This is a standard Genbank file derived from the master .gff.</li>
+<li><code>${sample_id}.log</code> : Contains all the output that Prokka produced during its run. This is a record of what settings used, even if the --quiet option was enabled.</li>
+<li><code>${sample_id}.sqn</code> : An ASN1 format "Sequin" file for submission to Genbank. It needs to be edited to set the correct taxonomy, authors, related publication etc.</li>
+<li><code>${sample_id}.tbl</code> : Feature Table file, used by "tbl2asn" to create the .sqn file.</li>
+<li><code>${sample_id}.tsv</code> : Tab-separated file of all features: locus_tag,ftype,len_bp,gene,EC_number,COG,product</li>
+<li><code>${sample_id}.txt</code> : Statistics relating to the annotated features found.</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<p>Prokka is a software tool to annotate bacterial, archaeal and viral genomes quickly and produce standards-compliant output files.</p>
+<h3 id="rgi">RGI</h3>
+<ul>
+<li>
+<p><code>annotation/rgi/</code></p>
+<ul>
+<li><code>${sample_id}_rgi.txt</code> : A TSV report containing all AMR predictions for a given genome. For more info see <a href="https://github.com/arpcard/rgi#rgi-main-tab-delimited-output-details">here</a></li>
+</ul>
+</li>
+</ul>
+<p>RGI predicts AMR determinants using the CARD ontology and various trained models.</p>
+<h3 id="mobrecon">MobRecon</h3>
+<ul>
+<li>
+<p><code>annotation/mob_recon</code></p>
+<ul>
+<li>
+<p><code>${sample_id}_mob_recon/</code> : MobRecon results will be in one directory per genome.</p>
+<ul>
+<li><code>contig_report.txt</code> - This file describes the assignment of the contig to chromosome or a particular plasmid grouping.</li>
+<li><code>mge.report.txt</code> - Blast HSP of detected MGE's/repetitive elements with contextual information.</li>
+<li><code>chromosome.fasta</code> - Fasta file of all contigs found to belong to the chromosome.</li>
+<li><code>plasmid_*.fasta</code> - Each plasmid group is written to an individual fasta file which contains the assigned contigs.</li>
+<li><code>mobtyper_results</code> - Aggregate MOB-typer report files for all identified plasmid.</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<p>MobRecon reconstructs individual plasmid sequences from draft genome assemblies using the clustered plasmid reference databases</p>
+<h3 id="diamond">DIAMOND</h3>
+<ul>
+<li>
+<p><code>annotation/(vfdb|bacmet|cazy|iceberg2)/</code></p>
+<ul>
+<li><code>${sample_id}/${sample_id}_(VFDB|BACMET|CAZYDB|ICEberg2).txt</code> : Blast6 formatted TSVs indicating BlastX results of the genes from each genome against VFDB, BacMet, and CAZy databases.</li>
+<li><code>(VFDB|BACMET|CAZYDB|ICEberg2).txt</code> : Table with all hits to this database, with a column describing which genome the match originates from. Sorted and filtered by the match's coverage.</li>
+</ul>
+</li>
+</ul>
+<p><a href="https://github.com/bbuchfink/diamond">Diamond</a> is a sequence aligner for protein and translated DNA searches, designed for high performance analysis of big sequence data. We use DIAMOND to predict the presence of virulence factors, heavy metal resistance determinants, carbohydrate-active enzymes, and integrative and conjugative elements using <a href="http://www.mgc.ac.cn/VFs/">VFDB</a>, <a href="http://bacmet.biomedicine.gu.se/">BacMet</a>, <a href="http://www.cazy.org/">CAZy</a>, and <a href="https://bioinfo-mml.sjtu.edu.cn/ICEberg2/index.php">ICEberg2</a> respectively.</p>
+<h3 id="islandpath">IslandPath</h3>
+<ul>
+<li>
+<p><code>annotation/islandpath/</code></p>
+<ul>
+<li>
+<p><code>${sample_id}/</code> : IslandPath results will be in one directory per genome.</p>
+<ul>
+<li><code>${sample_id}.tsv</code> : IslandPath results</li>
+<li><code>Dimob.log</code> : IslandPath execution log</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<p><a href="https://github.com/brinkmanlab/islandpath">IslandPath</a> is a standalone software to predict genomic islands
+in bacterial and archaeal genomes based on the presence of dinucleotide biases and mobility genes.</p>
+<h3 id="integronfinder">IntegronFinder</h3>
+<p>Disabled by default. Enable by adding <code>--run_integronfinder</code> to your command.</p>
+<ul>
+<li>
+<p><code>annotation/integron_finder/</code></p>
+<ul>
+<li><code>Results_Integron_Finder_${sample_id}/</code> : IntegronFinder results will be in one directory per genome.</li>
+</ul>
+</li>
+</ul>
+<p><a href="https://github.com/gem-pasteur/Integron_Finder">Integron Finder</a> is a bioinformatics tool to find integrons in bacterial genomes.</p>
+<h3 id="phispy">PhiSpy</h3>
+<ul>
+<li>
+<p><code>annotation/phispy/</code></p>
+<ul>
+<li><code>${sample_id}/</code> : PhiSpy results will be in one directory per genome.</li>
+</ul>
+</li>
+</ul>
+<p>See the <a href="https://github.com/linsalrob/PhiSpy#output-files">PhiSpy documentation</a> for an extensive description of the output.</p>
+<p><a href="https://github.com/linsalrob/PhiSpy">PhiSpy</a> is a tool for identification of prophages in Bacterial (and probably Archaeal) genomes. Given an annotated genome it will use several approaches to identify the most likely prophage regions.</p>
+<h3 id="panaroo">Panaroo</h3>
+<ul>
+<li><code>pangenomics/panaroo/results/</code></li>
+</ul>
+<p>See <a href="https://gtonkinhill.github.io/panaroo/#/gettingstarted/output">the panaroo documentation</a> for an extensive description of output provided.</p>
+<p><a href="https://gtonkinhill.github.io/panaroo/">Panaroo</a> is a Bacterial Pangenome Analysis Pipeline.</p>
+<h3 id="fasttree">FastTree</h3>
+<ul>
+<li>
+<p><code>phylogenomics/fasttree/</code></p>
+<ul>
+<li><code>*.tre</code> : Newick formatted maximum likelihood tree of core-genome alignment.</li>
+</ul>
+</li>
+</ul>
+<p><a href="http://www.microbesonline.org/fasttree/">FastTree</a> infers approximately-maximum-likelihood phylogenetic trees from alignments of nucleotide or protein sequences</p>
+<h3 id="iqtree"><em>IQTree</em></h3>
+<ul>
+<li>
+<p><code>phylogenomics/iqtree/</code></p>
+<ul>
+<li><code>*.treefile</code> : Newick formatted maximum likelihood tree of core-genome alignment.</li>
+</ul>
+</li>
+</ul>
+<p><a href="http://www.iqtree.org/">IQTree</a> is a fast and effective stochastic algorithm to infer phylogenetic trees by maximum likelihood.</p>
+<h3 id="snpsites"><em>SNPsites</em></h3>
+<ul>
+<li>
+<p><code>phylogenomics/snpsites/</code></p>
+<ul>
+<li><code>filtered_alignment.fas</code> : Variant fasta file.</li>
+<li><code>constant.sites.txt</code> : Text file containing counts of constant sites.</li>
+</ul>
+</li>
+</ul>
+<p><a href="https://github.com/sanger-pathogens/snp-sites">SNPsites</a> is a tool to rapidly extract SNPs from a multi-FASTA alignment.</p>
+<h3 id="poppunk">PopPUNK</h3>
+<ul>
+<li>
+<p><code>poppunk_results/</code></p>
+<ul>
+<li><code>poppunk_${poppunk_model}/</code> - Results from PopPUNK's fit-model command</li>
+<li><code>poppunk_visualizations/</code> - Results from the poppunk_visualise command</li>
+</ul>
+</li>
+</ul>
+<p><a href="https://poppunk.net/">PopPUNK</a> is a tool for clustering genomes.</p>
+<h3 id="verticall">Verticall</h3>
+<ul>
+<li>
+<p><code>recombination/verticall/</code></p>
+<ul>
+<li><code>verticall_cluster*.tsv</code> - Verticall results for the genomes within this PopPUNK cluster.</li>
+</ul>
+</li>
+</ul>
+<p><a href="https://github.com/rrwick/Verticall/">Verticall</a> is a tool to help produce bacterial genome phylogenies which are not influenced by horizontally acquired sequences such as recombination.</p>
+<h3 id="ska2">SKA2</h3>
+<ul>
+<li>
+<p><code>recombination/ska2/</code></p>
+<ul>
+<li><code>cluster_*.aln</code> - SKA2 results for the genomes within this PopPUNK cluster.</li>
+</ul>
+</li>
+</ul>
+<p><a href="https://github.com/bacpop/ska.rust">SKA2</a> (Split Kmer Analysis) is a toolkit for prokaryotic (and any other small, haploid) DNA sequence analysis using split kmers.</p>
+<h3 id="gubbins">Gubbins</h3>
+<ul>
+<li>
+<p><code>recombination/gubbins/</code></p>
+<ul>
+<li><code>cluster_*/</code> - Gubbins results for the genomes within this PopPUNK cluster.</li>
+</ul>
+</li>
+</ul>
+<p><a href="https://github.com/nickjcroucher/gubbins">Gubbins</a> is an algorithm that iteratively identifies loci containing elevated densities of base substitutions while concurrently constructing a phylogeny based on the putative point mutations outside of these regions.</p>
+<h3 id="multiqc">MultiQC</h3>
+<ul>
+<li>
+<p><code>multiqc/</code></p>
+<ul>
+<li><code>multiqc_report.html</code>: a standalone HTML file that can be viewed in your web browser.</li>
+<li><code>multiqc_data/</code>: directory containing parsed statistics from the different tools used in the pipeline.</li>
+<li><code>multiqc_plots/</code>: directory containing static images from the report in various formats.</li>
+</ul>
+</li>
+</ul>
+<p><a href="http://multiqc.info">MultiQC</a> is a visualization tool that generates a single HTML report summarising all samples in your project. Most of the pipeline QC results are visualised in the report and further statistics are available in the report data directory.</p>
+<p>Results generated by MultiQC collate pipeline QC from supported tools e.g. FastQC. The pipeline has special steps which also allow the software versions to be reported in the MultiQC output for future traceability. For more information about how to use MultiQC reports, see <a href="http://multiqc.info">http://multiqc.info</a>.</p>
+<h3 id="pipeline-information">Pipeline information</h3>
+<ul>
+<li>
+<p><code>pipeline_info/</code></p>
+<ul>
+<li>Reports generated by Nextflow: <code>execution_report.html</code>, <code>execution_timeline.html</code>, <code>execution_trace.txt</code> and <code>pipeline_dag.dot</code>/<code>pipeline_dag.svg</code>.</li>
+<li>Reports generated by the pipeline: <code>pipeline_report.html</code>, <code>pipeline_report.txt</code> and <code>software_versions.csv</code>.</li>
+<li>Reformatted samplesheet files used as input to the pipeline: <code>samplesheet.valid.csv</code>.</li>
+</ul>
+</li>
+</ul>
+<p><a href="https://www.nextflow.io/docs/latest/tracing.html">Nextflow</a> provides excellent functionality for generating various reports relevant to the running and execution of the pipeline. This will allow you to troubleshoot errors with the running of the pipeline, and also provide you with other information such as launch commands, run times and resource usage.</p>
+              
+            </div>
+          </div><footer>
+    <div class="rst-footer-buttons" role="navigation" aria-label="Footer Navigation">
+        <a href="../usage/" class="btn btn-neutral float-left" title="Usage"><span class="icon icon-circle-arrow-left"></span> Previous</a>
+        <a href="../CITATIONS/" class="btn btn-neutral float-right" title="Citations">Next <span class="icon icon-circle-arrow-right"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <!-- Copyright etc -->
+  </div>
+
+  Built with <a href="https://www.mkdocs.org/">MkDocs</a> using a <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+</footer>
+          
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+
+  <div class="rst-versions" role="note" aria-label="Versions">
+  <span class="rst-current-version" data-toggle="rst-current-version">
+    
+        <span>
+          <a href="https://github.com/beiko-lab/arete" class="fa fa-github" style="color: #fcfcfc"> GitHub</a>
+        </span>
+    
+    
+      <span><a href="../usage/" style="color: #fcfcfc">&laquo; Previous</a></span>
+    
+    
+      <span><a href="../CITATIONS/" style="color: #fcfcfc">Next &raquo;</a></span>
+    
+  </span>
+</div>
+    <script>var base_url = '..';</script>
+    <script src="../js/theme_extra.js" defer></script>
+    <script src="../js/theme.js" defer></script>
+      <script src="../search/main.js" defer></script>
+    <script defer>
+        window.onload = function () {
+            SphinxRtdTheme.Navigation.enable(true);
+        };
+    </script>
+
+</body>
+</html>

@@ -1,0 +1,737 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="author" content="Beiko Lab" />
+      <link rel="shortcut icon" href="../img/favicon.ico" />
+    <title>Parameters - ARETE</title>
+    <link rel="stylesheet" href="../css/theme.css" />
+    <link rel="stylesheet" href="../css/theme_extra.css" />
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.5.0/styles/github.min.css" />
+    
+      <script>
+        // Current page data
+        var mkdocs_page_name = "Parameters";
+        var mkdocs_page_input_path = "params.md";
+        var mkdocs_page_url = null;
+      </script>
+    
+    <script src="../js/jquery-3.6.0.min.js" defer></script>
+    <!--[if lt IE 9]>
+      <script src="../js/html5shiv.min.js"></script>
+    <![endif]-->
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.5.0/highlight.min.js"></script>
+      <script>hljs.initHighlightingOnLoad();</script> 
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side stickynav">
+    <div class="wy-side-scroll">
+      <div class="wy-side-nav-search">
+          <a href=".." class="icon icon-home"> ARETE
+        </a><div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="../search.html" method="get">
+      <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" title="Type search term here" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="..">Home</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../usage/">Usage</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../output/">Output</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../CITATIONS/">Citations</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../ROADMAP/">Roadmap</a>
+                </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Reference</span></p>
+              <ul class="current">
+                  <li class="toctree-l1 current"><a class="reference internal current" href="./">Parameters</a>
+    <ul class="current">
+    <li class="toctree-l2"><a class="reference internal" href="#inputoutput-options">Input/output options</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#reference-genome-options">Reference genome options</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#kraken2">Kraken2</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#annotation">Annotation</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#phylogenomics">Phylogenomics</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#poppunk">PopPUNK</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#recombination">Recombination</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#institutional-config-options">Institutional config options</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#max-job-request-options">Max job request options</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#generic-options">Generic options</a>
+    </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../subsampling/">Subsampling</a>
+                  </li>
+              </ul>
+      </div>
+    </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+      <nav class="wy-nav-top" role="navigation" aria-label="Mobile navigation menu">
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="..">ARETE</a>
+        
+      </nav>
+      <div class="wy-nav-content">
+        <div class="rst-content"><div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href=".." class="icon icon-home" aria-label="Docs"></a> &raquo;</li>
+          <li>Reference &raquo;</li>
+      <li>Parameters</li>
+    <li class="wy-breadcrumbs-aside">
+          <a href="https://github.com/beiko-lab/arete/edit/master/docs/params.md" class="icon icon-github"> Edit on GitHub</a>
+    </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+            <div class="section" itemprop="articleBody">
+              
+                <h1 id="beiko-labarete-pipeline-parameters">beiko-lab/ARETE pipeline parameters</h1>
+<p>AMR/VF LGT-focused bacterial genomics workflow</p>
+<h2 id="inputoutput-options">Input/output options</h2>
+<p>Define where the pipeline should find input data and save output data.</p>
+<table>
+<thead>
+<tr>
+<th>Parameter</th>
+<th>Description</th>
+<th>Type</th>
+<th>Default</th>
+<th>Required</th>
+<th>Hidden</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>input_sample_table</code></td>
+<td>Path to comma-separated file containing information about the samples in the experiment. <details><summary>Help</summary><small>You will need to create a design file with information about the samples in your experiment before running the pipeline. Use this parameter to specify its location. It has to be a comma-separated file with 3 columns, and a header row.</small></details></td>
+<td><code>string</code></td>
+<td></td>
+<td>True</td>
+<td></td>
+</tr>
+<tr>
+<td><code>outdir</code></td>
+<td>Path to the output directory where the results will be saved.</td>
+<td><code>string</code></td>
+<td>./results</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td><code>db_cache</code></td>
+<td>Directory where the databases are located</td>
+<td><code>string</code></td>
+<td>None</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td><code>email</code></td>
+<td>Email address for completion summary. <details><summary>Help</summary><small>Set this parameter to your e-mail address to get a summary e-mail with details of the run sent to you when the workflow exits. If set in your user config file (<code>~/.nextflow/config</code>) then you don't need to specify this on the command line for every run.</small></details></td>
+<td><code>string</code></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td><code>multiqc_title</code></td>
+<td>MultiQC report title. Printed as page header, used for filename if not otherwise specified.</td>
+<td><code>string</code></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<h2 id="reference-genome-options">Reference genome options</h2>
+<p>Reference and outgroup genome fasta files required for the workflow.</p>
+<table>
+<thead>
+<tr>
+<th>Parameter</th>
+<th>Description</th>
+<th>Type</th>
+<th>Default</th>
+<th>Required</th>
+<th>Hidden</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>reference_genome</code></td>
+<td>Path to FASTA reference genome file.</td>
+<td><code>string</code></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<h2 id="kraken2">Kraken2</h2>
+<p>Options for the Kraken2 taxonomic classification</p>
+<table>
+<thead>
+<tr>
+<th>Parameter</th>
+<th>Description</th>
+<th>Type</th>
+<th>Default</th>
+<th>Required</th>
+<th>Hidden</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>skip_kraken</code></td>
+<td>Don't run Kraken2 taxonomic classification</td>
+<td><code>boolean</code></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<h2 id="annotation">Annotation</h2>
+<p>Parameters for the annotation subworkflow</p>
+<table>
+<thead>
+<tr>
+<th>Parameter</th>
+<th>Description</th>
+<th>Type</th>
+<th>Default</th>
+<th>Required</th>
+<th>Hidden</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>annotation_tools</code></td>
+<td>Comma-separated list of annotation tools to run</td>
+<td><code>string</code></td>
+<td>mobsuite,rgi,cazy,vfdb,iceberg,bacmet,islandpath,phispy,report</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td><code>bakta_db</code></td>
+<td>Path to the BAKTA database</td>
+<td><code>string</code></td>
+<td>None</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td><code>use_prokka</code></td>
+<td>Use Prokka (not Bakta) for annotating assemblies</td>
+<td><code>boolean</code></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td><code>min_pident</code></td>
+<td>Minimum match identity percentage for filtering</td>
+<td><code>integer</code></td>
+<td>60</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td><code>min_qcover</code></td>
+<td>Minimum coverage of each match for filtering</td>
+<td><code>number</code></td>
+<td>0.6</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td><code>skip_profile_creation</code></td>
+<td>Skip annotation feature profile creation</td>
+<td><code>boolean</code></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td><code>feature_profile_columns</code></td>
+<td>Columns to include in the feature profile</td>
+<td><code>string</code></td>
+<td>mobsuite,rgi,cazy,vfdb,iceberg,bacmet</td>
+<td></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<h2 id="phylogenomics">Phylogenomics</h2>
+<p>Parameters for the phylogenomics subworkflow</p>
+<table>
+<thead>
+<tr>
+<th>Parameter</th>
+<th>Description</th>
+<th>Type</th>
+<th>Default</th>
+<th>Required</th>
+<th>Hidden</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>skip_phylo</code></td>
+<td>Skip Pangenomics and Phylogenomics subworkflow</td>
+<td><code>boolean</code></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td><code>use_ppanggolin</code></td>
+<td>Use ppanggolin for calculating the pangenome</td>
+<td><code>boolean</code></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td><code>use_full_alignment</code></td>
+<td>Use full alignment</td>
+<td><code>boolean</code></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td><code>use_fasttree</code></td>
+<td>Use FastTree</td>
+<td><code>boolean</code></td>
+<td>True</td>
+<td></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<h2 id="poppunk">PopPUNK</h2>
+<p>Parameters for the lineage subworkflow</p>
+<table>
+<thead>
+<tr>
+<th>Parameter</th>
+<th>Description</th>
+<th>Type</th>
+<th>Default</th>
+<th>Required</th>
+<th>Hidden</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>skip_poppunk</code></td>
+<td>Skip PopPunk</td>
+<td><code>boolean</code></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td><code>poppunk_model</code></td>
+<td>Which PopPunk model to use (bgmm, dbscan, refine, threshold or lineage)</td>
+<td><code>string</code></td>
+<td>None</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td><code>run_poppunk_qc</code></td>
+<td>Whether to run the QC step for PopPunk</td>
+<td><code>boolean</code></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td><code>enable_subsetting</code></td>
+<td>Enable subsetting workflow based on genome similarity</td>
+<td><code>boolean</code></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td><code>core_similarity</code></td>
+<td>Similarity threshold for core genomes</td>
+<td><code>number</code></td>
+<td>99.99</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td><code>accessory_similarity</code></td>
+<td>Similarity threshold for accessory genes</td>
+<td><code>number</code></td>
+<td>99</td>
+<td></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<h2 id="recombination">Recombination</h2>
+<p>Parameters for the recombination subworkflow</p>
+<table>
+<thead>
+<tr>
+<th>Parameter</th>
+<th>Description</th>
+<th>Type</th>
+<th>Default</th>
+<th>Required</th>
+<th>Hidden</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>run_recombination</code></td>
+<td>Run Recombination</td>
+<td><code>boolean</code></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td><code>run_verticall</code></td>
+<td>Run Verticall recombination tool</td>
+<td><code>boolean</code></td>
+<td>True</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td><code>run_gubbins</code></td>
+<td>Run Gubbins recombination tool</td>
+<td><code>boolean</code></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<h2 id="institutional-config-options">Institutional config options</h2>
+<p>Parameters used to describe centralised config profiles. These should not be edited.</p>
+<table>
+<thead>
+<tr>
+<th>Parameter</th>
+<th>Description</th>
+<th>Type</th>
+<th>Default</th>
+<th>Required</th>
+<th>Hidden</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>custom_config_version</code></td>
+<td>Git commit id for Institutional configs.</td>
+<td><code>string</code></td>
+<td>master</td>
+<td></td>
+<td>True</td>
+</tr>
+<tr>
+<td><code>custom_config_base</code></td>
+<td>Base directory for Institutional configs. <details><summary>Help</summary><small>If you're running offline, Nextflow will not be able to fetch the institutional config files from the internet. If you don't need them, then this is not a problem. If you do need them, you should download the files from the repo and tell Nextflow where to find them with this parameter.</small></details></td>
+<td><code>string</code></td>
+<td>https://raw.githubusercontent.com/nf-core/configs/master</td>
+<td></td>
+<td>True</td>
+</tr>
+<tr>
+<td><code>hostnames</code></td>
+<td>Institutional configs hostname.</td>
+<td><code>string</code></td>
+<td></td>
+<td></td>
+<td>True</td>
+</tr>
+<tr>
+<td><code>config_profile_name</code></td>
+<td>Institutional config name.</td>
+<td><code>string</code></td>
+<td></td>
+<td></td>
+<td>True</td>
+</tr>
+<tr>
+<td><code>config_profile_description</code></td>
+<td>Institutional config description.</td>
+<td><code>string</code></td>
+<td></td>
+<td></td>
+<td>True</td>
+</tr>
+<tr>
+<td><code>config_profile_contact</code></td>
+<td>Institutional config contact information.</td>
+<td><code>string</code></td>
+<td></td>
+<td></td>
+<td>True</td>
+</tr>
+<tr>
+<td><code>config_profile_url</code></td>
+<td>Institutional config URL link.</td>
+<td><code>string</code></td>
+<td></td>
+<td></td>
+<td>True</td>
+</tr>
+</tbody>
+</table>
+<h2 id="max-job-request-options">Max job request options</h2>
+<p>Set the top limit for requested resources for any single job.</p>
+<table>
+<thead>
+<tr>
+<th>Parameter</th>
+<th>Description</th>
+<th>Type</th>
+<th>Default</th>
+<th>Required</th>
+<th>Hidden</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>max_cpus</code></td>
+<td>Maximum number of CPUs that can be requested for any single job. <details><summary>Help</summary><small>Use to set an upper-limit for the CPU requirement for each process. Should be an integer e.g. <code>--max_cpus 1</code></small></details></td>
+<td><code>integer</code></td>
+<td>16</td>
+<td></td>
+<td>True</td>
+</tr>
+<tr>
+<td><code>max_memory</code></td>
+<td>Maximum amount of memory that can be requested for any single job. <details><summary>Help</summary><small>Use to set an upper-limit for the memory requirement for each process. Should be a string in the format integer-unit e.g. <code>--max_memory '8.GB'</code></small></details></td>
+<td><code>string</code></td>
+<td>128.GB</td>
+<td></td>
+<td>True</td>
+</tr>
+<tr>
+<td><code>max_time</code></td>
+<td>Maximum amount of time that can be requested for any single job. <details><summary>Help</summary><small>Use to set an upper-limit for the time requirement for each process. Should be a string in the format integer-unit e.g. <code>--max_time '2.h'</code></small></details></td>
+<td><code>string</code></td>
+<td>240.h</td>
+<td></td>
+<td>True</td>
+</tr>
+</tbody>
+</table>
+<h2 id="generic-options">Generic options</h2>
+<p>Less common options for the pipeline, typically set in a config file.</p>
+<table>
+<thead>
+<tr>
+<th>Parameter</th>
+<th>Description</th>
+<th>Type</th>
+<th>Default</th>
+<th>Required</th>
+<th>Hidden</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>help</code></td>
+<td>Display help text.</td>
+<td><code>boolean</code></td>
+<td></td>
+<td></td>
+<td>True</td>
+</tr>
+<tr>
+<td><code>publish_dir_mode</code></td>
+<td>Method used to save pipeline results to output directory. <details><summary>Help</summary><small>The Nextflow <code>publishDir</code> option specifies which intermediate files should be saved to the output directory. This option tells the pipeline what method should be used to move these files. See <a href="https://www.nextflow.io/docs/latest/process.html#publishdir">Nextflow docs</a> for details.</small></details></td>
+<td><code>string</code></td>
+<td>copy</td>
+<td></td>
+<td>True</td>
+</tr>
+<tr>
+<td><code>email_on_fail</code></td>
+<td>Email address for completion summary, only when pipeline fails. <details><summary>Help</summary><small>An email address to send a summary email to when the pipeline is completed - ONLY sent if the pipeline does not exit successfully.</small></details></td>
+<td><code>string</code></td>
+<td></td>
+<td></td>
+<td>True</td>
+</tr>
+<tr>
+<td><code>plaintext_email</code></td>
+<td>Send plain-text email instead of HTML.</td>
+<td><code>boolean</code></td>
+<td></td>
+<td></td>
+<td>True</td>
+</tr>
+<tr>
+<td><code>max_multiqc_email_size</code></td>
+<td>File size limit when attaching MultiQC reports to summary emails.</td>
+<td><code>string</code></td>
+<td>25.MB</td>
+<td></td>
+<td>True</td>
+</tr>
+<tr>
+<td><code>monochrome_logs</code></td>
+<td>Do not use coloured log outputs.</td>
+<td><code>boolean</code></td>
+<td></td>
+<td></td>
+<td>True</td>
+</tr>
+<tr>
+<td><code>multiqc_config</code></td>
+<td>Custom config file to supply to MultiQC.</td>
+<td><code>string</code></td>
+<td></td>
+<td></td>
+<td>True</td>
+</tr>
+<tr>
+<td><code>tracedir</code></td>
+<td>Directory to keep pipeline Nextflow logs and reports.</td>
+<td><code>string</code></td>
+<td>${params.outdir}/pipeline_info</td>
+<td></td>
+<td>True</td>
+</tr>
+<tr>
+<td><code>validate_params</code></td>
+<td>Boolean whether to validate parameters against the schema at runtime</td>
+<td><code>boolean</code></td>
+<td>True</td>
+<td></td>
+<td>True</td>
+</tr>
+<tr>
+<td><code>show_hidden_params</code></td>
+<td>Show all params when using <code>--help</code> <details><summary>Help</summary><small>By default, parameters set as <em>hidden</em> in the schema are not shown on the command line when a user runs with <code>--help</code>. Specifying this option will tell the pipeline to show all parameters.</small></details></td>
+<td><code>boolean</code></td>
+<td></td>
+<td></td>
+<td>True</td>
+</tr>
+<tr>
+<td><code>enable_conda</code></td>
+<td>Run this workflow with Conda. You can also use '-profile conda' instead of providing this parameter.</td>
+<td><code>boolean</code></td>
+<td></td>
+<td></td>
+<td>True</td>
+</tr>
+<tr>
+<td><code>singularity_pull_docker_container</code></td>
+<td>Instead of directly downloading Singularity images for use with Singularity, force the workflow to pull and convert Docker containers instead. <details><summary>Help</summary><small>This may be useful for example if you are unable to directly pull Singularity containers to run the pipeline due to http/https proxy issues.</small></details></td>
+<td><code>boolean</code></td>
+<td></td>
+<td></td>
+<td>True</td>
+</tr>
+<tr>
+<td><code>schema_ignore_params</code></td>
+<td></td>
+<td><code>string</code></td>
+<td>genomes,modules</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td><code>multiqc_logo</code></td>
+<td></td>
+<td><code>string</code></td>
+<td>None</td>
+<td></td>
+<td>True</td>
+</tr>
+</tbody>
+</table>
+              
+            </div>
+          </div><footer>
+    <div class="rst-footer-buttons" role="navigation" aria-label="Footer Navigation">
+        <a href="../ROADMAP/" class="btn btn-neutral float-left" title="Roadmap"><span class="icon icon-circle-arrow-left"></span> Previous</a>
+        <a href="../subsampling/" class="btn btn-neutral float-right" title="Subsampling">Next <span class="icon icon-circle-arrow-right"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <!-- Copyright etc -->
+  </div>
+
+  Built with <a href="https://www.mkdocs.org/">MkDocs</a> using a <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+</footer>
+          
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+
+  <div class="rst-versions" role="note" aria-label="Versions">
+  <span class="rst-current-version" data-toggle="rst-current-version">
+    
+        <span>
+          <a href="https://github.com/beiko-lab/arete" class="fa fa-github" style="color: #fcfcfc"> GitHub</a>
+        </span>
+    
+    
+      <span><a href="../ROADMAP/" style="color: #fcfcfc">&laquo; Previous</a></span>
+    
+    
+      <span><a href="../subsampling/" style="color: #fcfcfc">Next &raquo;</a></span>
+    
+  </span>
+</div>
+    <script>var base_url = '..';</script>
+    <script src="../js/theme_extra.js" defer></script>
+    <script src="../js/theme.js" defer></script>
+      <script src="../search/main.js" defer></script>
+    <script defer>
+        window.onload = function () {
+            SphinxRtdTheme.Navigation.enable(true);
+        };
+    </script>
+
+</body>
+</html>

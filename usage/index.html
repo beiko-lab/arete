@@ -1,0 +1,386 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="author" content="Beiko Lab" />
+      <link rel="shortcut icon" href="../img/favicon.ico" />
+    <title>Usage - ARETE</title>
+    <link rel="stylesheet" href="../css/theme.css" />
+    <link rel="stylesheet" href="../css/theme_extra.css" />
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.5.0/styles/github.min.css" />
+    
+      <script>
+        // Current page data
+        var mkdocs_page_name = "Usage";
+        var mkdocs_page_input_path = "usage.md";
+        var mkdocs_page_url = null;
+      </script>
+    
+    <script src="../js/jquery-3.6.0.min.js" defer></script>
+    <!--[if lt IE 9]>
+      <script src="../js/html5shiv.min.js"></script>
+    <![endif]-->
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.5.0/highlight.min.js"></script>
+      <script>hljs.initHighlightingOnLoad();</script> 
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side stickynav">
+    <div class="wy-side-scroll">
+      <div class="wy-side-nav-search">
+          <a href=".." class="icon icon-home"> ARETE
+        </a><div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="../search.html" method="get">
+      <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" title="Type search term here" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="..">Home</a>
+                </li>
+              </ul>
+              <ul class="current">
+                <li class="toctree-l1 current"><a class="reference internal current" href="./">Usage</a>
+    <ul class="current">
+    <li class="toctree-l2"><a class="reference internal" href="#introduction">Introduction</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#samplesheet-input">Samplesheet input</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#full-workflow-or-assembly-samplesheet">Full workflow or assembly samplesheet</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#annotation-only-samplesheet">Annotation only samplesheet</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#reference-genome">Reference Genome</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#running-the-pipeline">Running the pipeline</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#updating-the-pipeline">Updating the pipeline</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#reproducibility">Reproducibility</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#core-nextflow-arguments">Core Nextflow arguments</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#-profile">-profile</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#-resume">-resume</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#-c">-c</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#custom-resource-requests">Custom resource requests</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#running-in-the-background">Running in the background</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#nextflow-memory-requirements">Nextflow memory requirements</a>
+    </li>
+    </ul>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../output/">Output</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../CITATIONS/">Citations</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../ROADMAP/">Roadmap</a>
+                </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Reference</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../params/">Parameters</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../subsampling/">Subsampling</a>
+                  </li>
+              </ul>
+      </div>
+    </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+      <nav class="wy-nav-top" role="navigation" aria-label="Mobile navigation menu">
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="..">ARETE</a>
+        
+      </nav>
+      <div class="wy-nav-content">
+        <div class="rst-content"><div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href=".." class="icon icon-home" aria-label="Docs"></a> &raquo;</li>
+      <li>Usage</li>
+    <li class="wy-breadcrumbs-aside">
+          <a href="https://github.com/beiko-lab/arete/edit/master/docs/usage.md" class="icon icon-github"> Edit on GitHub</a>
+    </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+            <div class="section" itemprop="articleBody">
+              
+                <h1 id="arete-usage">ARETE: Usage</h1>
+<blockquote>
+<p><em>Documentation of pipeline parameters is generated automatically from the pipeline schema and can no longer be found in markdown files.</em></p>
+</blockquote>
+<h2 id="introduction">Introduction</h2>
+<p>The ARETE pipeline can is designed as an end-to-end workflow manager for genome assembly, annotation, and phylogenetic analysis, beginning with read data. However, in some cases a user may wish to stop the pipeline prior to annotation or use the annotation features of the work flow with pre-existing assemblies. Therefore, ARETE allows users four use cases:</p>
+<ol>
+<li>Run the full pipeline end-to-end..</li>
+<li>Input a set of reads and stop after assembly.</li>
+<li>Input a set of assemblies and perform QC.</li>
+<li>Input a set of assemblies and perform annotation and taxonomic analyses.</li>
+</ol>
+<p>This document will describe how to perform each workflow.</p>
+<h2 id="samplesheet-input">Samplesheet input</h2>
+<p>No matter your use case, you will need to create a samplesheet with information about the samples you would like to analyse before running the pipeline. Use this parameter to specify its location.
+For full runs and assembly, it has to be a comma-separated file with 3 columns, and a header row as shown in the examples below.</p>
+<pre><code class="language-bash">--input_sample_table '[path to samplesheet file]'
+</code></pre>
+<h3 id="full-workflow-or-assembly-samplesheet">Full workflow or assembly samplesheet</h3>
+<p>The pipeline will auto-detect whether a sample is single- or paired-end using the information provided in the samplesheet. The samplesheet can have as many columns as you desire, however, there is a strict requirement for the first 4 columns to match those defined in the table below.</p>
+<p>A final samplesheet file consisting of both single- and paired-end data may look something like the one below. This is for 6 samples, where <code>TREATMENT_REP3</code> has been sequenced twice.</p>
+<pre><code class="language-bash">sample,fastq_1,fastq_2
+CONTROL_REP1,AEG588A1_S1_L002_R1_001.fastq.gz,AEG588A1_S1_L002_R2_001.fastq.gz
+CONTROL_REP2,AEG588A2_S2_L002_R1_001.fastq.gz,AEG588A2_S2_L002_R2_001.fastq.gz
+CONTROL_REP3,AEG588A3_S3_L002_R1_001.fastq.gz,AEG588A3_S3_L002_R2_001.fastq.gz
+TREATMENT_REP1,AEG588A4_S4_L003_R1_001.fastq.gz,
+TREATMENT_REP2,AEG588A5_S5_L003_R1_001.fastq.gz,
+TREATMENT_REP3,AEG588A6_S6_L003_R1_001.fastq.gz,
+TREATMENT_REP3,AEG588A6_S6_L004_R1_001.fastq.gz,
+</code></pre>
+<table>
+<thead>
+<tr>
+<th>Column</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>sample</code></td>
+<td>Custom sample name. This entry will be identical for multiple sequencing libraries/runs from the same sample.</td>
+</tr>
+<tr>
+<td><code>fastq_1</code></td>
+<td>Full path to FastQ file for Illumina short reads 1. File has to be gzipped and have the extension ".fastq.gz" or ".fq.gz".</td>
+</tr>
+<tr>
+<td><code>fastq_2</code></td>
+<td>Full path to FastQ file for Illumina short reads 2. File has to be gzipped and have the extension ".fastq.gz" or ".fq.gz".</td>
+</tr>
+</tbody>
+</table>
+<p>An <a href="../assets/samplesheet.csv">example samplesheet</a> has been provided with the pipeline.</p>
+<h3 id="annotation-only-samplesheet">Annotation only samplesheet</h3>
+<p>The ARETE pipeline allows users to provide pre-existing assemblies to make use of the annotation and reporting features of the workflow. Users may use the <code>assembly_qc</code> entry point to perform QC on the assemblies. <strong>Note that the QC workflow does not automatically filter low quality assemblies, it simply generates QC reports!</strong> <code>assembly</code> and <code>assembly_qc</code> workflows accept the same format of sample sheet.</p>
+<p>The sample sheet must be a 2 column, comma-seperated CSV file with header.</p>
+<table>
+<thead>
+<tr>
+<th>Column</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>sample</code></td>
+<td>Custom sample name. This entry will be identical for multiple sequencing libraries/runs from the same sample.</td>
+</tr>
+<tr>
+<td><code>fna_file_path</code></td>
+<td>Full path to fna file for assembly or genome. File must have <code>.fna</code> file extension.</td>
+</tr>
+</tbody>
+</table>
+<h2 id="reference-genome">Reference Genome</h2>
+<p>For full workflow or assembly, users may provide a path to a reference genome in fasta format for use in assembly evaluation.</p>
+<pre><code class="language-bash">--reference_genome ref.fasta
+</code></pre>
+<!--
+The pipeline also requires a genome in fasta format to be supplied to use as an outgroup for phylogenetic analyses:
+
+<pre><code class="language-bash">--outgroup_genome out.fasta
+</code></pre>
+
+-->
+
+<h2 id="running-the-pipeline">Running the pipeline</h2>
+<p>The typical command for running the pipeline is as follows:</p>
+<pre><code class="language-bash">nextflow run beiko-lab/ARETE --input_sample_table samplesheet.csv --reference_genome ref.fasta --poppunk_model bgmm  -profile docker
+</code></pre>
+<p>This will launch the pipeline with the <code>docker</code> configuration profile. See below for more information about profiles.</p>
+<p>Note that the pipeline will create the following files in your working directory:</p>
+<pre><code class="language-bash">work            # Directory containing the nextflow working files
+results         # Finished results (configurable, see below)
+.nextflow_log   # Log file from Nextflow
+# Other nextflow hidden files, eg. history of pipeline runs and old logs.
+</code></pre>
+<p>As written above, the pipeline also allows users to execute only assembly or only annotation. To execute assembly (reference genome optional):</p>
+<pre><code class="language-bash">nextflow run beiko-lab/ARETE -entry assembly --input_sample_table samplesheet.csv --reference_genome ref.fasta  -profile docker
+</code></pre>
+<p>To execute QC on pre-existing assemblies (reference genome optional):</p>
+<pre><code class="language-bash">nextflow run beiko-lab/ARETE -entry assembly_qc --input_sample_table samplesheet.csv --reference_genome ref.fasta  -profile docker
+</code></pre>
+<p>To execute annotation of pre-existing assemblies:</p>
+<pre><code class="language-bash">nextflow run beiko-lab/ARETE -entry annotation --input_sample_table samplesheet.csv --poppunk_model bgmm -profile docker
+</code></pre>
+<h2 id="updating-the-pipeline">Updating the pipeline</h2>
+<p>When you run the above command, Nextflow automatically pulls the pipeline code from GitHub and stores it as a cached version. When running the pipeline after this, it will always use the cached version if available - even if the pipeline has been updated since. To make sure that you're running the latest version of the pipeline, make sure that you regularly update the cached version of the pipeline:</p>
+<pre><code class="language-bash">nextflow pull beiko-lab/ARETE
+</code></pre>
+<h2 id="reproducibility">Reproducibility</h2>
+<p>It's a good idea to specify a pipeline version when running the pipeline on your data. This ensures that a specific version of the pipeline code and software are used when you run your pipeline. If you keep using the same tag, you'll be running the same version of the pipeline, even if there have been changes to the code since.</p>
+<p>First, go to the <a href="https://github.com/beiko-lab/ARETE/releases">ARETE releases page</a> and find the latest version number - numeric only (eg. <code>1.3.1</code>). Then specify this when running the pipeline with <code>-r</code> (one hyphen) - eg. <code>-r 1.3.1</code>.</p>
+<p>This version number will be logged in reports when you run the pipeline, so that you'll know what you used when you look back in the future.</p>
+<h2 id="core-nextflow-arguments">Core Nextflow arguments</h2>
+<blockquote>
+<p><strong>NB:</strong> These options are part of Nextflow and use a <em>single</em> hyphen (pipeline parameters use a double-hyphen).</p>
+</blockquote>
+<h3 id="-profile"><code>-profile</code></h3>
+<p>Use this parameter to choose a configuration profile. Profiles can give configuration presets for different compute environments.</p>
+<p>Several generic profiles are bundled with the pipeline which instruct the pipeline to use software packaged using different methods (Docker, Singularity, Podman, Shifter, Charliecloud, Conda) - see below.</p>
+<blockquote>
+<p>We highly recommend the use of Docker or Singularity containers for full pipeline reproducibility, however when this is not possible, Conda is also supported.</p>
+</blockquote>
+<p>The pipeline also dynamically loads configurations from <a href="https://github.com/nf-core/configs">https://github.com/nf-core/configs</a> when it runs, making multiple config profiles for various institutional clusters available at run time. For more information and to see if your system is available in these configs please see the <a href="https://github.com/nf-core/configs#documentation">nf-core/configs documentation</a>.</p>
+<p>Note that multiple profiles can be loaded, for example: <code>-profile test,docker</code> - the order of arguments is important!
+They are loaded in sequence, so later profiles can overwrite earlier profiles.</p>
+<p>If <code>-profile</code> is not specified, the pipeline will run locally and expect all software to be installed and available on the <code>PATH</code>. This is <em>not</em> recommended.</p>
+<ul>
+<li>
+<p><code>docker</code></p>
+<ul>
+<li>A generic configuration profile to be used with <a href="https://docker.com/">Docker</a></li>
+<li>Pulls software from Docker Hub: <a href="https://hub.docker.com/r/nfcore/arete/"><code>nfcore/arete</code></a></li>
+</ul>
+</li>
+<li>
+<p><code>singularity</code></p>
+<ul>
+<li>A generic configuration profile to be used with <a href="https://sylabs.io/docs/">Singularity</a></li>
+<li>Pulls software from Docker Hub: <a href="https://hub.docker.com/r/nfcore/arete/"><code>nfcore/arete</code></a></li>
+</ul>
+</li>
+<li>
+<p><code>podman</code></p>
+<ul>
+<li>A generic configuration profile to be used with <a href="https://podman.io/">Podman</a></li>
+<li>Pulls software from Docker Hub: <a href="https://hub.docker.com/r/nfcore/arete/"><code>nfcore/arete</code></a></li>
+</ul>
+</li>
+<li>
+<p><code>shifter</code></p>
+<ul>
+<li>A generic configuration profile to be used with <a href="https://nersc.gitlab.io/development/shifter/how-to-use/">Shifter</a></li>
+<li>Pulls software from Docker Hub: <a href="https://hub.docker.com/r/nfcore/arete/"><code>nfcore/arete</code></a></li>
+</ul>
+</li>
+<li>
+<p><code>charliecloud</code></p>
+<ul>
+<li>A generic configuration profile to be used with <a href="https://hpc.github.io/charliecloud/">Charliecloud</a></li>
+<li>Pulls software from Docker Hub: <a href="https://hub.docker.com/r/nfcore/arete/"><code>nfcore/arete</code></a></li>
+</ul>
+</li>
+<li>
+<p><code>conda</code></p>
+<ul>
+<li>Please only use Conda as a last resort i.e. when it's not possible to run the pipeline with Docker, Singularity, Podman, Shifter or Charliecloud.</li>
+<li>A generic configuration profile to be used with <a href="https://conda.io/docs/">Conda</a></li>
+<li>Pulls most software from <a href="https://bioconda.github.io/">Bioconda</a></li>
+</ul>
+</li>
+<li>
+<p><code>test</code></p>
+<ul>
+<li>A profile with a complete configuration for automated testing</li>
+<li>Includes links to test data so needs no other parameters</li>
+</ul>
+</li>
+</ul>
+<h3 id="-resume"><code>-resume</code></h3>
+<p>Specify this when restarting a pipeline. Nextflow will used cached results from any pipeline steps where the inputs are the same, continuing from where it got to previously.</p>
+<p>You can also supply a run name to resume a specific run: <code>-resume [run-name]</code>. Use the <code>nextflow log</code> command to show previous run names.</p>
+<h3 id="-c"><code>-c</code></h3>
+<p>Specify the path to a specific config file (this is a core Nextflow command). See the <a href="https://nf-co.re/usage/configuration">nf-core website documentation</a> for more information.</p>
+<h2 id="custom-resource-requests">Custom resource requests</h2>
+<p>Each step in the pipeline has a default set of requirements for number of CPUs, memory and time. For most of the steps in the pipeline, if the job exits with an error code of <code>143</code> (exceeded requested resources) it will automatically resubmit with higher requests (2 x original, then 3 x original). If it still fails after three times then the pipeline is stopped.</p>
+<p>Whilst these default requirements will hopefully work for most people with most data, you may find that you want to customise the compute resources that the pipeline requests. You can do this by creating a custom config file. For example, to give the workflow process <code>UNICYCLER</code> 32GB of memory, you could use the following config:</p>
+<pre><code class="language-nextflow">process {
+  withName: UNICYCLER {
+    memory = 32.GB
+  }
+}
+</code></pre>
+<p>To find the exact name of a process you wish to modify the compute resources, check the live-status of a nextflow run displayed on your terminal or check the nextflow error for a line like so: <code>Error executing process &gt; 'bwa'</code>. In this case the name to specify in the custom config file is <code>bwa</code>.</p>
+<p>See the main <a href="https://www.nextflow.io/docs/latest/config.html">Nextflow documentation</a> for more information.</p>
+<h2 id="running-in-the-background">Running in the background</h2>
+<p>Nextflow handles job submissions and supervises the running jobs. The Nextflow process must run until the pipeline is finished.</p>
+<p>The Nextflow <code>-bg</code> flag launches Nextflow in the background, detached from your terminal so that the workflow does not stop if you log out of your session. The logs are saved to a file.</p>
+<p>Alternatively, you can use <code>screen</code> / <code>tmux</code> or similar tool to create a detached session which you can log back into at a later time.
+Some HPC setups also allow you to run nextflow within a cluster job submitted your job scheduler (from where it submits more jobs).</p>
+<h2 id="nextflow-memory-requirements">Nextflow memory requirements</h2>
+<p>In some cases, the Nextflow Java virtual machines can start to request a large amount of memory.
+We recommend adding the following line to your environment to limit this (typically in <code>~/.bashrc</code> or <code>~./bash_profile</code>):</p>
+<pre><code class="language-bash">NXF_OPTS='-Xms1g -Xmx4g'
+</code></pre>
+              
+            </div>
+          </div><footer>
+    <div class="rst-footer-buttons" role="navigation" aria-label="Footer Navigation">
+        <a href=".." class="btn btn-neutral float-left" title="Home"><span class="icon icon-circle-arrow-left"></span> Previous</a>
+        <a href="../output/" class="btn btn-neutral float-right" title="Output">Next <span class="icon icon-circle-arrow-right"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <!-- Copyright etc -->
+  </div>
+
+  Built with <a href="https://www.mkdocs.org/">MkDocs</a> using a <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+</footer>
+          
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+
+  <div class="rst-versions" role="note" aria-label="Versions">
+  <span class="rst-current-version" data-toggle="rst-current-version">
+    
+        <span>
+          <a href="https://github.com/beiko-lab/arete" class="fa fa-github" style="color: #fcfcfc"> GitHub</a>
+        </span>
+    
+    
+      <span><a href=".." style="color: #fcfcfc">&laquo; Previous</a></span>
+    
+    
+      <span><a href="../output/" style="color: #fcfcfc">Next &raquo;</a></span>
+    
+  </span>
+</div>
+    <script>var base_url = '..';</script>
+    <script src="../js/theme_extra.js" defer></script>
+    <script src="../js/theme.js" defer></script>
+      <script src="../search/main.js" defer></script>
+    <script defer>
+        window.onload = function () {
+            SphinxRtdTheme.Navigation.enable(true);
+        };
+    </script>
+
+</body>
+</html>

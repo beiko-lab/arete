@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="description" content="AMR/VF LGT focused bacterial genomics analysis workflow" /><meta name="author" content="Beiko Lab" />
+      <link rel="shortcut icon" href="img/favicon.ico" />
+    <title>ARETE</title>
+    <link rel="stylesheet" href="css/theme.css" />
+    <link rel="stylesheet" href="css/theme_extra.css" />
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.5.0/styles/github.min.css" />
+    
+      <script>
+        // Current page data
+        var mkdocs_page_name = "Home";
+        var mkdocs_page_input_path = "README.md";
+        var mkdocs_page_url = null;
+      </script>
+    
+    <script src="js/jquery-3.6.0.min.js" defer></script>
+    <!--[if lt IE 9]>
+      <script src="js/html5shiv.min.js"></script>
+    <![endif]-->
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.5.0/highlight.min.js"></script>
+      <script>hljs.initHighlightingOnLoad();</script> 
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side stickynav">
+    <div class="wy-side-scroll">
+      <div class="wy-side-nav-search">
+          <a href="." class="icon icon-home"> ARETE
+        </a><div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="./search.html" method="get">
+      <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" title="Type search term here" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul class="current">
+                <li class="toctree-l1 current"><a class="reference internal current" href=".">Home</a>
+    <ul class="current">
+    </ul>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="usage/">Usage</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="output/">Output</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="CITATIONS/">Citations</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="ROADMAP/">Roadmap</a>
+                </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Reference</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="params/">Parameters</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="subsampling/">Subsampling</a>
+                  </li>
+              </ul>
+      </div>
+    </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+      <nav class="wy-nav-top" role="navigation" aria-label="Mobile navigation menu">
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href=".">ARETE</a>
+        
+      </nav>
+      <div class="wy-nav-content">
+        <div class="rst-content"><div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="." class="icon icon-home" aria-label="Docs"></a> &raquo;</li>
+      <li>Home</li>
+    <li class="wy-breadcrumbs-aside">
+          <a href="https://github.com/beiko-lab/arete/edit/master/docs/README.md" class="icon icon-github"> Edit on GitHub</a>
+    </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+            <div class="section" itemprop="articleBody">
+              
+                <p><a href="https://github.com/beiko-lab/arete/actions?query=workflow%3A%22nf-core+CI%22"><img alt="GitHub Actions CI Status" src="https://github.com/beiko-lab/arete/workflows/nf-core%20CI/badge.svg" /></a>
+<a href="https://github.com/beiko-lab/arete/actions?query=workflow%3A%22nf-test+CI%22"><img alt="GitHub Actions CI (test) Status" src="https://github.com/beiko-lab/arete/workflows/nf-test%20CI/badge.svg" /></a></p>
+<p><a href="https://www.nextflow.io/"><img alt="Nextflow" src="https://img.shields.io/badge/nextflow%20DSL2-%E2%89%A521.03.0--edge-23aa62.svg?labelColor=000000" /></a>
+<a href="https://docs.conda.io/en/latest/"><img alt="run with conda" src="http://img.shields.io/badge/run%20with-conda-3EB049?labelColor=000000&amp;logo=anaconda" /></a>
+<a href="https://www.docker.com/"><img alt="run with docker" src="https://img.shields.io/badge/run%20with-docker-0db7ed?labelColor=000000&amp;logo=docker" /></a>
+<a href="https://sylabs.io/docs/"><img alt="run with singularity" src="https://img.shields.io/badge/run%20with-singularity-1d355c.svg?labelColor=000000" /></a></p>
+<p><img alt="ARETE Logo" src="assets/arete-logo-transparent.png" /></p>
+<h2 id="introduction">Introduction</h2>
+<p><strong>ARETE</strong> is a bioinformatics best-practice analysis pipeline for AMR/VF LGT-focused bacterial genomics workflow.</p>
+<p>The pipeline is built using <a href="https://www.nextflow.io">Nextflow</a>, a workflow tool to run tasks across multiple compute infrastructures in a very portable manner. It uses Docker / Singularity containers making installation trivial and results highly reproducible.
+Like other workflow languages it provides <a href="https://www.nextflow.io/docs/latest/getstarted.html#modify-and-resume">useful features</a> like <code>-resume</code> to only rerun tasks that haven't already been completed (e.g., allowing editing of inputs/tasks and recovery from crashes without a full re-run).
+The <a href="https://nf-cor.re">nf-core</a> project provided overall project template, pre-written software modules when available, and general best practice recommendations.</p>
+<h2 id="pipeline-summary">Pipeline summary</h2>
+<p>Read processing:</p>
+<ul>
+<li>Raw Read QC (<a href="https://www.bioinformatics.babraham.ac.uk/projects/fastqc/"><code>FastQC</code></a>)</li>
+<li>Read Trimming (<a href="https://github.com/OpenGene/fastp"><code>fastp</code></a>)</li>
+<li>Trimmed Read QC (<a href="https://www.bioinformatics.babraham.ac.uk/projects/fastqc/"><code>FastQC</code></a>)</li>
+<li>Taxonomic Profiling (<a href="http://ccb.jhu.edu/software/kraken2/"><code>kraken2</code></a>)</li>
+</ul>
+<p>Assembly:</p>
+<ul>
+<li>Unicycler (<a href="https://github.com/rrwick/Unicycler"><code>unicycler</code></a>)</li>
+<li>QUAST QC (<a href="http://quast.sourceforge.net/"><code>quast</code></a>)</li>
+<li>CheckM QC (<a href="https://github.com/Ecogenomics/CheckM"><code>checkm</code></a>)</li>
+</ul>
+<p>Annotation:</p>
+<ul>
+<li>Bakta (<a href="https://github.com/oschwengers/bakta"><code>bakta</code></a>)</li>
+<li>(<em>optionally</em>) Prokka (<a href="https://github.com/tseemann/prokka"><code>prokka</code></a>)</li>
+<li>AMR (<a href="https://github.com/arpcard/rgi"><code>RGI</code></a>)</li>
+<li>Plasmids (<a href="https://github.com/phac-nml/mob-suite"><code>mob_suite</code></a>)</li>
+<li>Genomic Islands (<a href="https://github.com/brinkmanlab/islandpath"><code>IslandPath</code></a>)</li>
+<li>Phage identification (<a href="https://github.com/linsalrob/PhiSpy"><code>PhiSpy</code></a>)</li>
+<li>CAZY, VFDB, and BacMet query using DIAMOND (<a href="https://github.com/bbuchfink/diamond"><code>diamond</code></a>)</li>
+</ul>
+<p>Phylogeny:</p>
+<ul>
+<li>(<em>optionally</em>) Genome subsetting with PopPUNK (<a href="https://beikolab.github.io/arete/subsampling/">See documentation</a>)</li>
+<li>PPanGGOLiN (<a href="https://github.com/labgem/PPanGGOLiN"><code>PPanGGOLiN</code></a>)</li>
+<li>(<em>optionally</em>) Panaroo (<a href="https://github.com/gtonkinhill/panaroo"><code>panaroo</code></a>)</li>
+<li>FastTree (<a href="http://www.microbesonline.org/fasttree/"><code>fasttree</code></a>)</li>
+<li>(<em>optionally</em>) SNP-sites (<a href="https://github.com/sanger-pathogens/snp-sites"><code>SNPsites</code></a>)</li>
+<li>(<em>optionally</em>) IQTree (<a href="http://www.iqtree.org/"><code>iqtree</code></a>)</li>
+</ul>
+<p>Other:</p>
+<ul>
+<li>PopPUNK (<a href="https://poppunk.net/"><code>poppunk</code></a>)</li>
+</ul>
+<p>Recombination:</p>
+<p>Check recombination events within each PopPUNK cluster.</p>
+<ul>
+<li>Verticall (<a href="https://github.com/rrwick/Verticall/"><code>verticall</code></a>)</li>
+<li>SKA2 (<a href="https://github.com/bacpop/ska.rust"><code>ska2</code></a>)</li>
+<li>Gubbins (<a href="https://github.com/nickjcroucher/gubbins"><code>gubbins</code></a>)</li>
+</ul>
+<p>See our <a href="ROADMAP/">roadmap</a> for future development targets.</p>
+<h2 id="quick-start">Quick Start</h2>
+<ol>
+<li>
+<p>Install <a href="https://nf-co.re/usage/installation"><code>nextflow</code></a></p>
+</li>
+<li>
+<p>Install <a href="https://www.docker.com"><code>Docker</code></a>, <a href="https://sylabs.io/guides/3.0/user-guide/installation.html"><code>Singularity</code></a>, or, as a last resort, <a href="https://conda.io/miniconda.html"><code>Conda</code></a>. Also ensure you have a working <code>curl</code> installed (should be present on almost all systems).</p>
+<p>2.1. Note: this workflow should also support <a href="https://podman.io/"><code>Podman</code></a>, <a href="https://nersc.gitlab.io/development/shifter/how-to-use/"><code>Shifter</code></a> or <a href="https://hpc.github.io/charliecloud/"><code>Charliecloud</code></a> execution for full pipeline reproducibility. We have minimized reliance on <code>conda</code> and suggest using it only as a last resort (see <a href="https://nf-co.re/usage/configuration#basic-configuration-profiles">docs</a>). Configure <code>mail</code> on your system to send an email on workflow success/failure (without this you may get a small error at the end <code>Failed to invoke workflow.onComplete event handler</code> but this doesn't mean the workflow didn't finish successfully).</p>
+</li>
+<li>
+<p>Download the pipeline and test with a <code>stub-run</code>. The <code>stub-run</code> will ensure that the pipeline is able to download and use containers as well as execute in the proper logic.</p>
+<p><code>nextflow run beiko-lab/ARETE -profile test,&lt;docker/singularity/conda&gt; -stub-run</code></p>
+<p>3.1. Please check <a href="https://github.com/nf-core/configs#documentation">nf-core/configs</a> to see if a custom config file to run nf-core pipelines already exists for your Institute. If so, you can simply use <code>-profile &lt;institute&gt;</code> in your command. This will enable either <code>docker</code> or <code>singularity</code> and set the appropriate execution settings for your local compute environment.</p>
+<p>3.2. If you are using <code>singularity</code> then the pipeline will auto-detect this and attempt to download the Singularity images directly as opposed to performing a conversion from Docker images. If you are persistently observing issues downloading Singularity images directly due to timeout or network issues then please use the <code>--singularity_pull_docker_container</code> parameter to pull and convert the Docker image instead.</p>
+</li>
+<li>
+<p>Start running your own analysis (ideally using <code>-profile docker</code> or <code>-profile singularity</code> for stability)!</p>
+</li>
+</ol>
+<pre><code class="language-bash">nextflow run beiko-lab/ARETE \
+  -profile &lt;docker/singularity&gt; \
+  --input_sample_table samplesheet.csv \
+  --poppunk_model bgmm
+</code></pre>
+<p><code>samplesheet.csv</code> must be formatted <code>sample,fastq_1,fastq_2</code></p>
+<p><strong>Note</strong>: If you get this error at the end <code>Failed to invoke `workflow.onComplete` event handler</code> it isn't a problem, it just means you don't have an sendmail configured and it can't send an email report saying it finished correctly i.e., its not that the workflow failed.</p>
+<p>See <a href="https://beikolab.github.io/arete/usage/">usage docs</a> for all of the available options when running the pipeline.
+See the <a href="https://beikolab.github.io/arete/params/">parameter docs</a> for a list of all params currently implemented in the pipeline and which ones are required.</p>
+<h3 id="testing">Testing</h3>
+<p>To test the worklow on a minimal dataset you can use the test configuration (with either docker, conda, or singularity - replace <code>docker</code> below as appropriate):</p>
+<pre><code class="language-bash">nextflow run beiko-lab/ARETE -profile test,docker
+</code></pre>
+<p>Due to download speed of the Kraken2, Bakta and CAZY databases this will take ~35 minutes.
+However to accelerate it you can download/cache the database files to a folder (e.g., <code>test/db_cache</code>) and provide a database cache parameter. As well as set <code>--bakta_db</code> to the directory containing the Bakta database.</p>
+<pre><code class="language-bash">nextflow run beiko-lab/ARETE \
+  -profile test,docker \
+  --db_cache $PWD/test/db_cache \
+  --bakta_db $PWD/baktadb/db-light
+</code></pre>
+<h2 id="documentation">Documentation</h2>
+<p>The ARETE pipeline comes with documentation about the pipeline: <a href="https://beikolab.github.io/arete/usage/">usage</a> and <a href="https://beikolab.github.io/arete/output/">output</a>.</p>
+<h2 id="credits">Credits</h2>
+<p>ARETE was originally written and developed by <a href="https://github.com/fmaguire">Finlay Maguire</a> and <a href="https://github.com/alexmanuele">Alex Manuele</a>, and is currently developed by <a href="https://github.com/jvfe">João Cavalcante</a>.</p>
+<h2 id="contributions-and-support">Contributions and Support</h2>
+<!--If you would like to contribute to this pipeline, please see the [contributing guidelines](.github/CONTRIBUTING.md).-->
+
+<p>Thank you for your interest in contributing to ARETE. We are currently in the process of formalizing contribution guidelines. In the meantime, please feel free to open an issue describing your suggested changes.</p>
+<h2 id="citations">Citations</h2>
+<!-- TODO nf-core: Add citation for pipeline after first release. Uncomment lines below and update Zenodo doi and badge at the top of this file. -->
+
+<p>This pipeline uses code and infrastructure developed and maintained by the <a href="https://nf-co.re">nf-core</a> initative, and reused here under the <a href="https://github.com/nf-core/tools/blob/master/LICENSE">MIT license</a>.</p>
+<blockquote>
+<p>The nf-core framework for community-curated bioinformatics pipelines.</p>
+<p>Philip Ewels, Alexander Peltzer, Sven Fillinger, Harshil Patel, Johannes Alneberg, Andreas Wilm, Maxime Ulysse Garcia, Paolo Di Tommaso &amp; Sven Nahnsen.</p>
+<p>Nat Biotechnol. 2020 Feb 13. doi: 10.1038/s41587-020-0439-x.</p>
+</blockquote>
+<p>In addition, references of tools and data used in this pipeline are as follows can be found in the <a href="CITATIONS/"><code>CITATIONS.md</code></a> file.</p>
+              
+            </div>
+          </div><footer>
+    <div class="rst-footer-buttons" role="navigation" aria-label="Footer Navigation">
+        <a href="usage/" class="btn btn-neutral float-right" title="Usage">Next <span class="icon icon-circle-arrow-right"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <!-- Copyright etc -->
+  </div>
+
+  Built with <a href="https://www.mkdocs.org/">MkDocs</a> using a <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+</footer>
+          
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+
+  <div class="rst-versions" role="note" aria-label="Versions">
+  <span class="rst-current-version" data-toggle="rst-current-version">
+    
+        <span>
+          <a href="https://github.com/beiko-lab/arete" class="fa fa-github" style="color: #fcfcfc"> GitHub</a>
+        </span>
+    
+    
+    
+      <span><a href="usage/" style="color: #fcfcfc">Next &raquo;</a></span>
+    
+  </span>
+</div>
+    <script>var base_url = '.';</script>
+    <script src="js/theme_extra.js" defer></script>
+    <script src="js/theme.js" defer></script>
+      <script src="search/main.js" defer></script>
+    <script defer>
+        window.onload = function () {
+            SphinxRtdTheme.Navigation.enable(true);
+        };
+    </script>
+
+</body>
+</html>
+
+<!--
+MkDocs version : 1.4.3
+Build Date UTC : 2023-07-24 14:34:57.445935+00:00
+-->
