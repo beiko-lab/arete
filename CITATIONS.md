@@ -1,4 +1,4 @@
-# nf-core/arete: Citations
+# beiko-lab/arete: Citations
 
 ## [nf-core](https://pubmed.ncbi.nlm.nih.gov/32055031/)
 
