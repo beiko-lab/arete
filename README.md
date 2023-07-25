@@ -31,49 +31,50 @@ The pipeline is built using [Nextflow](https://www.nextflow.io), a workflow tool
 Like other workflow languages it provides [useful features](https://www.nextflow.io/docs/latest/getstarted.html#modify-and-resume) like `-resume` to only rerun tasks that haven't already been completed (e.g., allowing editing of inputs/tasks and recovery from crashes without a full re-run).
 The [nf-core](https://nf-cor.re) project provided overall project template, pre-written software modules when available, and general best practice recommendations.
 
-Read processing:
+ARETE is organized as a series of subworkflows, each of which executes a different conceptual step of the pipeline. The subworkflow orgnaization provides suitable entry and exit points for users who want to run only a portion of the full pipeline.
+
+Genome subsetting:
+
+The user can optionally subdivide their set of genomes into lineages as defined by PopPUNK ([See documentation](https://beiko-lab.github.io/arete/subsampling/)). PopPUNK quickly subdivides a set of genomes into 'lineages' based on core and accessory genome identity. If this option is selected, all genomes will still be annotated, but cross-genome comparisons (e.g., pan-genome inference and phylogenomics) will use only a single representative genome. The user can run PopPUNK with a spread of different thresholds and decide how to proceed based on the number of lineages produced. l
+
+Short-read processing and assembly:
 
 - Raw Read QC ([`FastQC`](https://www.bioinformatics.babraham.ac.uk/projects/fastqc/))
 - Read Trimming ([`fastp`](https://github.com/OpenGene/fastp))
 - Trimmed Read QC ([`FastQC`](https://www.bioinformatics.babraham.ac.uk/projects/fastqc/))
 - Taxonomic Profiling ([`kraken2`](http://ccb.jhu.edu/software/kraken2/))
-
-Assembly:
-
 - Unicycler ([`unicycler`](https://github.com/rrwick/Unicycler))
 - QUAST QC ([`quast`](http://quast.sourceforge.net/))
 - CheckM QC ([`checkm`](https://github.com/Ecogenomics/CheckM))
 
 Annotation:
 
-- Bakta ([`bakta`](https://github.com/oschwengers/bakta))
-- (_optionally_) Prokka ([`prokka`](https://github.com/tseemann/prokka))
-- AMR ([`RGI`](https://github.com/arpcard/rgi))
-- Plasmids ([`mob_suite`](https://github.com/phac-nml/mob-suite))
-- Genomic Islands ([`IslandPath`](https://github.com/brinkmanlab/islandpath))
-- Phage identification ([`PhiSpy`](https://github.com/linsalrob/PhiSpy))
-- CAZY, VFDB, and BacMet query using DIAMOND ([`diamond`](https://github.com/bbuchfink/diamond))
+- Genome annotation with Bakta ([`bakta`](https://github.com/oschwengers/bakta)) or Prokka ([`prokka`](https://github.com/tseemann/prokka))
+- Feature prediction:
+  - AMR genes with the Resistance Gene Identifier ([`RGI`](https://github.com/arpcard/rgi))
+  - Plasmids with MOB-Suite ([`mob_suite`](https://github.com/phac-nml/mob-suite))
+  - Genomic Islands with IslandPath ([`IslandPath`](https://github.com/brinkmanlab/islandpath))
+  - Phages with PhiSpy ([`PhiSpy`](https://github.com/linsalrob/PhiSpy))
+  - Specialized databaes: CAZY, VFDB, and BacMet using DIAMOND homology search ([`diamond`](https://github.com/bbuchfink/diamond))
 
-Phylogeny:
+Phylogenomics:
 
 - (_optionally_) Genome subsetting with PopPUNK ([See documentation](https://beiko-lab.github.io/arete/subsampling/))
-- PPanGGOLiN ([`PPanGGOLiN`](https://github.com/labgem/PPanGGOLiN))
-- (_optionally_) Panaroo ([`panaroo`](https://github.com/gtonkinhill/panaroo))
-- FastTree ([`fasttree`](http://www.microbesonline.org/fasttree/))
+- Pan-genome inference using PPanGGOLiN ([`PPanGGOLiN`](https://github.com/labgem/PPanGGOLiN)) or Panaroo ([`panaroo`](https://github.com/gtonkinhill/panaroo))
+- Reference and gene tree inference using FastTree ([`fasttree`](http://www.microbesonline.org/fasttree/)) or IQTree ([`iqtree`](http://www.iqtree.org/))
 - (_optionally_) SNP-sites ([`SNPsites`](https://github.com/sanger-pathogens/snp-sites))
-- (_optionally_) IQTree ([`iqtree`](http://www.iqtree.org/))
 
-Other:
+Recombination detection:
 
-- PopPUNK ([`poppunk`](https://poppunk.net/))
+- Recombination detection is performed within lineages identified by PopPUNK ([`poppunk`](https://poppunk.net/)). Note that this application of PopPUNK is different from the subsetting described above.
+- Genome alignment using SKA2 ([`ska2`](https://github.com/bacpop/ska.rust))
+- Recombination detection using Verticall ([`verticall`](https://github.com/rrwick/Verticall/)) and/or Gubbins ([`gubbins`](https://github.com/nickjcroucher/gubbins))
 
-Recombination:
+Coevolution:
+- Identification of coordinated gain and loss of features using EvolCCM (to add)
 
-Check recombination events within each PopPUNK cluster.
-
-- Verticall ([`verticall`](https://github.com/rrwick/Verticall/))
-- SKA2 ([`ska2`](https://github.com/bacpop/ska.rust))
-- Gubbins ([`gubbins`](https://github.com/nickjcroucher/gubbins))
+Lateral gene transfer:
+- Phylogenetic inference of LGT using rSPR (to add) 
 
 See our [roadmap](ROADMAP.md) for future development targets.
 
