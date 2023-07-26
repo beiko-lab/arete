@@ -168,7 +168,7 @@ Thank you for your interest in contributing to ARETE. We are currently in the pr
 Please cite the tools used in your ARETE run: a comprehensive list can be found in the [`CITATIONS.md`](CITATIONS.md) file.
 
 An early version of ARETE was used for assembly and feature prediction in [the following paper](https://pubmed.ncbi.nlm.nih.gov/36129737/):
-Sanderson H*, Gray KL*, Manuele A, Maguire F, Khan A, Liu C, Navanekere Rudrappa C, Nash JHE, Robertson J, Bessonov K, Oloni M, Alcock BP, Raphenya AR, McAllister TA, Peacock SJ, Raven KE, Gouliouris T, McArthur AG, Brinkman FSL, Fink RC, Zaheer R, Beiko RG. Exploring the mobilome and resistome of Enterococcus faecium in a One Health context across two continents. Microb Genom. 2022 Sep;8(9):mgen000880. doi: 10.1099/mgen.0.000880. PMID: 36129737; PMCID: PMC9676038.
+Sanderson H, Gray KL, Manuele A, Maguire F, Khan A, Liu C, Navanekere Rudrappa C, Nash JHE, Robertson J, Bessonov K, Oloni M, Alcock BP, Raphenya AR, McAllister TA, Peacock SJ, Raven KE, Gouliouris T, McArthur AG, Brinkman FSL, Fink RC, Zaheer R, Beiko RG. Exploring the mobilome and resistome of Enterococcus faecium in a One Health context across two continents. Microb Genom. 2022 Sep;8(9):mgen000880. doi: 10.1099/mgen.0.000880. PMID: 36129737; PMCID: PMC9676038.
 
 <!-- TODO nf-core: Add citation for pipeline after first release. Uncomment lines below and update Zenodo doi and badge at the top of this file. -->
 
