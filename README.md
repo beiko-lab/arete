@@ -23,7 +23,7 @@ A key design principle of ARETE is finding the right choice of software packages
 4. [Documentation](#documentation)
 5. [Credits](#credits)
 6. [Contributing to ARETE](#contributing)
-7. [Citations](#citations)
+7. [Citing ARETE](#citing)
 
 ## About the pipeline <a name="about"></a>
 
@@ -163,7 +163,7 @@ ARETE development has been supported from many sources, including Genome Canada,
 
 Thank you for your interest in contributing to ARETE. We are currently in the process of formalizing contribution guidelines. In the meantime, please feel free to open an issue describing your suggested changes.
 
-## Citations <a name="citations"></a>
+## Citing ARETE <a name="citing"></a>
 
 Please cite the tools used in your ARETE run: a comprehensive list can be found in the [`CITATIONS.md`](CITATIONS.md) file.
 
