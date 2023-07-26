@@ -74,7 +74,10 @@ Coevolution:
 - Identification of coordinated gain and loss of features using EvolCCM (to add)
 
 Lateral gene transfer:
-- Phylogenetic inference of LGT using rSPR (to add) 
+- Phylogenetic inference of LGT using rSPR (to add)
+
+Gene order:
+- Comparison of genomic neighbourhoods using the Gene Order Workflow (to add)
 
 See our [roadmap](ROADMAP.md) for future development targets.
 
@@ -142,11 +145,11 @@ The fine details of how to run ARETE are described in the command reference and 
 
 ## Documentation <a name="documentation"></a>
 
-The ARETE pipeline comes with documentation about the pipeline: [usage](https://beiko-lab.github.io/arete/usage/) and [output](https://beiko-lab.github.io/arete/output/).
+Documentation about the pipeline: [usage](https://beiko-lab.github.io/arete/usage/) and [output](https://beiko-lab.github.io/arete/output/).
 
 ## Credits <a name="credits"></a>
 
-ARETE was originally written and developed by [Finlay Maguire](https://github.com/fmaguire) and [Alex Manuele](https://github.com/alexmanuele), and is currently developed by [João Cavalcante](https://github.com/jvfe).
+The ARETE software was originally written and developed by [Finlay Maguire](https://github.com/fmaguire) and [Alex Manuele](https://github.com/alexmanuele), and is currently developed by [João Cavalcante](https://github.com/jvfe).
 
 ## Contributing to ARETE <a name="contributing"></a>
 
@@ -155,6 +158,11 @@ ARETE was originally written and developed by [Finlay Maguire](https://github.co
 Thank you for your interest in contributing to ARETE. We are currently in the process of formalizing contribution guidelines. In the meantime, please feel free to open an issue describing your suggested changes.
 
 ## Citations <a name="citations"></a>
+
+Please cite the tools used in your ARETE run: a comprehensive list can be found in the [`CITATIONS.md`](CITATIONS.md) file.
+
+An early version of ARETE was used for assembly and feature prediction in [the following paper](https://pubmed.ncbi.nlm.nih.gov/36129737/):
+Sanderson H*, Gray KL*, Manuele A, Maguire F, Khan A, Liu C, Navanekere Rudrappa C, Nash JHE, Robertson J, Bessonov K, Oloni M, Alcock BP, Raphenya AR, McAllister TA, Peacock SJ, Raven KE, Gouliouris T, McArthur AG, Brinkman FSL, Fink RC, Zaheer R, Beiko RG. Exploring the mobilome and resistome of Enterococcus faecium in a One Health context across two continents. Microb Genom. 2022 Sep;8(9):mgen000880. doi: 10.1099/mgen.0.000880. PMID: 36129737; PMCID: PMC9676038.
 
 <!-- TODO nf-core: Add citation for pipeline after first release. Uncomment lines below and update Zenodo doi and badge at the top of this file. -->
 
@@ -166,4 +174,4 @@ This pipeline uses code and infrastructure developed and maintained by the [nf-c
 >
 > Nat Biotechnol. 2020 Feb 13. doi: 10.1038/s41587-020-0439-x.
 
-In addition, references of tools and data used in this pipeline are as follows can be found in the [`CITATIONS.md`](CITATIONS.md) file.
+
