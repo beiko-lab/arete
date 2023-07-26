@@ -4,6 +4,7 @@ site_author: Beiko Lab
 nav:
   - Home: README.md
   - Usage: usage.md
+  - FAQ: faq.md
   - Output: output.md
   - Citations: CITATIONS.md
   - Roadmap: ROADMAP.md
