@@ -151,6 +151,12 @@ Documentation about the pipeline: [usage](https://beiko-lab.github.io/arete/usag
 
 The ARETE software was originally written and developed by [Finlay Maguire](https://github.com/fmaguire) and [Alex Manuele](https://github.com/alexmanuele), and is currently developed by [João Cavalcante](https://github.com/jvfe).
 
+Rob Beiko is the PI of the ARETE project. The project Co-PI is Fiona Brinkman. Other project PIs include Andrew MacArthur, Cedric Chauve, Chris Whidden, Gary van Domselaar, John Nash, Rahat Zaheer, and Tim McAllister.
+
+Many students, postdocs, developers, and staff scientists have made invaluable contributions to the design and application of ARETE and its components, including Haley Sanderson, Kristen Gray, Julia Lewandowski, Chaoyue Liu, Kartik Kakadiya, Bryan Alcock, Amos Raphenya, Amjad Khan, Ryan Fink, Aniket Mane, Chandana Navanekere Rudrappa, Kyrylo Bessonov, James Robertson, Jee In Kim, and Nolan Woods.
+
+ARETE development has been supported from many sources, including Genome Canada, ResearchNS, Genome Atlantic, Genome British Columbia, The Canadian Institutes for Health Research, The Natural Sciences and Engineering Research Council of Canada, and Dalhousie University's Faculty of Computer Science. We have received tremendous support from federal agencies, most notably the Public Health Agency of Canada and Agriculture / Agri-Food Canada.
+
 ## Contributing to ARETE <a name="contributing"></a>
 
 <!--If you would like to contribute to this pipeline, please see the [contributing guidelines](.github/CONTRIBUTING.md).-->
