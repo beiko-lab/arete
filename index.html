@@ -118,49 +118,46 @@
 <p>The pipeline is built using <a href="https://www.nextflow.io">Nextflow</a>, a workflow tool to run tasks across multiple compute infrastructures in a very portable manner. It uses Docker / Singularity containers making installation trivial and results highly reproducible.
 Like other workflow languages it provides <a href="https://www.nextflow.io/docs/latest/getstarted.html#modify-and-resume">useful features</a> like <code>-resume</code> to only rerun tasks that haven't already been completed (e.g., allowing editing of inputs/tasks and recovery from crashes without a full re-run).
 The <a href="https://nf-cor.re">nf-core</a> project provided overall project template, pre-written software modules when available, and general best practice recommendations.</p>
-<p>Read processing:</p>
+<p>ARETE is organized as a series of subworkflows, each of which executes a different conceptual step of the pipeline. The subworkflow orgnaization provides suitable entry and exit points for users who want to run only a portion of the full pipeline.</p>
+<p>Genome subsetting:</p>
+<p>The user can optionally subdivide their set of genomes into lineages as defined by PopPUNK (<a href="https://beiko-lab.github.io/arete/subsampling/">See documentation</a>). PopPUNK quickly subdivides a set of genomes into 'lineages' based on core and accessory genome identity. If this option is selected, all genomes will still be annotated, but cross-genome comparisons (e.g., pan-genome inference and phylogenomics) will use only a single representative genome. The user can run PopPUNK with a spread of different thresholds and decide how to proceed based on the number of lineages produced. l</p>
+<p>Short-read processing and assembly:</p>
 <ul>
 <li>Raw Read QC (<a href="https://www.bioinformatics.babraham.ac.uk/projects/fastqc/"><code>FastQC</code></a>)</li>
 <li>Read Trimming (<a href="https://github.com/OpenGene/fastp"><code>fastp</code></a>)</li>
 <li>Trimmed Read QC (<a href="https://www.bioinformatics.babraham.ac.uk/projects/fastqc/"><code>FastQC</code></a>)</li>
 <li>Taxonomic Profiling (<a href="http://ccb.jhu.edu/software/kraken2/"><code>kraken2</code></a>)</li>
-</ul>
-<p>Assembly:</p>
-<ul>
 <li>Unicycler (<a href="https://github.com/rrwick/Unicycler"><code>unicycler</code></a>)</li>
 <li>QUAST QC (<a href="http://quast.sourceforge.net/"><code>quast</code></a>)</li>
 <li>CheckM QC (<a href="https://github.com/Ecogenomics/CheckM"><code>checkm</code></a>)</li>
 </ul>
 <p>Annotation:</p>
 <ul>
-<li>Bakta (<a href="https://github.com/oschwengers/bakta"><code>bakta</code></a>)</li>
-<li>(<em>optionally</em>) Prokka (<a href="https://github.com/tseemann/prokka"><code>prokka</code></a>)</li>
-<li>AMR (<a href="https://github.com/arpcard/rgi"><code>RGI</code></a>)</li>
-<li>Plasmids (<a href="https://github.com/phac-nml/mob-suite"><code>mob_suite</code></a>)</li>
-<li>Genomic Islands (<a href="https://github.com/brinkmanlab/islandpath"><code>IslandPath</code></a>)</li>
-<li>Phage identification (<a href="https://github.com/linsalrob/PhiSpy"><code>PhiSpy</code></a>)</li>
-<li>CAZY, VFDB, and BacMet query using DIAMOND (<a href="https://github.com/bbuchfink/diamond"><code>diamond</code></a>)</li>
+<li>Genome annotation with Bakta (<a href="https://github.com/oschwengers/bakta"><code>bakta</code></a>) or Prokka (<a href="https://github.com/tseemann/prokka"><code>prokka</code></a>)</li>
+<li>Feature prediction:</li>
+<li>AMR genes with the Resistance Gene Identifier (<a href="https://github.com/arpcard/rgi"><code>RGI</code></a>)</li>
+<li>Plasmids with MOB-Suite (<a href="https://github.com/phac-nml/mob-suite"><code>mob_suite</code></a>)</li>
+<li>Genomic Islands with IslandPath (<a href="https://github.com/brinkmanlab/islandpath"><code>IslandPath</code></a>)</li>
+<li>Phages with PhiSpy (<a href="https://github.com/linsalrob/PhiSpy"><code>PhiSpy</code></a>)</li>
+<li>Specialized databaes: CAZY, VFDB, and BacMet using DIAMOND homology search (<a href="https://github.com/bbuchfink/diamond"><code>diamond</code></a>)</li>
 </ul>
-<p>Phylogeny:</p>
+<p>Phylogenomics:</p>
 <ul>
 <li>(<em>optionally</em>) Genome subsetting with PopPUNK (<a href="https://beiko-lab.github.io/arete/subsampling/">See documentation</a>)</li>
-<li>PPanGGOLiN (<a href="https://github.com/labgem/PPanGGOLiN"><code>PPanGGOLiN</code></a>)</li>
-<li>(<em>optionally</em>) Panaroo (<a href="https://github.com/gtonkinhill/panaroo"><code>panaroo</code></a>)</li>
-<li>FastTree (<a href="http://www.microbesonline.org/fasttree/"><code>fasttree</code></a>)</li>
+<li>Pan-genome inference using PPanGGOLiN (<a href="https://github.com/labgem/PPanGGOLiN"><code>PPanGGOLiN</code></a>) or Panaroo (<a href="https://github.com/gtonkinhill/panaroo"><code>panaroo</code></a>)</li>
+<li>Reference and gene tree inference using FastTree (<a href="http://www.microbesonline.org/fasttree/"><code>fasttree</code></a>) or IQTree (<a href="http://www.iqtree.org/"><code>iqtree</code></a>)</li>
 <li>(<em>optionally</em>) SNP-sites (<a href="https://github.com/sanger-pathogens/snp-sites"><code>SNPsites</code></a>)</li>
-<li>(<em>optionally</em>) IQTree (<a href="http://www.iqtree.org/"><code>iqtree</code></a>)</li>
 </ul>
-<p>Other:</p>
+<p>Recombination detection:</p>
 <ul>
-<li>PopPUNK (<a href="https://poppunk.net/"><code>poppunk</code></a>)</li>
+<li>Recombination detection is performed within lineages identified by PopPUNK (<a href="https://poppunk.net/"><code>poppunk</code></a>). Note that this application of PopPUNK is different from the subsetting described above.</li>
+<li>Genome alignment using SKA2 (<a href="https://github.com/bacpop/ska.rust"><code>ska2</code></a>)</li>
+<li>Recombination detection using Verticall (<a href="https://github.com/rrwick/Verticall/"><code>verticall</code></a>) and/or Gubbins (<a href="https://github.com/nickjcroucher/gubbins"><code>gubbins</code></a>)</li>
 </ul>
-<p>Recombination:</p>
-<p>Check recombination events within each PopPUNK cluster.</p>
-<ul>
-<li>Verticall (<a href="https://github.com/rrwick/Verticall/"><code>verticall</code></a>)</li>
-<li>SKA2 (<a href="https://github.com/bacpop/ska.rust"><code>ska2</code></a>)</li>
-<li>Gubbins (<a href="https://github.com/nickjcroucher/gubbins"><code>gubbins</code></a>)</li>
-</ul>
+<p>Coevolution:
+- Identification of coordinated gain and loss of features using EvolCCM (to add)</p>
+<p>Lateral gene transfer:
+- Phylogenetic inference of LGT using rSPR (to add) </p>
 <p>See our <a href="ROADMAP/">roadmap</a> for future development targets.</p>
 <h2 id="quick-start">Quick Start <a name="quickstart"></a></h2>
 <ol>
@@ -275,5 +272,5 @@ However to accelerate it you can download/cache the database files to a folder (
 
 <!--
 MkDocs version : 1.4.3
-Build Date UTC : 2023-07-25 23:38:53.824182+00:00
+Build Date UTC : 2023-07-26 00:00:06.869256+00:00
 -->
