@@ -52,11 +52,13 @@ Annotation:
 
 - Genome annotation with Bakta ([`bakta`](https://github.com/oschwengers/bakta)) or Prokka ([`prokka`](https://github.com/tseemann/prokka))
 - Feature prediction:
-  - AMR genes with the Resistance Gene Identifier ([`RGI`](https://github.com/arpcard/rgi))
-  - Plasmids with MOB-Suite ([`mob_suite`](https://github.com/phac-nml/mob-suite))
-  - Genomic Islands with IslandPath ([`IslandPath`](https://github.com/brinkmanlab/islandpath))
-  - Phages with PhiSpy ([`PhiSpy`](https://github.com/linsalrob/PhiSpy))
-  - Specialized databaes: CAZY, VFDB, and BacMet using DIAMOND homology search ([`diamond`](https://github.com/bbuchfink/diamond))
+
+      - AMR genes with the Resistance Gene Identifier ([`RGI`](https://github.com/arpcard/rgi))
+      - Plasmids with MOB-Suite ([`mob_suite`](https://github.com/phac-nml/mob-suite))
+      - Genomic Islands with IslandPath ([`IslandPath`](https://github.com/brinkmanlab/islandpath))
+      - Phages with PhiSpy ([`PhiSpy`](https://github.com/linsalrob/PhiSpy))
+      - (_optionally_) Integrons with [`IntegronFinder`](https://github.com/gem-pasteur/Integron_Finder)
+      - Specialized databases: CAZY, VFDB, BacMet and ICEberg2 using DIAMOND homology search ([`diamond`](https://github.com/bbuchfink/diamond))
 
 Phylogenomics:
 

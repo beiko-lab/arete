@@ -8,37 +8,55 @@ The directories listed below will be created in the results directory after the 
 
 The pipeline is built using [Nextflow](https://www.nextflow.io/) and processes data using the following steps (steps in _italics_ don't run by default):
 
-- [FastQC](#fastqc) - Raw and trimmed read QC
-- [FastP](#fastp) - Read trimming
-- [Kraken2](#kraken2) - Taxonomic assignment
-- [Unicycler](#unicycler) - Short read assembly
-- [_Quast_](#quast) - Assembly quality score
-- [Bakta](#bakta) or [_Prokka_](#prokka) - Gene detection and annotation
-- [Panaroo](#panaroo) - Pangenome alignment
-- [MobRecon](#mobrecon) - Reconstruction and typing of plasmids
-- [RGI](#rgi) - Detection and annotation of AMR determinants
-- [IslandPath](#islandpath) - Predicts genomic islands in bacterial and archaeal genomes.
-- [PhiSpy](#phispy) - Prediction of prophages from bacterial genomes
-- [_IntegronFinder_](#integronfinder) - Finds integrons in DNA sequences
-- [Diamond](#diamond) - Detection and annotation of genes using external databases.
+- [Short-read processing and assembly](#assembly)
 
-      - CAZy: Carbohydrate metabolism
-      - VFDB: Virulence factors
-      - BacMet: Metal resistance determinants
-      - ICEberg: Integrative and conjugative elements
+      - [FastQC](#fastqc) - Raw and trimmed read QC
+      - [FastP](#fastp) - Read trimming
+      - [Kraken2](#kraken2) - Taxonomic assignment
+      - [Unicycler](#unicycler) - Short read assembly
+      - [_Quast_](#quast) - Assembly quality score
 
-- [PopPUNK](#poppunk) - Genome clustering
-- [_Verticall_](#verticall) - Conduct pairwise assembly comparisons between genomes in a same PopPUNK cluster
-- [_SKA2_](#ska2) - Generate a whole-genome FASTA alignment for each genome within a cluster.
-- [_Gubbins_](#gubbins) - Detection of recombination events within genomes of the same cluster.
-- [FastTree](#fasttree) or [_IQTree_](#iqtree) - Maximum likelihood core genome phylogenetic tree
-- [_SNPsites_](#snpsites) - Extracts SNPs from a multi-FASTA alignment
-- [MultiQC](#multiqc) - Aggregate report describing results and QC from the whole pipeline
-- [Pipeline information](#pipeline-information) - Report metrics generated during the workflow execution
+- [Annotation](#annotation)
+
+      - [Bakta](#bakta) or [_Prokka_](#prokka) - Gene detection and annotation
+      - [MobRecon](#mobrecon) - Reconstruction and typing of plasmids
+      - [RGI](#rgi) - Detection and annotation of AMR determinants
+      - [IslandPath](#islandpath) - Predicts genomic islands in bacterial and archaeal genomes.
+      - [PhiSpy](#phispy) - Prediction of prophages from bacterial genomes
+      - [_IntegronFinder_](#integronfinder) - Finds integrons in DNA sequences
+      - [Diamond](#diamond) - Detection and annotation of genes using external databases.
+
+        - CAZy: Carbohydrate metabolism
+        - VFDB: Virulence factors
+        - BacMet: Metal resistance determinants
+        - ICEberg: Integrative and conjugative elements
+
+- [PopPUNK Subworkflow](#poppunk)
+
+      - PopPUNK - Genome clustering
+
+- [_Recombination_](#recombination)
+
+      - [_Verticall_](#verticall) - Conduct pairwise assembly comparisons between genomes in a same PopPUNK cluster
+      - [_SKA2_](#ska2) - Generate a whole-genome FASTA alignment for each genome within a cluster.
+      - [_Gubbins_](#gubbins) - Detection of recombination events within genomes of the same cluster.
+
+- [Phylogenomics and Pangenomics](#phylogenomics-and-pangenomics)
+
+      - [Panaroo](#panaroo) or [_PPanGGoLiN_](#ppanggolin) - Pangenome alignment
+      - [FastTree](#fasttree) or [_IQTree_](#iqtree) - Maximum likelihood core genome phylogenetic tree
+      - [_SNPsites_](#snpsites) - Extracts SNPs from a multi-FASTA alignment
+
+- [Pipeline information](#pipeline-information)
+
+      - Report metrics generated during the workflow execution
+      - [MultiQC](#multiqc) - Aggregate report describing results and QC from the whole pipeline
 
 <!-- TODO put all the other crap in below. Can't be arsed today -->
 
-### FastQC
+## Assembly
+
+#### FastQC
 
 - `read_processing/*_fastqc/`
 
@@ -57,7 +75,7 @@ The pipeline is built using [Nextflow](https://www.nextflow.io/) and processes d
 
 > **NB:** The FastQC plots displayed in the MultiQC report shows _untrimmed_ reads. They may contain adapter sequence and potentially regions with low quality.
 
-### fastp
+#### fastp
 
 - `read_processing/fastp/`
 
@@ -65,7 +83,7 @@ The pipeline is built using [Nextflow](https://www.nextflow.io/) and processes d
 
 [fastp](https://github.com/OpenGene/fastp) is a all-in-one fastq preprocessor for read/adapter trimming and quality control. It is used in this pipeline for trimming adapter sequences and discard low-quality reads.
 
-### Kraken2
+#### Kraken2
 
 - `read_processing/kraken2/`
 
@@ -75,7 +93,7 @@ The pipeline is built using [Nextflow](https://www.nextflow.io/) and processes d
 
 Kraken2 is a read classification software which will assign taxonomy to each read comprising a sample. These results may be analyzed as an indicator of contamination.
 
-### Unicycler
+#### Unicycler
 
 - `assembly/unicycler/`
 
@@ -85,7 +103,7 @@ Kraken2 is a read classification software which will assign taxonomy to each rea
 
 Short/hybrid read assembler. For now only handles short reads in ARETE.
 
-### Quast
+#### Quast
 
 - `assembly/quast/`
 
@@ -99,7 +117,9 @@ Short/hybrid read assembler. For now only handles short reads in ARETE.
             - `contig_size_viewer.html`
           - `basic_stats/`: Directory containing various summary plots generated by Quast.
 
-### Bakta
+## Annotation
+
+#### Bakta
 
 - `annotation/bakta/`
 
@@ -120,7 +140,7 @@ Short/hybrid read assembler. For now only handles short reads in ARETE.
 
 Bakta is a tool for the rapid & standardized annotation of bacterial genomes and plasmids from both isolates and MAGs
 
-### _Prokka_
+#### _Prokka_
 
 - `annotation/prokka/`
 
@@ -141,7 +161,7 @@ Bakta is a tool for the rapid & standardized annotation of bacterial genomes and
 
 Prokka is a software tool to annotate bacterial, archaeal and viral genomes quickly and produce standards-compliant output files.
 
-### RGI
+#### RGI
 
 - `annotation/rgi/`
 
@@ -149,7 +169,7 @@ Prokka is a software tool to annotate bacterial, archaeal and viral genomes quic
 
 RGI predicts AMR determinants using the CARD ontology and various trained models.
 
-### MobRecon
+#### MobRecon
 
 - `annotation/mob_recon`
 
@@ -163,7 +183,7 @@ RGI predicts AMR determinants using the CARD ontology and various trained models
 
 MobRecon reconstructs individual plasmid sequences from draft genome assemblies using the clustered plasmid reference databases
 
-### DIAMOND
+#### DIAMOND
 
 - `annotation/(vfdb|bacmet|cazy|iceberg2)/`
 
@@ -172,7 +192,7 @@ MobRecon reconstructs individual plasmid sequences from draft genome assemblies 
 
 [Diamond](https://github.com/bbuchfink/diamond) is a sequence aligner for protein and translated DNA searches, designed for high performance analysis of big sequence data. We use DIAMOND to predict the presence of virulence factors, heavy metal resistance determinants, carbohydrate-active enzymes, and integrative and conjugative elements using [VFDB](http://www.mgc.ac.cn/VFs/), [BacMet](http://bacmet.biomedicine.gu.se/), [CAZy](http://www.cazy.org/), and [ICEberg2](https://bioinfo-mml.sjtu.edu.cn/ICEberg2/index.php) respectively.
 
-### IslandPath
+#### IslandPath
 
 - `annotation/islandpath/`
 
@@ -184,7 +204,7 @@ MobRecon reconstructs individual plasmid sequences from draft genome assemblies 
 [IslandPath](https://github.com/brinkmanlab/islandpath) is a standalone software to predict genomic islands
 in bacterial and archaeal genomes based on the presence of dinucleotide biases and mobility genes.
 
-### IntegronFinder
+#### IntegronFinder
 
 Disabled by default. Enable by adding `--run_integronfinder` to your command.
 
@@ -194,7 +214,7 @@ Disabled by default. Enable by adding `--run_integronfinder` to your command.
 
 [Integron Finder](https://github.com/gem-pasteur/Integron_Finder) is a bioinformatics tool to find integrons in bacterial genomes.
 
-### PhiSpy
+#### PhiSpy
 
 - `annotation/phispy/`
 
@@ -204,40 +224,7 @@ See the [PhiSpy documentation](https://github.com/linsalrob/PhiSpy#output-files)
 
 [PhiSpy](https://github.com/linsalrob/PhiSpy) is a tool for identification of prophages in Bacterial (and probably Archaeal) genomes. Given an annotated genome it will use several approaches to identify the most likely prophage regions.
 
-### Panaroo
-
-- `pangenomics/panaroo/results/`
-
-See [the panaroo documentation](https://gtonkinhill.github.io/panaroo/#/gettingstarted/output) for an extensive description of output provided.
-
-[Panaroo](https://gtonkinhill.github.io/panaroo/) is a Bacterial Pangenome Analysis Pipeline.
-
-### FastTree
-
-- `phylogenomics/fasttree/`
-
-      - `*.tre` : Newick formatted maximum likelihood tree of core-genome alignment.
-
-[FastTree](http://www.microbesonline.org/fasttree/) infers approximately-maximum-likelihood phylogenetic trees from alignments of nucleotide or protein sequences
-
-### _IQTree_
-
-- `phylogenomics/iqtree/`
-
-      - `*.treefile` : Newick formatted maximum likelihood tree of core-genome alignment.
-
-[IQTree](http://www.iqtree.org/) is a fast and effective stochastic algorithm to infer phylogenetic trees by maximum likelihood.
-
-### _SNPsites_
-
-- `phylogenomics/snpsites/`
-
-      - `filtered_alignment.fas` : Variant fasta file.
-      - `constant.sites.txt` : Text file containing counts of constant sites.
-
-[SNPsites](https://github.com/sanger-pathogens/snp-sites) is a tool to rapidly extract SNPs from a multi-FASTA alignment.
-
-### PopPUNK
+## PopPUNK
 
 - `poppunk_results/`
 
@@ -246,7 +233,9 @@ See [the panaroo documentation](https://gtonkinhill.github.io/panaroo/#/gettings
 
 [PopPUNK](https://poppunk.net/) is a tool for clustering genomes.
 
-### Verticall
+## _Recombination_
+
+#### Verticall
 
 - `recombination/verticall/`
 
@@ -254,7 +243,7 @@ See [the panaroo documentation](https://gtonkinhill.github.io/panaroo/#/gettings
 
 [Verticall](https://github.com/rrwick/Verticall/) is a tool to help produce bacterial genome phylogenies which are not influenced by horizontally acquired sequences such as recombination.
 
-### SKA2
+#### SKA2
 
 - `recombination/ska2/`
 
@@ -262,7 +251,7 @@ See [the panaroo documentation](https://gtonkinhill.github.io/panaroo/#/gettings
 
 [SKA2](https://github.com/bacpop/ska.rust) (Split Kmer Analysis) is a toolkit for prokaryotic (and any other small, haploid) DNA sequence analysis using split kmers.
 
-### Gubbins
+#### Gubbins
 
 - `recombination/gubbins/`
 
@@ -270,7 +259,60 @@ See [the panaroo documentation](https://gtonkinhill.github.io/panaroo/#/gettings
 
 [Gubbins](https://github.com/nickjcroucher/gubbins) is an algorithm that iteratively identifies loci containing elevated densities of base substitutions while concurrently constructing a phylogeny based on the putative point mutations outside of these regions.
 
-### MultiQC
+## Phylogenomics and Pangenomics
+
+#### Panaroo
+
+- `pangenomics/panaroo/results/`
+
+See [the panaroo documentation](https://gtonkinhill.github.io/panaroo/#/gettingstarted/output) for an extensive description of output provided.
+
+[Panaroo](https://gtonkinhill.github.io/panaroo/) is a Bacterial Pangenome Analysis Pipeline.
+
+#### _PPanGGoLiN_
+
+- `pangenomics/ppanggolin/`
+
+See [the PPanGGoLiN documentation](https://github.com/labgem/PPanGGOLiN/wiki/Outputs#msa) for an extensive description of output provided.
+
+[PPanGGoLiN](https://github.com/labgem/PPanGGOLiN) is a tool to build a partitioned pangenome graph from microbial genomes
+
+#### FastTree
+
+- `phylogenomics/fasttree/`
+
+      - `*.tre` : Newick formatted maximum likelihood tree of core-genome alignment.
+
+[FastTree](http://www.microbesonline.org/fasttree/) infers approximately-maximum-likelihood phylogenetic trees from alignments of nucleotide or protein sequences
+
+#### _IQTree_
+
+- `phylogenomics/iqtree/`
+
+      - `*.treefile` : Newick formatted maximum likelihood tree of core-genome alignment.
+
+[IQTree](http://www.iqtree.org/) is a fast and effective stochastic algorithm to infer phylogenetic trees by maximum likelihood.
+
+#### _SNPsites_
+
+- `phylogenomics/snpsites/`
+
+      - `filtered_alignment.fas` : Variant fasta file.
+      - `constant.sites.txt` : Text file containing counts of constant sites.
+
+[SNPsites](https://github.com/sanger-pathogens/snp-sites) is a tool to rapidly extract SNPs from a multi-FASTA alignment.
+
+## Pipeline information
+
+- `pipeline_info/`
+
+      - Reports generated by Nextflow: `execution_report.html`, `execution_timeline.html`, `execution_trace.txt` and `pipeline_dag.dot`/`pipeline_dag.svg`.
+      - Reports generated by the pipeline: `pipeline_report.html`, `pipeline_report.txt` and `software_versions.csv`.
+      - Reformatted samplesheet files used as input to the pipeline: `samplesheet.valid.csv`.
+
+[Nextflow](https://www.nextflow.io/docs/latest/tracing.html) provides excellent functionality for generating various reports relevant to the running and execution of the pipeline. This will allow you to troubleshoot errors with the running of the pipeline, and also provide you with other information such as launch commands, run times and resource usage.
+
+#### MultiQC
 
 - `multiqc/`
 
@@ -281,13 +323,3 @@ See [the panaroo documentation](https://gtonkinhill.github.io/panaroo/#/gettings
 [MultiQC](http://multiqc.info) is a visualization tool that generates a single HTML report summarising all samples in your project. Most of the pipeline QC results are visualised in the report and further statistics are available in the report data directory.
 
 Results generated by MultiQC collate pipeline QC from supported tools e.g. FastQC. The pipeline has special steps which also allow the software versions to be reported in the MultiQC output for future traceability. For more information about how to use MultiQC reports, see <http://multiqc.info>.
-
-### Pipeline information
-
-- `pipeline_info/`
-
-      - Reports generated by Nextflow: `execution_report.html`, `execution_timeline.html`, `execution_trace.txt` and `pipeline_dag.dot`/`pipeline_dag.svg`.
-      - Reports generated by the pipeline: `pipeline_report.html`, `pipeline_report.txt` and `software_versions.csv`.
-      - Reformatted samplesheet files used as input to the pipeline: `samplesheet.valid.csv`.
-
-[Nextflow](https://www.nextflow.io/docs/latest/tracing.html) provides excellent functionality for generating various reports relevant to the running and execution of the pipeline. This will allow you to troubleshoot errors with the running of the pipeline, and also provide you with other information such as launch commands, run times and resource usage.
