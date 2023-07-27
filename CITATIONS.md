@@ -61,13 +61,31 @@
 
   > Alcock et al. 2020. CARD 2020: antibiotic resistome surveillance with the comprehensive antibiotic resistance database. Nucleic Acids Research, Volume 48, Issue D1, Pages D517-525 [PMID 31665441]
 
+- [IntegronFinder](https://doi.org/10.3390/microorganisms10040700)
+
+  > Néron, Bertrand, Eloi Littner, Matthieu Haudiquet, Amandine Perrin, Jean Cury, and Eduardo P.C. Rocha. 2022. IntegronFinder 2.0: Identification and Analysis of Integrons across Bacteria, with a Focus on Antibiotic Resistance in Klebsiella Microorganisms 10, no. 4: 700. https://doi.org/10.3390/microorganisms10040700
+
 - [Panaroo](https://github.com/gtonkinhill/panaroo)
 
   > Tonkin-Hill, G., MacAlasdair, N., Ruis, C. et al. Producing polished prokaryotic pangenomes with the Panaroo pipeline. Genome Biol 21, 180 (2020). https://doi.org/10.1186/s13059-020-02090-4
 
+- [PPanGGoLiN](https://doi.org/10.1371/journal.pcbi.1007732)
+
+  > Gautreau G et al. (2020) PPanGGOLiN: Depicting microbial diversity via a partitioned pangenome graph. PLOS Computational Biology 16(3): e1007732. https://doi.org/10.1371/journal.pcbi.1007732
+
 - [PopPUNK](https://doi.org/10.1101/gr.241455.118)
 
   > Lees JA, Harris SR, Tonkin-Hill G, Gladstone RA, Lo SW, Weiser JN, Corander J, Bentley SD, Croucher NJ. Fast and flexible bacterial genomic epidemiology with PopPUNK. Genome Res. 2019 Feb;29(2):304-316. doi: 10.1101/gr.241455.118. Epub 2019 Jan 24. PMID: 30679308; PMCID: PMC6360808.
+
+- [SKA2](https://doi.org/10.1101/453142)
+
+  > Harris SR. 2018. SKA: Split Kmer Analysis Toolkit for Bacterial Genomic Epidemiology. bioRxiv 453142 doi: https://doi.org/10.1101/453142
+
+- [Gubbins](https://doi.org/10.1093/nar/gku1196)
+
+  > Croucher N. J., Page A. J., Connor T. R., Delaney A. J., Keane J. A., Bentley S. D., Parkhill J., Harris S.R. "Rapid phylogenetic analysis of large samples of recombinant bacterial whole genome sequences using Gubbins". doi:10.1093/nar/gku1196, Nucleic Acids Research, 2014.
+
+- [Verticall](https://github.com/rrwick/Verticall)
 
 - [SNP-sites](https://pubmed.ncbi.nlm.nih.gov/28348851/)
 
