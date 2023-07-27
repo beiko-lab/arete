@@ -145,9 +145,66 @@ The fine details of how to run ARETE are described in the command reference and 
 
 ### Assembly, annotation, and pan-genome inference from a modestly sized dataset (50 or so genomes) from paired-end reads
 
+```bash
+nextflow run beiko-lab/ARETE \
+ --input_sample_table samplesheet.csv \
+ --annotation_tools 'mobsuite,rgi,vfdb,bacmet,islandpath,phispy,report' \
+ --poppunk_model bgmm \
+ -profile docker
+```
+
+Parameters used:
+
+- `--input_sample_table` - Input dataset in samplesheet format (See [usage](https://beiko-lab.github.io/arete/usage/#samplesheet-input))
+- `--annotation_tools` - Select the annotation tools and modules to be executed (See the [parameter documentation](https://beiko-lab.github.io/arete/params/#annotation) for defaults)
+- `--poppunk_model` - Model to be used by [PopPUNK](poppunk.readthedocs.io/)
+- `-profile docker` - Run tools in docker containers.
+
 ### Annotation to evolutionary dynamics on 300-ish genomes
 
+```bash
+nextflow run beiko-lab/ARETE \
+ --input_sample_table samplesheet.csv \
+ --poppunk_model dbscan \
+ --run_recombination \
+ --run_gubbins \
+ --use_ppanggolin \
+ -entry annotation \
+ -profile docker
+```
+
+Parameters used:
+
+- `--input_sample_table` - Input dataset in samplesheet format (See [usage](https://beiko-lab.github.io/arete/usage/#samplesheet-input))
+- `--poppunk_model` - Model to be used by [PopPUNK](poppunk.readthedocs.io/).
+- `--run_recombination` - Run the recombination subworkflow.
+- `--run_gubbins` - Run [Gubbins](https://github.com/nickjcroucher/gubbins) as part of the recombination subworkflow.
+- `--use_ppanggolin` - Use [PPanGGOLiN](https://github.com/labgem/PPanGGOLiN) for calculating the pangenome. Tends to perform better on larger input sets.
+- `-entry annotation` - Run annotation subworkflow and further steps (See [usage](https://beiko-lab.github.io/arete/usage/)).
+- `-profile docker` - Run tools in docker containers.
+
 ### Annotation to evolutionary dynamics on 10,000 genomes
+
+```bash
+nextflow run beiko-lab/ARETE \
+ --input_sample_table samplesheet.csv \
+ --poppunk_model dbscan \
+ --use_ppanggolin \
+ --run_recombination \
+ --enable_subsetting \
+ -entry annotation \
+ -profile docker
+```
+
+Parameters used:
+
+- `--input_sample_table` - Input dataset in samplesheet format (See [usage](https://beiko-lab.github.io/arete/usage/#samplesheet-input))
+- `--poppunk_model` - Model to be used by [PopPUNK](poppunk.readthedocs.io/).
+- `--run_recombination` - Run the recombination subworkflow.
+- `--use_ppanggolin` - Use [PPanGGOLiN](https://github.com/labgem/PPanGGOLiN) for calculating the pangenome. Tends to perform better on larger input sets.
+- `--enable_subsetting` - Enable subsetting workflow based on genome similarity (See [subsetting documentation](https://beiko-lab.github.io/arete/subsampling/))
+- `-entry annotation` - Run annotation subworkflow and further steps (See [usage](https://beiko-lab.github.io/arete/usage/)).
+- `-profile docker` - Run tools in docker containers.
 
 ## Credits <a name="credits"></a>
 
