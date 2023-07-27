@@ -8,7 +8,7 @@
     <title>Usage - ARETE</title>
     <link rel="stylesheet" href="../css/theme.css" />
     <link rel="stylesheet" href="../css/theme_extra.css" />
-        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.5.0/styles/github.min.css" />
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github.min.css" />
     
       <script>
         // Current page data
@@ -17,12 +17,11 @@
         var mkdocs_page_url = null;
       </script>
     
-    <script src="../js/jquery-3.6.0.min.js" defer></script>
     <!--[if lt IE 9]>
       <script src="../js/html5shiv.min.js"></script>
     <![endif]-->
-      <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.5.0/highlight.min.js"></script>
-      <script>hljs.initHighlightingOnLoad();</script> 
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+      <script>hljs.highlightAll();</script> 
 </head>
 
 <body class="wy-body-for-nav" role="document">
@@ -55,11 +54,25 @@
     </li>
     <li class="toctree-l3"><a class="reference internal" href="#annotation-only-samplesheet">Annotation only samplesheet</a>
     </li>
+    <li class="toctree-l3"><a class="reference internal" href="#phylogenomics-and-pangenomics-only-samplesheet">Phylogenomics and Pangenomics only samplesheet</a>
+    </li>
         </ul>
     </li>
     <li class="toctree-l2"><a class="reference internal" href="#reference-genome">Reference Genome</a>
     </li>
     <li class="toctree-l2"><a class="reference internal" href="#running-the-pipeline">Running the pipeline</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#assembly-entry">Assembly Entry</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#assembly-qc-entry">Assembly QC Entry</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#annotation-entry">Annotation Entry</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#poppunk-entry">PopPUNK Entry</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#phylogenomics-and-pangenomics-entry">Phylogenomics and Pangenomics Entry</a>
+    </li>
+        </ul>
     </li>
     <li class="toctree-l2"><a class="reference internal" href="#updating-the-pipeline">Updating the pipeline</a>
     </li>
@@ -121,7 +134,7 @@
         <div class="rst-content"><div role="navigation" aria-label="breadcrumbs navigation">
   <ul class="wy-breadcrumbs">
     <li><a href=".." class="icon icon-home" aria-label="Docs"></a> &raquo;</li>
-      <li>Usage</li>
+      <li class="breadcrumb-item active">Usage</li>
     <li class="wy-breadcrumbs-aside">
           <a href="https://github.com/beiko-lab/arete/edit/master/docs/usage.md" class="icon icon-github"> Edit on GitHub</a>
     </li>
@@ -131,19 +144,19 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
             <div class="section" itemprop="articleBody">
               
-                <h1 id="arete-usage">ARETE: Usage</h1>
-<blockquote>
-<p><em>Documentation of pipeline parameters is generated automatically from the pipeline schema and can no longer be found in markdown files.</em></p>
-</blockquote>
+                <h1 id="beiko-labarete-usage">beiko-lab/ARETE: Usage</h1>
 <h2 id="introduction">Introduction</h2>
-<p>The ARETE pipeline can is designed as an end-to-end workflow manager for genome assembly, annotation, and phylogenetic analysis, beginning with read data. However, in some cases a user may wish to stop the pipeline prior to annotation or use the annotation features of the work flow with pre-existing assemblies. Therefore, ARETE allows users four use cases:</p>
+<p>The ARETE pipeline can is designed as an end-to-end workflow manager for genome assembly, annotation, and phylogenetic analysis, beginning with read data. However, in some cases a user may wish to stop the pipeline prior to annotation or use the annotation features of the work flow with pre-existing assemblies. Therefore, ARETE allows users different use cases:</p>
 <ol>
-<li>Run the full pipeline end-to-end..</li>
+<li>Run the full pipeline end-to-end.</li>
 <li>Input a set of reads and stop after assembly.</li>
 <li>Input a set of assemblies and perform QC.</li>
 <li>Input a set of assemblies and perform annotation and taxonomic analyses.</li>
+<li>Input a set of assemblies and perform genome clustering with PopPUNK.</li>
+<li>Input a set of assemblies and perform phylogenomic and pangenomic analysis.</li>
 </ol>
 <p>This document will describe how to perform each workflow.</p>
+<p><a href="#running-the-pipeline">"Running the pipeline"</a> will show some example command on how to use these different entries to ARETE.</p>
 <h2 id="samplesheet-input">Samplesheet input</h2>
 <p>No matter your use case, you will need to create a samplesheet with information about the samples you would like to analyse before running the pipeline. Use this parameter to specify its location.
 For full runs and assembly, it has to be a comma-separated file with 3 columns, and a header row as shown in the examples below.</p>
@@ -183,9 +196,9 @@ TREATMENT_REP3,AEG588A6_S6_L004_R1_001.fastq.gz,
 </tr>
 </tbody>
 </table>
-<p>An <a href="../assets/samplesheet.csv">example samplesheet</a> has been provided with the pipeline.</p>
+<p>An <a href="https://github.com/beiko-lab/arete/blob/master/test/test_dataset.csv">example samplesheet</a> has been provided with the pipeline.</p>
 <h3 id="annotation-only-samplesheet">Annotation only samplesheet</h3>
-<p>The ARETE pipeline allows users to provide pre-existing assemblies to make use of the annotation and reporting features of the workflow. Users may use the <code>assembly_qc</code> entry point to perform QC on the assemblies. <strong>Note that the QC workflow does not automatically filter low quality assemblies, it simply generates QC reports!</strong> <code>assembly</code> and <code>assembly_qc</code> workflows accept the same format of sample sheet.</p>
+<p>The ARETE pipeline allows users to provide pre-existing assemblies to make use of the annotation and reporting features of the workflow. Users may use the <code>assembly_qc</code> entry point to perform QC on the assemblies. <strong>Note that the QC workflow does not automatically filter low quality assemblies, it simply generates QC reports!</strong> <code>annotation</code>, <code>assembly_qc</code> and <code>poppunk</code> workflows accept the same format of sample sheet.</p>
 <p>The sample sheet must be a 2 column, comma-seperated CSV file with header.</p>
 <table>
 <thead>
@@ -202,6 +215,28 @@ TREATMENT_REP3,AEG588A6_S6_L004_R1_001.fastq.gz,
 <tr>
 <td><code>fna_file_path</code></td>
 <td>Full path to fna file for assembly or genome. File must have <code>.fna</code> file extension.</td>
+</tr>
+</tbody>
+</table>
+<p>An <a href="https://github.com/beiko-lab/arete/blob/master/test/test_annotation_dataset.csv">example samplesheet</a> has been provided with the pipeline.</p>
+<h3 id="phylogenomics-and-pangenomics-only-samplesheet">Phylogenomics and Pangenomics only samplesheet</h3>
+<p>The ARETE pipeline allows users to provide pre-existing assemblies to make use of the phylogenomic and pangenomic features of the workflow.</p>
+<p>The sample sheet must be a 2 column, comma-seperated CSV file with header.</p>
+<table>
+<thead>
+<tr>
+<th>Column</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>sample</code></td>
+<td>Custom sample name. This entry will be identical for multiple sequencing libraries/runs from the same sample.</td>
+</tr>
+<tr>
+<td><code>gff_file_path</code></td>
+<td>Full path to GFF file for assembly or genome. File must have <code>.gff</code> or <code>.gff3</code> file extension. These files can be the ones generated by Prokka or Bakta in ARETE's annotation subworkflow.</td>
 </tr>
 </tbody>
 </table>
@@ -228,14 +263,26 @@ results         # Finished results (configurable, see below)
 .nextflow_log   # Log file from Nextflow
 # Other nextflow hidden files, eg. history of pipeline runs and old logs.
 </code></pre>
-<p>As written above, the pipeline also allows users to execute only assembly or only annotation. To execute assembly (reference genome optional):</p>
+<p>As written above, the pipeline also allows users to execute only assembly or only annotation.</p>
+<h3 id="assembly-entry">Assembly Entry</h3>
+<p>To execute assembly (reference genome optional):</p>
 <pre><code class="language-bash">nextflow run beiko-lab/ARETE -entry assembly --input_sample_table samplesheet.csv --reference_genome ref.fasta  -profile docker
 </code></pre>
+<h3 id="assembly-qc-entry">Assembly QC Entry</h3>
 <p>To execute QC on pre-existing assemblies (reference genome optional):</p>
 <pre><code class="language-bash">nextflow run beiko-lab/ARETE -entry assembly_qc --input_sample_table samplesheet.csv --reference_genome ref.fasta  -profile docker
 </code></pre>
-<p>To execute annotation of pre-existing assemblies:</p>
+<h3 id="annotation-entry">Annotation Entry</h3>
+<p>To execute annotation of pre-existing assemblies (PopPUNK model can be either bgmm, dbscan, refine, threshold or lineage):</p>
 <pre><code class="language-bash">nextflow run beiko-lab/ARETE -entry annotation --input_sample_table samplesheet.csv --poppunk_model bgmm -profile docker
+</code></pre>
+<h3 id="poppunk-entry">PopPUNK Entry</h3>
+<p>To execute annotation of pre-existing assemblies (PopPUNK model can be either bgmm, dbscan, refine, threshold or lineage):</p>
+<pre><code class="language-bash">nextflow run beiko-lab/ARETE -entry poppunk --input_sample_table samplesheet.csv --poppunk_model bgmm -profile docker
+</code></pre>
+<h3 id="phylogenomics-and-pangenomics-entry">Phylogenomics and Pangenomics Entry</h3>
+<p>To execute phylogenomic and pangenomics analysis on pre-existing assemblies:</p>
+<pre><code class="language-bash">nextflow run beiko-lab/ARETE -entry phylogenomics --input_sample_table samplesheet.csv -profile docker
 </code></pre>
 <h2 id="updating-the-pipeline">Updating the pipeline</h2>
 <p>When you run the above command, Nextflow automatically pulls the pipeline code from GitHub and stores it as a cached version. When running the pipeline after this, it will always use the cached version if available - even if the pipeline has been updated since. To make sure that you're running the latest version of the pipeline, make sure that you regularly update the cached version of the pipeline:</p>
@@ -251,9 +298,9 @@ results         # Finished results (configurable, see below)
 </blockquote>
 <h3 id="-profile"><code>-profile</code></h3>
 <p>Use this parameter to choose a configuration profile. Profiles can give configuration presets for different compute environments.</p>
-<p>Several generic profiles are bundled with the pipeline which instruct the pipeline to use software packaged using different methods (Docker, Singularity, Podman, Shifter, Charliecloud, Conda) - see below.</p>
+<p>Several generic profiles are bundled with the pipeline which instruct the pipeline to use software packaged using different methods (Docker, Singularity, Podman, Shifter, Charliecloud) - see below.</p>
 <blockquote>
-<p>We highly recommend the use of Docker or Singularity containers for full pipeline reproducibility, however when this is not possible, Conda is also supported.</p>
+<p>We highly recommend the use of Docker or Singularity containers for full pipeline reproducibility.</p>
 </blockquote>
 <p>The pipeline also dynamically loads configurations from <a href="https://github.com/nf-core/configs">https://github.com/nf-core/configs</a> when it runs, making multiple config profiles for various institutional clusters available at run time. For more information and to see if your system is available in these configs please see the <a href="https://github.com/nf-core/configs#documentation">nf-core/configs documentation</a>.</p>
 <p>Note that multiple profiles can be loaded, for example: <code>-profile test,docker</code> - the order of arguments is important!
@@ -264,35 +311,30 @@ They are loaded in sequence, so later profiles can overwrite earlier profiles.</
 <p><code>docker</code></p>
 <ul>
 <li>A generic configuration profile to be used with <a href="https://docker.com/">Docker</a></li>
-<li>Pulls software from Docker Hub: <a href="https://hub.docker.com/r/nfcore/arete/"><code>nfcore/arete</code></a></li>
 </ul>
 </li>
 <li>
 <p><code>singularity</code></p>
 <ul>
 <li>A generic configuration profile to be used with <a href="https://sylabs.io/docs/">Singularity</a></li>
-<li>Pulls software from Docker Hub: <a href="https://hub.docker.com/r/nfcore/arete/"><code>nfcore/arete</code></a></li>
 </ul>
 </li>
 <li>
 <p><code>podman</code></p>
 <ul>
 <li>A generic configuration profile to be used with <a href="https://podman.io/">Podman</a></li>
-<li>Pulls software from Docker Hub: <a href="https://hub.docker.com/r/nfcore/arete/"><code>nfcore/arete</code></a></li>
 </ul>
 </li>
 <li>
 <p><code>shifter</code></p>
 <ul>
 <li>A generic configuration profile to be used with <a href="https://nersc.gitlab.io/development/shifter/how-to-use/">Shifter</a></li>
-<li>Pulls software from Docker Hub: <a href="https://hub.docker.com/r/nfcore/arete/"><code>nfcore/arete</code></a></li>
 </ul>
 </li>
 <li>
 <p><code>charliecloud</code></p>
 <ul>
 <li>A generic configuration profile to be used with <a href="https://hpc.github.io/charliecloud/">Charliecloud</a></li>
-<li>Pulls software from Docker Hub: <a href="https://hub.docker.com/r/nfcore/arete/"><code>nfcore/arete</code></a></li>
 </ul>
 </li>
 <li>
@@ -307,6 +349,7 @@ They are loaded in sequence, so later profiles can overwrite earlier profiles.</
 <p><code>test</code></p>
 <ul>
 <li>A profile with a complete configuration for automated testing</li>
+<li>Can run in personal computers with at least 6GB of RAM and 2 CPUs</li>
 <li>Includes links to test data so needs no other parameters</li>
 </ul>
 </li>
@@ -376,14 +419,15 @@ We recommend adding the following line to your environment to limit this (typica
     
   </span>
 </div>
-    <script>var base_url = '..';</script>
-    <script src="../js/theme_extra.js" defer></script>
-    <script src="../js/theme.js" defer></script>
-      <script src="../search/main.js" defer></script>
-    <script defer>
-        window.onload = function () {
+    <script src="../js/jquery-3.6.0.min.js"></script>
+    <script>var base_url = "..";</script>
+    <script src="../js/theme_extra.js"></script>
+    <script src="../js/theme.js"></script>
+      <script src="../search/main.js"></script>
+    <script>
+        jQuery(function () {
             SphinxRtdTheme.Navigation.enable(true);
-        };
+        });
     </script>
 
 </body>

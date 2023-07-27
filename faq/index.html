@@ -8,7 +8,7 @@
     <title>FAQ - ARETE</title>
     <link rel="stylesheet" href="../css/theme.css" />
     <link rel="stylesheet" href="../css/theme_extra.css" />
-        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.5.0/styles/github.min.css" />
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github.min.css" />
     
       <script>
         // Current page data
@@ -17,12 +17,11 @@
         var mkdocs_page_url = null;
       </script>
     
-    <script src="../js/jquery-3.6.0.min.js" defer></script>
     <!--[if lt IE 9]>
       <script src="../js/html5shiv.min.js"></script>
     <![endif]-->
-      <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.5.0/highlight.min.js"></script>
-      <script>hljs.initHighlightingOnLoad();</script> 
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+      <script>hljs.highlightAll();</script> 
 </head>
 
 <body class="wy-body-for-nav" role="document">
@@ -51,7 +50,7 @@
               <ul class="current">
                 <li class="toctree-l1 current"><a class="reference internal current" href="./">FAQ</a>
     <ul class="current">
-    <li class="toctree-l2"><a class="reference internal" href="#how-do-i-x">How do I x?</a>
+    <li class="toctree-l2"><a class="reference internal" href="#how-do-i-run-arete-in-a-slurm-hpc-environment">How do I run ARETE in a Slurm HPC environment?</a>
     </li>
     </ul>
                 </li>
@@ -89,7 +88,7 @@
         <div class="rst-content"><div role="navigation" aria-label="breadcrumbs navigation">
   <ul class="wy-breadcrumbs">
     <li><a href=".." class="icon icon-home" aria-label="Docs"></a> &raquo;</li>
-      <li>FAQ</li>
+      <li class="breadcrumb-item active">FAQ</li>
     <li class="wy-breadcrumbs-aside">
           <a href="https://github.com/beiko-lab/arete/edit/master/docs/faq.md" class="icon icon-github"> Edit on GitHub</a>
     </li>
@@ -100,7 +99,44 @@
             <div class="section" itemprop="articleBody">
               
                 <h1 id="frequently-asked-questions">Frequently Asked Questions</h1>
-<h2 id="how-do-i-x">How do I x?</h2>
+<h2 id="how-do-i-run-arete-in-a-slurm-hpc-environment">How do I run ARETE in a Slurm HPC environment?</h2>
+<ul>
+<li>Set a config file under <code>~/.nextflow/config</code> to use the slurm executor:</li>
+</ul>
+<pre><code class="language-json">  process {
+    executor = 'slurm'
+    pollInterval = '60 sec'
+    submitRateLimit = '60/1min'
+    queueSize = 100
+    // If an account is necessary:
+    clusterOptions = '--account=&lt;my-account&gt;'
+  }
+</code></pre>
+<p>See the <a href="https://www.nextflow.io/docs/latest/config.html#scope-executor">Nextflow documentation</a> for a description of these options.</p>
+<ul>
+<li>Now, when running ARETE, you'll need to set additional options if your compute nodes don't have network access - as is common for most Slurm clusters. The example below uses the default test data, i.e. the <code>test</code> profile, for demonstration purposes only.</li>
+</ul>
+<pre><code class="language-bash">nextflow run beiko-lab/ARETE \
+  --db_cache path/to/db_cache \
+  --bakta_db path/to/baktadb \
+  -profile test,singularity
+</code></pre>
+<p>Apart from <code>-profile singularity</code>, which just makes ARETE use Singularity/Apptainer containers for running the tools, there are two additional parameters:</p>
+<ul>
+<li>
+<p><code>--db_cache</code> should be the location for the pre-downloaded databases used in the DIAMOND alignments (i.e. Bacmet, VFDB, ICEberg2 and CAZy FASTA files) and in the Kraken2 taxonomic read classification.</p>
+<ul>
+<li>Although these tools run by default, you can change the selection of annotation tools by changing <code>--annotation_tools</code> and
+    skip Kraken2 by adding <code>--skip_kraken</code>. See the <a href="https://beiko-lab.github.io/arete/params/">parameter documentation</a> for a full list of parameters and their defaults.</li>
+</ul>
+</li>
+<li>
+<p><code>--bakta_db</code> should be the location of the pre-downloaded <a href="https://github.com/oschwengers/bakta#database-download">Bakta database</a></p>
+<ul>
+<li>Alternatively, you can use Prokka for annotating your assemblies, since it doesn't require a downloaded database (<code>--use_prokka</code>).</li>
+</ul>
+</li>
+</ul>
               
             </div>
           </div><footer>
@@ -140,14 +176,15 @@
     
   </span>
 </div>
-    <script>var base_url = '..';</script>
-    <script src="../js/theme_extra.js" defer></script>
-    <script src="../js/theme.js" defer></script>
-      <script src="../search/main.js" defer></script>
-    <script defer>
-        window.onload = function () {
+    <script src="../js/jquery-3.6.0.min.js"></script>
+    <script>var base_url = "..";</script>
+    <script src="../js/theme_extra.js"></script>
+    <script src="../js/theme.js"></script>
+      <script src="../search/main.js"></script>
+    <script>
+        jQuery(function () {
             SphinxRtdTheme.Navigation.enable(true);
-        };
+        });
     </script>
 
 </body>
