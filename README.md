@@ -139,7 +139,7 @@ nextflow run beiko-lab/ARETE \
   --bakta_db $PWD/baktadb/db-light
 ```
 
-## A couple of examples <a name="examples"></a>
+## Examples <a name="examples"></a>
 
 The fine details of how to run ARETE are described in the command reference and documentation, but here are a couple of illustrative examples:
 
