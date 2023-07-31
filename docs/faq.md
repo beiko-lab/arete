@@ -36,3 +36,5 @@ Apart from `-profile singularity`, which just makes ARETE use Singularity/Apptai
 - `--bakta_db` should be the location of the pre-downloaded [Bakta database](https://github.com/oschwengers/bakta#database-download)
 
       - Alternatively, you can use Prokka for annotating your assemblies, since it doesn't require a downloaded database (`--use_prokka`).
+
+- Do note that there could be [memory-related issues](https://beiko-lab.github.io/arete/usage/#nextflow-memory-requirements) when running Nextflow in SLURM environments.

@@ -261,3 +261,7 @@ We recommend adding the following line to your environment to limit this (typica
 ```bash
 NXF_OPTS='-Xms1g -Xmx4g'
 ```
+
+Sometimes LevelDB, which is used by Nextflow to track execution metadata, can lead to memory-related issues, often showing as a **SIGBUS** error. [This tends to happen when running Nextflow in SLURM environments](https://github.com/nextflow-io/nextflow/issues/842).
+
+In this case, setting `NXF_OPTS="-Dleveldb.mmap=false"` in your `~/.bashrc` or immediately before executing `nextflow run` usually solves the issue.
