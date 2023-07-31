@@ -196,7 +196,8 @@ workflow ARETE {
         if (params.run_recombination) {
             RECOMBINATION (
                 assemblies,
-                RUN_POPPUNK.out.clusters
+                RUN_POPPUNK.out.clusters,
+                ASSEMBLE_SHORTREADS.out.quast_report
             )
         }
     }
@@ -398,7 +399,8 @@ workflow ANNOTATION {
         if (params.run_recombination) {
             RECOMBINATION (
                 assemblies,
-                RUN_POPPUNK.out.clusters
+                RUN_POPPUNK.out.clusters,
+                []
             )
         }
     }
