@@ -141,7 +141,7 @@ nextflow run beiko-lab/ARETE \
 
 ## Examples <a name="examples"></a>
 
-The fine details of how to run ARETE are described in the command reference and documentation, but here are a couple of illustrative examples:
+The fine details of how to run ARETE are described in the command reference and documentation, but here are a couple of illustrative examples of how runs can be adjusted to accommodate genome sets of different sizes:
 
 ### Assembly, annotation, and pan-genome inference from a modestly sized dataset (50 or so genomes) from paired-end reads
 
