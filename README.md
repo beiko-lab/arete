@@ -75,15 +75,15 @@ The user can optionally subdivide their set of genomes into lineages as defined 
 
 ### Coevolution
 
-- Identification of coordinated gain and loss of features using EvolCCM ([`EvolCCM`](https://rdrr.io/github/beiko-lab/evolCCM/f/README.md) (in progress)
+- Identification of coordinated gain and loss of features using EvolCCM ([`EvolCCM`](https://rdrr.io/github/beiko-lab/evolCCM/f/README.md)) (in progress)
 
 ### Lateral gene transfer
 
-- Phylogenetic inference of LGT using rSPR ([`rSPR`](https://github.com/cwhidden/rspr) (in progress)
+- Phylogenetic inference of LGT using rSPR ([`rSPR`](https://github.com/cwhidden/rspr)) (in progress)
 
 ### Gene order
 
-- Comparison of genomic neighbourhoods using the Gene Order Workflow (`https://github.com/JTL-lab/Gene-Order-Workflow`](https://github.com/JTL-lab/Gene-Order-Workflow) (in progress)
+- Comparison of genomic neighbourhoods using the Gene Order Workflow ([``](https://github.com/JTL-lab/Gene-Order-Workflow)) (in progress)
 
 See our [roadmap](ROADMAP.md) for a full list of future development targets.
 
