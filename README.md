@@ -30,11 +30,11 @@ A key design principle of ARETE is finding the right choice of software packages
 
 The pipeline is built using [Nextflow](https://www.nextflow.io), a workflow tool to run tasks across multiple compute infrastructures in a very portable manner. It uses Docker / Singularity containers making installation trivial and results highly reproducible.
 Like other workflow languages it provides [useful features](https://www.nextflow.io/docs/latest/getstarted.html#modify-and-resume) like `-resume` to only rerun tasks that haven't already been completed (e.g., allowing editing of inputs/tasks and recovery from crashes without a full re-run).
-The [nf-core](https://nf-cor.re) project provided overall project template, pre-written software modules when available, and general best practice recommendations.
+The [nf-core](https://nf-cor.re) project provided overall project template, pre-written software modules when available, and general best-practice recommendations.
 
 ARETE is organized as a series of subworkflows, each of which executes a different conceptual step of the pipeline. The subworkflow orgnaization provides suitable entry and exit points for users who want to run only a portion of the full pipeline.
 
-Genome subsetting:
+### Genome subsetting:
 
 The user can optionally subdivide their set of genomes into lineages as defined by PopPUNK ([See documentation](https://beiko-lab.github.io/arete/subsampling/)). PopPUNK quickly subdivides a set of genomes into 'lineages' based on core and accessory genome identity. If this option is selected, all genomes will still be annotated, but cross-genome comparisons (e.g., pan-genome inference and phylogenomics) will use only a single representative genome. The user can run PopPUNK with a spread of different thresholds and decide how to proceed based on the number of lineages produced.
 
