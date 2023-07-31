@@ -34,7 +34,7 @@ process QUAST {
         $features \\
         --threads $task.cpus \\
         $args \\
-        ${consensus.join(' ')}
+        \$(cat ${consensus.join(' ')})
 
     ln -s ${prefix}/report.tsv
 
