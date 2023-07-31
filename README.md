@@ -53,12 +53,12 @@ The user can optionally subdivide their set of genomes into lineages as defined 
 - Genome annotation with Bakta ([`bakta`](https://github.com/oschwengers/bakta)) or Prokka ([`prokka`](https://github.com/tseemann/prokka))
 - Feature prediction:
 
-      - AMR genes with the Resistance Gene Identifier ([`RGI`](https://github.com/arpcard/rgi))
-      - Plasmids with MOB-Suite ([`mob_suite`](https://github.com/phac-nml/mob-suite))
-      - Genomic Islands with IslandPath ([`IslandPath`](https://github.com/brinkmanlab/islandpath))
-      - Phages with PhiSpy ([`PhiSpy`](https://github.com/linsalrob/PhiSpy))
-      - (_optionally_) Integrons with [`IntegronFinder`](https://github.com/gem-pasteur/Integron_Finder)
-      - Specialized databases: CAZY, VFDB, BacMet and ICEberg2 using DIAMOND homology search ([`diamond`](https://github.com/bbuchfink/diamond))
+  - AMR genes with the Resistance Gene Identifier ([`RGI`](https://github.com/arpcard/rgi))
+  - Plasmids with MOB-Suite ([`mob_suite`](https://github.com/phac-nml/mob-suite))
+  - Genomic Islands with IslandPath ([`IslandPath`](https://github.com/brinkmanlab/islandpath))
+  - Phages with PhiSpy ([`PhiSpy`](https://github.com/linsalrob/PhiSpy))
+  - (_optionally_) Integrons with [`IntegronFinder`](https://github.com/gem-pasteur/Integron_Finder)
+  - Specialized databases: CAZY, VFDB, BacMet and ICEberg2 using DIAMOND homology search ([`diamond`](https://github.com/bbuchfink/diamond))
 
 ### Phylogenomics
 
@@ -83,7 +83,7 @@ The user can optionally subdivide their set of genomes into lineages as defined 
 
 ### Gene order
 
-- Comparison of genomic neighbourhoods using the Gene Order Workflow ([``](https://github.com/JTL-lab/Gene-Order-Workflow)) (in progress)
+- Comparison of genomic neighbourhoods using the Gene Order Workflow ([`Gene Order Workflow`](https://github.com/JTL-lab/Gene-Order-Workflow)) (in progress)
 
 See our [roadmap](ROADMAP.md) for a full list of future development targets.
 
