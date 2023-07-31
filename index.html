@@ -122,9 +122,9 @@
 Like other workflow languages it provides <a href="https://www.nextflow.io/docs/latest/getstarted.html#modify-and-resume">useful features</a> like <code>-resume</code> to only rerun tasks that haven't already been completed (e.g., allowing editing of inputs/tasks and recovery from crashes without a full re-run).
 The <a href="https://nf-cor.re">nf-core</a> project provided overall project template, pre-written software modules when available, and general best-practice recommendations.</p>
 <p>ARETE is organized as a series of subworkflows, each of which executes a different conceptual step of the pipeline. The subworkflow orgnaization provides suitable entry and exit points for users who want to run only a portion of the full pipeline.</p>
-<h3 id="genome-subsetting">Genome subsetting:</h3>
+<h3 id="genome-subsetting">Genome subsetting</h3>
 <p>The user can optionally subdivide their set of genomes into lineages as defined by PopPUNK (<a href="https://beiko-lab.github.io/arete/subsampling/">See documentation</a>). PopPUNK quickly subdivides a set of genomes into 'lineages' based on core and accessory genome identity. If this option is selected, all genomes will still be annotated, but cross-genome comparisons (e.g., pan-genome inference and phylogenomics) will use only a single representative genome. The user can run PopPUNK with a spread of different thresholds and decide how to proceed based on the number of lineages produced.</p>
-<p>Short-read processing and assembly:</p>
+<h3 id="short-read-processing-and-assembly">Short-read processing and assembly</h3>
 <ul>
 <li>Raw Read QC (<a href="https://www.bioinformatics.babraham.ac.uk/projects/fastqc/"><code>FastQC</code></a>)</li>
 <li>Read Trimming (<a href="https://github.com/OpenGene/fastp"><code>fastp</code></a>)</li>
@@ -134,7 +134,7 @@ The <a href="https://nf-cor.re">nf-core</a> project provided overall project tem
 <li>QUAST QC (<a href="http://quast.sourceforge.net/"><code>quast</code></a>)</li>
 <li>CheckM QC (<a href="https://github.com/Ecogenomics/CheckM"><code>checkm</code></a>)</li>
 </ul>
-<p>Annotation:</p>
+<h3 id="annotation">Annotation</h3>
 <ul>
 <li>Genome annotation with Bakta (<a href="https://github.com/oschwengers/bakta"><code>bakta</code></a>) or Prokka (<a href="https://github.com/tseemann/prokka"><code>prokka</code></a>)</li>
 <li>
@@ -149,30 +149,30 @@ The <a href="https://nf-cor.re">nf-core</a> project provided overall project tem
 </ul>
 </li>
 </ul>
-<p>Phylogenomics:</p>
+<h3 id="phylogenomics">Phylogenomics</h3>
 <ul>
 <li>(<em>optionally</em>) Genome subsetting with PopPUNK (<a href="https://beiko-lab.github.io/arete/subsampling/">See documentation</a>)</li>
 <li>Pan-genome inference using PPanGGOLiN (<a href="https://github.com/labgem/PPanGGOLiN"><code>PPanGGOLiN</code></a>) or Panaroo (<a href="https://github.com/gtonkinhill/panaroo"><code>panaroo</code></a>)</li>
 <li>Reference and gene tree inference using FastTree (<a href="http://www.microbesonline.org/fasttree/"><code>fasttree</code></a>) or IQTree (<a href="http://www.iqtree.org/"><code>iqtree</code></a>)</li>
 <li>(<em>optionally</em>) SNP-sites (<a href="https://github.com/sanger-pathogens/snp-sites"><code>SNPsites</code></a>)</li>
 </ul>
-<p>Recombination detection:</p>
+<h3 id="recombination-detection">Recombination detection</h3>
 <ul>
 <li>Recombination detection is performed within lineages identified by PopPUNK (<a href="https://poppunk.net/"><code>poppunk</code></a>). Note that this application of PopPUNK is different from the subsetting described above.</li>
 <li>Genome alignment using SKA2 (<a href="https://github.com/bacpop/ska.rust"><code>ska2</code></a>)</li>
 <li>Recombination detection using Verticall (<a href="https://github.com/rrwick/Verticall/"><code>verticall</code></a>) and/or Gubbins (<a href="https://github.com/nickjcroucher/gubbins"><code>gubbins</code></a>)</li>
 </ul>
-<p>Coevolution:</p>
+<h3 id="coevolution">Coevolution</h3>
 <ul>
-<li>Identification of coordinated gain and loss of features using EvolCCM (to add)</li>
+<li>Identification of coordinated gain and loss of features using EvolCCM (<a href="https://rdrr.io/github/beiko-lab/evolCCM/f/README.md"><code>EvolCCM</code></a> (in progress)</li>
 </ul>
-<p>Lateral gene transfer:</p>
+<h3 id="lateral-gene-transfer">Lateral gene transfer</h3>
 <ul>
-<li>Phylogenetic inference of LGT using rSPR (to add)</li>
+<li>Phylogenetic inference of LGT using rSPR (<a href="https://github.com/cwhidden/rspr"><code>rSPR</code></a> (in progress)</li>
 </ul>
-<p>Gene order:</p>
+<h3 id="gene-order">Gene order</h3>
 <ul>
-<li>Comparison of genomic neighbourhoods using the Gene Order Workflow (to add)</li>
+<li>Comparison of genomic neighbourhoods using the Gene Order Workflow (<code>https://github.com/JTL-lab/Gene-Order-Workflow</code>](https://github.com/JTL-lab/Gene-Order-Workflow) (in progress)</li>
 </ul>
 <p>See our <a href="ROADMAP/">roadmap</a> for a full list of future development targets.</p>
 <h2 id="quick-start">Quick Start <a name="quickstart"></a></h2>
@@ -345,5 +345,5 @@ However to accelerate it you can download/cache the database files to a folder (
 
 <!--
 MkDocs version : 1.5.1
-Build Date UTC : 2023-07-31 17:31:20.568993+00:00
+Build Date UTC : 2023-07-31 17:36:52.150356+00:00
 -->
