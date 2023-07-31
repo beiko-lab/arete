@@ -34,11 +34,11 @@ The [nf-core](https://nf-cor.re) project provided overall project template, pre-
 
 ARETE is organized as a series of subworkflows, each of which executes a different conceptual step of the pipeline. The subworkflow orgnaization provides suitable entry and exit points for users who want to run only a portion of the full pipeline.
 
-### Genome subsetting:
+### Genome subsetting
 
 The user can optionally subdivide their set of genomes into lineages as defined by PopPUNK ([See documentation](https://beiko-lab.github.io/arete/subsampling/)). PopPUNK quickly subdivides a set of genomes into 'lineages' based on core and accessory genome identity. If this option is selected, all genomes will still be annotated, but cross-genome comparisons (e.g., pan-genome inference and phylogenomics) will use only a single representative genome. The user can run PopPUNK with a spread of different thresholds and decide how to proceed based on the number of lineages produced.
 
-Short-read processing and assembly:
+### Short-read processing and assembly
 
 - Raw Read QC ([`FastQC`](https://www.bioinformatics.babraham.ac.uk/projects/fastqc/))
 - Read Trimming ([`fastp`](https://github.com/OpenGene/fastp))
@@ -48,7 +48,7 @@ Short-read processing and assembly:
 - QUAST QC ([`quast`](http://quast.sourceforge.net/))
 - CheckM QC ([`checkm`](https://github.com/Ecogenomics/CheckM))
 
-Annotation:
+### Annotation
 
 - Genome annotation with Bakta ([`bakta`](https://github.com/oschwengers/bakta)) or Prokka ([`prokka`](https://github.com/tseemann/prokka))
 - Feature prediction:
@@ -60,30 +60,30 @@ Annotation:
       - (_optionally_) Integrons with [`IntegronFinder`](https://github.com/gem-pasteur/Integron_Finder)
       - Specialized databases: CAZY, VFDB, BacMet and ICEberg2 using DIAMOND homology search ([`diamond`](https://github.com/bbuchfink/diamond))
 
-Phylogenomics:
+### Phylogenomics
 
 - (_optionally_) Genome subsetting with PopPUNK ([See documentation](https://beiko-lab.github.io/arete/subsampling/))
 - Pan-genome inference using PPanGGOLiN ([`PPanGGOLiN`](https://github.com/labgem/PPanGGOLiN)) or Panaroo ([`panaroo`](https://github.com/gtonkinhill/panaroo))
 - Reference and gene tree inference using FastTree ([`fasttree`](http://www.microbesonline.org/fasttree/)) or IQTree ([`iqtree`](http://www.iqtree.org/))
 - (_optionally_) SNP-sites ([`SNPsites`](https://github.com/sanger-pathogens/snp-sites))
 
-Recombination detection:
+### Recombination detection
 
 - Recombination detection is performed within lineages identified by PopPUNK ([`poppunk`](https://poppunk.net/)). Note that this application of PopPUNK is different from the subsetting described above.
 - Genome alignment using SKA2 ([`ska2`](https://github.com/bacpop/ska.rust))
 - Recombination detection using Verticall ([`verticall`](https://github.com/rrwick/Verticall/)) and/or Gubbins ([`gubbins`](https://github.com/nickjcroucher/gubbins))
 
-Coevolution:
+### Coevolution
 
-- Identification of coordinated gain and loss of features using EvolCCM (to add)
+- Identification of coordinated gain and loss of features using EvolCCM ([`EvolCCM`](https://rdrr.io/github/beiko-lab/evolCCM/f/README.md) (in progress)
 
-Lateral gene transfer:
+### Lateral gene transfer
 
-- Phylogenetic inference of LGT using rSPR (to add)
+- Phylogenetic inference of LGT using rSPR ([`rSPR`](https://github.com/cwhidden/rspr) (in progress)
 
-Gene order:
+### Gene order
 
-- Comparison of genomic neighbourhoods using the Gene Order Workflow (to add)
+- Comparison of genomic neighbourhoods using the Gene Order Workflow (`https://github.com/JTL-lab/Gene-Order-Workflow`](https://github.com/JTL-lab/Gene-Order-Workflow) (in progress)
 
 See our [roadmap](ROADMAP.md) for a full list of future development targets.
 
