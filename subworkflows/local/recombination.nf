@@ -17,8 +17,13 @@ workflow RECOMBINATION {
         ch_reference_genome = params.reference_genome ? file(params.reference_genome) : []
         use_reference_genome = params.reference_genome ? true : false
 
+        assemblies
+            .map { meta, fasta -> fasta.toString() }
+            .collectFile(name:'assemblies.txt', newLine: true)
+            .set { quast_input }
+
         QUAST (
-            assemblies.collect { meta, fasta -> fasta },
+            quast_input,
             ch_reference_genome,
             [],
             use_reference_genome,
