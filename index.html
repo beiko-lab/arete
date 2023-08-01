@@ -204,15 +204,18 @@ The <a href="https://nf-cor.re">nf-core</a> project provided overall project tem
 <p>See <a href="https://beiko-lab.github.io/arete/usage/">usage docs</a> for all of the available options when running the pipeline.
 See the <a href="https://beiko-lab.github.io/arete/params/">parameter docs</a> for a list of all params currently implemented in the pipeline and which ones are required.</p>
 <h3 id="testing">Testing</h3>
-<p>To test the worklow on a minimal dataset you can use the test configuration (with either docker, conda, or singularity - replace <code>docker</code> below as appropriate):</p>
+<p>To test the worklow on a minimal dataset you can use the test configuration (with either docker or singularity - replace <code>docker</code> below as appropriate):</p>
 <pre><code class="language-bash">nextflow run beiko-lab/ARETE -profile test,docker
 </code></pre>
-<p>Due to download speed of the Kraken2, Bakta and CAZY databases this will take ~35 minutes.
-However to accelerate it you can download/cache the database files to a folder (e.g., <code>test/db_cache</code>) and provide a database cache parameter. As well as set <code>--bakta_db</code> to the directory containing the Bakta database.</p>
+<p>To accelerate it you can download/cache the database files to a folder (e.g., <code>test/db_cache</code>) and provide a database cache parameter.</p>
 <pre><code class="language-bash">nextflow run beiko-lab/ARETE \
   -profile test,docker \
   --db_cache $PWD/test/db_cache \
   --bakta_db $PWD/baktadb/db-light
+</code></pre>
+<p>We also provide a larger test dataset, under <code>-profile test_full</code>, for use in ARETE's <code>annotation</code> entry. This dataset is comprised of 8 bacterial genomes. As a note, <strong>this can take upwards of 20 minutes to complete on an average personal computer</strong>.
+Replace <code>docker</code> below as appropriate.</p>
+<pre><code class="language-bash">nextflow run beiko-lab/ARETE -entry annotation -profile test_full,docker
 </code></pre>
 <h2 id="examples">Examples <a name="examples"></a></h2>
 <p>The fine details of how to run ARETE are described in the command reference and documentation, but here are a couple of illustrative examples of how runs can be adjusted to accommodate genome sets of different sizes:</p>
@@ -345,5 +348,5 @@ However to accelerate it you can download/cache the database files to a folder (
 
 <!--
 MkDocs version : 1.5.1
-Build Date UTC : 2023-07-31 23:33:58.920522+00:00
+Build Date UTC : 2023-08-01 15:40:51.948154+00:00
 -->
