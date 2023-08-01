@@ -123,20 +123,26 @@ See the [parameter docs](https://beiko-lab.github.io/arete/params/) for a list o
 
 ### Testing
 
-To test the worklow on a minimal dataset you can use the test configuration (with either docker, conda, or singularity - replace `docker` below as appropriate):
+To test the worklow on a minimal dataset you can use the test configuration (with either docker or singularity - replace `docker` below as appropriate):
 
 ```bash
 nextflow run beiko-lab/ARETE -profile test,docker
 ```
 
-Due to download speed of the Kraken2, Bakta and CAZY databases this will take ~35 minutes.
-However to accelerate it you can download/cache the database files to a folder (e.g., `test/db_cache`) and provide a database cache parameter. As well as set `--bakta_db` to the directory containing the Bakta database.
+To accelerate it you can download/cache the database files to a folder (e.g., `test/db_cache`) and provide a database cache parameter.
 
 ```bash
 nextflow run beiko-lab/ARETE \
   -profile test,docker \
   --db_cache $PWD/test/db_cache \
   --bakta_db $PWD/baktadb/db-light
+```
+
+We also provide a larger test dataset, under `-profile test_full`, for use in ARETE's `annotation` entry. This dataset is comprised of 8 bacterial genomes. As a note, **this can take upwards of 20 minutes to complete on an average personal computer**.
+Replace `docker` below as appropriate.
+
+```bash
+nextflow run beiko-lab/ARETE -entry annotation -profile test_full,docker
 ```
 
 ## Examples <a name="examples"></a>
