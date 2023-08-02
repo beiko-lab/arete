@@ -38,3 +38,20 @@ Apart from `-profile singularity`, which just makes ARETE use Singularity/Apptai
       - Alternatively, you can use Prokka for annotating your assemblies, since it doesn't require a downloaded database (`--use_prokka`).
 
 - Do note that there could be [memory-related issues](https://beiko-lab.github.io/arete/usage/#nextflow-memory-requirements) when running Nextflow in SLURM environments.
+
+## Can I use the ARETE outputs in MicroReact?
+
+Yes you can! In fact, ARETE provides many outputs that can be used in the [MicroReact](https://microreact.org/) web app. Some of these files are:
+
+- The PopPUNK lineages tree under `poppunk_results/poppunk_visualizations/poppunk_visualizations.microreact`.
+
+- The reference tree built with FastTree under `phylogenomics/reference_tree/core_gene_alignment.tre`.
+
+- The annotation feature profile `annotation/feature_profile.tsv.gz`.
+  This file contains the annotation features in a presence/absence matrix format. Since MicroReact doesn't allow compressed files, just make sure to decompress it before-hand:
+
+```bash
+gunzip feature_profile.tsv.gz
+```
+
+Make sure to check our [output documentation](https://beiko-lab.github.io/arete/output/) for a full list of outputs and the [parameter documentation](https://beiko-lab.github.io/arete/params/) for a description of parameters to enable and disable these outputs.
