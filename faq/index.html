@@ -52,6 +52,8 @@
     <ul class="current">
     <li class="toctree-l2"><a class="reference internal" href="#how-do-i-run-arete-in-a-slurm-hpc-environment">How do I run ARETE in a Slurm HPC environment?</a>
     </li>
+    <li class="toctree-l2"><a class="reference internal" href="#can-i-use-the-arete-outputs-in-microreact">Can I use the ARETE outputs in MicroReact?</a>
+    </li>
     </ul>
                 </li>
               </ul>
@@ -140,6 +142,23 @@
 <p>Do note that there could be <a href="https://beiko-lab.github.io/arete/usage/#nextflow-memory-requirements">memory-related issues</a> when running Nextflow in SLURM environments.</p>
 </li>
 </ul>
+<h2 id="can-i-use-the-arete-outputs-in-microreact">Can I use the ARETE outputs in MicroReact?</h2>
+<p>Yes you can! In fact, ARETE provides many outputs that can be used in the <a href="https://microreact.org/">MicroReact</a> web app. Some of these files are:</p>
+<ul>
+<li>
+<p>The PopPUNK lineages tree under <code>poppunk_results/poppunk_visualizations/poppunk_visualizations.microreact</code>.</p>
+</li>
+<li>
+<p>The reference tree built with FastTree under <code>phylogenomics/reference_tree/core_gene_alignment.tre</code>.</p>
+</li>
+<li>
+<p>The annotation feature profile <code>annotation/feature_profile.tsv.gz</code>.
+  This file contains the annotation features in a presence/absence matrix format. Since MicroReact doesn't allow compressed files, just make sure to decompress it before-hand:</p>
+</li>
+</ul>
+<pre><code class="language-bash">gunzip feature_profile.tsv.gz
+</code></pre>
+<p>Make sure to check our <a href="https://beiko-lab.github.io/arete/output/">output documentation</a> for a full list of outputs and the <a href="https://beiko-lab.github.io/arete/params/">parameter documentation</a> for a description of parameters to enable and disable these outputs.</p>
               
             </div>
           </div><footer>
