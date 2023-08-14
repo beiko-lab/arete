@@ -211,10 +211,12 @@ workflow ARETE {
         PHYLOGENOMICS(gffs, use_full_alignment, use_fasttree)
         ch_software_versions = ch_software_versions.mix(PHYLOGENOMICS.out.phylo_software)
 
-        EVOLCCM (
-            PHYLOGENOMICS.out.core_tree,
-            ANNOTATE_ASSEMBLIES.out.feature_profile
-        )
+        if (params.run_evolccm) {
+            EVOLCCM (
+                PHYLOGENOMICS.out.core_tree,
+                ANNOTATE_ASSEMBLIES.out.feature_profile
+            )
+        }
     }
 
     ch_software_versions
@@ -416,10 +418,12 @@ workflow ANNOTATION {
         PHYLOGENOMICS(gffs, use_full_alignment, use_fasttree)
         ch_software_versions = ch_software_versions.mix(PHYLOGENOMICS.out.phylo_software)
 
-        EVOLCCM (
-            PHYLOGENOMICS.out.core_tree,
-            ANNOTATE_ASSEMBLIES.out.feature_profile
-        )
+        if (params.run_evolccm) {
+            EVOLCCM (
+                PHYLOGENOMICS.out.core_tree,
+                ANNOTATE_ASSEMBLIES.out.feature_profile
+            )
+        }
     }
 
     ch_software_versions
