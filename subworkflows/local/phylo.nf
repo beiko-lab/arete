@@ -100,6 +100,9 @@ workflow PHYLOGENOMICS{
             def is_nt = params.use_ppanggolin ? false : true
             FASTTREE(chunked_alignments, is_nt)
             ch_software_versions = ch_software_versions.mix(FASTTREE.out.versions.ifEmpty(null))
+            core_tree = FASTTREE.out.phylogeny
+                .flatten()
+                .filter( ~/^core.*/ )
         }
 
         if (!use_fasttree && !params.use_ppanggolin) {
@@ -111,10 +114,12 @@ workflow PHYLOGENOMICS{
             else{
                 IQTREE(ch_core_alignment, false)
             }
+            core_tree = IQTREE.out.phylogeny
             ch_software_versions = ch_software_versions.mix(IQTREE.out.versions.ifEmpty(null))
         }
 
     emit:
         phylo_software = ch_software_versions
         all_alignments = ch_all_alignments
+        core_tree = core_tree
 }

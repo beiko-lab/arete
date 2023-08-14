@@ -75,6 +75,7 @@ include { SNPSITES } from '../modules/nf-core/snpsites/main'
 // MODULE: Local to the pipeline
 //
 include { GET_SOFTWARE_VERSIONS } from '../modules/local/get_software_versions' addParams( options: [publish_files : ['tsv':'']] )
+include { EVOLCCM } from '../modules/local/evolccm.nf'
 include { RGI;
           UPDATE_RGI_DB } from '../modules/local/rgi'
 include { MOB_RECON } from '../modules/local/mobsuite'
@@ -209,6 +210,11 @@ workflow ARETE {
     if (!params.skip_phylo) {
         PHYLOGENOMICS(gffs, use_full_alignment, use_fasttree)
         ch_software_versions = ch_software_versions.mix(PHYLOGENOMICS.out.phylo_software)
+
+        EVOLCCM (
+            PHYLOGENOMICS.out.core_tree,
+            ANNOTATE_ASSEMBLIES.out.feature_profile
+        )
     }
 
     ch_software_versions
@@ -409,6 +415,11 @@ workflow ANNOTATION {
     if (!params.skip_phylo) {
         PHYLOGENOMICS(gffs, use_full_alignment, use_fasttree)
         ch_software_versions = ch_software_versions.mix(PHYLOGENOMICS.out.phylo_software)
+
+        EVOLCCM (
+            PHYLOGENOMICS.out.core_tree,
+            ANNOTATE_ASSEMBLIES.out.feature_profile
+        )
     }
 
     ch_software_versions
