@@ -12,7 +12,7 @@ process EVOLCCM {
     path feature_table
 
     output:
-    path "EvolCCM_*tsv"    , emit: profile
+    path "EvolCCM_*tsv.gz"    , emit: profile
     path "EvolCCM_*pvals"  , emit: pvalues
     path "EvolCCM_*X2"     , emit: x2
     path "EvolCCM_*tre"    , emit: tree
