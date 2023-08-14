@@ -102,7 +102,9 @@ workflow PHYLOGENOMICS{
             ch_software_versions = ch_software_versions.mix(FASTTREE.out.versions.ifEmpty(null))
             core_tree = FASTTREE.out.phylogeny
                 .flatten()
-                .filter( ~/^core.*/ )
+                .map { it -> it.toString() }
+                .filter( ~/.*core.*/ )
+                .map { file(it) }
         }
 
         if (!use_fasttree && !params.use_ppanggolin) {
