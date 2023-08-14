@@ -47,6 +47,10 @@ The pipeline is built using [Nextflow](https://www.nextflow.io/) and processes d
       - [FastTree](#fasttree) or [_IQTree_](#iqtree) - Maximum likelihood core genome phylogenetic tree
       - [_SNPsites_](#snpsites) - Extracts SNPs from a multi-FASTA alignment
 
+- [Dynamics](#dynamics)
+
+      - [_EvolCCM_](#evolccm) - Community Coevolution
+
 - [Pipeline information](#pipeline-information)
 
       - Report metrics generated during the workflow execution
@@ -301,6 +305,19 @@ See [the PPanGGoLiN documentation](https://github.com/labgem/PPanGGOLiN/wiki/Out
       - `constant.sites.txt` : Text file containing counts of constant sites.
 
 [SNPsites](https://github.com/sanger-pathogens/snp-sites) is a tool to rapidly extract SNPs from a multi-FASTA alignment.
+
+## Dynamics
+
+#### _EvolCCM_
+
+- `dynamics/EvolCCM/`
+
+      - `EvolCCM_*tsv`
+      - `EvolCCM_*pvals`
+      - `EvolCCM_*X2`
+      - `EvolCCM_*tre`
+
+[EvolCCM](https://github.com/beiko-lab/evolCCM) is the R implementation for CCM (Community Coevolution Model)
 
 ## Pipeline information
 
