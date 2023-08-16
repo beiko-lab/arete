@@ -1,0 +1,31 @@
+nextflow_workflow {
+
+    name "Test Workflow EVOLCCM"
+    script "subworkflows/local/evolccm.nf"
+    workflow "EVOLCCM"
+
+    test("Should run without failures") {
+
+        when {
+            params {
+                outdir = "$outputDir"
+            }
+            workflow {
+                """
+                // define inputs of the workflow here. Example:
+                input[0] = file("$baseDir/test/rooted_vtec_phylogeny.tre")
+                input[1] = file("$baseDir/test/feature_profile_reallyreduced.tsv.gz")
+                """
+            }
+        }
+
+        then {
+            assert workflow.success
+            with(workflow.out) {
+                assert size() == 4
+            }
+        }
+
+    }
+
+}
