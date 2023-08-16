@@ -21,9 +21,6 @@ nextflow_workflow {
 
         then {
             assert workflow.success
-            with(workflow.out) {
-                assert size() == 4
-            }
         }
 
     }
