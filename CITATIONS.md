@@ -100,7 +100,11 @@
   > Claire Bertelli, Fiona S L Brinkman, Improved genomic island predictions with IslandPath-DIMOB, Bioinformatics, Volume 34, Issue 13, 01 July 2018, Pages 2161–2167, https://doi.org/10.1093/bioinformatics/bty095
 
 - [PhiSpy](https://doi.org/10.1093/nar/gks406)
+
   > Sajia Akhter, Ramy K. Aziz, Robert A. Edwards; PhiSpy: a novel algorithm for finding prophages in bacterial genomes that combines similarity- and composition-based strategies. Nucl Acids Res 2012; 40 (16): e126. doi: 10.1093/nar/gks406
+
+- [EvolCCM](https://doi.org/10.1093/sysbio/syac052)
+  > Chaoyue Liu and others, The Community Coevolution Model with Application to the Study of Evolutionary Relationships between Genes Based on Phylogenetic Profiles, Systematic Biology, Volume 72, Issue 3, May 2023, Pages 559–574, https://doi.org/10.1093/sysbio/syac052
 
 ## Software packaging/containerisation tools
 
