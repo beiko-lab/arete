@@ -35,21 +35,20 @@ The pipeline is built using [Nextflow](https://www.nextflow.io/) and processes d
 
       - PopPUNK - Genome clustering
 
-- [_Recombination_](#recombination)
+- [Dynamics](#dynamics)
 
-      - [_Verticall_](#verticall) - Conduct pairwise assembly comparisons between genomes in a same PopPUNK cluster
-      - [_SKA2_](#ska2) - Generate a whole-genome FASTA alignment for each genome within a cluster.
-      - [_Gubbins_](#gubbins) - Detection of recombination events within genomes of the same cluster.
+      - [_EvolCCM_](#evolccm) - Community Coevolution
+      - [_Recombination_](#recombination)
+
+          - [_Verticall_](#verticall) - Conduct pairwise assembly comparisons between genomes in a same PopPUNK cluster
+          - [_SKA2_](#ska2) - Generate a whole-genome FASTA alignment for each genome within a cluster.
+          - [_Gubbins_](#gubbins) - Detection of recombination events within genomes of the same cluster.
 
 - [Phylogenomics and Pangenomics](#phylogenomics-and-pangenomics)
 
       - [Panaroo](#panaroo) or [_PPanGGoLiN_](#ppanggolin) - Pangenome alignment
       - [FastTree](#fasttree) or [_IQTree_](#iqtree) - Maximum likelihood core genome phylogenetic tree
       - [_SNPsites_](#snpsites) - Extracts SNPs from a multi-FASTA alignment
-
-- [Dynamics](#dynamics)
-
-      - [_EvolCCM_](#evolccm) - Community Coevolution
 
 - [Pipeline information](#pipeline-information)
 
@@ -237,32 +236,6 @@ See the [PhiSpy documentation](https://github.com/linsalrob/PhiSpy#output-files)
 
 [PopPUNK](https://poppunk.net/) is a tool for clustering genomes.
 
-## _Recombination_
-
-#### Verticall
-
-- `recombination/verticall/`
-
-      - `verticall_cluster*.tsv` - Verticall results for the genomes within this PopPUNK cluster.
-
-[Verticall](https://github.com/rrwick/Verticall/) is a tool to help produce bacterial genome phylogenies which are not influenced by horizontally acquired sequences such as recombination.
-
-#### SKA2
-
-- `recombination/ska2/`
-
-      - `cluster_*.aln` - SKA2 results for the genomes within this PopPUNK cluster.
-
-[SKA2](https://github.com/bacpop/ska.rust) (Split Kmer Analysis) is a toolkit for prokaryotic (and any other small, haploid) DNA sequence analysis using split kmers.
-
-#### Gubbins
-
-- `recombination/gubbins/`
-
-      - `cluster_*/` - Gubbins results for the genomes within this PopPUNK cluster.
-
-[Gubbins](https://github.com/nickjcroucher/gubbins) is an algorithm that iteratively identifies loci containing elevated densities of base substitutions while concurrently constructing a phylogeny based on the putative point mutations outside of these regions.
-
 ## Phylogenomics and Pangenomics
 
 #### Panaroo
@@ -318,6 +291,32 @@ See [the PPanGGoLiN documentation](https://github.com/labgem/PPanGGOLiN/wiki/Out
       - `EvolCCM_*tre`
 
 [EvolCCM](https://github.com/beiko-lab/evolCCM) is the R implementation for CCM (Community Coevolution Model)
+
+### _Recombination_
+
+#### Verticall
+
+- `dynamics/recombination/verticall/`
+
+      - `verticall_cluster*.tsv` - Verticall results for the genomes within this PopPUNK cluster.
+
+[Verticall](https://github.com/rrwick/Verticall/) is a tool to help produce bacterial genome phylogenies which are not influenced by horizontally acquired sequences such as recombination.
+
+#### SKA2
+
+- `dynamics/recombination/ska2/`
+
+      - `cluster_*.aln` - SKA2 results for the genomes within this PopPUNK cluster.
+
+[SKA2](https://github.com/bacpop/ska.rust) (Split Kmer Analysis) is a toolkit for prokaryotic (and any other small, haploid) DNA sequence analysis using split kmers.
+
+#### Gubbins
+
+- `dynamics/recombination/gubbins/`
+
+      - `cluster_*/` - Gubbins results for the genomes within this PopPUNK cluster.
+
+[Gubbins](https://github.com/nickjcroucher/gubbins) is an algorithm that iteratively identifies loci containing elevated densities of base substitutions while concurrently constructing a phylogeny based on the putative point mutations outside of these regions.
 
 ## Pipeline information
 
