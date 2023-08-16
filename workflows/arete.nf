@@ -45,6 +45,7 @@ include { PHYLOGENOMICS } from '../subworkflows/local/phylo'
 include { RUN_POPPUNK } from '../subworkflows/local/poppunk'
 include { RECOMBINATION } from '../subworkflows/local/recombination'
 include { SUBSET_GENOMES } from '../subworkflows/local/subsample'
+include { EVOLCCM } from '../subworkflows/local/evolccm'
 /*
 ========================================================================================
     IMPORT NF-CORE MODULES/SUBWORKFLOWS
@@ -75,7 +76,6 @@ include { SNPSITES } from '../modules/nf-core/snpsites/main'
 // MODULE: Local to the pipeline
 //
 include { GET_SOFTWARE_VERSIONS } from '../modules/local/get_software_versions' addParams( options: [publish_files : ['tsv':'']] )
-include { EVOLCCM } from '../modules/local/evolccm.nf'
 include { RGI;
           UPDATE_RGI_DB } from '../modules/local/rgi'
 include { MOB_RECON } from '../modules/local/mobsuite'
