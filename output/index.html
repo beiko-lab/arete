@@ -94,16 +94,6 @@
     </li>
     <li class="toctree-l2"><a class="reference internal" href="#poppunk">PopPUNK</a>
     </li>
-    <li class="toctree-l2"><a class="reference internal" href="#recombination">Recombination</a>
-        <ul>
-    <li class="toctree-l3"><a class="reference internal" href="#verticall">Verticall</a>
-    </li>
-    <li class="toctree-l3"><a class="reference internal" href="#ska2">SKA2</a>
-    </li>
-    <li class="toctree-l3"><a class="reference internal" href="#gubbins">Gubbins</a>
-    </li>
-        </ul>
-    </li>
     <li class="toctree-l2"><a class="reference internal" href="#phylogenomics-and-pangenomics">Phylogenomics and Pangenomics</a>
         <ul>
     <li class="toctree-l3"><a class="reference internal" href="#panaroo">Panaroo</a>
@@ -115,6 +105,22 @@
     <li class="toctree-l3"><a class="reference internal" href="#iqtree">IQTree</a>
     </li>
     <li class="toctree-l3"><a class="reference internal" href="#snpsites">SNPsites</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#dynamics">Dynamics</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#evolccm">EvolCCM</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#recombination">Recombination</a>
+        <ul>
+    <li class="toctree-l4"><a class="reference internal" href="#verticall">Verticall</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#ska2">SKA2</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#gubbins">Gubbins</a>
+    </li>
+        </ul>
     </li>
         </ul>
     </li>
@@ -209,11 +215,17 @@
 </ul>
 </li>
 <li>
+<p><a href="#dynamics">Dynamics</a></p>
+<ul>
+<li><a href="#evolccm"><em>EvolCCM</em></a> - Community Coevolution</li>
+<li>
 <p><a href="#recombination"><em>Recombination</em></a></p>
 <ul>
 <li><a href="#verticall"><em>Verticall</em></a> - Conduct pairwise assembly comparisons between genomes in a same PopPUNK cluster</li>
 <li><a href="#ska2"><em>SKA2</em></a> - Generate a whole-genome FASTA alignment for each genome within a cluster.</li>
 <li><a href="#gubbins"><em>Gubbins</em></a> - Detection of recombination events within genomes of the same cluster.</li>
+</ul>
+</li>
 </ul>
 </li>
 <li>
@@ -452,37 +464,6 @@ in bacterial and archaeal genomes based on the presence of dinucleotide biases a
 </li>
 </ul>
 <p><a href="https://poppunk.net/">PopPUNK</a> is a tool for clustering genomes.</p>
-<h2 id="recombination"><em>Recombination</em></h2>
-<h4 id="verticall">Verticall</h4>
-<ul>
-<li>
-<p><code>recombination/verticall/</code></p>
-<ul>
-<li><code>verticall_cluster*.tsv</code> - Verticall results for the genomes within this PopPUNK cluster.</li>
-</ul>
-</li>
-</ul>
-<p><a href="https://github.com/rrwick/Verticall/">Verticall</a> is a tool to help produce bacterial genome phylogenies which are not influenced by horizontally acquired sequences such as recombination.</p>
-<h4 id="ska2">SKA2</h4>
-<ul>
-<li>
-<p><code>recombination/ska2/</code></p>
-<ul>
-<li><code>cluster_*.aln</code> - SKA2 results for the genomes within this PopPUNK cluster.</li>
-</ul>
-</li>
-</ul>
-<p><a href="https://github.com/bacpop/ska.rust">SKA2</a> (Split Kmer Analysis) is a toolkit for prokaryotic (and any other small, haploid) DNA sequence analysis using split kmers.</p>
-<h4 id="gubbins">Gubbins</h4>
-<ul>
-<li>
-<p><code>recombination/gubbins/</code></p>
-<ul>
-<li><code>cluster_*/</code> - Gubbins results for the genomes within this PopPUNK cluster.</li>
-</ul>
-</li>
-</ul>
-<p><a href="https://github.com/nickjcroucher/gubbins">Gubbins</a> is an algorithm that iteratively identifies loci containing elevated densities of base substitutions while concurrently constructing a phylogeny based on the putative point mutations outside of these regions.</p>
 <h2 id="phylogenomics-and-pangenomics">Phylogenomics and Pangenomics</h2>
 <h4 id="panaroo">Panaroo</h4>
 <ul>
@@ -527,6 +508,51 @@ in bacterial and archaeal genomes based on the presence of dinucleotide biases a
 </li>
 </ul>
 <p><a href="https://github.com/sanger-pathogens/snp-sites">SNPsites</a> is a tool to rapidly extract SNPs from a multi-FASTA alignment.</p>
+<h2 id="dynamics">Dynamics</h2>
+<h4 id="evolccm"><em>EvolCCM</em></h4>
+<ul>
+<li>
+<p><code>dynamics/EvolCCM/</code></p>
+<ul>
+<li><code>EvolCCM_*tsv</code></li>
+<li><code>EvolCCM_*pvals</code></li>
+<li><code>EvolCCM_*X2</code></li>
+<li><code>EvolCCM_*tre</code></li>
+</ul>
+</li>
+</ul>
+<p><a href="https://github.com/beiko-lab/evolCCM">EvolCCM</a> is the R implementation for CCM (Community Coevolution Model)</p>
+<h3 id="recombination"><em>Recombination</em></h3>
+<h4 id="verticall">Verticall</h4>
+<ul>
+<li>
+<p><code>dynamics/recombination/verticall/</code></p>
+<ul>
+<li><code>verticall_cluster*.tsv</code> - Verticall results for the genomes within this PopPUNK cluster.</li>
+</ul>
+</li>
+</ul>
+<p><a href="https://github.com/rrwick/Verticall/">Verticall</a> is a tool to help produce bacterial genome phylogenies which are not influenced by horizontally acquired sequences such as recombination.</p>
+<h4 id="ska2">SKA2</h4>
+<ul>
+<li>
+<p><code>dynamics/recombination/ska2/</code></p>
+<ul>
+<li><code>cluster_*.aln</code> - SKA2 results for the genomes within this PopPUNK cluster.</li>
+</ul>
+</li>
+</ul>
+<p><a href="https://github.com/bacpop/ska.rust">SKA2</a> (Split Kmer Analysis) is a toolkit for prokaryotic (and any other small, haploid) DNA sequence analysis using split kmers.</p>
+<h4 id="gubbins">Gubbins</h4>
+<ul>
+<li>
+<p><code>dynamics/recombination/gubbins/</code></p>
+<ul>
+<li><code>cluster_*/</code> - Gubbins results for the genomes within this PopPUNK cluster.</li>
+</ul>
+</li>
+</ul>
+<p><a href="https://github.com/nickjcroucher/gubbins">Gubbins</a> is an algorithm that iteratively identifies loci containing elevated densities of base substitutions while concurrently constructing a phylogeny based on the putative point mutations outside of these regions.</p>
 <h2 id="pipeline-information">Pipeline information</h2>
 <ul>
 <li>
