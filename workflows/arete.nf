@@ -45,6 +45,7 @@ include { PHYLOGENOMICS } from '../subworkflows/local/phylo'
 include { RUN_POPPUNK } from '../subworkflows/local/poppunk'
 include { RECOMBINATION } from '../subworkflows/local/recombination'
 include { SUBSET_GENOMES } from '../subworkflows/local/subsample'
+include { EVOLCCM } from '../subworkflows/local/evolccm'
 /*
 ========================================================================================
     IMPORT NF-CORE MODULES/SUBWORKFLOWS
@@ -209,6 +210,13 @@ workflow ARETE {
     if (!params.skip_phylo) {
         PHYLOGENOMICS(gffs, use_full_alignment, use_fasttree)
         ch_software_versions = ch_software_versions.mix(PHYLOGENOMICS.out.phylo_software)
+
+        if (params.run_evolccm) {
+            EVOLCCM (
+                PHYLOGENOMICS.out.core_tree,
+                ANNOTATE_ASSEMBLIES.out.feature_profile
+            )
+        }
     }
 
     ch_software_versions
@@ -409,6 +417,13 @@ workflow ANNOTATION {
     if (!params.skip_phylo) {
         PHYLOGENOMICS(gffs, use_full_alignment, use_fasttree)
         ch_software_versions = ch_software_versions.mix(PHYLOGENOMICS.out.phylo_software)
+
+        if (params.run_evolccm) {
+            EVOLCCM (
+                PHYLOGENOMICS.out.core_tree,
+                ANNOTATE_ASSEMBLIES.out.feature_profile
+            )
+        }
     }
 
     ch_software_versions

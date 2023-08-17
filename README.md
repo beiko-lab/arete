@@ -75,7 +75,7 @@ The user can optionally subdivide their set of genomes into related lineages ide
 
 ### Coevolution
 
-- Identification of coordinated gain and loss of features using EvolCCM ([`EvolCCM`](https://rdrr.io/github/beiko-lab/evolCCM/f/README.md)) (in progress)
+- Identification of coordinated gain and loss of features using EvolCCM ([`EvolCCM`](https://rdrr.io/github/beiko-lab/evolCCM/f/README.md))
 
 ### Lateral gene transfer
 

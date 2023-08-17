@@ -221,6 +221,18 @@
                 }
             }
         },
+        "dynamics": {
+            "title": "Dynamics",
+            "type": "object",
+            "description": "",
+            "default": "",
+            "properties": {
+                "run_evolccm": {
+                    "type": "boolean",
+                    "description": "Run the community coevolution model"
+                }
+            }
+        },
         "institutional_config_options": {
             "title": "Institutional config options",
             "type": "object",
@@ -434,6 +446,9 @@
         },
         {
             "$ref": "#/definitions/recombination"
+        },
+        {
+            "$ref": "#/definitions/dynamics"
         },
         {
             "$ref": "#/definitions/institutional_config_options"
