@@ -2,6 +2,7 @@ process PPANGGOLIN_WORKFLOW {
     tag "$meta.id"
     label 'process_high'
     label 'process_high_memory'
+    label 'process_long'
 
     conda "bioconda::ppanggolin=1.2.105"
     container "${ workflow.containerEngine == 'singularity' && !task.ext.singularity_pull_docker_container ?
