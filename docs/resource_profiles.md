@@ -2,7 +2,9 @@
 
 Currently ARETE has three distinct profiles that change the pipeline execution in some ways: The default profile (which we can call `small`), the `medium` profile and the `large` profile.
 
-These three profiles were developed based on the size of the input dataset and change some parameter defaults based on tests we have performed on similar-sized datasets.
+These three profiles were developed based on the size and diversity of the input dataset and change some parameter defaults based on tests we have performed on similar-sized datasets.
+
+If you want to first gauge the potential diversity of your dataset and have some input assemblies you can try the [PopPUNK entry](https://beiko-lab.github.io/arete/usage/#poppunk-entry). One of the outputs will provide insight into how many clusters, or lineages, your dataset divides into.
 
 The sizes are:
 
