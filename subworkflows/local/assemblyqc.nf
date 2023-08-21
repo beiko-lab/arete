@@ -47,7 +47,7 @@ workflow CHECK_ASSEMBLIES {
         ch_assembly = ch_assembly.mix(assemblies.dump(tag: 'assembly'))
         ch_assembly
             .map { meta, fasta -> fasta } //QUAST doesn't take the meta tag
-            .collect()
+            .collectFile(name:'assemblies.txt', newLine: true)
             .set { ch_to_quast }
         QUAST(ch_to_quast, reference_genome, [], use_reference_genome, false)
         ch_software_versions = ch_software_versions.mix(QUAST.out.versions.ifEmpty(null))

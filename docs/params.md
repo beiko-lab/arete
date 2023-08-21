@@ -78,6 +78,14 @@ Parameters for the recombination subworkflow
 | `run_verticall` | Run Verticall recombination tool | `boolean` | True |  |  |
 | `run_gubbins` | Run Gubbins recombination tool | `boolean` |  |  |  |
 
+## Dynamics
+
+
+
+| Parameter | Description | Type | Default | Required | Hidden |
+|-----------|-----------|-----------|-----------|-----------|-----------|
+| `run_evolccm` | Run the community coevolution model | `boolean` |  |  |  |
+
 ## Institutional config options
 
 Parameters used to describe centralised config profiles. These should not be edited.

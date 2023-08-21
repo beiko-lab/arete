@@ -10,6 +10,7 @@ workflow RECOMBINATION {
     take:
         assemblies
         poppunk_clusters
+        quast_report
 
     main:
 
@@ -17,14 +18,22 @@ workflow RECOMBINATION {
         ch_reference_genome = params.reference_genome ? file(params.reference_genome) : []
         use_reference_genome = params.reference_genome ? true : false
 
-        QUAST (
-            assemblies.collect { meta, fasta -> fasta },
-            ch_reference_genome,
-            [],
-            use_reference_genome,
-            false
-        )
-        ch_software_versions = ch_software_versions.mix(QUAST.out.versions.ifEmpty(null))
+        if (quast_report == []) {
+            assemblies
+                .map { meta, fasta -> fasta.toString() }
+                .collectFile(name:'assemblies.txt', newLine: true)
+                .set { quast_input }
+
+            QUAST (
+                quast_input,
+                ch_reference_genome,
+                [],
+                use_reference_genome,
+                false
+            )
+            QUAST.out.transposed_report.set { quast_report }
+            ch_software_versions = ch_software_versions.mix(QUAST.out.versions.ifEmpty(null))
+        }
 
         if (params.run_verticall) {
             VERTICALL_REPAIR (
@@ -42,7 +51,7 @@ workflow RECOMBINATION {
             .set { assembly_samplesheet }
 
         GET_RECOMB_INPUT (
-            QUAST.out.transposed_report,
+            quast_report,
             poppunk_clusters,
             assembly_samplesheet
         )

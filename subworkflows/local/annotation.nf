@@ -308,6 +308,7 @@ workflow ANNOTATE_ASSEMBLIES {
                 .set { ch_diamond_outs }
         }
 
+        profile = []
         if (tools_to_run.contains('report')) {
             needed_for_report = ['vfdb', 'rgi', 'mobsuite']
             if (!params.use_prokka && needed_for_report.every { it in tools_to_run }) {
@@ -333,11 +334,13 @@ workflow ANNOTATE_ASSEMBLIES {
                     params.skip_profile_creation
                 )
             }
+
+            profile = (params.skip_profile_creation) ? [] : CREATE_REPORT.out.profile
         }
 
     emit:
         annotation_software = ch_software_versions
         multiqc = ch_multiqc_files
         gff = ch_gff_files
-
+        feature_profile = profile
 }

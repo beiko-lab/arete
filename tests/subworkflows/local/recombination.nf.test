@@ -20,6 +20,7 @@ nextflow_workflow {
                     [[id:'SRR14022764'], "$baseDir/test/SRR14022764_T1.scaffolds.fa"],
                 )
                 input[1] = file("$baseDir/test/poppunk_bgmm_clusters.csv")
+                input[2] = []
                 """
             }
         }
