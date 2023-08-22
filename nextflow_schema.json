@@ -208,7 +208,8 @@
                 "run_recombination": {
                     "type": "boolean",
                     "description": "Run Recombination",
-                    "fa_icon": "fas fa-tree"
+                    "fa_icon": "fas fa-tree",
+                    "default": true
                 },
                 "run_verticall": {
                     "type": "boolean",

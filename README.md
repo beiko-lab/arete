@@ -104,6 +104,7 @@ See our [roadmap](ROADMAP.md) for a full list of future development targets.
     3.1. Please check [nf-core/configs](https://github.com/nf-core/configs#documentation) to see if a custom config file to run nf-core pipelines already exists for your Institute. If so, you can simply use `-profile <institute>` in your command. This will enable either `docker` or `singularity` and set the appropriate execution settings for your local compute environment.
 
     3.2. If you are using `singularity` then the pipeline will auto-detect this and attempt to download the Singularity images directly as opposed to performing a conversion from Docker images. If you are persistently observing issues downloading Singularity images directly due to timeout or network issues then please use the `--singularity_pull_docker_container` parameter to pull and convert the Docker image instead.
+    In case of input datasets larger than 100 samples, [check our resource profiles documentation](https://beiko-lab.github.io/arete/resource-profiles/), for optimal usage.
 
 4.  Start running your own analysis (ideally using `-profile docker` or `-profile singularity` for stability)!
 
@@ -174,9 +175,8 @@ nextflow run beiko-lab/ARETE \
  --poppunk_model dbscan \
  --run_recombination \
  --run_gubbins \
- --use_ppanggolin \
  -entry annotation \
- -profile docker
+ -profile medium,docker
 ```
 
 Parameters used:
@@ -187,7 +187,7 @@ Parameters used:
 - `--run_gubbins` - Run [Gubbins](https://github.com/nickjcroucher/gubbins) as part of the recombination subworkflow.
 - `--use_ppanggolin` - Use [PPanGGOLiN](https://github.com/labgem/PPanGGOLiN) for calculating the pangenome. Tends to perform better on larger input sets.
 - `-entry annotation` - Run annotation subworkflow and further steps (See [usage](https://beiko-lab.github.io/arete/usage/)).
-- `-profile docker` - Run tools in docker containers.
+- `-profile medium,docker` - Run tools in docker containers. For `-profile medium`, check our [resource requirements documentation](https://beiko-lab.github.io/arete/resource_profiles/).
 
 ### Annotation to evolutionary dynamics on 10,000 genomes
 
@@ -195,11 +195,9 @@ Parameters used:
 nextflow run beiko-lab/ARETE \
  --input_sample_table samplesheet.csv \
  --poppunk_model dbscan \
- --use_ppanggolin \
  --run_recombination \
- --enable_subsetting \
  -entry annotation \
- -profile docker
+ -profile large,docker
 ```
 
 Parameters used:
@@ -210,7 +208,7 @@ Parameters used:
 - `--use_ppanggolin` - Use [PPanGGOLiN](https://github.com/labgem/PPanGGOLiN) for calculating the pangenome. Tends to perform better on larger input sets.
 - `--enable_subsetting` - Enable subsetting workflow based on genome similarity (See [subsetting documentation](https://beiko-lab.github.io/arete/subsampling/))
 - `-entry annotation` - Run annotation subworkflow and further steps (See [usage](https://beiko-lab.github.io/arete/usage/)).
-- `-profile docker` - Run tools in docker containers.
+- `-profile large,docker` - Run tools in docker containers. For `-profile large`, check our [resource requirements documentation](https://beiko-lab.github.io/arete/resource_profiles/).
 
 ## Credits <a name="credits"></a>
 

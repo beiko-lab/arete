@@ -7,7 +7,7 @@ options        = initOptions(params.options)
 process KRAKEN2_DB {
     //publishDir 'dbcache/', mode:'copy'
     tag "minikraken"
-    label 'process_high'
+    label 'process_medium'
     label 'error_retry_delay'
 
     output:

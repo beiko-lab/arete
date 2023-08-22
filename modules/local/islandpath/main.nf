@@ -1,6 +1,6 @@
 process ISLANDPATH {
     tag "$meta.id"
-    label 'process_medium'
+    label 'process_low'
 
     conda "bioconda::islandpath=1.0.6"
     container "${ workflow.containerEngine == 'singularity' && !task.ext.singularity_pull_docker_container ?

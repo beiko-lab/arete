@@ -1,5 +1,5 @@
 process POPPUNK_MAKE_SAMPLESHEET {
-    label "process_low"
+    label "process_single"
 
     input:
     path(samplesheets)
