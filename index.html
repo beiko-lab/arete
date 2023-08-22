@@ -67,6 +67,8 @@
               </ul>
               <p class="caption"><span class="caption-text">Reference</span></p>
               <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="resource_profiles/">Dataset Size</a>
+                  </li>
                   <li class="toctree-l1"><a class="reference internal" href="params/">Parameters</a>
                   </li>
                   <li class="toctree-l1"><a class="reference internal" href="subsampling/">Subsampling</a>
@@ -188,7 +190,8 @@ The <a href="https://nf-cor.re">nf-core</a> project provided overall project tem
 <p>Download the pipeline and test with a <code>stub-run</code>. The <code>stub-run</code> will ensure that the pipeline is able to download and use containers as well as execute in the proper logic.</p>
 <p><code>nextflow run beiko-lab/ARETE -profile test,&lt;docker/singularity/conda&gt; -stub-run</code></p>
 <p>3.1. Please check <a href="https://github.com/nf-core/configs#documentation">nf-core/configs</a> to see if a custom config file to run nf-core pipelines already exists for your Institute. If so, you can simply use <code>-profile &lt;institute&gt;</code> in your command. This will enable either <code>docker</code> or <code>singularity</code> and set the appropriate execution settings for your local compute environment.</p>
-<p>3.2. If you are using <code>singularity</code> then the pipeline will auto-detect this and attempt to download the Singularity images directly as opposed to performing a conversion from Docker images. If you are persistently observing issues downloading Singularity images directly due to timeout or network issues then please use the <code>--singularity_pull_docker_container</code> parameter to pull and convert the Docker image instead.</p>
+<p>3.2. If you are using <code>singularity</code> then the pipeline will auto-detect this and attempt to download the Singularity images directly as opposed to performing a conversion from Docker images. If you are persistently observing issues downloading Singularity images directly due to timeout or network issues then please use the <code>--singularity_pull_docker_container</code> parameter to pull and convert the Docker image instead.
+In case of input datasets larger than 100 samples, <a href="https://beiko-lab.github.io/arete/resource-profiles/">check our resource profiles documentation</a>, for optimal usage.</p>
 </li>
 <li>
 <p>Start running your own analysis (ideally using <code>-profile docker</code> or <code>-profile singularity</code> for stability)!</p>
@@ -239,9 +242,8 @@ Replace <code>docker</code> below as appropriate.</p>
  --poppunk_model dbscan \
  --run_recombination \
  --run_gubbins \
- --use_ppanggolin \
  -entry annotation \
- -profile docker
+ -profile medium,docker
 </code></pre>
 <p>Parameters used:</p>
 <ul>
@@ -251,17 +253,15 @@ Replace <code>docker</code> below as appropriate.</p>
 <li><code>--run_gubbins</code> - Run <a href="https://github.com/nickjcroucher/gubbins">Gubbins</a> as part of the recombination subworkflow.</li>
 <li><code>--use_ppanggolin</code> - Use <a href="https://github.com/labgem/PPanGGOLiN">PPanGGOLiN</a> for calculating the pangenome. Tends to perform better on larger input sets.</li>
 <li><code>-entry annotation</code> - Run annotation subworkflow and further steps (See <a href="https://beiko-lab.github.io/arete/usage/">usage</a>).</li>
-<li><code>-profile docker</code> - Run tools in docker containers.</li>
+<li><code>-profile medium,docker</code> - Run tools in docker containers. For <code>-profile medium</code>, check our <a href="https://beiko-lab.github.io/arete/resource_profiles/">resource requirements documentation</a>.</li>
 </ul>
 <h3 id="annotation-to-evolutionary-dynamics-on-10000-genomes">Annotation to evolutionary dynamics on 10,000 genomes</h3>
 <pre><code class="language-bash">nextflow run beiko-lab/ARETE \
  --input_sample_table samplesheet.csv \
  --poppunk_model dbscan \
- --use_ppanggolin \
  --run_recombination \
- --enable_subsetting \
  -entry annotation \
- -profile docker
+ -profile large,docker
 </code></pre>
 <p>Parameters used:</p>
 <ul>
@@ -271,7 +271,7 @@ Replace <code>docker</code> below as appropriate.</p>
 <li><code>--use_ppanggolin</code> - Use <a href="https://github.com/labgem/PPanGGOLiN">PPanGGOLiN</a> for calculating the pangenome. Tends to perform better on larger input sets.</li>
 <li><code>--enable_subsetting</code> - Enable subsetting workflow based on genome similarity (See <a href="https://beiko-lab.github.io/arete/subsampling/">subsetting documentation</a>)</li>
 <li><code>-entry annotation</code> - Run annotation subworkflow and further steps (See <a href="https://beiko-lab.github.io/arete/usage/">usage</a>).</li>
-<li><code>-profile docker</code> - Run tools in docker containers.</li>
+<li><code>-profile large,docker</code> - Run tools in docker containers. For <code>-profile large</code>, check our <a href="https://beiko-lab.github.io/arete/resource_profiles/">resource requirements documentation</a>.</li>
 </ul>
 <h2 id="credits">Credits <a name="credits"></a></h2>
 <p>The ARETE software was originally written and developed by <a href="https://github.com/fmaguire">Finlay Maguire</a> and <a href="https://github.com/alexmanuele">Alex Manuele</a>, and is currently developed by <a href="https://github.com/jvfe">João Cavalcante</a>.</p>
@@ -348,5 +348,5 @@ Replace <code>docker</code> below as appropriate.</p>
 
 <!--
 MkDocs version : 1.5.2
-Build Date UTC : 2023-08-17 19:35:48.319569+00:00
+Build Date UTC : 2023-08-22 11:45:18.025743+00:00
 -->

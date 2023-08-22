@@ -5,15 +5,15 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="author" content="Beiko Lab" />
       <link rel="shortcut icon" href="../img/favicon.ico" />
-    <title>Subsampling - ARETE</title>
+    <title>Dataset Size - ARETE</title>
     <link rel="stylesheet" href="../css/theme.css" />
     <link rel="stylesheet" href="../css/theme_extra.css" />
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github.min.css" />
     
       <script>
         // Current page data
-        var mkdocs_page_name = "Subsampling";
-        var mkdocs_page_input_path = "subsampling.md";
+        var mkdocs_page_name = "Dataset Size";
+        var mkdocs_page_input_path = "resource_profiles.md";
         var mkdocs_page_url = null;
       </script>
     
@@ -65,15 +65,13 @@
               </ul>
               <p class="caption"><span class="caption-text">Reference</span></p>
               <ul class="current">
-                  <li class="toctree-l1"><a class="reference internal" href="../resource_profiles/">Dataset Size</a>
+                  <li class="toctree-l1 current"><a class="reference internal current" href="./">Dataset Size</a>
+    <ul class="current">
+    </ul>
                   </li>
                   <li class="toctree-l1"><a class="reference internal" href="../params/">Parameters</a>
                   </li>
-                  <li class="toctree-l1 current"><a class="reference internal current" href="./">Subsampling</a>
-    <ul class="current">
-    <li class="toctree-l2"><a class="reference internal" href="#example-command">Example command</a>
-    </li>
-    </ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../subsampling/">Subsampling</a>
                   </li>
               </ul>
       </div>
@@ -91,9 +89,9 @@
   <ul class="wy-breadcrumbs">
     <li><a href=".." class="icon icon-home" aria-label="Docs"></a> &raquo;</li>
           <li>Reference &raquo;</li>
-      <li class="breadcrumb-item active">Subsampling</li>
+      <li class="breadcrumb-item active">Dataset Size</li>
     <li class="wy-breadcrumbs-aside">
-          <a href="https://github.com/beiko-lab/arete/edit/master/docs/subsampling.md" class="icon icon-github"> Edit on GitHub</a>
+          <a href="https://github.com/beiko-lab/arete/edit/master/docs/resource_profiles.md" class="icon icon-github"> Edit on GitHub</a>
     </li>
   </ul>
   <hr/>
@@ -101,37 +99,32 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
             <div class="section" itemprop="articleBody">
               
-                <h2 id="poppunk-subsetting">PopPUNK subsetting</h2>
-<p>The subsampling subworkflow is executed if you want
-to reduce the number of genomes that get added to the phylogenomics subworkflow.
-By reducing the number of genomes, you can potentially reduce resource requirements for the pangenomics and phylogenomics tools.</p>
-<p>To enable this subworkflow, add <code>--enable_subsetting</code> when running beiko-lab/ARETE.
-This will subset genomes based on their core genome similarity and accessory genome similarity, as calculated via their PopPUNK distances.</p>
-<p>By default, the threshold is <code>--core_similarity 99.9</code> and <code>--accessory_similarity 99</code>. But these
-can be changed by adding these parameters to your execution. What happens then is if any pair of genomes is this similar, only one genome from this pair will
-be included in the phylogenomic section. All of the removed genome IDs will be present under <code>poppunk_results/removed_genomes.txt</code>.</p>
-<p>By adding <code>--enable_subsetting</code>, you'll be adding two processes to the execution DAG:</p>
+                <h1 id="arete-and-dataset-size">ARETE and dataset size</h1>
+<p>Currently ARETE has three distinct profiles that change the pipeline execution in some ways: The default profile (which we can call <code>small</code>), the <code>medium</code> profile and the <code>large</code> profile.</p>
+<p>These three profiles were developed based on the size and diversity of the input dataset and change some parameter defaults based on tests we have performed on similar-sized datasets.</p>
+<p>If you want to first gauge the potential diversity of your dataset and have some input assemblies you can try the <a href="https://beiko-lab.github.io/arete/usage/#poppunk-entry">PopPUNK entry</a>. One of the outputs will provide insight into how many clusters, or lineages, your dataset divides into.</p>
+<p>The sizes are:</p>
 <ul>
-<li>POPPUNK_EXTRACT_DISTANCES: This process will extract pair-wise distances between all genomes, returning a table under <code>poppunk_results/distances/</code>. This table will be used to perform the subsetting.</li>
-<li>MAKE_HEATMAP: This process will create a heatmap showing different similarity thresholds and the number of genomes that'd be present in each of the possible subsets. It'll also be under <code>poppunk_results/distances/</code>.</li>
+<li>
+<p>For the default or <code>small</code> profile, we expect datasets with 100 samples/assemblies or fewer.
+  It runs on the default pipeline parameters, with no changes.</p>
+</li>
+<li>
+<p>For the <code>medium</code> profile, we expect datasets with &gt;100 and &lt;1000 samples.
+  It increases the default resource requirements for most processes and also uses <a href="https://github.com/labgem/PPanGGOLiN">PPanGGoLiN</a> for pangenome construction, instead of <a href="https://github.com/gtonkinhill/panaroo/">Panaroo</a>.</p>
+</li>
+<li>
+<p>For the <code>large</code> profile, we expect datasets with &gt;1000 samples.
+  It also increases default resource requirements for some processes and uses PPanGGoLin.
+  Additionally, <strong>it enables <a href="../subsampling/">PopPUNK subsampling</a>, with default parameters</strong>.</p>
+</li>
 </ul>
-<h3 id="example-command">Example command</h3>
-<p>The command below will execute the 'annotation' ARETE entry with subsetting enabled,
-with a core similarity threshold of 99% and an accessory similarity of 95%.</p>
-<pre><code>nextflow run beiko-lab/ARETE \
-  --input_sample_table samplesheet.csv \
-  --enable_subsetting \
-  --core_similarity 99 \
-  --accessory_similarity 95 \
-  -profile docker \
-  -entry annotation
-</code></pre>
-<p>Be sure to not include <code>--skip_poppunk</code> in your command, because that will then disable all PopPUNK-related processes, including the subsetting subworkflow.</p>
               
             </div>
           </div><footer>
     <div class="rst-footer-buttons" role="navigation" aria-label="Footer Navigation">
-        <a href="../params/" class="btn btn-neutral float-left" title="Parameters"><span class="icon icon-circle-arrow-left"></span> Previous</a>
+        <a href="../ROADMAP/" class="btn btn-neutral float-left" title="Roadmap"><span class="icon icon-circle-arrow-left"></span> Previous</a>
+        <a href="../params/" class="btn btn-neutral float-right" title="Parameters">Next <span class="icon icon-circle-arrow-right"></span></a>
     </div>
 
   <hr/>
@@ -158,8 +151,10 @@ with a core similarity threshold of 99% and an accessory similarity of 95%.</p>
         </span>
     
     
-      <span><a href="../params/" style="color: #fcfcfc">&laquo; Previous</a></span>
+      <span><a href="../ROADMAP/" style="color: #fcfcfc">&laquo; Previous</a></span>
     
+    
+      <span><a href="../params/" style="color: #fcfcfc">Next &raquo;</a></span>
     
   </span>
 </div>
