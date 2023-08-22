@@ -16,4 +16,4 @@ The sizes are:
 
 - For the `large` profile, we expect datasets with >1000 samples.
   It also increases default resource requirements for some processes and uses PPanGGoLin.
-  Additionally, it enables [PopPUNK subsampling](subsampling.md), with default parameters.
+  Additionally, **it enables [PopPUNK subsampling](subsampling.md), with default parameters**.
