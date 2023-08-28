@@ -17,8 +17,11 @@ ARETE produces a range of useful outputs (see [outputs](https://beiko-lab.github
 
 A key design feature of ARETE is the versatility to find the right blend of software packages and parameter settings that best handle datasets of different sizes, introducing heuristics and swapping out tools as necessary. ARETE has been benchmarked on datasets from fewer than ten to over 10,000 genomes from a diversity of species and genera including _Enterococcus faecium_, _Escherichia coli_, _Listeria_, and _Salmonella_. Another key feature is enabling the user choice to run specific subsets of the pipeline; a user may already have assembled genomes, or they may not care about, say, recombination detection. There are also cases where it might be necessary to manually review the outputs from a particular step before moving on to the next one; ARETE makes this manual QC easy to do.
 
-![ARETE diagram](assets/arete.diagram.light.png#gh-light-mode-only)
-![ARETE diagram](assets/arete.diagram.png#gh-dark-mode-only)
+<picture>
+
+  <source media="(prefers-color-scheme: dark)" srcset="./assets/arete.diagram.png">
+  <img alt="ARETE diagram" src="./assets/arete.diagram.light.png">
+</picture>
 
 # Table of Contents
 
