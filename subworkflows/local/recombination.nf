@@ -18,23 +18,6 @@ workflow RECOMBINATION {
         ch_reference_genome = params.reference_genome ? file(params.reference_genome) : []
         use_reference_genome = params.reference_genome ? true : false
 
-        if (quast_report == []) {
-            assemblies
-                .map { meta, fasta -> fasta.toString() }
-                .collectFile(name:'assemblies.txt', newLine: true)
-                .set { quast_input }
-
-            QUAST (
-                quast_input,
-                ch_reference_genome,
-                [],
-                use_reference_genome,
-                false
-            )
-            QUAST.out.transposed_report.set { quast_report }
-            ch_software_versions = ch_software_versions.mix(QUAST.out.versions.ifEmpty(null))
-        }
-
         if (params.run_verticall) {
             VERTICALL_REPAIR (
                 assemblies

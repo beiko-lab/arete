@@ -356,6 +356,7 @@ workflow ANNOTATION {
     //if (params.outgroup_genome ) { ch_outgroup_genome = file(params.outgroup_genome) } else { ch_outgroup_genome = '' }
 
     ch_software_versions = Channel.empty()
+    ch_multiqc_files = Channel.empty()
 
     /*
      * SUBWORKFLOW: Read in samplesheet, validate and stage input files
@@ -363,6 +364,17 @@ workflow ANNOTATION {
     ANNOTATION_INPUT_CHECK(ch_input)
 
     ANNOTATION_INPUT_CHECK.out.genomes.set { assemblies }
+
+    if (params.run_recombination) {
+        CHECK_ASSEMBLIES(
+            assemblies,
+            ch_reference_genome,
+            use_reference_genome
+        )
+        ch_software_versions = ch_software_versions.mix(CHECK_ASSEMBLIES.out.assemblyqc_software)
+        ch_multiqc_files = ch_multiqc_files.mix(CHECK_ASSEMBLIES.out.multiqc)
+    }
+
 
     if(db_cache){
         GET_DB_CACHE(db_cache)
@@ -378,8 +390,6 @@ workflow ANNOTATION {
             GET_DB_CACHE.out.card_json,
             GET_DB_CACHE.out.card_version
             )
-
-
     }
     else{
 
@@ -424,7 +434,7 @@ workflow ANNOTATION {
             RECOMBINATION (
                 assemblies,
                 RUN_POPPUNK.out.clusters,
-                []
+                CHECK_ASSEMBLIES.out.quast_report
             )
         }
     }
@@ -459,7 +469,6 @@ workflow ANNOTATION {
 
     //Mix QUAST results into one report file
 
-    ch_multiqc_files = Channel.empty()
     ch_multiqc_files = ch_multiqc_files.mix(ch_workflow_summary.collectFile(name: 'workflow_summary_mqc.yaml'))
     ch_multiqc_files = ch_multiqc_files.mix(GET_SOFTWARE_VERSIONS.out.yaml.collect())
     ch_multiqc_files = ch_multiqc_files.mix(ANNOTATE_ASSEMBLIES.out.multiqc)

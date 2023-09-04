@@ -19,8 +19,11 @@ workflow CHECK_ASSEMBLIES {
         /*
         * Module: CheckM Quality Check
         */
-        CHECKM_LINEAGEWF(assemblies, fasta_extension, [])
-        ch_software_versions = ch_software_versions.mix(CHECKM_LINEAGEWF.out.versions.first().ifEmpty(null))
+        if (params.run_checkm) {
+            CHECKM_LINEAGEWF(assemblies, fasta_extension, [])
+            ch_software_versions = ch_software_versions.mix(CHECKM_LINEAGEWF.out.versions.first().ifEmpty(null))
+        }
+
         /*
         * Module: QUAST quality check
         */
