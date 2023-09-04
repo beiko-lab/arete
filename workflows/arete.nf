@@ -153,6 +153,11 @@ workflow ARETE {
     )
     ch_software_versions = ch_software_versions.mix(CHECK_ASSEMBLIES.out.assemblyqc_software)
 
+    if (params.apply_filtering) {
+        CHECK_ASSEMBLIES.out.filtered_assemblies
+            .set { assemblies }
+    }
+
     if (db_cache) {
         /////////////////// ANNOTATION ///////////////////////////
         ANNOTATE_ASSEMBLIES(
@@ -365,7 +370,7 @@ workflow ANNOTATION {
 
     ANNOTATION_INPUT_CHECK.out.genomes.set { assemblies }
 
-    if (params.run_recombination) {
+    if (params.run_recombination || params.apply_filtering) {
         CHECK_ASSEMBLIES(
             assemblies,
             ch_reference_genome,
@@ -373,6 +378,11 @@ workflow ANNOTATION {
         )
         ch_software_versions = ch_software_versions.mix(CHECK_ASSEMBLIES.out.assemblyqc_software)
         ch_multiqc_files = ch_multiqc_files.mix(CHECK_ASSEMBLIES.out.multiqc)
+
+        if (params.apply_filtering) {
+            CHECK_ASSEMBLIES.out.filtered_assemblies
+                .set { assemblies }
+        }
     }
 
 
