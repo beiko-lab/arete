@@ -76,7 +76,6 @@ workflow ASSEMBLE_SHORTREADS{
         /*
         * MODULE: Assembly
         */
-
         // unicycler can accept short reads and long reads. For now, shortread only: Pass empty list for optional file args
         ch_unicycler_input = FASTP.out.reads.map { it -> it + [[]]}
         UNICYCLER(ch_unicycler_input)
@@ -84,26 +83,11 @@ workflow ASSEMBLE_SHORTREADS{
 
         // Unicycler outputs not quite right for QUAST. Need to re-arrange
         // pattern adapted from nf-core/bacass
-        ch_assembly = Channel.empty()
-        ch_assembly = ch_assembly.mix(UNICYCLER.out.scaffolds.dump(tag: 'unicycler'))
-        ch_assembly
-            .map { meta, fasta -> fasta.toString() }
-            .collectFile(name:'assemblies.txt', newLine: true)
-            .set { ch_to_quast }
-        /*
-        * Module: Evaluate Assembly
-        */
-        QUAST(ch_to_quast, ch_reference_genome, [], use_reference_genome, false)
-        ch_software_versions = ch_software_versions.mix(QUAST.out.versions.ifEmpty(null))
-
         ch_multiqc_files = ch_multiqc_files.mix(RAW_FASTQC.out.zip.collect{it[1]}.ifEmpty([]))
         ch_multiqc_files = ch_multiqc_files.mix(TRIM_FASTQC.out.zip.collect{it[1]}.ifEmpty([]))
-        ch_multiqc_files = ch_multiqc_files.mix(QUAST.out.tsv.collect())
 
     emit:
-        assemblies = ch_assembly
         scaffolds = UNICYCLER.out.scaffolds
-        quast_report = QUAST.out.transposed_report
         assembly_software = ch_software_versions
         multiqc = ch_multiqc_files
 

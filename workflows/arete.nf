@@ -146,6 +146,13 @@ workflow ARETE {
 
     ASSEMBLE_SHORTREADS.out.scaffolds.set { assemblies }
 
+    CHECK_ASSEMBLIES (
+        assemblies,
+        ch_reference_genome,
+        use_reference_genome
+    )
+    ch_software_versions = ch_software_versions.mix(CHECK_ASSEMBLIES.out.assemblyqc_software)
+
     if (db_cache) {
         /////////////////// ANNOTATION ///////////////////////////
         ANNOTATE_ASSEMBLIES(
@@ -198,7 +205,7 @@ workflow ARETE {
             RECOMBINATION (
                 assemblies,
                 RUN_POPPUNK.out.clusters,
-                ASSEMBLE_SHORTREADS.out.quast_report
+                CHECK_ASSEMBLIES.out.quast_report
             )
         }
     }
@@ -240,6 +247,7 @@ workflow ARETE {
     ch_multiqc_files = ch_multiqc_files.mix(ch_workflow_summary.collectFile(name: 'workflow_summary_mqc.yaml'))
     ch_multiqc_files = ch_multiqc_files.mix(GET_SOFTWARE_VERSIONS.out.yaml.collect())
     ch_multiqc_files = ch_multiqc_files.mix(ASSEMBLE_SHORTREADS.out.multiqc)
+    ch_multiqc_files = ch_multiqc_files.mix(CHECK_ASSEMBLIES.out.multiqc)
     ch_multiqc_files = ch_multiqc_files.mix(ANNOTATE_ASSEMBLIES.out.multiqc)
 
     MULTIQC(
@@ -285,6 +293,13 @@ workflow ASSEMBLY {
 
     ch_software_versions = ch_software_versions.mix(ASSEMBLE_SHORTREADS.out.assembly_software)
 
+    CHECK_ASSEMBLIES(
+        ASSEMBLE_SHORTREADS.out.scaffolds,
+        ch_reference_genome,
+        use_reference_genome
+    )
+    ch_software_versions = ch_software_versions.mix(CHECK_ASSEMBLIES.out.assemblyqc_software)
+
     // Get unique list of files containing version information
     ch_software_versions
         .map { it -> if (it) [ it.baseName, it ] }
@@ -300,6 +315,7 @@ workflow ASSEMBLY {
     ch_workflow_summary = Channel.value(workflow_summary)
 
     ch_multiqc_files = Channel.empty()
+    ch_multiqc_files = ch_multiqc_files.mix(CHECK_ASSEMBLIES.out.multiqc)
     ch_multiqc_files = ch_multiqc_files.mix(ch_workflow_summary.collectFile(name: 'workflow_summary_mqc.yaml'))
     ch_multiqc_files = ch_multiqc_files.mix(ASSEMBLE_SHORTREADS.out.multiqc)
 
@@ -480,7 +496,6 @@ workflow QUALITYCHECK {
 
     CHECK_ASSEMBLIES(
         ANNOTATION_INPUT_CHECK.out.genomes,
-        db_cache,
         ch_reference_genome,
         use_reference_genome
     )
