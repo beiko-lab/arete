@@ -43,6 +43,7 @@ def create_recomb_input(quast_report, poppunk_clusters, assembly_samplesheet, fi
     assemblies["assembly_path"] = [
         Path(path).name for path in assemblies["assembly_path"].to_list()
     ]
+    assemblies["id"] = assemblies["id"].str.replace("\.(.*)|_T1|$", "", regex=True)
 
     # Merging datasets
     merged = poppunk.merge(quast, right_on="Assembly", left_on="Taxon").loc[
