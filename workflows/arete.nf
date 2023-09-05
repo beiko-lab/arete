@@ -154,7 +154,7 @@ workflow ARETE {
     ch_software_versions = ch_software_versions.mix(CHECK_ASSEMBLIES.out.assemblyqc_software)
 
     if (params.apply_filtering) {
-        CHECK_ASSEMBLIES.out.filtered_assemblies
+        CHECK_ASSEMBLIES.out.assemblies
             .set { assemblies }
     }
 
@@ -380,7 +380,7 @@ workflow ANNOTATION {
         ch_multiqc_files = ch_multiqc_files.mix(CHECK_ASSEMBLIES.out.multiqc)
 
         if (params.apply_filtering) {
-            CHECK_ASSEMBLIES.out.filtered_assemblies
+            CHECK_ASSEMBLIES.out.assemblies
                 .set { assemblies }
         }
     }

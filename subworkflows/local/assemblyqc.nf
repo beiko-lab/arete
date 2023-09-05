@@ -45,7 +45,7 @@ workflow CHECK_ASSEMBLIES {
         filtered_assemblies = assemblies
 
         if (params.apply_filtering) {
-            println 'WARNING: Your assemblies are being filtered \n(--apply_filtering is true)'
+            println '\033[0;33mWARN: Your assemblies are being filtered (--apply_filtering is true)'
 
             QUAST.out.transposed_report
                 .splitCsv(header: true, sep: '\t')
@@ -62,7 +62,7 @@ workflow CHECK_ASSEMBLIES {
         }
 
     emit:
-        filtered_assemblies
+        assemblies = filtered_assemblies
         quast_report = QUAST.out.transposed_report
         assemblyqc_software = ch_software_versions
         multiqc = ch_multiqc_files
