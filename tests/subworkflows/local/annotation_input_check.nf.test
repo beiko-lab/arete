@@ -20,7 +20,7 @@ nextflow_workflow {
         then {
             assert workflow.success
             assert workflow.out.genomes.size() == 4
-            assert workflow.out.genomes.get(0).get(0) == ['id':'test_1', 'single_end':true]
+            assert workflow.out.genomes.get(0).get(0) == ['id':'SRR14022735_T1', 'single_end':true]
         }
 
     }
