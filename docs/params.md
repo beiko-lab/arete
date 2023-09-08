@@ -10,7 +10,7 @@ Define where the pipeline should find input data and save output data.
 |-----------|-----------|-----------|-----------|-----------|-----------|
 | `input_sample_table` | Path to comma-separated file containing information about the samples in the experiment. <details><summary>Help</summary><small>You will need to create a design file with information about the samples in your experiment before running the pipeline. Use this parameter to specify its location. It has to be a comma-separated file with 3 columns, and a header row.</small></details>| `string` |  | True |  |
 | `outdir` | Path to the output directory where the results will be saved. | `string` | ./results |  |  |
-| `db_cache` | Directory where the databases are located | `string` | None |  |  |
+| `db_cache` | Directory where the databases are located | `string` |  |  |  |
 | `email` | Email address for completion summary. <details><summary>Help</summary><small>Set this parameter to your e-mail address to get a summary e-mail with details of the run sent to you when the workflow exits. If set in your user config file (`~/.nextflow/config`) then you don't need to specify this on the command line for every run.</small></details>| `string` |  |  |  |
 | `multiqc_title` | MultiQC report title. Printed as page header, used for filename if not otherwise specified. | `string` |  |  |  |
 
@@ -22,13 +22,18 @@ Reference and outgroup genome fasta files required for the workflow.
 |-----------|-----------|-----------|-----------|-----------|-----------|
 | `reference_genome` | Path to FASTA reference genome file. | `string` |  |  |  |
 
-## Kraken2
+## QC
 
-Options for the Kraken2 taxonomic classification
+
 
 | Parameter | Description | Type | Default | Required | Hidden |
 |-----------|-----------|-----------|-----------|-----------|-----------|
+| `run_checkm` | Run CheckM QC software | `boolean` |  |  |  |
+| `apply_filtering` | Filter assemblies on QC results | `boolean` |  |  |  |
 | `skip_kraken` | Don't run Kraken2 taxonomic classification | `boolean` |  |  |  |
+| `min_n50` | Minimum N50 for filtering | `integer` | 10000 |  |  |
+| `min_contigs_1000_bp` | Minimum number of contigs with >1000bp | `integer` | 1 |  |  |
+| `min_contig_length` | Minimum average contig length | `integer` | 1 |  |  |
 
 ## Annotation
 
@@ -37,7 +42,7 @@ Parameters for the annotation subworkflow
 | Parameter | Description | Type | Default | Required | Hidden |
 |-----------|-----------|-----------|-----------|-----------|-----------|
 | `annotation_tools` | Comma-separated list of annotation tools to run | `string` | mobsuite,rgi,cazy,vfdb,iceberg,bacmet,islandpath,phispy,report |  |  |
-| `bakta_db` | Path to the BAKTA database | `string` | None |  |  |
+| `bakta_db` | Path to the BAKTA database | `string` |  |  |  |
 | `use_prokka` | Use Prokka (not Bakta) for annotating assemblies | `boolean` |  |  |  |
 | `min_pident` | Minimum match identity percentage for filtering | `integer` | 60 |  |  |
 | `min_qcover` | Minimum coverage of each match for filtering | `number` | 0.6 |  |  |
@@ -62,7 +67,7 @@ Parameters for the lineage subworkflow
 | Parameter | Description | Type | Default | Required | Hidden |
 |-----------|-----------|-----------|-----------|-----------|-----------|
 | `skip_poppunk` | Skip PopPunk | `boolean` |  |  |  |
-| `poppunk_model` | Which PopPunk model to use (bgmm, dbscan, refine, threshold or lineage) | `string` | None |  |  |
+| `poppunk_model` | Which PopPunk model to use (bgmm, dbscan, refine, threshold or lineage) | `string` |  |  |  |
 | `run_poppunk_qc` | Whether to run the QC step for PopPunk | `boolean` |  |  |  |
 | `enable_subsetting` | Enable subsetting workflow based on genome similarity | `boolean` |  |  |  |
 | `core_similarity` | Similarity threshold for core genomes | `number` | 99.99 |  |  |
@@ -129,4 +134,4 @@ Less common options for the pipeline, typically set in a config file.
 | `enable_conda` | Run this workflow with Conda. You can also use '-profile conda' instead of providing this parameter. | `boolean` |  |  | True |
 | `singularity_pull_docker_container` | Instead of directly downloading Singularity images for use with Singularity, force the workflow to pull and convert Docker containers instead. <details><summary>Help</summary><small>This may be useful for example if you are unable to directly pull Singularity containers to run the pipeline due to http/https proxy issues.</small></details>| `boolean` |  |  | True |
 | `schema_ignore_params` |  | `string` | genomes,modules |  |  |
-| `multiqc_logo` |  | `string` | None |  | True |
+| `multiqc_logo` |  | `string` |  |  | True |
