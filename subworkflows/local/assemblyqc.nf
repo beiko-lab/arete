@@ -49,7 +49,11 @@ workflow CHECK_ASSEMBLIES {
 
             QUAST.out.transposed_report
                 .splitCsv(header: true, sep: '\t')
-                .filter { row -> row.N50.toFloat() > 100000}
+                .filter {
+                     it.N50.toFloat() > params.min_n50 &&
+                     it['# contigs (>= 1000 bp)'].toFloat() > params.min_contigs_1000_bp &&
+                     it['Total length'].toFloat() > params.min_contig_length
+                }
                 .map { row -> row.Assembly }
                 .set { to_keep }
 
