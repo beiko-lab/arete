@@ -81,6 +81,24 @@
                     "type": "boolean",
                     "description": "Don't run Kraken2 taxonomic classification",
                     "fa_icon": "fas fa-forward"
+                },
+                "min_n50": {
+                    "type": "integer",
+                    "default": 10000,
+                    "description": "Minimum N50 for filtering",
+                    "fa_icon": "fas fa-align-right"
+                },
+                "min_contigs_1000_bp": {
+                    "type": "integer",
+                    "default": 1,
+                    "description": "Minimum number of contigs with >1000bp",
+                    "fa_icon": "fas fa-ellipsis-h"
+                },
+                "min_contig_length": {
+                    "type": "integer",
+                    "default": 1,
+                    "description": "Minimum average contig length",
+                    "fa_icon": "fas fa-ruler-horizontal"
                 }
             }
         },
@@ -215,8 +233,7 @@
                 "run_recombination": {
                     "type": "boolean",
                     "description": "Run Recombination",
-                    "fa_icon": "fas fa-tree",
-                    "default": true
+                    "fa_icon": "fas fa-tree"
                 },
                 "run_verticall": {
                     "type": "boolean",
