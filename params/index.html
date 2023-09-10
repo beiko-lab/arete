@@ -73,7 +73,7 @@
     </li>
     <li class="toctree-l2"><a class="reference internal" href="#reference-genome-options">Reference genome options</a>
     </li>
-    <li class="toctree-l2"><a class="reference internal" href="#kraken2">Kraken2</a>
+    <li class="toctree-l2"><a class="reference internal" href="#qc">QC</a>
     </li>
     <li class="toctree-l2"><a class="reference internal" href="#annotation">Annotation</a>
     </li>
@@ -157,7 +157,7 @@
 <td><code>db_cache</code></td>
 <td>Directory where the databases are located</td>
 <td><code>string</code></td>
-<td>None</td>
+<td></td>
 <td></td>
 <td></td>
 </tr>
@@ -203,8 +203,7 @@
 </tr>
 </tbody>
 </table>
-<h2 id="kraken2">Kraken2</h2>
-<p>Options for the Kraken2 taxonomic classification</p>
+<h2 id="qc">QC</h2>
 <table>
 <thead>
 <tr>
@@ -218,10 +217,50 @@
 </thead>
 <tbody>
 <tr>
+<td><code>run_checkm</code></td>
+<td>Run CheckM QC software</td>
+<td><code>boolean</code></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td><code>apply_filtering</code></td>
+<td>Filter assemblies on QC results</td>
+<td><code>boolean</code></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
 <td><code>skip_kraken</code></td>
 <td>Don't run Kraken2 taxonomic classification</td>
 <td><code>boolean</code></td>
 <td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td><code>min_n50</code></td>
+<td>Minimum N50 for filtering</td>
+<td><code>integer</code></td>
+<td>10000</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td><code>min_contigs_1000_bp</code></td>
+<td>Minimum number of contigs with &gt;1000bp</td>
+<td><code>integer</code></td>
+<td>1</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td><code>min_contig_length</code></td>
+<td>Minimum average contig length</td>
+<td><code>integer</code></td>
+<td>1</td>
 <td></td>
 <td></td>
 </tr>
@@ -253,7 +292,7 @@
 <td><code>bakta_db</code></td>
 <td>Path to the BAKTA database</td>
 <td><code>string</code></td>
-<td>None</td>
+<td></td>
 <td></td>
 <td></td>
 </tr>
@@ -373,7 +412,7 @@
 <td><code>poppunk_model</code></td>
 <td>Which PopPunk model to use (bgmm, dbscan, refine, threshold or lineage)</td>
 <td><code>string</code></td>
-<td>None</td>
+<td></td>
 <td></td>
 <td></td>
 </tr>
@@ -708,7 +747,7 @@
 <td><code>multiqc_logo</code></td>
 <td></td>
 <td><code>string</code></td>
-<td>None</td>
+<td></td>
 <td></td>
 <td>True</td>
 </tr>
