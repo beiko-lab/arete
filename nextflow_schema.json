@@ -30,7 +30,6 @@
                 },
                 "db_cache": {
                     "type": "string",
-                    "default": "None",
                     "fa_icon": "fas fa-database",
                     "description": "Directory where the databases are located"
                 },
@@ -61,19 +60,47 @@
                 }
             }
         },
-        "kraken2": {
-            "title": "Kraken2",
+        "qc": {
+            "title": "QC",
             "type": "object",
-            "description": "Options for the Kraken2 taxonomic classification",
+            "description": "",
             "default": "",
+            "fa_icon": "fas fa-eye",
             "properties": {
+                "run_checkm": {
+                    "type": "boolean",
+                    "fa_icon": "fas fa-check-double",
+                    "description": "Run CheckM QC software"
+                },
+                "apply_filtering": {
+                    "type": "boolean",
+                    "fa_icon": "fas fa-filter",
+                    "description": "Filter assemblies on QC results"
+                },
                 "skip_kraken": {
                     "type": "boolean",
                     "description": "Don't run Kraken2 taxonomic classification",
                     "fa_icon": "fas fa-forward"
+                },
+                "min_n50": {
+                    "type": "integer",
+                    "default": 10000,
+                    "description": "Minimum N50 for filtering",
+                    "fa_icon": "fas fa-align-right"
+                },
+                "min_contigs_1000_bp": {
+                    "type": "integer",
+                    "default": 1,
+                    "description": "Minimum number of contigs with >1000bp",
+                    "fa_icon": "fas fa-ellipsis-h"
+                },
+                "min_contig_length": {
+                    "type": "integer",
+                    "default": 1,
+                    "description": "Minimum average contig length",
+                    "fa_icon": "fas fa-ruler-horizontal"
                 }
-            },
-            "fa_icon": "fas fa-align-left"
+            }
         },
         "annotation": {
             "title": "Annotation",
@@ -91,7 +118,6 @@
                 },
                 "bakta_db": {
                     "type": "string",
-                    "default": "None",
                     "fa_icon": "fas fa-database",
                     "description": "Path to the BAKTA database"
                 },
@@ -171,8 +197,7 @@
                 "poppunk_model": {
                     "type": "string",
                     "description": "Which PopPunk model to use (bgmm, dbscan, refine, threshold or lineage)",
-                    "fa_icon": "fas fa-indent",
-                    "default": "None"
+                    "fa_icon": "fas fa-indent"
                 },
                 "run_poppunk_qc": {
                     "type": "boolean",
@@ -208,8 +233,7 @@
                 "run_recombination": {
                     "type": "boolean",
                     "description": "Run Recombination",
-                    "fa_icon": "fas fa-tree",
-                    "default": true
+                    "fa_icon": "fas fa-tree"
                 },
                 "run_verticall": {
                     "type": "boolean",
@@ -419,7 +443,6 @@
                 },
                 "multiqc_logo": {
                     "type": "string",
-                    "default": "None",
                     "fa_icon": "fas fa-image",
                     "hidden": true
                 }
@@ -434,7 +457,7 @@
             "$ref": "#/definitions/reference_genome_options"
         },
         {
-            "$ref": "#/definitions/kraken2"
+            "$ref": "#/definitions/qc"
         },
         {
             "$ref": "#/definitions/annotation"
