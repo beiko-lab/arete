@@ -1,5 +1,6 @@
 process FASTTREE {
-    label 'process_medium'
+    label 'process_high'
+    label 'process_long'
 
     conda (params.enable_conda ? "bioconda::fasttree=2.1.10" : null)
     container "${ workflow.containerEngine == 'singularity' && !task.ext.singularity_pull_docker_container ?
@@ -8,6 +9,7 @@ process FASTTREE {
 
     input:
     path alignment
+    val is_nt
 
     output:
     path "*.tre",         emit: phylogeny
@@ -18,12 +20,16 @@ process FASTTREE {
 
     script:
     def args = task.ext.args ?: ''
+    def type = is_nt ? '-nt' : ''
     """
+    sampleid=\$(basename $alignment .aln)
+
     fasttree \\
         $args \\
-        -log fasttree_phylogeny.tre.log \\
-        -nt $alignment \\
-        > fasttree_phylogeny.tre
+        -log \$sampleid".tre.log" \\
+        $type \\
+        $alignment \\
+        > \$sampleid".tre"
 
     cat <<-END_VERSIONS > versions.yml
     "${task.process}":
