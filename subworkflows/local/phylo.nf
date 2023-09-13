@@ -4,11 +4,12 @@
 include { IQTREE } from '../../modules/nf-core/iqtree/main'
 include { PANAROO_RUN } from '../../modules/nf-core/panaroo/run/main'
 include { SNPSITES } from '../../modules/nf-core/snpsites/main'
+include { FASTTREE as CORE_FASTTREE } from '../../modules/nf-core/fasttree/main'
 
 //
 // MODULE: Local to the pipeline
 //
-include { CHUNKED_FASTTREE as FASTTREE } from '../../modules/local/chunked_fasttree'
+include { CHUNKED_FASTTREE as GENE_FASTTREE } from '../../modules/local/chunked_fasttree'
 include { PPANGGOLIN_WORKFLOW } from '../../modules/local/ppanggolin/workflow/main'
 include { PPANGGOLIN_MSA } from '../../modules/local/ppanggolin/msa/main'
 include { GML2GV } from '../../modules/local/graphviz/gml2gv/main'
@@ -59,7 +60,7 @@ workflow PHYLOGENOMICS{
                 PPANGGOLIN_WORKFLOW.out.soft_core
             )
 
-            ch_all_alignments = ch_all_alignments.mix(CONCAT_ALIGNMENT.out.core_aln)
+            CONCAT_ALIGNMENT.out.core_aln.set { ch_core_alignment }
 
             ch_software_versions = ch_software_versions.mix(PPANGGOLIN_MSA.out.versions.ifEmpty(null))
         } else {
@@ -77,11 +78,7 @@ workflow PHYLOGENOMICS{
             // By default, run panaroo
             PANAROO_RUN(gff_samplesheet)
             PANAROO_RUN.out.aln.collect{ meta, aln -> aln }.set{ ch_core_alignment }
-            PANAROO_RUN.out.accessory_aln.set{ ch_accessory_alignment }
-
-            ch_core_alignment
-                .mix(ch_accessory_alignment)
-                .set{ ch_all_alignments }
+            PANAROO_RUN.out.accessory_aln.set{ ch_all_alignments }
 
             PANAROO_RUN.out.graph_gml.map{ id, path -> path }.set { panaroo_graph }
             ch_software_versions = ch_software_versions.mix(PANAROO_RUN.out.versions.ifEmpty(null))
@@ -98,11 +95,11 @@ workflow PHYLOGENOMICS{
         */
         if (use_fasttree){
             def is_nt = params.use_ppanggolin ? false : true
-            FASTTREE(chunked_alignments, is_nt)
-            ch_software_versions = ch_software_versions.mix(FASTTREE.out.versions.ifEmpty(null))
-            core_tree = FASTTREE.out.phylogeny
-                .flatten()
-                .filter( ~/.*core.*/ )
+            GENE_FASTTREE(chunked_alignments, is_nt)
+            ch_software_versions = ch_software_versions.mix(GENE_FASTTREE.out.versions.ifEmpty(null))
+
+            CORE_FASTTREE(ch_core_alignment, is_nt)
+            CORE_FASTTREE.out.phylogeny.set { core_tree }
         }
 
         if (!use_fasttree && !params.use_ppanggolin) {
