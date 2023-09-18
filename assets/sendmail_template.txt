@@ -9,12 +9,12 @@ Content-Type: text/html; charset=utf-8
 $email_html
 
 --nfcoremimeboundary
-Content-Type: image/png;name="nf-core-arete_logo.png"
+Content-Type: image/png;name="arete-logo-transparent.png"
 Content-Transfer-Encoding: base64
 Content-ID: <nfcorepipelinelogo>
-Content-Disposition: inline; filename="nf-core-arete_logo.png"
+Content-Disposition: inline; filename="arete-logo-transparent.png"
 
-<% out << new File("$projectDir/assets/nf-core-arete_logo.png").
+<% out << new File("$projectDir/assets/arete-logo-transparent.png").
     bytes.
     encodeBase64().
     toString().
