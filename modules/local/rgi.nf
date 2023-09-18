@@ -11,19 +11,25 @@ process UPDATE_RGI_DB {
 
     output:
     path "card.json", emit: card_json
-    path "card.version.txt", emit: card_version
+    path "versions.yml", emit: card_version
 
     script:
     """
     curl https://card.mcmaster.ca/latest/data --output card.tar.bz2
     tar xvf card.tar.bz2
-    python -c "import json;fh = open('card.json');card=json.load(fh);print(card['_version'])" > card.version.txt
+    cat <<-END_VERSIONS > versions.yml
+    "${task.process}":
+        card: \$(echo \$(python -c "import json;fh = open('card.json');card=json.load(fh);print(card['_version'])"))
+    END_VERSIONS
     """
 
     stub:
     """
     touch card.json
-    touch card.version.txt
+    cat <<-END_VERSIONS > versions.yml
+    "${task.process}":
+        card: 1.0
+    END_VERSIONS
     """
 }
 
@@ -48,7 +54,7 @@ process RGI {
 
     output:
     tuple val(meta), path("${meta.id}_rgi.txt"), emit: tsv
-    path "*.version.txt", emit: version
+    path "versions.yml", emit: version
 
     script:
     def software = getSoftwareName(task.process)
@@ -58,13 +64,19 @@ process RGI {
     rgi load -i $card_db --local
     rgi main --local --input_sequence $fasta --output_file ${meta.id}_rgi --input_type contig --clean --include_loose
 
-    echo \$(rgi main --version 2>&1) > ${software}.version.txt
+    cat <<-END_VERSIONS > versions.yml
+    "${task.process}":
+        rgi: \$(echo \$(rgi main --version 2>&1))
+    END_VERSIONS
     """
     stub:
     def software = getSoftwareName(task.process)
     def prefix   = options.suffix ? "${meta.id}${options.suffix}" : "${meta.id}"
     """
     touch ${prefix}_rgi.txt
-    echo \$(rgi main --version 2>&1) > ${software}.version.txt
+    cat <<-END_VERSIONS > versions.yml
+    "${task.process}":
+        rgi: \$(echo \$(rgi main --version 2>&1))
+    END_VERSIONS
     """
 }
