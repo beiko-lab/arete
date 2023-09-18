@@ -35,11 +35,12 @@ workflow ASSEMBLE_SHORTREADS{
 
     main:
         ch_multiqc_files = Channel.empty()
-    /////////////////// Read Processing /////////////////////////////
+        ch_software_versions = Channel.empty()
+
+        /////////////////// Read Processing /////////////////////////////
         /*
         * MODULE: Run FastQC
         */
-        ch_software_versions = Channel.empty()
         RAW_FASTQC(reads)
         ch_software_versions = ch_software_versions.mix(RAW_FASTQC.out.versions.first().ifEmpty(null))
 
@@ -48,8 +49,8 @@ workflow ASSEMBLE_SHORTREADS{
         */
         FASTP(reads, [], false, false)
         ch_software_versions = ch_software_versions.mix(FASTP.out.versions.first().ifEmpty(null))
+        ch_multiqc_files = ch_multiqc_files.mix(FASTP.out.json.collect{it[1]}.ifEmpty([]))        /*
 
-        /*
         * MODULE: Run FastQC on trimmed reads
         */
         TRIM_FASTQC(FASTP.out.reads)
@@ -81,8 +82,6 @@ workflow ASSEMBLE_SHORTREADS{
         UNICYCLER(ch_unicycler_input)
         ch_software_versions = ch_software_versions.mix(UNICYCLER.out.versions.first().ifEmpty(null))
 
-        // Unicycler outputs not quite right for QUAST. Need to re-arrange
-        // pattern adapted from nf-core/bacass
         ch_multiqc_files = ch_multiqc_files.mix(RAW_FASTQC.out.zip.collect{it[1]}.ifEmpty([]))
         ch_multiqc_files = ch_multiqc_files.mix(TRIM_FASTQC.out.zip.collect{it[1]}.ifEmpty([]))
 

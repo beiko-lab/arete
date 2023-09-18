@@ -8,9 +8,17 @@ report_section_order:
   arete-summary:
     order: -1001
 
+custom_logo: "arete-logo-transparent.png"
+custom_logo_url: https://github.com/beiko-lab/arete
+custom_logo_title: "beiko-lab/ARETE"
+
+## Tool specific configuration
 sp:
+  diamond:
+    fn: "*diamond.log"
   quast:
     fn: "report.tsv"
     shared: true
+prokka_fn_snames: true
 
 export_plots: true
