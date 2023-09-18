@@ -1,11 +1,9 @@
 lint:
-    files_exist:
-    - assets/nf-core-ARETE_logo.png
-    - docs/images/nf-core-ARETE_logo.png
-    files_unchanged:
-    - assets/email_template.html
+  files_exist:
+    - assets/arete-logo-transparent.png
+  files_unchanged:
     - assets/multiqc_config.yaml
-    nextflow_config:
+  nextflow_config:
     - params.input
     - manifest.name
 repository_type: pipeline

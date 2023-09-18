@@ -75,7 +75,7 @@ include { SNPSITES } from '../modules/nf-core/snpsites/main'
 //
 // MODULE: Local to the pipeline
 //
-include { GET_SOFTWARE_VERSIONS } from '../modules/local/get_software_versions' addParams( options: [publish_files : ['tsv':'']] )
+include { CUSTOM_DUMPSOFTWAREVERSIONS } from '../modules/nf-core/custom/dumpsoftwareversions/main'
 include { RGI;
           UPDATE_RGI_DB } from '../modules/local/rgi'
 include { MOB_RECON } from '../modules/local/mobsuite'
@@ -231,14 +231,9 @@ workflow ARETE {
         }
     }
 
-    ch_software_versions
-        .map { it -> if (it) [ it.baseName, it ] }
-        .groupTuple()
-        .map { it[1][0] }
-        .flatten()
-        .collect()
-        .set { ch_software_versions }
-    GET_SOFTWARE_VERSIONS(ch_software_versions)
+    CUSTOM_DUMPSOFTWAREVERSIONS (
+        ch_software_versions.unique().collectFile(name: 'collated_versions.yml')
+    )
 
     /*
      * MODULE: MultiQC
@@ -250,7 +245,7 @@ workflow ARETE {
 
     ch_multiqc_files = Channel.empty()
     ch_multiqc_files = ch_multiqc_files.mix(ch_workflow_summary.collectFile(name: 'workflow_summary_mqc.yaml'))
-    ch_multiqc_files = ch_multiqc_files.mix(GET_SOFTWARE_VERSIONS.out.yaml.collect())
+    ch_multiqc_files = ch_multiqc_files.mix(CUSTOM_DUMPSOFTWAREVERSIONS.out.mqc_yml.collect())
     ch_multiqc_files = ch_multiqc_files.mix(ASSEMBLE_SHORTREADS.out.multiqc)
     ch_multiqc_files = ch_multiqc_files.mix(CHECK_ASSEMBLIES.out.multiqc)
     ch_multiqc_files = ch_multiqc_files.mix(ANNOTATE_ASSEMBLIES.out.multiqc)
@@ -305,23 +300,18 @@ workflow ASSEMBLY {
     )
     ch_software_versions = ch_software_versions.mix(CHECK_ASSEMBLIES.out.assemblyqc_software)
 
-    // Get unique list of files containing version information
-    ch_software_versions
-        .map { it -> if (it) [ it.baseName, it ] }
-        .groupTuple()
-        .map { it[1][0] }
-        .flatten()
-        .collect()
-        .set { ch_software_versions }
-    GET_SOFTWARE_VERSIONS(ch_software_versions)
+    CUSTOM_DUMPSOFTWAREVERSIONS (
+        ch_software_versions.unique().collectFile(name: 'collated_versions.yml')
+    )
 
     //multiqc
     workflow_summary    = WorkflowArete.paramsSummaryMultiqc(workflow, summary_params)
     ch_workflow_summary = Channel.value(workflow_summary)
 
     ch_multiqc_files = Channel.empty()
-    ch_multiqc_files = ch_multiqc_files.mix(CHECK_ASSEMBLIES.out.multiqc)
     ch_multiqc_files = ch_multiqc_files.mix(ch_workflow_summary.collectFile(name: 'workflow_summary_mqc.yaml'))
+    ch_multiqc_files = ch_multiqc_files.mix(CUSTOM_DUMPSOFTWAREVERSIONS.out.mqc_yml.collect())
+    ch_multiqc_files = ch_multiqc_files.mix(CHECK_ASSEMBLIES.out.multiqc)
     ch_multiqc_files = ch_multiqc_files.mix(ASSEMBLE_SHORTREADS.out.multiqc)
 
     MULTIQC(
@@ -330,9 +320,6 @@ workflow ASSEMBLY {
         ch_multiqc_custom_config.collect().ifEmpty([]),
         ch_multiqc_logo.collect().ifEmpty([])
     )
-    multiqc_report       = MULTIQC.out.report.toList()
-    ch_software_versions = ch_software_versions.mix(MULTIQC.out.versions.ifEmpty(null))
-
 }
 
 // annotate existing assemblies
@@ -462,14 +449,9 @@ workflow ANNOTATION {
         }
     }
 
-    ch_software_versions
-        .map { it -> if (it) [ it.baseName, it ] }
-        .groupTuple()
-        .map { it[1][0] }
-        .flatten()
-        .collect()
-        .set { ch_software_versions }
-    GET_SOFTWARE_VERSIONS(ch_software_versions)
+    CUSTOM_DUMPSOFTWAREVERSIONS (
+        ch_software_versions.unique().collectFile(name: 'collated_versions.yml')
+    )
 
     /*
      * MODULE: MultiQC
@@ -480,7 +462,7 @@ workflow ANNOTATION {
     //Mix QUAST results into one report file
 
     ch_multiqc_files = ch_multiqc_files.mix(ch_workflow_summary.collectFile(name: 'workflow_summary_mqc.yaml'))
-    ch_multiqc_files = ch_multiqc_files.mix(GET_SOFTWARE_VERSIONS.out.yaml.collect())
+    ch_multiqc_files = ch_multiqc_files.mix(CUSTOM_DUMPSOFTWAREVERSIONS.out.mqc_yml.collect())
     ch_multiqc_files = ch_multiqc_files.mix(ANNOTATE_ASSEMBLIES.out.multiqc)
 
     MULTIQC(
@@ -530,15 +512,9 @@ workflow QUALITYCHECK {
     multiqc_report       = MULTIQC.out.report.toList()
     ch_software_versions = ch_software_versions.mix(MULTIQC.out.versions.ifEmpty(null))
 
-    // Get unique list of files containing version information
-    ch_software_versions
-        .map { it -> if (it) [ it.baseName, it ] }
-        .groupTuple()
-        .map { it[1][0] }
-        .flatten()
-        .collect()
-        .set { ch_software_versions }
-    GET_SOFTWARE_VERSIONS(ch_software_versions)
+    CUSTOM_DUMPSOFTWAREVERSIONS (
+        ch_software_versions.unique().collectFile(name: 'collated_versions.yml')
+    )
 
     //multiqc
     workflow_summary    = WorkflowArete.paramsSummaryMultiqc(workflow, summary_params)
@@ -563,14 +539,9 @@ workflow PHYLO {
     ch_software_versions = ch_software_versions.mix(PHYLOGENOMICS.out.phylo_software)
 
 
-    ch_software_versions
-        .map { it -> if (it) [ it.baseName, it ] }
-        .groupTuple()
-        .map { it[1][0] }
-        .flatten()
-        .collect()
-        .set { ch_software_versions }
-    GET_SOFTWARE_VERSIONS(ch_software_versions)
+    CUSTOM_DUMPSOFTWAREVERSIONS (
+        ch_software_versions.unique().collectFile(name: 'collated_versions.yml')
+    )
 
 }
 
@@ -598,7 +569,9 @@ workflow POPPUNK {
 
     }
 
-    GET_SOFTWARE_VERSIONS(ch_software_versions)
+    CUSTOM_DUMPSOFTWAREVERSIONS (
+        ch_software_versions.unique().collectFile(name: 'collated_versions.yml')
+    )
 }
 
 /*
