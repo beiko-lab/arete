@@ -231,6 +231,7 @@ See the [PhiSpy documentation](https://github.com/linsalrob/PhiSpy#output-files)
 
 - `poppunk_results/`
 
+      - `poppunk_db/` - Results from PopPUNK's create-db command
       - `poppunk_${poppunk_model}/` - Results from PopPUNK's fit-model command
       - `poppunk_visualizations/` - Results from the poppunk_visualise command
 
