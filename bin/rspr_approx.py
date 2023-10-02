@@ -9,6 +9,7 @@ import argparse
 import subprocess
 from ete3 import Tree
 import pandas as pd
+from collections import defaultdict
 from matplotlib import pyplot as plt
 import seaborn as sns
 
@@ -23,6 +24,14 @@ def parse_args(args=None):
     )
     parser.add_argument(
         "-o", "--output", dest="OUTPUT_DIR", default="approx", help="Gene tree list"
+    )
+    parser.add_argument(
+        "-mrd",
+        "--min_rspr_distance",
+        dest="MIN_RSPR_DISTANCE",
+        type=int,
+        default=10,
+        help="Minimum rSPR distance used to define processing groups.",
     )
     parser.add_argument(
         "-mbl",
@@ -124,6 +133,46 @@ def make_heatmap(results, output_path):
     plt.savefig(output_path)
 
 
+def make_groups(results, min_limit=10):
+    print("Generating groups")
+    results["approx_drSPR"] = pd.to_numeric(results["approx_drSPR"])
+    min_group = results[results["approx_drSPR"] <= min_limit]["file_name"].tolist()
+    groups = defaultdict()
+    first_group = "group_0"
+    groups[first_group] = min_group
+
+    rem_results = results[results["approx_drSPR"] > min_limit].sort_values(
+        by="approx_drSPR", ascending=False
+    )
+    rem_length = len(rem_results)
+    cur_index, grp_size, cur_appx_dist, grp_name = 0, 0, -1, 1
+    while cur_index < rem_length:
+        if cur_appx_dist != rem_results.iloc[cur_index]["approx_drSPR"]:
+            cur_appx_dist = rem_results.iloc[cur_index]["approx_drSPR"]
+            grp_size += 1
+        cur_group_names = rem_results.iloc[cur_index : cur_index + grp_size][
+            "file_name"
+        ].tolist()
+        groups[f"group_{grp_name}"] = cur_group_names
+        cur_index += grp_size
+        grp_name += 1
+    return groups
+
+
+def make_groups_from_csv(input_df, min_limit):
+    print("Generating groups from CSV")
+    groups = make_groups(input_df, min_limit)
+    tidy_data = [
+        (key, val)
+        for key, value in groups.items()
+        for val in (value if isinstance(value, list) else [value])
+    ]
+    df_w_groups = pd.DataFrame(tidy_data, columns=["group_name", "file_name"])
+    merged = input_df.merge(df_w_groups, on="file_name")
+
+    return merged
+
+
 def make_heatmap_from_csv(input_path, output_path):
     print("Generating heatmap from CSV")
     results = pd.read_csv(input_path)
@@ -146,11 +195,14 @@ def main(args=None):
         args.MIN_BRANCH_LENGTH,
         args.MAX_SUPPORT_THRESHOLD,
     )
-
-    res_path = os.path.join(args.OUTPUT_DIR, "output.csv")
-    results.to_csv(res_path, index=True)
     fig_path = os.path.join(args.OUTPUT_DIR, "output.png")
     make_heatmap(results, fig_path)
+
+    results.reset_index("file_name", inplace=True)
+    res_path = os.path.join(args.OUTPUT_DIR, "output.csv")
+    df_with_groups = make_groups_from_csv(results, args.MIN_RSPR_DISTANCE)
+    df_with_groups.to_csv(res_path, index=True)
+
     #'''
 
     # From CSV

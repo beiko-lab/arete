@@ -1,4 +1,4 @@
-process RSPR_APPROX {
+process RSPR_EXACT {
     label 'process_medium'
 
     conda "bioconda::ete3=3.1.1"
@@ -9,11 +9,9 @@ process RSPR_APPROX {
     input:
     path core_tree
     path gene_tree_list
-    val min_rspr_distance
 
     output:
-    path "approx", emit: res_dir
-    path "approx/output.csv", emit: csv
+    path "approx"
 
     when:
     task.ext.when == null || task.ext.when
@@ -21,11 +19,10 @@ process RSPR_APPROX {
     script:
     def args = task.ext.args ?: ''
     """
-    rspr_approx.py \\
+    rspr_exact.py \\
         --core $core_tree \\
         --acc $gene_tree_list \\
         -o approx \\
-        --min_rspr_distance $min_rspr_distance \\
         $args
     """
     stub:

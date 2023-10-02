@@ -217,7 +217,7 @@
                 },
                 "accessory_similarity": {
                     "type": "number",
-                    "default": 99.0,
+                    "default": 99,
                     "fa_icon": "far fa-clone",
                     "description": "Similarity threshold for accessory genes"
                 }
@@ -255,6 +255,11 @@
                 "run_evolccm": {
                     "type": "boolean",
                     "description": "Run the community coevolution model"
+                },
+                "min_rspr_distance": {
+                    "type": "integer",
+                    "default": 10,
+                    "description": "Minimum rSPR distance used to define processing groups"
                 }
             }
         },

@@ -65,35 +65,6 @@ def make_heatmap_from_csv(input_path, output_path):
     make_heatmap(results, output_path)
 
 
-def make_groups(results, min_limit=10):
-    print("Generating groups")
-    min_group = results[results["approx_drSPR"] <= min_limit]["file_name"].tolist()
-    groups = [min_group]
-
-    rem_results = results[results["approx_drSPR"] > min_limit].sort_values(
-        by="approx_drSPR", ascending=False
-    )
-    rem_length = len(rem_results)
-    cur_index, grp_size, cur_appx_dist = 0, 0, -1
-    while cur_index < rem_length:
-        if cur_appx_dist != rem_results.iloc[cur_index]["approx_drSPR"]:
-            cur_appx_dist = rem_results.iloc[cur_index]["approx_drSPR"]
-            grp_size += 1
-        cur_group_names = rem_results.iloc[cur_index : cur_index + grp_size][
-            "file_name"
-        ].tolist()
-        groups.append(cur_group_names)
-        cur_index += grp_size
-    return groups
-
-
-def make_groups_from_csv(input_path):
-    print("Generating groups from CSV")
-    results = pd.read_csv(input_path)
-    groups = make_groups(results, 0)
-    return groups
-
-
 def extract_exact_distance(text):
     for line in text.splitlines():
         if "total exact drSPR=" in line:
