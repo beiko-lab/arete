@@ -26,7 +26,7 @@ process RSPR_APPROX {
     """
     rspr_approx.py \\
         --core $core_tree \\
-        --acc $gene_tree_list \\
+        --acc \$(cat $gene_tree_list) \\
         -o approx \\
         --min_rspr_distance $min_rspr_distance \\
         $args
