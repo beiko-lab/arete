@@ -11,7 +11,7 @@ process RSPR_EXACT {
     path rooted_gene_trees
 
     output:
-    path "exact_output_*csv"
+    path "exact_output_*csv", emit: csv
 
     when:
     task.ext.when == null || task.ext.when
