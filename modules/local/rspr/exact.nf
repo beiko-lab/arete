@@ -7,7 +7,7 @@ process RSPR_EXACT {
         'docker.io/jvfe/rspr:v1.3.0' }"
 
     input:
-    each path(subset_df)
+    path subset_df
     path rooted_gene_trees
 
     output:

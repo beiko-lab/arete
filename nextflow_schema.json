@@ -256,12 +256,17 @@
                     "type": "boolean",
                     "description": "Run the community coevolution model"
                 },
+                "run_rspr": {
+                    "type": "boolean",
+                    "description": "Run rSPR"
+                },
                 "min_rspr_distance": {
                     "type": "integer",
                     "default": 10,
                     "description": "Minimum rSPR distance used to define processing groups"
                 }
-            }
+            },
+            "fa_icon": "fas fa-bezier-curve"
         },
         "institutional_config_options": {
             "title": "Institutional config options",

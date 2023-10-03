@@ -46,6 +46,7 @@ include { RUN_POPPUNK } from '../subworkflows/local/poppunk'
 include { RECOMBINATION } from '../subworkflows/local/recombination'
 include { SUBSET_GENOMES } from '../subworkflows/local/subsample'
 include { EVOLCCM } from '../subworkflows/local/evolccm'
+include { RSPR } from '../subworkflows/local/rspr'
 /*
 ========================================================================================
     IMPORT NF-CORE MODULES/SUBWORKFLOWS
@@ -227,6 +228,13 @@ workflow ARETE {
             EVOLCCM (
                 PHYLOGENOMICS.out.core_tree,
                 ANNOTATE_ASSEMBLIES.out.feature_profile
+            )
+        }
+
+        if (params.run_rspr) {
+            RSPR (
+                PHYLOGENOMICS.out.core_tree,
+                PHYLOGENOMICS.out.gene_trees
             )
         }
     }
@@ -445,6 +453,13 @@ workflow ANNOTATION {
             EVOLCCM (
                 PHYLOGENOMICS.out.core_tree,
                 ANNOTATE_ASSEMBLIES.out.feature_profile
+            )
+        }
+
+        if (params.run_rspr) {
+            RSPR (
+                PHYLOGENOMICS.out.core_tree,
+                PHYLOGENOMICS.out.gene_trees
             )
         }
     }
