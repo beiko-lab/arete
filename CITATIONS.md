@@ -104,7 +104,11 @@
   > Sajia Akhter, Ramy K. Aziz, Robert A. Edwards; PhiSpy: a novel algorithm for finding prophages in bacterial genomes that combines similarity- and composition-based strategies. Nucl Acids Res 2012; 40 (16): e126. doi: 10.1093/nar/gks406
 
 - [EvolCCM](https://doi.org/10.1093/sysbio/syac052)
+
   > Chaoyue Liu and others, The Community Coevolution Model with Application to the Study of Evolutionary Relationships between Genes Based on Phylogenetic Profiles, Systematic Biology, Volume 72, Issue 3, May 2023, Pages 559–574, https://doi.org/10.1093/sysbio/syac052
+
+- [rSPR](https://doi.org/10.1093/sysbio/syu023)
+  > Christopher Whidden, Norbert Zeh, Robert G. Beiko, Supertrees Based on the Subtree Prune-and-Regraft Distance, Systematic Biology, Volume 63, Issue 4, July 2014, Pages 566–581, https://doi.org/10.1093/sysbio/syu023
 
 ## Software packaging/containerisation tools
 

@@ -84,7 +84,7 @@ The user can optionally subdivide their set of genomes into related lineages ide
 
 ### Lateral gene transfer
 
-- Phylogenetic inference of LGT using rSPR ([`rSPR`](https://github.com/cwhidden/rspr)) (in progress)
+- Phylogenetic inference of LGT using rSPR ([`rSPR`](https://github.com/cwhidden/rspr))
 
 ### Gene order
 
