@@ -14,6 +14,8 @@ process RSPR_APPROX {
     output:
     path "approx", emit: res_dir
     path "approx/output.csv", emit: csv
+    path "approx/rooted_gene_trees", emit: rooted_gene_trees
+    path "approx/rooted_reference_tree", emit: rooted_reference_tree
 
     when:
     task.ext.when == null || task.ext.when
@@ -31,5 +33,8 @@ process RSPR_APPROX {
     stub:
     """
     mkdir approx
+    touch approx/output.csv
+    mkdir approx/rooted_gene_trees
+    mkdir approx/rooted_reference_tree
     """
 }

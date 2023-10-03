@@ -201,7 +201,7 @@ def main(args=None):
     results.reset_index("file_name", inplace=True)
     res_path = os.path.join(args.OUTPUT_DIR, "output.csv")
     df_with_groups = make_groups_from_csv(results, args.MIN_RSPR_DISTANCE)
-    df_with_groups.to_csv(res_path, index=True)
+    df_with_groups.to_csv(res_path, index=False)
 
     #'''
 
