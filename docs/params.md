@@ -71,7 +71,7 @@ Parameters for the lineage subworkflow
 | `run_poppunk_qc` | Whether to run the QC step for PopPunk | `boolean` |  |  |  |
 | `enable_subsetting` | Enable subsetting workflow based on genome similarity | `boolean` |  |  |  |
 | `core_similarity` | Similarity threshold for core genomes | `number` | 99.99 |  |  |
-| `accessory_similarity` | Similarity threshold for accessory genes | `number` | 99.0 |  |  |
+| `accessory_similarity` | Similarity threshold for accessory genes | `number` | 99 |  |  |
 
 ## Recombination
 
@@ -90,6 +90,8 @@ Parameters for the recombination subworkflow
 | Parameter | Description | Type | Default | Required | Hidden |
 |-----------|-----------|-----------|-----------|-----------|-----------|
 | `run_evolccm` | Run the community coevolution model | `boolean` |  |  |  |
+| `run_rspr` | Run rSPR | `boolean` |  |  |  |
+| `min_rspr_distance` | Minimum rSPR distance used to define processing groups | `integer` | 10 |  |  |
 
 ## Institutional config options
 
