@@ -16,6 +16,7 @@ process RSPR_APPROX {
     path "approx/output.csv", emit: csv
     path "approx/rooted_gene_trees", emit: rooted_gene_trees
     path "approx/rooted_reference_tree", emit: rooted_reference_tree
+    path "*.csv", emit: csvs
 
     when:
     task.ext.when == null || task.ext.when

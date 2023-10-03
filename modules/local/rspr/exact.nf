@@ -7,11 +7,11 @@ process RSPR_EXACT {
         'docker.io/jvfe/rspr:v1.3.0' }"
 
     input:
-    path core_tree
-    path gene_tree_list
+    each path(subset_df)
+    path rooted_gene_trees
 
     output:
-    path "approx"
+    path "exact_output_*csv"
 
     when:
     task.ext.when == null || task.ext.when
@@ -20,13 +20,11 @@ process RSPR_EXACT {
     def args = task.ext.args ?: ''
     """
     rspr_exact.py \\
-        --core $core_tree \\
-        --acc $gene_tree_list \\
-        -o approx \\
+        --dataframe $subset_df \\
         $args
     """
     stub:
     """
-    mkdir approx
+    touch exact_output_group_1.csv
     """
 }

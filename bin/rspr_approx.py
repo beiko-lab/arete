@@ -202,6 +202,13 @@ def main(args=None):
     res_path = os.path.join(args.OUTPUT_DIR, "output.csv")
     df_with_groups = make_groups_from_csv(results, args.MIN_RSPR_DISTANCE)
     df_with_groups.to_csv(res_path, index=False)
+    groups = df_with_groups["group_name"].unique()
+    grouped_dfs = [
+        df_with_groups[df_with_groups["group_name"] == group] for group in groups
+    ]
+    for df in grouped_dfs:
+        group = df["group_name"].unique()[0]
+        df.to_csv(f"rspr_{group}.csv", index=False)
 
     #'''
 
