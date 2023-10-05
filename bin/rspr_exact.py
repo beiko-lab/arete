@@ -11,6 +11,14 @@ from matplotlib import pyplot as plt
 import seaborn as sns
 
 
+#####################################################################
+### FUNCTION PARSE_ARGS
+### Parse the command-line arguments.
+### args: the arguments
+### RETURN a list that contains values for all the defined arguments.
+#####################################################################
+
+
 def parse_args(args=None):
     Description = "Run rspr"
     Epilog = "Example usage: rspr.py INPUT_DIR_PATH"
@@ -39,7 +47,7 @@ def parse_args(args=None):
         "--max_support_threshold",
         dest="MAX_SUPPORT_THRESHOLD",
         type=int,
-        default=0,
+        default=0.7,
         help="Maximum support threshold",
     )
     return parser.parse_args(args)
@@ -67,6 +75,14 @@ def parse_args(args=None):
 #     make_heatmap(results, output_path)
 
 
+#####################################################################
+### FUNCTION EXTRACT_EXACT_DISTANCE
+### Extract exact rspr distance from the rspr output
+### text: rspr output text
+### RETURN exact rspr distance
+#####################################################################
+
+
 def extract_exact_distance(text):
     for line in text.splitlines():
         if "total exact drSPR=" in line:
@@ -75,7 +91,16 @@ def extract_exact_distance(text):
     return "0"
 
 
-def fpt_rspr(results_df, min_branch_len=0, max_support_threshold=0):
+#####################################################################
+### FUNCTION FPT_RSPR
+### Run exact rspr algorithm of set of input tree pairs
+### results_df: dataframe to input tree pairs and store the exact rspr results
+### min_branch_len: minimum branch length
+### max_support_threshold: maximum branching support threshold
+#####################################################################
+
+
+def fpt_rspr(results_df, min_branch_len=0, max_support_threshold=0.7):
     print("Calculating exact distance")
     rspr_path = [
         "rspr",

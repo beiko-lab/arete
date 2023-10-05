@@ -14,6 +14,14 @@ from matplotlib import pyplot as plt
 import seaborn as sns
 
 
+#####################################################################
+### FUNCTION PARSE_ARGS
+### Parse the command-line arguments.
+### args: the arguments
+### RETURN a list that contains values for all the defined arguments.
+#####################################################################
+
+
 def parse_args(args=None):
     Description = "Run rspr"
     Epilog = "Example usage: rspr.py CORE_TREE GENE_TREES"
@@ -46,10 +54,19 @@ def parse_args(args=None):
         "--max_support_threshold",
         dest="MAX_SUPPORT_THRESHOLD",
         type=int,
-        default=0,
+        default=0.7,
         help="Maximum support threshold",
     )
     return parser.parse_args(args)
+
+
+#####################################################################
+### FUNCTION ROOT_TREE
+### Root the unrooted input trees
+### input_path: path of the input tree
+### output_path: path of the output rooted trees
+### RETURN rooted tree and tree size
+#####################################################################
 
 
 def root_tree(input_path, output_path):
@@ -60,6 +77,18 @@ def root_tree(input_path, output_path):
         os.makedirs(os.path.dirname(output_path))
     tre.write(outfile=output_path)
     return tre.write(), len(tre.get_leaves())
+
+
+#####################################################################
+### FUNCTION ROOT_TREE
+### Root all the unrooted input trees in directory
+### core_tree: path of the core tree
+### gene_trees: input gene tree directory path
+### output_dir: output directory path
+### results: dataframe of the results to store tree size
+### merge_pair: boolean to check whether to merge coer tree and gene tree in a single file
+### RETURN path of the rooted gene trees directory
+#####################################################################
 
 
 def root_trees(core_tree, gene_trees, output_dir, results, merge_pair=False):
@@ -88,6 +117,14 @@ def root_trees(core_tree, gene_trees, output_dir, results, merge_pair=False):
     return rooted_gene_trees_path
 
 
+#####################################################################
+### FUNCTION EXTRACT_APPROX_DISTANCE
+### Extract approx rspr distance from the rspr output
+### text: rspr output text
+### RETURN approx rspr distance
+#####################################################################
+
+
 def extract_approx_distance(text):
     for line in text.splitlines():
         if "approx drSPR=" in line:
@@ -96,8 +133,18 @@ def extract_approx_distance(text):
     return "0"
 
 
+#####################################################################
+### FUNCTION APPROX_RSPR
+### Run approx rspr algorithm of set of input tree pairs
+### rooted_gene_trees_path: path of the rooted gene trees directory
+### results: dataframe to store the approx rspr results
+### min_branch_len: minimum branch length
+### max_support_threshold: maximum branching support threshold
+#####################################################################
+
+
 def approx_rspr(
-    rooted_gene_trees_path, results, min_branch_len=0, max_support_threshold=0
+    rooted_gene_trees_path, results, min_branch_len=0, max_support_threshold=0.7
 ):
     print("Calculating approx distance")
     rspr_path = [
@@ -117,6 +164,14 @@ def approx_rspr(
             results.loc[filename, "approx_drSPR"] = dist
 
 
+#####################################################################
+### FUNCTION MAKE_HEATMAP
+### Generate heatmap of tree size and approx rspr distance
+### results: dataframe of the approx rspr distance and tree size
+### output_path: output path for storing the heatmap
+#####################################################################
+
+
 def make_heatmap(results, output_path):
     print("Generating heatmap")
     data = (
@@ -131,6 +186,14 @@ def make_heatmap(results, output_path):
     plt.xlabel("Tree size")
     plt.ylabel("Approx rSPR distance")
     plt.savefig(output_path)
+
+
+#####################################################################
+### FUNCTION MAKE_GROUPS
+### Generate groups of tree pairs based on the approx rspr distnace
+### min_limit: minimum approx rspr distance for the first group
+### RETURN groups of trees
+#####################################################################
 
 
 def make_groups(results, min_limit=10):
