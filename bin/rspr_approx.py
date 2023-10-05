@@ -53,7 +53,7 @@ def parse_args(args=None):
         "--max_support_threshold",
         dest="MAX_SUPPORT_THRESHOLD",
         type=int,
-        default=0,
+        default=0.7,
         help="Maximum support threshold",
     )
     return parser.parse_args(args)
