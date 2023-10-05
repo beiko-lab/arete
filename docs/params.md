@@ -92,6 +92,9 @@ Parameters for the recombination subworkflow
 | `run_evolccm` | Run the community coevolution model | `boolean` |  |  |  |
 | `run_rspr` | Run rSPR | `boolean` |  |  |  |
 | `min_rspr_distance` | Minimum rSPR distance used to define processing groups | `integer` | 10 |  |  |
+| `min_branch_length` | Minimum rSPR branch length | `integer` | 0 |  |  |
+| `max_support_threshold` | Maximum rSPR support threshold | `integer` | 0 |  |  |
+| `max_approx_rspr` | Maximum approximate rSPR distance for filtering | `integer` | -1 |  |  |
 
 ## Institutional config options
 
