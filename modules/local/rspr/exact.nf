@@ -1,5 +1,6 @@
 process RSPR_EXACT {
-    label 'process_medium'
+    label 'process_low'
+    label 'process_long'
 
     conda "bioconda::ete3=3.1.1"
     container "${ workflow.containerEngine == 'singularity' && !task.ext.singularity_pull_docker_container ?
