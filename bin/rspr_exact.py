@@ -46,7 +46,7 @@ def parse_args(args=None):
         "-mst",
         "--max_support_threshold",
         dest="MAX_SUPPORT_THRESHOLD",
-        type=int,
+        type=float,
         default=0.7,
         help="Maximum support threshold",
     )
