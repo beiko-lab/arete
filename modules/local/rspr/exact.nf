@@ -10,6 +10,9 @@ process RSPR_EXACT {
     input:
     path subset_df
     path rooted_gene_trees
+    val min_branch_length
+    val max_support_threshold
+    val max_approx_rspr
 
     output:
     path "exact_output_*csv", emit: csv
@@ -22,6 +25,9 @@ process RSPR_EXACT {
     """
     rspr_exact.py \\
         --dataframe $subset_df \\
+        --min_branch_length $min_branch_length \\
+        --max_support_threshold $max_support_threshold \\
+        --max_approx_rspr $max_approx_rspr \\
         $args
     """
     stub:

@@ -18,12 +18,17 @@ workflow RSPR {
         RSPR_APPROX (
             core_tree,
             gene_tree_sheet,
-            params.min_rspr_distance
+            params.min_rspr_distance,
+            params.min_branch_length,
+            params.max_support_threshold
         )
 
         RSPR_EXACT (
             RSPR_APPROX.out.csvs.flatten(),
-            RSPR_APPROX.out.rooted_gene_trees.first()
+            RSPR_APPROX.out.rooted_gene_trees.first(),
+            params.min_branch_length,
+            params.max_support_threshold,
+            params.max_approx_rspr
         )
 
         RSPR_EXACT.out.csv

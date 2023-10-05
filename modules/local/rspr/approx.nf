@@ -10,6 +10,8 @@ process RSPR_APPROX {
     path core_tree
     path gene_tree_list
     val min_rspr_distance
+    val min_branch_length
+    val max_support_threshold
 
     output:
     path "approx", emit: res_dir
@@ -29,6 +31,8 @@ process RSPR_APPROX {
         --acc \$(cat $gene_tree_list) \\
         -o approx \\
         --min_rspr_distance $min_rspr_distance \\
+        --min_branch_length $min_branch_length \\
+        --max_support_threshold $max_support_threshold \\
         $args
     """
     stub:

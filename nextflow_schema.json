@@ -264,6 +264,21 @@
                     "type": "integer",
                     "default": 10,
                     "description": "Minimum rSPR distance used to define processing groups"
+                },
+                "min_branch_length": {
+                    "type": "integer",
+                    "default": 0,
+                    "description": "Minimum rSPR branch length"
+                },
+                "max_support_threshold": {
+                    "type": "integer",
+                    "default": 0,
+                    "description": "Maximum rSPR support threshold"
+                },
+                "max_approx_rspr": {
+                    "type": "integer",
+                    "default": -1,
+                    "description": "Maximum approximate rSPR distance for filtering"
                 }
             },
             "fa_icon": "fas fa-bezier-curve"
