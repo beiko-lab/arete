@@ -271,8 +271,8 @@
                     "description": "Minimum rSPR branch length"
                 },
                 "max_support_threshold": {
-                    "type": "integer",
-                    "default": 0,
+                    "type": "number",
+                    "default": 0.7,
                     "description": "Maximum rSPR support threshold"
                 },
                 "max_approx_rspr": {
