@@ -4,6 +4,7 @@
 
 import sys
 import os
+import re
 from pathlib import Path
 import argparse
 import subprocess
@@ -60,6 +61,13 @@ def parse_args(args=None):
     return parser.parse_args(args)
 
 
+def read_tree(input_path):
+    with open(input_path, "r") as f:
+        tree_string = f.read()
+        formatted = re.sub(r";[^:]+:", ":", tree_string)
+        return Tree(formatted)
+
+
 #####################################################################
 ### FUNCTION ROOT_TREE
 ### Root the unrooted input trees
@@ -70,7 +78,7 @@ def parse_args(args=None):
 
 
 def root_tree(input_path, output_path):
-    tre = Tree(input_path)
+    tre = read_tree(input_path)
     midpoint = tre.get_midpoint_outgroup()
     tre.set_outgroup(midpoint)
     if not os.path.exists(os.path.dirname(output_path)):
