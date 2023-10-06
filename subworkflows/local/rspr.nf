@@ -1,5 +1,6 @@
 include { RSPR_APPROX } from '../../modules/local/rspr/approx.nf'
 include { RSPR_EXACT } from '../../modules/local/rspr/exact.nf'
+include { RSPR_HEATMAP } from '../../modules/local/rspr/heatmap.nf'
 
 workflow RSPR {
 
@@ -39,6 +40,10 @@ workflow RSPR {
                 skip: 1
             )
             .set { exact_output }
+
+        RSPR_HEATMAP (
+            exact_output
+        )
 
     emit:
         exact_output

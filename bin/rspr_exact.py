@@ -53,28 +53,6 @@ def parse_args(args=None):
     return parser.parse_args(args)
 
 
-# def make_heatmap(results, output_path):
-#     print("Generating heatmap")
-#     data = (
-#         results.groupby(["tree_size", "exact_drSPR"]).size().reset_index(name="count")
-#     )
-#     data_pivot = data.pivot(
-#         index="exact_drSPR", columns="tree_size", values="count"
-#     ).fillna(0)
-#     sns.heatmap(
-#         data_pivot.loc[sorted(data_pivot.index, reverse=True)], annot=True, fmt=".0f"
-#     ).set(title="Number of trees")
-#     plt.xlabel("Tree size")
-#     plt.ylabel("Exact rSPR distance")
-#     plt.savefig(output_path)
-
-
-# def make_heatmap_from_csv(input_path, output_path):
-#     print("Generating heatmap from CSV")
-#     results = pd.read_csv(input_path)
-#     make_heatmap(results, output_path)
-
-
 #####################################################################
 ### FUNCTION EXTRACT_EXACT_DISTANCE
 ### Extract exact rspr distance from the rspr output
