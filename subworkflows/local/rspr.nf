@@ -7,6 +7,7 @@ workflow RSPR {
     take:
         core_tree
         gene_trees
+        annotation
 
     main:
 
@@ -19,6 +20,7 @@ workflow RSPR {
         RSPR_APPROX (
             core_tree,
             gene_tree_sheet,
+            annotation,
             params.min_rspr_distance,
             params.min_branch_length,
             params.max_support_threshold

@@ -149,6 +149,9 @@ workflow ANNOTATE_ASSEMBLIES {
 
             PROKKA_ADD_COLUMN.out.txt
                 .set{ prokka_tsv }
+
+            PROKKA_ADD_COLUMN.out.txt
+                .set{ concat_annotation }
         }
         else {
 
@@ -176,6 +179,9 @@ workflow ANNOTATE_ASSEMBLIES {
 
             BAKTA_ADD_COLUMN.out.txt
                 .set{ bakta_tsv }
+
+            BAKTA_ADD_COLUMN.out.txt
+                .set{ concat_annotation }
         }
 
         /*
@@ -344,6 +350,7 @@ workflow ANNOTATE_ASSEMBLIES {
         }
 
     emit:
+        annotation = concat_annotation
         annotation_software = ch_software_versions
         multiqc = ch_multiqc_files
         gff = ch_gff_files

@@ -9,6 +9,7 @@ process RSPR_APPROX {
     input:
     path core_tree
     path gene_tree_list
+    path annotation
     val min_rspr_distance
     val min_branch_length
     val max_support_threshold
@@ -29,6 +30,7 @@ process RSPR_APPROX {
     rspr_approx.py \\
         --core $core_tree \\
         --acc \$(cat $gene_tree_list) \\
+        --annotation $annotation \\
         -o approx \\
         --min_rspr_distance $min_rspr_distance \\
         --min_branch_length $min_branch_length \\

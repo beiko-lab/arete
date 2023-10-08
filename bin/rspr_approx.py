@@ -32,6 +32,12 @@ def parse_args(args=None):
         "-a", "--acc", dest="GENE_TREES", nargs="+", help="Gene tree list"
     )
     parser.add_argument(
+        "-ann",
+        "--annotation",
+        dest="ANNOTATION",
+        help="Annotation table from BAKTA/PROKKA",
+    )
+    parser.add_argument(
         "-o", "--output", dest="OUTPUT_DIR", default="approx", help="Gene tree list"
     )
     parser.add_argument(
@@ -250,6 +256,18 @@ def make_heatmap_from_csv(input_path, output_path):
     make_heatmap(results, output_path)
 
 
+def join_annotation_data(df, annotation_data):
+    ann_df = pd.read_table(annotation_data, dtype={"genome_id": "str"})
+    ann_df.columns = map(str.lower, ann_df.columns)
+    ann_subset = ann_df[["gene", "product"]]
+
+    df["tree_name"] = [f.split(".")[0] for f in df.index]
+
+    df.merge(ann_subset, how="left", left_on="tree_name", right_on="gene")
+
+    return df.drop("tree_name", axis=1)
+
+
 def main(args=None):
     args = parse_args(args)
 
@@ -269,6 +287,7 @@ def main(args=None):
     fig_path = os.path.join(args.OUTPUT_DIR, "output.png")
     make_heatmap(results, fig_path)
 
+    results = join_annotation_data(results, args.ANNOTATION)
     results.reset_index("file_name", inplace=True)
     res_path = os.path.join(args.OUTPUT_DIR, "output.csv")
     df_with_groups = make_groups_from_csv(results, args.MIN_RSPR_DISTANCE)
