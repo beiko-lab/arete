@@ -263,9 +263,9 @@ def join_annotation_data(df, annotation_data):
 
     df["tree_name"] = [f.split(".")[0] for f in df.index]
 
-    df.merge(ann_subset, how="left", left_on="tree_name", right_on="gene")
+    merged = df.merge(ann_subset, how="left", left_on="tree_name", right_on="gene")
 
-    return df.drop("tree_name", axis=1)
+    return merged.drop("tree_name", axis=1)
 
 
 def main(args=None):
