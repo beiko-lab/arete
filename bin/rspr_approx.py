@@ -261,7 +261,7 @@ def join_annotation_data(df, annotation_data):
     ann_df.columns = map(str.lower, ann_df.columns)
     ann_subset = ann_df[["gene", "product"]]
 
-    df["tree_name"] = [f.split(".")[0] for f in df.index]
+    df["tree_name"] = [f.split(".")[0] for f in df["file_name"]]
 
     merged = df.merge(ann_subset, how="left", left_on="tree_name", right_on="gene")
 
@@ -287,8 +287,8 @@ def main(args=None):
     fig_path = os.path.join(args.OUTPUT_DIR, "output.png")
     make_heatmap(results, fig_path)
 
-    results = join_annotation_data(results, args.ANNOTATION)
     results.reset_index("file_name", inplace=True)
+    results = join_annotation_data(results, args.ANNOTATION)
     res_path = os.path.join(args.OUTPUT_DIR, "output.csv")
     df_with_groups = make_groups_from_csv(results, args.MIN_RSPR_DISTANCE)
     df_with_groups.to_csv(res_path, index=False)
