@@ -266,7 +266,7 @@ def join_annotation_data(df, annotation_data):
 
     merged = df.merge(ann_subset, how="left", left_on="tree_name", right_on="gene")
 
-    if merged["gene"].empty:
+    if merged["gene"].isnull().all():
         merged = df.merge(
             ann_subset, how="left", left_on="tree_name", right_on="locus_tag"
         )
