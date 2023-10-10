@@ -34,9 +34,9 @@ workflow RSPR {
             params.max_approx_rspr
         )
 
-        RSPR_EXACT.out.csv
+        RSPR_EXACT.out.tsv
             .collectFile(
-                name: 'exact_output.csv',
+                name: 'exact_output.tsv',
                 keepHeader: true,
                 storeDir: "${params.outdir}/dynamics/rSPR/exact",
                 skip: 1

@@ -296,9 +296,9 @@ def main(args=None):
 
     results.reset_index("file_name", inplace=True)
     results = join_annotation_data(results, args.ANNOTATION)
-    res_path = os.path.join(args.OUTPUT_DIR, "output.csv")
+    res_path = os.path.join(args.OUTPUT_DIR, "output.tsv")
     df_with_groups = make_groups_from_csv(results, args.MIN_RSPR_DISTANCE)
-    df_with_groups.to_csv(res_path, index=False)
+    df_with_groups.to_csv(res_path, sep="\t", index=False)
     groups = df_with_groups["group_name"].unique()
     grouped_dfs = [
         df_with_groups[df_with_groups["group_name"] == group] for group in groups
