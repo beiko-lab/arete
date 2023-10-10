@@ -234,7 +234,8 @@ workflow ARETE {
         if (params.run_rspr) {
             RSPR (
                 PHYLOGENOMICS.out.core_tree,
-                PHYLOGENOMICS.out.gene_trees
+                PHYLOGENOMICS.out.gene_trees,
+                ANNOTATE_ASSEMBLIES.out.annotation
             )
         }
     }
@@ -459,7 +460,8 @@ workflow ANNOTATION {
         if (params.run_rspr) {
             RSPR (
                 PHYLOGENOMICS.out.core_tree,
-                PHYLOGENOMICS.out.gene_trees
+                PHYLOGENOMICS.out.gene_trees,
+                ANNOTATE_ASSEMBLIES.out.annotation
             )
         }
     }

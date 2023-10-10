@@ -15,7 +15,7 @@ process RSPR_EXACT {
     val max_approx_rspr
 
     output:
-    path "exact_output_*csv", emit: csv
+    path "exact_output_*tsv", emit: tsv
 
     when:
     task.ext.when == null || task.ext.when
@@ -32,6 +32,6 @@ process RSPR_EXACT {
     """
     stub:
     """
-    touch exact_output_group_1.csv
+    touch exact_output_group_1.tsv
     """
 }

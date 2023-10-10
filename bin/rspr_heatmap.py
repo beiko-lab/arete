@@ -45,14 +45,14 @@ def make_heatmap(results, output_path):
 
 def make_heatmap_from_csv(input_path, output_path):
     print("Generating heatmap from CSV")
-    results = pd.read_csv(input_path)
+    results = pd.read_table(input_path)
     make_heatmap(results, output_path)
 
 
 def main(args=None):
     args = parse_args(args)
 
-    results = pd.read_csv(args.DF)
+    results = pd.read_table(args.DF)
     make_heatmap(results, args.OUTPUT)
 
 

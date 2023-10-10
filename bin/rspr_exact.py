@@ -110,10 +110,8 @@ def main(args=None):
     fpt_rspr(results, args.MIN_BRANCH_LENGTH, args.MAX_SUPPORT_THRESHOLD)
 
     group = results["group_name"].unique()[0]
-    res_path = f"exact_output_{group}.csv"
-    results.to_csv(res_path, index=True)
-    # fig_path = os.path.join(phylo_dir, "exact_output.png")
-    # make_heatmap(results, fig_path)
+    res_path = f"exact_output_{group}.tsv"
+    results.fillna(value="NULL").to_csv(res_path, sep="\t", index=True)
 
     # From CSV
     """

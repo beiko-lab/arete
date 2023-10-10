@@ -32,6 +32,12 @@ def parse_args(args=None):
         "-a", "--acc", dest="GENE_TREES", nargs="+", help="Gene tree list"
     )
     parser.add_argument(
+        "-ann",
+        "--annotation",
+        dest="ANNOTATION",
+        help="Annotation table from BAKTA/PROKKA",
+    )
+    parser.add_argument(
         "-o", "--output", dest="OUTPUT_DIR", default="approx", help="Gene tree list"
     )
     parser.add_argument(
@@ -250,6 +256,25 @@ def make_heatmap_from_csv(input_path, output_path):
     make_heatmap(results, output_path)
 
 
+def join_annotation_data(df, annotation_data):
+    ann_df = pd.read_table(annotation_data, dtype={"genome_id": "str"})
+    ann_df.columns = map(str.lower, ann_df.columns)
+    ann_df.columns = ann_df.columns.str.replace(" ", "_")
+    ann_subset = ann_df[["gene", "product"]]
+
+    df["tree_name"] = [f.split(".")[0] for f in df["file_name"]]
+
+    merged = df.merge(ann_subset, how="left", left_on="tree_name", right_on="gene")
+
+    if merged["gene"].isnull().all():
+        ann_subset = ann_df[["locus_tag", "gene", "product"]]
+        merged = df.merge(
+            ann_subset, how="left", left_on="tree_name", right_on="locus_tag"
+        )
+
+    return merged.fillna(value="NULL").drop("tree_name", axis=1).drop_duplicates()
+
+
 def main(args=None):
     args = parse_args(args)
 
@@ -270,9 +295,10 @@ def main(args=None):
     make_heatmap(results, fig_path)
 
     results.reset_index("file_name", inplace=True)
-    res_path = os.path.join(args.OUTPUT_DIR, "output.csv")
+    results = join_annotation_data(results, args.ANNOTATION)
+    res_path = os.path.join(args.OUTPUT_DIR, "output.tsv")
     df_with_groups = make_groups_from_csv(results, args.MIN_RSPR_DISTANCE)
-    df_with_groups.to_csv(res_path, index=False)
+    df_with_groups.to_csv(res_path, sep="\t", index=False)
     groups = df_with_groups["group_name"].unique()
     grouped_dfs = [
         df_with_groups[df_with_groups["group_name"] == group] for group in groups
