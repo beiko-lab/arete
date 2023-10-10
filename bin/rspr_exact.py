@@ -111,7 +111,7 @@ def main(args=None):
 
     group = results["group_name"].unique()[0]
     res_path = f"exact_output_{group}.csv"
-    results.to_csv(res_path, index=True)
+    results.fillna(value="NULL").to_csv(res_path, index=True)
     # fig_path = os.path.join(phylo_dir, "exact_output.png")
     # make_heatmap(results, fig_path)
 

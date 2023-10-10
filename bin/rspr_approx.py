@@ -260,18 +260,19 @@ def join_annotation_data(df, annotation_data):
     ann_df = pd.read_table(annotation_data, dtype={"genome_id": "str"})
     ann_df.columns = map(str.lower, ann_df.columns)
     ann_df.columns = ann_df.columns.str.replace(" ", "_")
-    ann_subset = ann_df[["locus_tag", "gene", "product"]]
+    ann_subset = ann_df[["gene", "product"]]
 
     df["tree_name"] = [f.split(".")[0] for f in df["file_name"]]
 
     merged = df.merge(ann_subset, how="left", left_on="tree_name", right_on="gene")
 
     if merged["gene"].isnull().all():
+        ann_subset = ann_df[["locus_tag", "gene", "product"]]
         merged = df.merge(
             ann_subset, how="left", left_on="tree_name", right_on="locus_tag"
         )
 
-    return merged.drop("tree_name", axis=1).drop_duplicates()
+    return merged.fillna(value="NULL").drop("tree_name", axis=1).drop_duplicates()
 
 
 def main(args=None):
