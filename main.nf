@@ -34,6 +34,7 @@ WorkflowArete.initialise(workflow, params, log)
 include { ARETE } from './workflows/arete'
 include { ASSEMBLY } from './workflows/arete'
 include { ANNOTATION } from './workflows/arete'
+include { PHYLO } from './workflows/arete'
 include { QUALITYCHECK } from './workflows/arete'
 include { POPPUNK } from './workflows/arete'
 
@@ -53,6 +54,10 @@ workflow assembly{
 
 workflow annotation {
     ANNOTATION ()
+}
+
+workflow phylogenomics {
+    PHYLO ()
 }
 
 workflow assembly_qc {

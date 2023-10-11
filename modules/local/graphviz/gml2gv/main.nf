@@ -1,5 +1,5 @@
 process GML2GV {
-    label 'process_low'
+    label 'process_single'
 
     conda "bioconda::perl-graphviz=2.24"
     container "${ workflow.containerEngine == 'singularity' && !task.ext.singularity_pull_docker_container ?

@@ -1,6 +1,5 @@
 process CREATE_REPORT {
     label 'process_high'
-    label 'process_high_memory'
 
     conda (params.enable_conda ? "conda-forge::pandas=1.4.3" : null)
     if (workflow.containerEngine == 'singularity' && !params.singularity_pull_docker_container) {
@@ -16,6 +15,7 @@ process CREATE_REPORT {
     path vfdb_fasta
     path phispy_output
     path mobsuite_output
+    val feature_columns
     val skip_profile
 
     output:
@@ -30,6 +30,7 @@ process CREATE_REPORT {
         --diamond_outs $diamond_results \\
         --rgi_out $rgi_output \\
         --vfdb_fasta $vfdb_fasta \\
+        --feature_profile_columns $feature_columns \\
         --phispy_out $phispy_output \\
         --mobsuite_out $mobsuite_output \\
         $skip

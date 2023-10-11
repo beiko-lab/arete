@@ -51,5 +51,6 @@ workflow RUN_POPPUNK {
         poppunk_version = POPPUNK_FITMODEL.out.versions.ifEmpty(null)
         poppunk_results = poppunk_results
         poppunk_visualisations = POPPUNK_VISUALISE.out.poppunk_visualizations
+        clusters = POPPUNK_FITMODEL.out.clusters
         poppunk_db = poppunk_db
 }

@@ -58,7 +58,7 @@ process DIAMOND_BLASTX {
         --out ${prefix}.${out_ext} \\
         --log
 
-    mv diamond.log ${prefix}.log
+    mv diamond.log ${prefix}.diamond.log
 
     cat <<-END_VERSIONS > versions.yml
     "${task.process}":
@@ -69,7 +69,7 @@ process DIAMOND_BLASTX {
     def prefix = task.ext.prefix ?: "${meta.id}"
     """
     touch ${prefix}.txt
-    touch ${prefix}.log
+    touch ${prefix}.diamond.log
     cat <<-END_VERSIONS > versions.yml
     "${task.process}":
         diamond: \$(diamond --version 2>&1 | tail -n 1 | sed 's/^diamond version //')

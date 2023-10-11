@@ -33,6 +33,12 @@
                         "installed_by": ["modules"],
                         "patch": "modules/nf-core/checkm/lineagewf/checkm-lineagewf.diff"
                     },
+                    "custom/dumpsoftwareversions": {
+                        "branch": "master",
+                        "git_sha": "05c280924b6c768d484c7c443dad5e605c4ff4b4",
+                        "installed_by": ["modules"],
+                        "patch": "modules/nf-core/custom/dumpsoftwareversions/custom-dumpsoftwareversions.diff"
+                    },
                     "diamond/blastp": {
                         "branch": "master",
                         "git_sha": "c8e35eb2055c099720a75538d1b8adb3fb5a464c",

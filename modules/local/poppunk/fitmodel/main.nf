@@ -14,6 +14,7 @@ process POPPUNK_FITMODEL {
     output:
 
     path "poppunk_${model}" , emit: poppunk_results
+    path "poppunk_${model}/poppunk_${model}_clusters.csv" , emit: clusters
     path "versions.yml", emit: versions
 
     script:

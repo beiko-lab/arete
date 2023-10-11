@@ -150,6 +150,9 @@ workflow ANNOTATE_ASSEMBLIES {
 
             PROKKA_ADD_COLUMN.out.txt
                 .set{ prokka_tsv }
+
+            PROKKA_ADD_COLUMN.out.txt
+                .set{ concat_annotation }
         }
         else {
 
@@ -161,12 +164,13 @@ workflow ANNOTATE_ASSEMBLIES {
                 BAKTA(assemblies, bakta_db, [], [])
             }
 
-            ch_software_versions = ch_software_versions.mix(BAKTA.out.versions.first().ifEmpty(null))
             ch_ffn_files = BAKTA.out.ffn
             ch_faa_files = BAKTA.out.faa
             ch_gff_files = BAKTA.out.gff
             ch_gbk_files = BAKTA.out.gbff
             ch_tsv_files = BAKTA.out.tsv
+            ch_software_versions = ch_software_versions.mix(BAKTA.out.versions.first().ifEmpty(null))
+            ch_multiqc_files = ch_multiqc_files.mix(BAKTA.out.txt.collect{it[1]}.ifEmpty([]))
 
             BAKTA_ADD_COLUMN(
                 ch_tsv_files.collect { id, path -> path },
@@ -177,6 +181,9 @@ workflow ANNOTATE_ASSEMBLIES {
 
             BAKTA_ADD_COLUMN.out.txt
                 .set{ bakta_tsv }
+
+            BAKTA_ADD_COLUMN.out.txt
+                .set{ concat_annotation }
         }
 
         /*
@@ -266,6 +273,7 @@ workflow ANNOTATE_ASSEMBLIES {
                 .set{ ch_diamond_outs }
 
             ch_software_versions = ch_software_versions.mix(DIAMOND_MAKE_VFDB.out.versions.ifEmpty(null))
+            ch_multiqc_files = ch_multiqc_files.mix(DIAMOND_BLAST_VFDB.out.log.collect{it[1]}.ifEmpty([]))
         }
         if (tools_to_run.contains('bacmet')) {
             DIAMOND_MAKE_BACMET(ch_bacmet_db)
@@ -280,6 +288,7 @@ workflow ANNOTATE_ASSEMBLIES {
 
             ch_diamond_outs.mix(BACMET_FILTER.out.concatenated)
                 .set{ ch_diamond_outs }
+            ch_multiqc_files = ch_multiqc_files.mix(DIAMOND_BLAST_BACMET.out.log.collect{it[1]}.ifEmpty([]))
         }
         if (tools_to_run.contains('cazy')) {
             DIAMOND_MAKE_CAZY(ch_cazy_db)
@@ -294,6 +303,7 @@ workflow ANNOTATE_ASSEMBLIES {
 
             ch_diamond_outs.mix(CAZY_FILTER.out.concatenated)
                 .set{ ch_diamond_outs }
+            ch_multiqc_files = ch_multiqc_files.mix(DIAMOND_BLAST_CAZY.out.log.collect{it[1]}.ifEmpty([]))
         }
         if (tools_to_run.contains('iceberg')) {
             DIAMOND_MAKE_ICEBERG(ch_iceberg_db)
@@ -308,8 +318,10 @@ workflow ANNOTATE_ASSEMBLIES {
 
             ch_diamond_outs.mix(ICEBERG_FILTER.out.concatenated)
                 .set { ch_diamond_outs }
+            ch_multiqc_files = ch_multiqc_files.mix(DIAMOND_BLAST_ICEBERG.out.log.collect{it[1]}.ifEmpty([]))
         }
 
+        profile = []
         if (tools_to_run.contains('report')) {
             needed_for_report = ['vfdb', 'rgi', 'mobsuite']
             if (!params.use_prokka && needed_for_report.every { it in tools_to_run }) {
@@ -320,6 +332,7 @@ workflow ANNOTATE_ASSEMBLIES {
                     ch_vfdb,
                     ch_phispy_out,
                     CONCAT_MOBSUITE.out.txt,
+                    params.feature_profile_columns,
                     params.skip_profile_creation
                 )
             } else if (needed_for_report.every { it in tools_to_run }) {
@@ -330,16 +343,21 @@ workflow ANNOTATE_ASSEMBLIES {
                     ch_vfdb,
                     [],
                     [],
+                    params.feature_profile_columns,
                     params.skip_profile_creation
                 )
             }
+
+            profile = (params.skip_profile_creation) ? [] : CREATE_REPORT.out.profile
         }
 
     emit:
+        annotation = concat_annotation
         annotation_software = ch_software_versions
         multiqc = ch_multiqc_files
         faa = ch_faa_files
         gff = ch_gff_files
+        feature_profile = profile
         gbk = ch_gbk_files
         rgi = RGI.out.tsv
 

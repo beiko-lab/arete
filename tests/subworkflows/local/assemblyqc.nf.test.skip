@@ -8,7 +8,6 @@ nextflow_workflow {
 
         when {
             params {
-                skip_kraken = true
                 outdir = "$outputDir"
             }
             workflow {
@@ -23,14 +22,13 @@ nextflow_workflow {
                 input[1] = []
                 // No ref genome
                 input[2] = []
-                input[3] = false
                 """
             }
         }
 
         then {
             assert workflow.success
-            assert workflow.trace.tasks().size() >= 2
+            assert workflow.trace.tasks().size() >= 1
         }
 
     }

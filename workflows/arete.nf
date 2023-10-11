@@ -36,13 +36,17 @@ ch_multiqc_logo            = params.multiqc_logo   ? Channel.fromPath( params.mu
 // SUBWORKFLOW: Consisting of a mix of local and nf-core/modules
 //
 include { INPUT_CHECK } from '../subworkflows/local/input_check'
+include { PHYLO_INPUT_CHECK } from '../subworkflows/local/phylo_input_check'
 include { ANNOTATION_INPUT_CHECK } from '../subworkflows/local/annotation_input_check'
 include { ASSEMBLE_SHORTREADS } from '../subworkflows/local/assembly'
 include { ANNOTATE_ASSEMBLIES } from '../subworkflows/local/annotation'
 include { CHECK_ASSEMBLIES } from '../subworkflows/local/assemblyqc'
 include { PHYLOGENOMICS } from '../subworkflows/local/phylo'
 include { RUN_POPPUNK } from '../subworkflows/local/poppunk'
+include { RECOMBINATION } from '../subworkflows/local/recombination'
 include { SUBSET_GENOMES } from '../subworkflows/local/subsample'
+include { EVOLCCM } from '../subworkflows/local/evolccm'
+include { RSPR } from '../subworkflows/local/rspr'
 include { GENE_ORDER } from '../subworkflows/local/gene_order'
 /*
 ========================================================================================
@@ -73,7 +77,7 @@ include { SNPSITES } from '../modules/nf-core/snpsites/main'
 //
 // MODULE: Local to the pipeline
 //
-include { GET_SOFTWARE_VERSIONS } from '../modules/local/get_software_versions' addParams( options: [publish_files : ['tsv':'']] )
+include { CUSTOM_DUMPSOFTWAREVERSIONS } from '../modules/nf-core/custom/dumpsoftwareversions/main'
 include { RGI;
           UPDATE_RGI_DB } from '../modules/local/rgi'
 include { MOB_RECON } from '../modules/local/mobsuite'
@@ -144,6 +148,18 @@ workflow ARETE {
 
     ASSEMBLE_SHORTREADS.out.scaffolds.set { assemblies }
 
+    CHECK_ASSEMBLIES (
+        assemblies,
+        ch_reference_genome,
+        use_reference_genome
+    )
+    ch_software_versions = ch_software_versions.mix(CHECK_ASSEMBLIES.out.assemblyqc_software)
+
+    if (params.apply_filtering) {
+        CHECK_ASSEMBLIES.out.assemblies
+            .set { assemblies }
+    }
+
     if (db_cache) {
         /////////////////// ANNOTATION ///////////////////////////
         ANNOTATE_ASSEMBLIES(
@@ -191,6 +207,14 @@ workflow ARETE {
                 .map { it[0, 1] }
                 .set { gffs }
         }
+
+        if (params.run_recombination) {
+            RECOMBINATION (
+                assemblies,
+                RUN_POPPUNK.out.clusters,
+                CHECK_ASSEMBLIES.out.quast_report
+            )
+        }
     }
 
     ch_software_versions = ch_software_versions.mix(ANNOTATE_ASSEMBLIES.out.annotation_software)
@@ -200,6 +224,21 @@ workflow ARETE {
     if (!params.skip_phylo) {
         PHYLOGENOMICS(gffs, use_full_alignment, use_fasttree)
         ch_software_versions = ch_software_versions.mix(PHYLOGENOMICS.out.phylo_software)
+
+        if (params.run_evolccm) {
+            EVOLCCM (
+                PHYLOGENOMICS.out.core_tree,
+                ANNOTATE_ASSEMBLIES.out.feature_profile
+            )
+        }
+
+        if (params.run_rspr) {
+            RSPR (
+                PHYLOGENOMICS.out.core_tree,
+                PHYLOGENOMICS.out.gene_trees,
+                ANNOTATE_ASSEMBLIES.out.annotation
+            )
+        }
     }
 
     ////////////////////////// GENE ORDER /////////////////////////////////////
@@ -211,14 +250,9 @@ workflow ARETE {
         )
     }
 
-    ch_software_versions
-        .map { it -> if (it) [ it.baseName, it ] }
-        .groupTuple()
-        .map { it[1][0] }
-        .flatten()
-        .collect()
-        .set { ch_software_versions }
-    GET_SOFTWARE_VERSIONS(ch_software_versions)
+    CUSTOM_DUMPSOFTWAREVERSIONS (
+        ch_software_versions.unique().collectFile(name: 'collated_versions.yml')
+    )
 
     /*
      * MODULE: MultiQC
@@ -230,8 +264,9 @@ workflow ARETE {
 
     ch_multiqc_files = Channel.empty()
     ch_multiqc_files = ch_multiqc_files.mix(ch_workflow_summary.collectFile(name: 'workflow_summary_mqc.yaml'))
-    ch_multiqc_files = ch_multiqc_files.mix(GET_SOFTWARE_VERSIONS.out.yaml.collect())
+    ch_multiqc_files = ch_multiqc_files.mix(CUSTOM_DUMPSOFTWAREVERSIONS.out.mqc_yml.collect())
     ch_multiqc_files = ch_multiqc_files.mix(ASSEMBLE_SHORTREADS.out.multiqc)
+    ch_multiqc_files = ch_multiqc_files.mix(CHECK_ASSEMBLIES.out.multiqc)
     ch_multiqc_files = ch_multiqc_files.mix(ANNOTATE_ASSEMBLIES.out.multiqc)
 
     MULTIQC(
@@ -277,15 +312,16 @@ workflow ASSEMBLY {
 
     ch_software_versions = ch_software_versions.mix(ASSEMBLE_SHORTREADS.out.assembly_software)
 
-    // Get unique list of files containing version information
-    ch_software_versions
-        .map { it -> if (it) [ it.baseName, it ] }
-        .groupTuple()
-        .map { it[1][0] }
-        .flatten()
-        .collect()
-        .set { ch_software_versions }
-    GET_SOFTWARE_VERSIONS(ch_software_versions)
+    CHECK_ASSEMBLIES(
+        ASSEMBLE_SHORTREADS.out.scaffolds,
+        ch_reference_genome,
+        use_reference_genome
+    )
+    ch_software_versions = ch_software_versions.mix(CHECK_ASSEMBLIES.out.assemblyqc_software)
+
+    CUSTOM_DUMPSOFTWAREVERSIONS (
+        ch_software_versions.unique().collectFile(name: 'collated_versions.yml')
+    )
 
     //multiqc
     workflow_summary    = WorkflowArete.paramsSummaryMultiqc(workflow, summary_params)
@@ -293,6 +329,8 @@ workflow ASSEMBLY {
 
     ch_multiqc_files = Channel.empty()
     ch_multiqc_files = ch_multiqc_files.mix(ch_workflow_summary.collectFile(name: 'workflow_summary_mqc.yaml'))
+    ch_multiqc_files = ch_multiqc_files.mix(CUSTOM_DUMPSOFTWAREVERSIONS.out.mqc_yml.collect())
+    ch_multiqc_files = ch_multiqc_files.mix(CHECK_ASSEMBLIES.out.multiqc)
     ch_multiqc_files = ch_multiqc_files.mix(ASSEMBLE_SHORTREADS.out.multiqc)
 
     MULTIQC(
@@ -301,9 +339,6 @@ workflow ASSEMBLY {
         ch_multiqc_custom_config.collect().ifEmpty([]),
         ch_multiqc_logo.collect().ifEmpty([])
     )
-    multiqc_report       = MULTIQC.out.report.toList()
-    ch_software_versions = ch_software_versions.mix(MULTIQC.out.versions.ifEmpty(null))
-
 }
 
 // annotate existing assemblies
@@ -332,6 +367,7 @@ workflow ANNOTATION {
     //if (params.outgroup_genome ) { ch_outgroup_genome = file(params.outgroup_genome) } else { ch_outgroup_genome = '' }
 
     ch_software_versions = Channel.empty()
+    ch_multiqc_files = Channel.empty()
 
     /*
      * SUBWORKFLOW: Read in samplesheet, validate and stage input files
@@ -339,6 +375,22 @@ workflow ANNOTATION {
     ANNOTATION_INPUT_CHECK(ch_input)
 
     ANNOTATION_INPUT_CHECK.out.genomes.set { assemblies }
+
+    if (params.run_recombination || params.apply_filtering) {
+        CHECK_ASSEMBLIES(
+            assemblies,
+            ch_reference_genome,
+            use_reference_genome
+        )
+        ch_software_versions = ch_software_versions.mix(CHECK_ASSEMBLIES.out.assemblyqc_software)
+        ch_multiqc_files = ch_multiqc_files.mix(CHECK_ASSEMBLIES.out.multiqc)
+
+        if (params.apply_filtering) {
+            CHECK_ASSEMBLIES.out.assemblies
+                .set { assemblies }
+        }
+    }
+
 
     if(db_cache){
         GET_DB_CACHE(db_cache)
@@ -354,8 +406,6 @@ workflow ANNOTATION {
             GET_DB_CACHE.out.card_json,
             GET_DB_CACHE.out.card_version
             )
-
-
     }
     else{
 
@@ -395,6 +445,14 @@ workflow ANNOTATION {
                 .map { it[0, 1] }
                 .set { gffs }
         }
+
+        if (params.run_recombination) {
+            RECOMBINATION (
+                assemblies,
+                RUN_POPPUNK.out.clusters,
+                CHECK_ASSEMBLIES.out.quast_report
+            )
+        }
     }
 
     ////////////////////////// PANGENOME /////////////////////////////////////
@@ -412,14 +470,9 @@ workflow ANNOTATION {
         )
     }
 
-    ch_software_versions
-        .map { it -> if (it) [ it.baseName, it ] }
-        .groupTuple()
-        .map { it[1][0] }
-        .flatten()
-        .collect()
-        .set { ch_software_versions }
-    GET_SOFTWARE_VERSIONS(ch_software_versions)
+    CUSTOM_DUMPSOFTWAREVERSIONS (
+        ch_software_versions.unique().collectFile(name: 'collated_versions.yml')
+    )
 
     /*
      * MODULE: MultiQC
@@ -429,9 +482,8 @@ workflow ANNOTATION {
 
     //Mix QUAST results into one report file
 
-    ch_multiqc_files = Channel.empty()
     ch_multiqc_files = ch_multiqc_files.mix(ch_workflow_summary.collectFile(name: 'workflow_summary_mqc.yaml'))
-    ch_multiqc_files = ch_multiqc_files.mix(GET_SOFTWARE_VERSIONS.out.yaml.collect())
+    ch_multiqc_files = ch_multiqc_files.mix(CUSTOM_DUMPSOFTWAREVERSIONS.out.mqc_yml.collect())
     ch_multiqc_files = ch_multiqc_files.mix(ANNOTATE_ASSEMBLIES.out.multiqc)
 
     MULTIQC(
@@ -445,7 +497,7 @@ workflow ANNOTATION {
 
 }
 
-workflow QUALITYCHECK{
+workflow QUALITYCHECK {
     if (params.input_sample_table){ ch_input = file(params.input_sample_table) } else { exit 1, 'Input samplesheet not specified!' }
     if (params.reference_genome) {
         ch_reference_genome = file(params.reference_genome)
@@ -466,7 +518,6 @@ workflow QUALITYCHECK{
 
     CHECK_ASSEMBLIES(
         ANNOTATION_INPUT_CHECK.out.genomes,
-        db_cache,
         ch_reference_genome,
         use_reference_genome
     )
@@ -482,19 +533,37 @@ workflow QUALITYCHECK{
     multiqc_report       = MULTIQC.out.report.toList()
     ch_software_versions = ch_software_versions.mix(MULTIQC.out.versions.ifEmpty(null))
 
-    // Get unique list of files containing version information
-    ch_software_versions
-        .map { it -> if (it) [ it.baseName, it ] }
-        .groupTuple()
-        .map { it[1][0] }
-        .flatten()
-        .collect()
-        .set { ch_software_versions }
-    GET_SOFTWARE_VERSIONS(ch_software_versions)
+    CUSTOM_DUMPSOFTWAREVERSIONS (
+        ch_software_versions.unique().collectFile(name: 'collated_versions.yml')
+    )
 
     //multiqc
     workflow_summary    = WorkflowArete.paramsSummaryMultiqc(workflow, summary_params)
     ch_workflow_summary = Channel.value(workflow_summary)
+}
+
+workflow PHYLO {
+    // Check mandatory parameters
+    if (params.input_sample_table) { ch_input = file(params.input_sample_table) } else { exit 1, 'Input samplesheet not specified!' }
+
+    use_full_alignment = params.use_full_alignment ? true : false
+    use_fasttree = params.use_fasttree ? true: false
+
+    ch_software_versions = Channel.empty()
+
+    PHYLO_INPUT_CHECK(ch_input)
+
+    PHYLO_INPUT_CHECK.out.genomes.set { gffs }
+
+    ////////////////////////// PANGENOME /////////////////////////////////////
+    PHYLOGENOMICS(gffs, use_full_alignment, use_fasttree)
+    ch_software_versions = ch_software_versions.mix(PHYLOGENOMICS.out.phylo_software)
+
+
+    CUSTOM_DUMPSOFTWAREVERSIONS (
+        ch_software_versions.unique().collectFile(name: 'collated_versions.yml')
+    )
+
 }
 
 workflow POPPUNK {
@@ -521,7 +590,9 @@ workflow POPPUNK {
 
     }
 
-    GET_SOFTWARE_VERSIONS(ch_software_versions)
+    CUSTOM_DUMPSOFTWAREVERSIONS (
+        ch_software_versions.unique().collectFile(name: 'collated_versions.yml')
+    )
 }
 
 /*

@@ -30,7 +30,6 @@
                 },
                 "db_cache": {
                     "type": "string",
-                    "default": "None",
                     "fa_icon": "fas fa-database",
                     "description": "Directory where the databases are located"
                 },
@@ -61,19 +60,47 @@
                 }
             }
         },
-        "kraken2": {
-            "title": "Kraken2",
+        "qc": {
+            "title": "QC",
             "type": "object",
-            "description": "Options for the Kraken2 taxonomic classification",
+            "description": "",
             "default": "",
+            "fa_icon": "fas fa-eye",
             "properties": {
+                "run_checkm": {
+                    "type": "boolean",
+                    "fa_icon": "fas fa-check-double",
+                    "description": "Run CheckM QC software"
+                },
+                "apply_filtering": {
+                    "type": "boolean",
+                    "fa_icon": "fas fa-filter",
+                    "description": "Filter assemblies on QC results"
+                },
                 "skip_kraken": {
                     "type": "boolean",
                     "description": "Don't run Kraken2 taxonomic classification",
                     "fa_icon": "fas fa-forward"
+                },
+                "min_n50": {
+                    "type": "integer",
+                    "default": 10000,
+                    "description": "Minimum N50 for filtering",
+                    "fa_icon": "fas fa-align-right"
+                },
+                "min_contigs_1000_bp": {
+                    "type": "integer",
+                    "default": 1,
+                    "description": "Minimum number of contigs with >1000bp",
+                    "fa_icon": "fas fa-ellipsis-h"
+                },
+                "min_contig_length": {
+                    "type": "integer",
+                    "default": 1,
+                    "description": "Minimum average contig length",
+                    "fa_icon": "fas fa-ruler-horizontal"
                 }
-            },
-            "fa_icon": "fas fa-align-left"
+            }
         },
         "annotation": {
             "title": "Annotation",
@@ -91,7 +118,6 @@
                 },
                 "bakta_db": {
                     "type": "string",
-                    "default": "None",
                     "fa_icon": "fas fa-database",
                     "description": "Path to the BAKTA database"
                 },
@@ -116,6 +142,13 @@
                     "type": "boolean",
                     "description": "Skip annotation feature profile creation",
                     "fa_icon": "fas fa-forward"
+                },
+                "feature_profile_columns": {
+                    "type": "string",
+                    "default": "mobsuite,rgi,cazy,vfdb,iceberg,bacmet",
+                    "fa_icon": "fas fa-columns",
+                    "description": "Columns to include in the feature profile",
+                    "pattern": "^((rgi|mobsuite|vfdb|cazy|bacmet|iceberg)?,?)*(?<!,)$"
                 }
             }
         },
@@ -163,7 +196,6 @@
                 },
                 "poppunk_model": {
                     "type": "string",
-                    "default": "None",
                     "description": "Which PopPunk model to use (bgmm, dbscan, refine, threshold or lineage)",
                     "fa_icon": "fas fa-indent"
                 },
@@ -242,6 +274,66 @@
                 }
             },
             "fa_icon": "fas fa-sort-numeric-down"
+        },
+        "recombination": {
+            "title": "Recombination",
+            "type": "object",
+            "description": "Parameters for the recombination subworkflow",
+            "default": "",
+            "fa_icon": "fab fa-pagelines",
+            "properties": {
+                "run_recombination": {
+                    "type": "boolean",
+                    "description": "Run Recombination",
+                    "fa_icon": "fas fa-tree"
+                },
+                "run_verticall": {
+                    "type": "boolean",
+                    "default": true,
+                    "description": "Run Verticall recombination tool"
+                },
+                "run_gubbins": {
+                    "type": "boolean",
+                    "description": "Run Gubbins recombination tool"
+                }
+            }
+        },
+        "dynamics": {
+            "title": "Dynamics",
+            "type": "object",
+            "description": "",
+            "default": "",
+            "properties": {
+                "run_evolccm": {
+                    "type": "boolean",
+                    "description": "Run the community coevolution model"
+                },
+                "run_rspr": {
+                    "type": "boolean",
+                    "description": "Run rSPR"
+                },
+                "min_rspr_distance": {
+                    "type": "integer",
+                    "default": 10,
+                    "description": "Minimum rSPR distance used to define processing groups"
+                },
+                "min_branch_length": {
+                    "type": "integer",
+                    "default": 0,
+                    "description": "Minimum rSPR branch length"
+                },
+                "max_support_threshold": {
+                    "type": "number",
+                    "default": 0.7,
+                    "description": "Maximum rSPR support threshold"
+                },
+                "max_approx_rspr": {
+                    "type": "integer",
+                    "default": -1,
+                    "description": "Maximum approximate rSPR distance for filtering"
+                }
+            },
+            "fa_icon": "fas fa-bezier-curve"
         },
         "institutional_config_options": {
             "title": "Institutional config options",
@@ -422,9 +514,12 @@
                     "fa_icon": "fas fa-toolbox",
                     "help_text": "This may be useful for example if you are unable to directly pull Singularity containers to run the pipeline due to http/https proxy issues."
                 },
+                "schema_ignore_params": {
+                    "type": "string",
+                    "default": "genomes,modules"
+                },
                 "multiqc_logo": {
                     "type": "string",
-                    "default": "None",
                     "fa_icon": "fas fa-image",
                     "hidden": true
                 }
@@ -439,7 +534,7 @@
             "$ref": "#/definitions/reference_genome_options"
         },
         {
-            "$ref": "#/definitions/kraken2"
+            "$ref": "#/definitions/qc"
         },
         {
             "$ref": "#/definitions/annotation"
@@ -452,6 +547,12 @@
         },
         {
             "$ref": "#/definitions/gene_order"
+        },
+        {
+            "$ref": "#/definitions/recombination"
+        },
+        {
+            "$ref": "#/definitions/dynamics"
         },
         {
             "$ref": "#/definitions/institutional_config_options"

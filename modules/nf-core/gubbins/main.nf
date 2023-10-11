@@ -7,7 +7,7 @@ process GUBBINS {
         'quay.io/biocontainers/gubbins:3.0.0--py39h5bf99c6_0' }"
 
     input:
-    path alignment
+    tuple val(cluster), path(alignment)
 
     output:
     path "*.fasta"                          , emit: fasta
@@ -29,6 +29,7 @@ process GUBBINS {
     """
     run_gubbins.py \\
         --threads $task.cpus \\
+        --prefix cluster_$cluster \\
         $args \\
         $alignment
     cat <<-END_VERSIONS > versions.yml

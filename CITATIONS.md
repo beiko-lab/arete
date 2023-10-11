@@ -1,4 +1,4 @@
-# nf-core/arete: Citations
+# beiko-lab/ARETE: Citations
 
 ## [nf-core](https://pubmed.ncbi.nlm.nih.gov/32055031/)
 
@@ -61,13 +61,31 @@
 
   > Alcock et al. 2020. CARD 2020: antibiotic resistome surveillance with the comprehensive antibiotic resistance database. Nucleic Acids Research, Volume 48, Issue D1, Pages D517-525 [PMID 31665441]
 
+- [IntegronFinder](https://doi.org/10.3390/microorganisms10040700)
+
+  > Néron, Bertrand, Eloi Littner, Matthieu Haudiquet, Amandine Perrin, Jean Cury, and Eduardo P.C. Rocha. 2022. IntegronFinder 2.0: Identification and Analysis of Integrons across Bacteria, with a Focus on Antibiotic Resistance in Klebsiella Microorganisms 10, no. 4: 700. https://doi.org/10.3390/microorganisms10040700
+
 - [Panaroo](https://github.com/gtonkinhill/panaroo)
 
   > Tonkin-Hill, G., MacAlasdair, N., Ruis, C. et al. Producing polished prokaryotic pangenomes with the Panaroo pipeline. Genome Biol 21, 180 (2020). https://doi.org/10.1186/s13059-020-02090-4
 
+- [PPanGGoLiN](https://doi.org/10.1371/journal.pcbi.1007732)
+
+  > Gautreau G et al. (2020) PPanGGOLiN: Depicting microbial diversity via a partitioned pangenome graph. PLOS Computational Biology 16(3): e1007732. https://doi.org/10.1371/journal.pcbi.1007732
+
 - [PopPUNK](https://doi.org/10.1101/gr.241455.118)
 
   > Lees JA, Harris SR, Tonkin-Hill G, Gladstone RA, Lo SW, Weiser JN, Corander J, Bentley SD, Croucher NJ. Fast and flexible bacterial genomic epidemiology with PopPUNK. Genome Res. 2019 Feb;29(2):304-316. doi: 10.1101/gr.241455.118. Epub 2019 Jan 24. PMID: 30679308; PMCID: PMC6360808.
+
+- [SKA2](https://doi.org/10.1101/453142)
+
+  > Harris SR. 2018. SKA: Split Kmer Analysis Toolkit for Bacterial Genomic Epidemiology. bioRxiv 453142 doi: https://doi.org/10.1101/453142
+
+- [Gubbins](https://doi.org/10.1093/nar/gku1196)
+
+  > Croucher N. J., Page A. J., Connor T. R., Delaney A. J., Keane J. A., Bentley S. D., Parkhill J., Harris S.R. "Rapid phylogenetic analysis of large samples of recombinant bacterial whole genome sequences using Gubbins". doi:10.1093/nar/gku1196, Nucleic Acids Research, 2014.
+
+- [Verticall](https://github.com/rrwick/Verticall)
 
 - [SNP-sites](https://pubmed.ncbi.nlm.nih.gov/28348851/)
 
@@ -82,7 +100,15 @@
   > Claire Bertelli, Fiona S L Brinkman, Improved genomic island predictions with IslandPath-DIMOB, Bioinformatics, Volume 34, Issue 13, 01 July 2018, Pages 2161–2167, https://doi.org/10.1093/bioinformatics/bty095
 
 - [PhiSpy](https://doi.org/10.1093/nar/gks406)
+
   > Sajia Akhter, Ramy K. Aziz, Robert A. Edwards; PhiSpy: a novel algorithm for finding prophages in bacterial genomes that combines similarity- and composition-based strategies. Nucl Acids Res 2012; 40 (16): e126. doi: 10.1093/nar/gks406
+
+- [EvolCCM](https://doi.org/10.1093/sysbio/syac052)
+
+  > Chaoyue Liu and others, The Community Coevolution Model with Application to the Study of Evolutionary Relationships between Genes Based on Phylogenetic Profiles, Systematic Biology, Volume 72, Issue 3, May 2023, Pages 559–574, https://doi.org/10.1093/sysbio/syac052
+
+- [rSPR](https://doi.org/10.1093/sysbio/syu023)
+  > Christopher Whidden, Norbert Zeh, Robert G. Beiko, Supertrees Based on the Subtree Prune-and-Regraft Distance, Systematic Biology, Volume 63, Issue 4, July 2014, Pages 566–581, https://doi.org/10.1093/sysbio/syu023
 
 ## Software packaging/containerisation tools
 

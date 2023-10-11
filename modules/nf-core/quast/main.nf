@@ -15,7 +15,8 @@ process QUAST {
 
     output:
     path "${prefix}"    , emit: results
-    path '*.tsv'        , emit: tsv
+    path "*.tsv"        , emit: tsv
+    path "${prefix}/transposed_report.tsv", emit: transposed_report
     path "versions.yml" , emit: versions
 
     when:
@@ -33,7 +34,7 @@ process QUAST {
         $features \\
         --threads $task.cpus \\
         $args \\
-        ${consensus.join(' ')}
+        \$(cat ${consensus.join(' ')})
 
     ln -s ${prefix}/report.tsv
 
@@ -47,6 +48,7 @@ process QUAST {
     """
     mkdir ${prefix}
     touch ${prefix}/report.tsv
+    touch ${prefix}/transposed_report.tsv
     touch ${prefix}_quast_stub.tsv
     cat <<-END_VERSIONS > versions.yml
     "${task.process}":

@@ -9,6 +9,8 @@ workflow SUBSET_GENOMES {
 
     main:
 
+        println '\033[0;33mWARN: Your assemblies will be subsampled (--enable_subsetting is true)\033[0m'
+
         POPPUNK_EXTRACT_DISTANCES(poppunk_db)
         POPPUNK_EXTRACT_DISTANCES.out.poppunk_distances.set{ poppunk_distances }
 

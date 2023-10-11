@@ -1,7 +1,6 @@
 name: nf-test CI
 # This workflow runs the nf-test test suite
 on:
-  push:
   pull_request:
   release:
     types: [published]
@@ -16,7 +15,7 @@ jobs:
     strategy:
       matrix:
         NXF_VER:
-          - "latest-everything"
+          - "latest-stable"
         profile: ["docker"] # TODO , "singularity", "conda"]
     steps:
       - name: Check out pipeline code
