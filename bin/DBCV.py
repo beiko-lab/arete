@@ -54,13 +54,14 @@ def _core_dist(point, neighbors, dist_function):
 
     distance_vector = cdist(point.reshape(1, -1), neighbors)
     distance_vector = distance_vector[distance_vector != 0]
-    numerator = ((1/distance_vector)**n_features).sum()
-    core_dist = (numerator / (n_neighbors - 1)) ** (-1/n_features)
+    numerator = ((1 / distance_vector) ** n_features).sum()
+    core_dist = (numerator / (n_neighbors - 1)) ** (-1 / n_features)
     return core_dist
 
 
-def _mutual_reachability_dist(point_i, point_j, neighbors_i,
-                              neighbors_j, dist_function):
+def _mutual_reachability_dist(
+    point_i, point_j, neighbors_i, neighbors_j, dist_function
+):
     """.
     Computes the mutual reachability distance between points
 
@@ -116,9 +117,9 @@ def _mutual_reach_dist_graph(X, labels, dist_function):
             class_j = labels[col]
             members_i = _get_label_members(X, labels, class_i)
             members_j = _get_label_members(X, labels, class_j)
-            dist = _mutual_reachability_dist(point_i, point_j,
-                                             members_i, members_j,
-                                             dist_function)
+            dist = _mutual_reachability_dist(
+                point_i, point_j, members_i, members_j, dist_function
+            )
             graph_row.append(dist)
         counter += 1
         graph.append(graph_row)
@@ -203,15 +204,12 @@ def _cluster_validity_index(MST, labels, cluster):
     min_density_separation = np.inf
     for cluster_j in np.unique(labels):
         if cluster_j != cluster:
-            cluster_density_separation = _cluster_density_separation(MST,
-                                                                     labels,
-                                                                     cluster,
-                                                                     cluster_j)
+            cluster_density_separation = _cluster_density_separation(
+                MST, labels, cluster, cluster_j
+            )
             if cluster_density_separation < min_density_separation:
                 min_density_separation = cluster_density_separation
-    cluster_density_sparseness = _cluster_density_sparseness(MST,
-                                                             labels,
-                                                             cluster)
+    cluster_density_sparseness = _cluster_density_sparseness(MST, labels, cluster)
     numerator = min_density_separation - cluster_density_sparseness
     denominator = np.max([min_density_separation, cluster_density_sparseness])
     print("Numerator: {}".format(numerator))

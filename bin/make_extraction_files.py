@@ -18,11 +18,26 @@ def parse_args(args=None):
     Description = "Generates required extraction data files for workflow from Genbank (GBK) files given a list of ."
     Epilog = "Example usage: python make_extraction_files.py <GBK_PATH> <TEXTFILE_PATH>"
     parser = argparse.ArgumentParser(description=Description, epilog=Epilog)
-    parser.add_argument('GBK_PATH', metavar='gbk', type=str, help='Path to directory containing GBK files. \
-                                                                       Must have names corresponding to RGI files.')
-    parser.add_argument('TEXTFILE_PATH', metavar='txt', type=str, help='Path to textfile listing one gene per row to \
-                                                                        extract neighborhoods for from GBK files.')
-    parser.add_argument('OUTPUT_PATH', metavar='txt', type=str, help='Output path to generate extraction textfiles in.')
+    parser.add_argument(
+        "GBK_PATH",
+        metavar="gbk",
+        type=str,
+        help="Path to directory containing GBK files. \
+                                                                       Must have names corresponding to RGI files.",
+    )
+    parser.add_argument(
+        "TEXTFILE_PATH",
+        metavar="txt",
+        type=str,
+        help="Path to textfile listing one gene per row to \
+                                                                        extract neighborhoods for from GBK files.",
+    )
+    parser.add_argument(
+        "OUTPUT_PATH",
+        metavar="txt",
+        type=str,
+        help="Output path to generate extraction textfiles in.",
+    )
     return parser.parse_args(args)
 
 
@@ -31,14 +46,16 @@ def get_genes_list(textfile_path):
     Processes user inputted textfile into a list of unique genes to be extracted.
     """
     genes_list = []
-    with open(textfile_path, 'r') as infile:
+    with open(textfile_path, "r") as infile:
         try:
             text_file_data = infile.readlines()
         except Exception as e:
-            sys.stderr.write('Error occurred attempting to process input textfile: {e}'.format(e=e))
+            sys.stderr.write(
+                "Error occurred attempting to process input textfile: {e}".format(e=e)
+            )
 
     for line in text_file_data:
-        gene = line.strip('\n')
+        gene = line.strip("\n")
         genes_list.append(gene)
 
     return genes_list
@@ -52,7 +69,9 @@ def get_file_paths(gbk_path):
     try:
         gbk_filepaths = glob.glob(os.path.join(gbk_path, "*.gbk"))
     except FileNotFoundError:
-        print("Error: there are no GBK files found in the specified directory. Please double-check the provided path.")
+        print(
+            "Error: there are no GBK files found in the specified directory. Please double-check the provided path."
+        )
         sys.exit(1)
 
     return gbk_filepaths
@@ -68,10 +87,19 @@ def extract_records(gbk_file_path, genes_list):
     for gene in genes_list:
         for index, record in enumerate(SeqIO.parse(gbk_file_path, "genbank")):
             for feature in record.features:
-                if feature.type == 'CDS' and 'pseudo' not in feature.qualifiers and 'gene' in feature.qualifiers:
+                if (
+                    feature.type == "CDS"
+                    and "pseudo" not in feature.qualifiers
+                    and "gene" in feature.qualifiers
+                ):
                     for key, val in feature.qualifiers.items():
                         if gene in val:
-                            data = [record.id, feature.location.start, feature.location.end, feature.qualifiers['gene']]
+                            data = [
+                                record.id,
+                                feature.location.start,
+                                feature.location.end,
+                                feature.qualifiers["gene"],
+                            ]
                             records_list.append(data)
 
     return records_list
@@ -101,15 +129,15 @@ def make_genome_extraction_input_file(genome_id, genome_data, output_path):
     04            211727    214876   acrB_1
     '''
     """
-    with open(output_path + '/' + genome_id + '.txt', 'w') as outfile:
-        outfile.write('Contig_Name\tStart\tStop\tName')
+    with open(output_path + "/" + genome_id + ".txt", "w") as outfile:
+        outfile.write("Contig_Name\tStart\tStop\tName")
         for gene_instance in genome_data:
             for i in range(len(gene_instance)):
                 outfile.write(gene_instance[i])
                 if i != len(gene_instance) - 1:
-                    outfile.write('\t')
+                    outfile.write("\t")
                 else:
-                    outfile.write('\n')
+                    outfile.write("\n")
 
 
 def make_input_files(gbk_path, textfile_path, output_path):
@@ -128,7 +156,9 @@ def make_input_files(gbk_path, textfile_path, output_path):
 
     # Generate required input files for workflow
     for genome_id, genome_extraction_data in extraction_dict.items():
-        make_genome_extraction_input_file(genome_id, genome_extraction_data, output_path)
+        make_genome_extraction_input_file(
+            genome_id, genome_extraction_data, output_path
+        )
 
 
 def main(args=None):
@@ -136,5 +166,5 @@ def main(args=None):
     make_input_files(args.GBK_PATH, args.TEXTFILE_PATH, args.OUTPUT_PATH)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     sys.exit(main())
