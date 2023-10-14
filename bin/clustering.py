@@ -39,6 +39,8 @@ from json_utils import (
     update_cluster_data,
     clean_json_data,
     write_clustermap_JSON_HTML,
+    make_assembly_dict,
+    add_UID_genes_links_groups,
 )
 from visualization import (
     plot_similarity_histogram,
@@ -150,7 +152,7 @@ def load_BLAST_file_df(file_path):
     df = pl.read_csv(
         file_path,
         has_header=False,
-        sep="\t",
+        separator="\t",
         new_columns=["query_id", "sub_id", "PI", "bitscore"],
     )
     df = df.with_columns(pl.col("query_id").cast(pl.Utf8, strict=False))
@@ -188,19 +190,6 @@ def append_FASTA_neighborhood_contigs(filename, gene, contig_dict, identical=Fal
     return df
 
 
-def make_assembly_dict(assembly_path):
-    """
-    Makes dictionary consisting of assembly file names with keys as the filename without the file extension, values
-    as the full filename.
-    """
-    faa_dict = {}
-    for filename in assembly_path:
-        key = filename.split(".")[0]
-        faa_dict[key] = filename
-
-    return faa_dict
-
-
 def get_blast_df(gene, blast_path, assembly_path, fasta_path, fasta_dict):
     """
     Loads whole genome BLAST into a dataframe with only relevant contig data rows.
@@ -221,8 +210,8 @@ def get_blast_df(gene, blast_path, assembly_path, fasta_path, fasta_dict):
             }
         )
 
-        genome_1_filename = faa_files.get(genome_1)
-        genome_2_filename = faa_files.get(genome_2)
+        genome_1_filename = faa_files.get(genome_1.split("-")[0])
+        genome_2_filename = faa_files.get(genome_2.split("-")[0])
 
         # Load comparative BLAST file
         comp1 = genome_1_filename + ".dmnd_" + genome_2_filename + ".txt"
@@ -258,6 +247,28 @@ def get_blast_df(gene, blast_path, assembly_path, fasta_path, fasta_dict):
             df = pl.concat([df, blast_rows_df], how="vertical")
 
         blast_dict[genome_1 + "_" + genome_2 + ".blast.txt"] = df
+
+        if (
+            not genome_1.split("-")[0] + "_" + genome_1.split("-")[0] + ".blast.txt"
+            in blast_dict
+        ):
+            same_df = append_FASTA_neighborhood_contigs(
+                genome_1_file_name, gene, fasta_dict[genome_1], identical=False
+            )
+            blast_dict[
+                genome_1.split("-")[0] + "_" + genome_1.split("-")[0] + ".blast.txt"
+            ] = same_df
+
+        if (
+            not genome_2.split("-")[0] + "_" + genome_2.split("-")[0] + ".blast.txt"
+            in blast_dict
+        ):
+            same_df = append_FASTA_neighborhood_contigs(
+                genome_2_file_name, gene, fasta_dict[genome_2], identical=False
+            )
+            blast_dict[
+                genome_2.split("-")[0] + "_" + genome_2.split("-")[0] + ".blast.txt"
+            ] = same_df
 
     return blast_dict
 
@@ -664,7 +675,8 @@ def cluster_neighborhoods(
     print(
         "Updating JSON neighborhood representations' links percent identities according to BLAST results..."
     )
-    update_JSON_links_PI(BLAST_df_dict, output_path)
+    json_dict = add_UID_genes_links_groups(BLAST_df_dict, output_path)
+    update_JSON_links_PI(BLAST_df_dict, json_dict, output_path)
 
     # Update gene UIDs to reflect locus tags, filtering based on identical neighborhoods using BLAST results
     print("Updating JSON surrogates representations...")

@@ -14,6 +14,7 @@ process EXTRACTION {
       path html_template
       val num_neighbors
       val percent_cutoff
+      val label_cols
 
     output:
       path "fasta", emit: fasta_path
@@ -31,6 +32,7 @@ process EXTRACTION {
         -o . \\
         -w $html_template \\
         -n $num_neighbors \\
-        -p $percent_cutoff
+        -p $percent_cutoff \\
+        -c $label_cols
     """
 }

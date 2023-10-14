@@ -7,6 +7,7 @@ this script is used for identification of all unique gene neighborhoods present 
 
 import os
 import glob
+import numpy as np
 import pandas as pd
 from Bio import SeqIO
 import json
@@ -190,7 +191,7 @@ def load_GBK_file(GBK_filepath):
     """
     filename, extension = os.path.splitext(GBK_filepath)
     assert (
-        extension == ".gbk" or extension == ".gb"
+        extension == ".gbk" or extension == ".gb" or extension == ".gbff"
     ), "Error: filepath provided does not lead to a Genbank file."
 
     # Extract and store all features and annotations per record
@@ -219,7 +220,7 @@ def make_GBK_dataframe(GBK_file_path):
 
     for index, record in enumerate(SeqIO.parse(GBK_file_path, "genbank")):
         for feature in record.features:
-            if feature.type == "CDS" and "pseudo" not in feature.qualifiers:
+            if feature.type == "CDS" and "pseudogene" not in feature.qualifiers:
                 gene_start.append(feature.location.start)
                 gene_end.append(feature.location.end)
                 gene_strand.append(feature.location.strand)
@@ -276,19 +277,8 @@ def clean_gene_identifier(name):
           'vanS gene in vanN cluster' -> 'vanS',
           'Bifidobacterium adolescentis rpoB mutants conferring resistance to rifampicin' -> 'rpoB')
     """
-    tokenized_name = name.split(" ")
-    try:
-        if len(tokenized_name) > 1:
-            short_name = (
-                tokenized_name[0][0] + tokenized_name[1][0] + "_" + tokenized_name[2]
-            )
-        else:
-            short_name = tokenized_name[0]
-    except IndexError:
-        short_name = tokenized_name[0]
-
-    short_name = (
-        short_name.replace("'", "")
+    final_name = (
+        name.replace("'", "")
         .replace("-", "_")
         .replace("(", "")
         .replace(")", "")
@@ -299,8 +289,7 @@ def clean_gene_identifier(name):
         .strip("-")
         .strip('"')
     )
-
-    return short_name
+    return final_name
 
 
 def clean_gene_names_df(extract_df, genome_name):
@@ -351,7 +340,7 @@ def make_extract_df_contig_col(extract_df):
     Applies transformation to contig name column to retain only first part of default contig col value from GBK.
     """
     extract_df = extract_df["Contig"].apply(
-        lambda contig_name: contig_name.split("_")[0]
+        lambda contig_name: str(contig_name).split("_")[0]
     )
 
     return extract_df
@@ -410,12 +399,56 @@ def make_occurrence_dict(extract_dataframes, gene):
     return gene_occurrences_dict
 
 
+def get_annotation_gene_instances(extract_dataframes, col_tokens=None):
+    """
+    Constructs a nested instance dictionary from every genome's annotation files to track annotation feature names.
+    Outer dictionary keys correspond to genome ids, and values correspond to the genome's instance dictionary where
+    keys are the feature start coordinate and end coordinate separated by ':', and values are the gene name (along
+    with any additional annotation details appended as specified by the user's selected cols).
+    """
+    annotation_gene_instances = dict()
+    for genome, df in extract_dataframes.items():
+        # Keep track of each genome's annotated features
+        genome_instances = {}
+
+        # Get start and end coordinates as a string with ':' separator
+        start_end_coordinates = (
+            df["Gene_Start"].astype(str) + ":" + df["Gene_End"].astype(str)
+        )
+
+        # Iterate over rows and columns to construct concatenated values
+        if col_tokens is None or col_tokens == "None":
+            # Determine columns to extract data from
+            selected_cols = ["Gene_Name"]
+        else:
+            selected_cols = ["Gene_Name"] + col_tokens
+
+        selected_data = df[selected_cols]
+        for i, row in selected_data.iterrows():
+            concatenated_values = []
+            for col in selected_cols:
+                value = row[col]
+                if pd.notna(value):
+                    concatenated_values.append(str(value))
+            genome_instances[start_end_coordinates[i]] = "_".join(concatenated_values)
+
+        # Add the genome's instance dictionary to the outer dictionary
+        annotation_gene_instances[genome] = genome_instances
+
+    return annotation_gene_instances
+
+
 def make_gene_neighborhood_df(
-    GBK_df_dict, genome_id, gene_start, gene_name, neighborhood_size, modified_gene_name
+    GBK_df_dict,
+    genome_id,
+    gene_start,
+    neighborhood_size,
+    modified_gene_name,
+    annotation_instances=None,
 ):
     """
     Finds gene neighborhood of size 2N (user-defined by neighborhood_size, i.e., N genes downstream and upstream)
-    for a given AMR gene for cross genome comparison.
+    for a given AMR gene for cross-genome comparison.
     """
     # Get the GBK data for the given genome
     try:
@@ -453,15 +486,14 @@ def make_gene_neighborhood_df(
 
     gene_index = gene_index_coord[0]
 
-    gene_df_row = contig_df.iloc[[gene_index]]
-    if modified_gene_name is not None:
-        gene_df_row.loc[:, "Gene_Name"] = modified_gene_name
+    gene_df_row = contig_df.iloc[[gene_index]].copy()
+    gene_df_row.loc[:, "Gene_Name"] = modified_gene_name
 
     # Get downstream neighbors
-    downstream = [gene_index - index for index in range(1, neighborhood_size + 1)]
+    downstream_indices = [
+        gene_index - index for index in range(1, neighborhood_size + 1)
+    ]
 
-    # If contig end present downstream, some indices will be negative: remove these to prevent index errors
-    downstream_indices = [index for index in downstream if index >= 0]
     downstream_neighbors = pd.DataFrame(
         columns=[
             "Gene_Start",
@@ -474,13 +506,51 @@ def make_gene_neighborhood_df(
             "Contig_Name",
         ]
     )
-    for i in range(len(downstream_indices) - 1, -1, -1):
+    # Check for the first negative value in downstream_indices
+    contig_end_position = next(
+        (i for i, index in enumerate(downstream_indices) if index < 0), None
+    )
+
+    if contig_end_position is not None:
+        print(
+            "Contig end found at position {} downstream.".format(
+                contig_end_position + 1
+            )
+        )
+        neighborhood_indices.append(contig_end_position)
+    else:
+        contig_end_position = len(downstream_indices)
+
+    for i in range(contig_end_position - 1, -1, -1):
         try:
             neighbor = contig_df.iloc[[downstream_indices[i]]]
+            # Check if neighbor in annotation instances; if so, use annotation feature name
+            start_end_indices = "{}:{}".format(
+                neighbor["Gene_Start"].values[0], neighbor["Gene_End"].values[0]
+            )
+            if (
+                start_end_indices
+                in annotation_instances[genome_id.split("-")[0]].keys()
+            ):
+                if not neighbor["Gene_Name"].tolist()[0].startswith("UID"):
+                    feature_name = (
+                        annotation_instances[genome_id.split("-")[0]][start_end_indices]
+                        + f" ({neighbor['Gene_Name'].tolist()[0]})"
+                    )
+                else:
+                    feature_name = annotation_instances[genome_id.split("-")[0]][
+                        start_end_indices
+                    ]
+                neighbor.loc[:, "Gene_Name"] = feature_name
             downstream_neighbors = pd.concat([downstream_neighbors, neighbor])
         except IndexError:
-            print("Contig end found at position -{} downstream.".format(i + 1))
-            neighborhood_indices.append(i)
+            print(
+                "Contig end found at position {} downstream.".format(
+                    -(neighborhood_size - i)
+                )
+            )
+            neighborhood_indices.append(-(neighborhood_size - i) - 1)
+            break
 
     # If there was no contig end, append default N size to neighborhood_indices
     if len(neighborhood_indices) == 0:
@@ -504,6 +574,24 @@ def make_gene_neighborhood_df(
         contig_end_found = False
         try:
             neighbor = contig_df.iloc[[upstream_indices[i]]]
+            # Check if neighbor in annotation instances; if so, use annotation feature name
+            start_end_indices = "{}:{}".format(
+                neighbor["Gene_Start"].values[0], neighbor["Gene_End"].values[0]
+            )
+            if (
+                start_end_indices
+                in annotation_instances[genome_id.split("-")[0]].keys()
+            ):
+                if not neighbor["Gene_Name"].tolist()[0].startswith("UID"):
+                    feature_name = (
+                        annotation_instances[genome_id.split("-")[0]][start_end_indices]
+                        + f" ({neighbor['Gene_Name'].tolist()[0]})"
+                    )
+                else:
+                    feature_name = annotation_instances[genome_id.split("-")[0]][
+                        start_end_indices
+                    ]
+                neighbor.loc[:, "Gene_Name"] = feature_name
             upstream_neighbors = pd.concat([upstream_neighbors, neighbor])
         except IndexError:
             if not contig_end_found:
@@ -516,11 +604,16 @@ def make_gene_neighborhood_df(
         neighborhood_indices.append(neighborhood_size)
 
     neighborhood_df = pd.concat([downstream_neighbors, gene_df_row, upstream_neighbors])
+
     return neighborhood_df, neighborhood_indices
 
 
 def get_all_gene_neighborhoods(
-    gene_instance_dict, GBK_df_dict, unique_genes, neighborhood_size, cols
+    gene_instance_dict,
+    GBK_df_dict,
+    neighborhood_size,
+    cols=None,
+    annotation_instances=None,
 ):
     """
     Given a dictionary of genes determined using extract outputs and a list of unique genes, creates one dictionary
@@ -544,40 +637,84 @@ def get_all_gene_neighborhoods(
         for genome, data in gene_dict.items():
             # Get start index of the focal AMR gene from the extract dataframe
             start_vals = gene_dict[genome]["Gene_Start"]
+
+            # Get neighborhood for every occurrence if multiple instances occur in same genome
+            instances_counter = 0
             start_vals_list = list(start_vals)
-            start_index = start_vals_list[0]
+            for gene_instance in range(len(start_vals_list)):
+                start_index = start_vals_list[gene_instance]
 
-            # If using annotation, set gene name according to annotated feature name
-            if cols is not None:
-                additional_data = []
-                gene_dict[genome].reset_index(drop=True, inplace=True)
-                for col in cols:
-                    additional_data.append(gene_dict[genome].loc[0, col])
-                delim = "_"
-                temp_data_str = list(map(str, additional_data))
-                str_data = delim.join(temp_data_str)
-                modified_gene_name = str(gene + "_" + str_data)
-            else:
-                modified_gene_name = None
+                # If using annotation, set gene name according to annotated feature name and also retain Genbank name
+                GBK_df = GBK_df_dict[genome.split("-")[0]]
+                try:
+                    genbank_gene_data = GBK_df.loc[
+                        ((GBK_df["Gene_Start"] == start_index - 1))
+                    ]
+                    genbank_gene_name = (
+                        genbank_gene_data.Gene_Name.tolist()[0].strip('"').strip("'")
+                    )
+                except IndexError:
+                    try:
+                        genbank_gene_data = GBK_df.loc[
+                            ((GBK_df["Gene_Start"] == start_index))
+                        ]
+                        genbank_gene_name = (
+                            genbank_gene_data.Gene_Name.tolist()[0]
+                            .strip('"')
+                            .strip("'")
+                        )
+                    except IndexError:
+                        genbank_gene_name = "Unidentified"
 
-            # Make gene neighborhood dataframe for each genome for the focal gene, AMR_gene
-            try:
-                neighborhood_df, indices = make_gene_neighborhood_df(
-                    GBK_df_dict,
-                    genome,
-                    start_index,
-                    gene,
-                    neighborhood_size,
-                    modified_gene_name,
-                )
-                neighborhood_df.reset_index(drop=True, inplace=True)
+                if cols is not None:
+                    additional_data = []
+                    gene_dict[genome].reset_index(drop=True, inplace=True)
+                    for col in cols:
+                        additional_data.append(
+                            gene_dict[genome].loc[gene_instance, col]
+                        )
+                    delim = "_"
+                    temp_data_str = list(map(str, additional_data))
+                    str_data = delim.join(temp_data_str)
+                    if genbank_gene_name.startswith("UID"):
+                        modified_gene_name = gene + "_" + str_data
+                    else:
+                        modified_gene_name = (
+                            gene + "_" + str_data + " (" + genbank_gene_name + ")"
+                        )
+                else:
+                    if genbank_gene_name.startswith("UID"):
+                        modified_gene_name = gene
+                    else:
+                        modified_gene_name = gene + " (" + genbank_gene_name + ")"
 
-                if len(neighborhood_df) > 1:
-                    neighbors[genome] = neighborhood_df
-                    contig_end_flags[genome] = indices
-            except TypeError:
-                errors += 1
-                print("Gene {} was not present in this genome!".format(gene))
+                # Make gene neighborhood dataframe for each genome for the focal gene, AMR_gene
+                try:
+                    neighborhood_df, indices = make_gene_neighborhood_df(
+                        GBK_df_dict,
+                        genome,
+                        start_index,
+                        neighborhood_size,
+                        modified_gene_name,
+                        annotation_instances,
+                    )
+                    neighborhood_df.reset_index(drop=True, inplace=True)
+
+                    if len(neighborhood_df) > 1:
+                        instances_counter += 1
+
+                        # Only use multi-instance naming scheme if multiple instances, otherwise just genome ID
+                        if instances_counter == 1 and len(start_vals_list) == 1:
+                            neighbors[genome] = neighborhood_df
+                            contig_end_flags[genome] = indices
+                        else:
+                            genome_id = genome + f"-{instances_counter}"
+                            neighbors[genome_id] = neighborhood_df
+                            contig_end_flags[genome_id] = indices
+
+                except TypeError:
+                    errors += 1
+                    print("Gene {} was not present in this genome!".format(gene))
 
         gene_neighborhoods[gene] = neighbors
         contig_ends[gene] = contig_end_flags
@@ -834,20 +971,25 @@ def extract_neighborhoods(
         )
 
         # Process additional cols from annotations to add to gene name
-        if label_cols is not None:
+        if label_cols is None or label_cols == "None":
+            col_tokens = None
+        else:
             col_tokens = label_cols.split(",")
             for col_token in col_tokens:
                 col_token = col_token.replace(" ", "")
-        else:
-            col_tokens = None
+
+        # Build annotations instance dict to link Genbank gene indices to annotation gene name
+        annotation_instances = get_annotation_gene_instances(
+            extract_dataframes, col_tokens
+        )
 
         # 6) Extract gene neighborhoods and store them in dataframes
         neighborhoods, neighborhood_indices = get_all_gene_neighborhoods(
             genomes_occurrence_dict_filtered,
             gbk_dataframes,
-            extraction_genes,
             num_neighbors,
             col_tokens,
+            annotation_instances,
         )
 
         # 7) Get the locus, protein, and gene name details for each neighborhood respectively for FNA file creation
@@ -887,14 +1029,14 @@ def extract_neighborhoods(
 
         # 10) Save gene neighborhoods and indices in textfile: needed for JSON representations downstream
         print("Generating neighborhood JSON representations...")
-        for AMR_gene, neighborhood_data in neighborhoods.items():
+        for gene, neighborhood_data in neighborhoods.items():
             # Get data needed to write JSON files
             neighborhood_JSON_dict = make_neighborhood_JSON_data(
-                neighborhood_data, AMR_gene, num_neighbors
+                neighborhood_data, neighborhood_indices, gene, num_neighbors
             )
 
             # Create JSON file
-            write_neighborhood_JSON(neighborhood_JSON_dict, AMR_gene, output_path)
+            write_neighborhood_JSON(neighborhood_JSON_dict, gene, output_path)
 
         make_gene_HTML(neighborhoods.keys(), html_template, output_path)
 
@@ -937,11 +1079,7 @@ def extract_neighborhoods(
 
         # 6) Extract gene neighborhoods and store them in dataframes
         neighborhoods, neighborhood_indices = get_all_gene_neighborhoods(
-            genomes_occurrence_dict_filtered,
-            gbk_dataframes,
-            input_file_data,
-            num_neighbors,
-            label_cols,
+            genomes_occurrence_dict_filtered, gbk_dataframes, num_neighbors, label_cols
         )
 
         # 7) Get the locus, protein, and gene name details for each neighborhood respectively for FNA file creation
@@ -972,7 +1110,7 @@ def extract_neighborhoods(
         for gene, neighborhood_data in neighborhoods.items():
             # Get data needed to write JSON files
             neighborhood_JSON_dict = make_neighborhood_JSON_data(
-                neighborhood_data, gene, num_neighbors
+                neighborhood_data, neighborhood_indices, gene, num_neighbors
             )
 
             # Create JSON file

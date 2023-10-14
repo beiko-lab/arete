@@ -2,7 +2,8 @@
 """
 Methods for generating JSON representations of extracted neighborhoods that can be used with clustermap.js.
 """
-
+import os
+import re
 import json
 import itertools
 import pandas as pd
@@ -68,7 +69,36 @@ def reverse_df(df, n_start, n_stop, gene_index):
     return swapped_df.copy(deep=True)
 
 
-def make_neighborhood_JSON_data(gene_neighborhoods_dict, gene, neighborhood_size):
+def get_focal_index(neighborhood_indices, num_neighbors):
+    """
+    Given a genome's neighborhood indices list as retrieved from the neighborhood_indices.txt output from extraction.py,
+    determines the index of the focal gene.
+    """
+    # Case 1: no upstream genes
+    if neighborhood_indices[0] == 0:
+        focal_gene_index = 0
+
+    # Case 2: no downstream genes
+    elif neighborhood_indices[1] == 0:
+        focal_gene_index = 0
+
+    # Case 3: full neighborhood
+    elif (
+        neighborhood_indices[0] == -num_neighbors
+        and neighborhood_indices[1] == num_neighbors
+    ):
+        focal_gene_index = (neighborhood_indices[1] * 2) // 2
+
+    # Case 4: at least one upstream, downstream gene
+    else:
+        focal_gene_index = abs(neighborhood_indices[0])
+
+    return focal_gene_index
+
+
+def make_neighborhood_JSON_data(
+    gene_neighborhoods_dict, neighborhood_indices, gene, neighborhood_size
+):
     """
     Creates dictionary of data required to write neighborhoods JSON file.
     This function should be run on the complete set of neighborhoods (i.e. for all AMR genes).
@@ -78,6 +108,7 @@ def make_neighborhood_JSON_data(gene_neighborhoods_dict, gene, neighborhood_size
 
     # CLUSTER DATA
     cluster_data = {}
+    reversed_genomes = {}
     unique_genes = []
 
     # Genome gene contig dict
@@ -87,7 +118,6 @@ def make_neighborhood_JSON_data(gene_neighborhoods_dict, gene, neighborhood_size
         neighborhood_data = {}
         contigs_dict = {}
 
-        # cluster_uids: Assign a random alphanumeric string of 36 characters for uid (as per clustermap.js examples),
         neighborhood_data["uid"] = generate_alphanumeric_string(36)
         neighborhood_data["name"] = genome_id
 
@@ -100,31 +130,41 @@ def make_neighborhood_JSON_data(gene_neighborhoods_dict, gene, neighborhood_size
         loci_data["start"] = df["Gene_Start"].min()
         loci_data["end"] = df["Gene_End"].max()
 
-        # cluster_loci: Key: uid (gene index in neighborhood), Values: (arr) gene name, start coord, end coord, strand
         genes_dict = {}
 
         indices = neighborhood_df.index.values.tolist()
 
         # Reverse the neighborhood representation if the focal gene is not oriented correctly
-        gene_index = int((len(indices) - 1) / 2)
+        indices = neighborhood_indices[gene][genome_id]
+        gene_index = get_focal_index(indices, neighborhood_size)
 
         if neighborhood_df["Gene_Strand"][gene_index] == -1:
             neighborhood_df = reverse_df(
                 neighborhood_df, loci_data["start"], loci_data["end"], gene_index
             )
+            indices = [-1 * indices[1], indices[0]]
+            reversed_genomes[genome_id] = True
+        else:
+            reversed_genomes[genome_id] = False
 
-        focal_gene_index = (neighborhood_size * 2 + 1) // 2
+        focal_gene_index = get_focal_index(indices, neighborhood_size)
+        neighborhood_df.reset_index(drop=True, inplace=True)
+
         for i in neighborhood_df.index:
             gene_data = {}
             gene_data["uid"] = neighborhood_df["Locus_Tag"][i].replace("'", "")
+            gene_data["name"] = neighborhood_df["Gene_Name"][i].replace('"', "")
+
+            # Add gene name to list for group names: if focal gene, ignore any extra annotation details
             if i == focal_gene_index:
                 if gene not in unique_genes:
                     unique_genes.append(gene)
-                gene_data["name"] = gene.replace('"', "")
             else:
-                gene_data["name"] = neighborhood_df["Gene_Name"][i].replace('"', "")
-            if gene_data["name"] not in unique_genes:
-                unique_genes.append(gene_data["name"])
+                if (
+                    gene not in gene_data["name"]
+                    and gene_data["name"] not in unique_genes
+                ):
+                    unique_genes.append(gene_data["name"])
             gene_data["start"] = neighborhood_df["Gene_Start"][i]
             gene_data["end"] = neighborhood_df["Gene_End"][i]
             gene_data["strand"] = neighborhood_df["Gene_Strand"][i]
@@ -146,18 +186,13 @@ def make_neighborhood_JSON_data(gene_neighborhoods_dict, gene, neighborhood_size
     # LINK DATA
     links_data = {}
 
-    # GROUPS DATA
-    groups_data = {}
     ind = 0
     for i in range(len(unique_genes)):
-        gene = unique_genes[i]
+        unique_gene = unique_genes[i]
         genomes = list(cluster_data.keys())
 
         # Ignore unidentified genes
-        if not gene.startswith("UID"):
-            group_data = {}
-            gene_group_list = []
-
+        if not unique_gene.startswith("UID"):
             for genome_1, genome_2 in itertools.combinations(genomes, 2):
                 link_data = {}
 
@@ -167,13 +202,19 @@ def make_neighborhood_JSON_data(gene_neighborhoods_dict, gene, neighborhood_size
                 genome_2_key = 0
 
                 for id in cluster_data[genome_1]["loci"]["genes"].keys():
-                    if gene in cluster_data[genome_1]["loci"]["genes"][id]["name"]:
+                    if (
+                        unique_gene
+                        in cluster_data[genome_1]["loci"]["genes"][id]["name"]
+                    ):
                         genome_1_presence = True
                         genome_1_key = id
                         break
 
                 for id in cluster_data[genome_2]["loci"]["genes"].keys():
-                    if gene in cluster_data[genome_2]["loci"]["genes"][id]["name"]:
+                    if (
+                        unique_gene
+                        in cluster_data[genome_2]["loci"]["genes"][id]["name"]
+                    ):
                         genome_2_presence = True
                         genome_2_key = id
                         break
@@ -198,43 +239,40 @@ def make_neighborhood_JSON_data(gene_neighborhoods_dict, gene, neighborhood_size
 
                     contig_1 = target["uid"]
                     contig_2 = query["uid"]
-                    link_data["uid"] = (
-                        str(genome_1)
-                        + "_"
-                        + contig_1
-                        + "-"
-                        + str(genome_2)
-                        + "_"
-                        + contig_2
-                    )
+                    link_data["uid"] = f"{genome_1}_{contig_1}|{genome_2}_{contig_2}"
                     link_data["target"] = target
                     link_data["query"] = query
-                    link_data["identity"] = 0.70
+                    if gene in target["name"] and gene in query["name"]:
+                        link_data["identity"] = 0
+                    else:
+                        link_data["identity"] = 0.70
 
                     links_data[ind] = link_data
                     ind += 1
 
-                if (
-                    genome_1_presence
-                    and not cluster_data[genome_1]["loci"]["genes"][genome_1_key]["uid"]
-                    in gene_group_list
-                ):
-                    gene_group_list.append(
-                        cluster_data[genome_1]["loci"]["genes"][genome_1_key]["uid"]
-                    )
-                if (
-                    genome_2_presence
-                    and not cluster_data[genome_2]["loci"]["genes"][genome_2_key]["uid"]
-                    in gene_group_list
-                ):
-                    gene_group_list.append(
-                        cluster_data[genome_2]["loci"]["genes"][genome_2_key]["uid"]
-                    )
+    # GROUPS DATA
+    groups_data = {}
+    group_id = 1
 
-            group_data["uid"] = "group" + str(i)
-            group_data["label"] = gene
-            group_data["genes"] = gene_group_list
-            groups_data[i] = group_data
+    for i in range(len(unique_genes)):
+        unique_gene = unique_genes[i]
+        genomes = list(cluster_data.keys())
+
+        # Ignore unidentified genes
+        if not unique_gene.startswith("UID"):
+            group_data = {}
+            gene_uids = set()
+            for genome in genomes:
+                for id in cluster_data[genome]["loci"]["genes"].keys():
+                    if unique_gene in cluster_data[genome]["loci"]["genes"][id]["name"]:
+                        gene_uids.add(cluster_data[genome]["loci"]["genes"][id]["uid"])
+
+            group_data["uid"] = f"group{group_id}"
+            group_data["label"] = unique_gene
+            group_data["genes"] = list(gene_uids)
+
+            groups_data[unique_gene] = group_data
+            group_id += 1
 
     neighborhood_json_data["links"] = links_data
     neighborhood_json_data["groups"] = groups_data
@@ -674,24 +712,161 @@ def load_JSON_data(output_path, gene, json_file="base"):
     return json_data, gene_path
 
 
-def update_JSON_links_PI(BLAST_df_dict, output_path):
+def add_UID_genes_links_groups(BLAST_df_dict, output_path):
+    """
+    Adds links between all unidentified genes. Initially sets PI to 0, as we update the PI (if found) at a later
+    step and otherwise delete the link.
+    """
+    json_dict = dict()
+    for gene, blast_files_dict in BLAST_df_dict.items():
+        # Load AMR gene JSON link data
+        json_data, gene_path = load_JSON_data(output_path, gene, json_file="temp")
+
+        # Fetch link data and determine number of existing links for counter
+        clusters = json_data["clusters"]
+        links = json_data["links"]
+
+        # Create a dictionary to store genes by name for each cluster
+        genes_by_name = {}
+
+        # Iterate over clusters and populate the dictionary
+        for cluster in clusters:
+            genes_by_name[cluster["name"]] = [
+                gene
+                for gene in cluster["loci"][0]["genes"]
+                if gene["name"].startswith("UID")
+            ]
+
+        # Iterate over every combination of clusters
+        for cluster_1, cluster_2 in itertools.combinations(clusters, 2):
+            genes_1 = genes_by_name[cluster_1["name"]]
+            genes_2 = genes_by_name[cluster_2["name"]]
+
+            # Iterate over unidentified genes and add temporary link between all unique combinations
+            for gene_1 in genes_1:
+                for gene_2 in genes_2:
+                    link_uid = f"{cluster_1['name']}_{gene_1['uid']}|{cluster_2['name']}_{gene_2['uid']}"
+
+                    # Create a new link object
+                    link = {
+                        "uid": link_uid,
+                        "target": {"uid": gene_1["uid"], "name": gene_1["name"]},
+                        "query": {"uid": gene_2["uid"], "name": gene_2["name"]},
+                        "identity": "0",
+                    }
+
+                    # Add the link to the links list
+                    links.append(link)
+
+        # Update links
+        json_data["links"] = links
+        json_dict[gene] = json_data
+
+    return json_dict
+
+
+def update_UID_groups(json_data):
+    """
+    Adds groups for unidentified genes so they can be toggled in clustermap legend.
+    """
+    # Create a list of unidentified genes across all clusters
+    unidentified_genes_by_genome = dict()
+    unidentified_genes = []
+    for cluster in json_data["clusters"]:
+        for gene in cluster["loci"][0]["genes"]:
+            if gene["name"].startswith("UID"):
+                unidentified_genes.append(gene)
+                unidentified_genes_by_genome[gene["uid"]] = cluster["name"]
+
+    # Create a shallow copy, candidate_genes, to avoid iterating over genes already added to a group
+    candidate_genes = unidentified_genes[:]
+
+    group_index = len(json_data["groups"]) + 1
+    uid_group_index = 1
+    for unidentified_gene in unidentified_genes:
+        if unidentified_gene in candidate_genes:
+            # Keep track of UID genes that are 70% or more identical
+            group_genes = []
+            unidentified_gene_uid = unidentified_gene["uid"]
+
+            # Check links for percent identity >= 0.70
+            for link in json_data["links"]:
+                query_uid = link["query"]["uid"]
+                target_uid = link["target"]["uid"]
+
+                query_name = link["query"]["name"]
+                target_name = link["target"]["name"]
+
+                if (
+                    unidentified_gene_uid == query_uid
+                    and target_name.startswith("UID")
+                    and unidentified_genes_by_genome[query_uid]
+                    != unidentified_genes_by_genome[target_uid]
+                ) or (
+                    unidentified_gene_uid == target_uid
+                    and query_name.startswith("UID")
+                    and unidentified_genes_by_genome[target_uid]
+                    != unidentified_genes_by_genome[query_uid]
+                ):
+                    # Add both genes to the new UID group if similar enough
+                    if link["identity"] >= 0.70:
+                        group_genes.append(target_uid)
+                        group_genes.append(query_uid)
+
+                        # Remove genes from candidate genes list
+                        if query_name in candidate_genes:
+                            candidate_genes.remove(query_name)
+                        if target_name in candidate_genes:
+                            candidate_genes.remove(target_name)
+
+            # Create a new group if group_genes is not empty
+            if group_genes:
+                group = {
+                    "uid": f"group{group_index}",
+                    "label": f"UID Group {uid_group_index}",
+                    "genes": list(set(group_genes)),
+                }
+                json_data["groups"].append(group)
+                group_index += 1
+                uid_group_index += 1
+
+    return json_data
+
+
+def make_assembly_dict(assembly_path):
+    """
+    Makes dictionary consisting of assembly file names with keys as the filename without the file extension, values
+    as the full filename.
+    """
+    faa_dict = {}
+    for filename in assembly_path:
+        key = filename.split(".")[0]
+        faa_dict[key] = filename
+
+    return faa_dict
+
+
+def update_JSON_links_PI(BLAST_df_dict, json_dict, output_path):
     """
     Updates JSON representations of AMR gene neighborhoods created using extraction module so that gene cluster links
     reflect percent identities found in blast results.
     """
     for gene, blast_files_dict in BLAST_df_dict.items():
         # Load AMR gene JSON link data
-        json_data, original_gene_path = load_JSON_data(
+        old_json_data, original_gene_path = load_JSON_data(
             output_path, gene, json_file="temp"
         )
+        json_data = json_dict[gene]
         original_gene_path = Path(original_gene_path)
 
         final_gene_path = output_path + "/JSON/" + gene + ".json"
 
         # Update each link according to the respective blast results
+        updated_links = []
         for i in range(len(json_data["links"])):
+            val_error_flag = False
             # Contig identifiers
-            locus_data = json_data["links"][i]["uid"].split("-")
+            locus_data = json_data["links"][i]["uid"].split("|")
             locus_1 = locus_data[0].split("_")
             locus_2 = locus_data[1].split("_")
             locus_tag_1 = locus_1[1] + "_" + locus_1[2]
@@ -719,8 +894,17 @@ def update_JSON_links_PI(BLAST_df_dict, output_path):
                 PI = row.get_column("PI").item()
             except ValueError:
                 PI = 0.70
+                val_error_flag = True
 
-            json_data["links"][i]["identity"] = PI
+            # Delete links between annotated focal genes that are not homologous
+            if not (json_data["links"][i]["identity"] == "0" and val_error_flag):
+                json_data["links"][i]["identity"] = PI
+                updated_links.append(json_data["links"][i])
+
+        json_data["links"] = updated_links
+
+        # Update UID group
+        json_data = update_UID_groups(json_data)
 
         # Overwrite JSON file with updated data
         with open(final_gene_path, "w") as outfile:
@@ -758,15 +942,13 @@ def order_cluster_data_by_dendrogram(genome_order_dict, json_cluster_data):
     return clusters
 
 
-def order_JSON_clusters_UPGMA(
-    output_path, gene, upgma_clusters, genome_to_num_mapping, surrogates=False
-):
+def order_JSON_clusters_UPGMA(output_path, gene, upgma_clusters, genome_to_num_mapping):
     """
     Reorders how genomes are encoded in their respective JSON files for an AMR gene according to how they
     were clustered by UPGMA (from left to right).
     """
     # Load AMR gene JSON cluster data
-    json_data, gene_path = load_JSON_data(output_path, gene, surrogates)
+    json_data, gene_path = load_JSON_data(output_path, gene)
 
     # Reorder cluster data genomes according to UPGMA leaves ordering
     genome_order = map_genome_id_to_dendrogram_leaves(
@@ -810,7 +992,7 @@ def clean_json_data(json_data):
     gene_links = []
     for link in json_data["links"]:
         # Get both genome names
-        genome_contig_details = link["uid"].split("-")
+        genome_contig_details = link["uid"].split("|")
         genome_1 = genome_contig_details[0].split("_")[0]
         genome_2 = genome_contig_details[1].split("_")[0]
 

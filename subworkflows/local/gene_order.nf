@@ -19,6 +19,7 @@ workflow GENE_ORDER {
     // Optional extraction params
     num_neighbors = params.num_neighbors
     percent_cutoff = params.gene_order_percent_cutoff
+    label_cols = params.gene_order_label_cols ? params.gene_order_label_cols : 'None'
 
     // Optional clustering params
     inflation = params.inflation
@@ -31,7 +32,8 @@ workflow GENE_ORDER {
         gbkFiles,
         file(params.gene_order_html_template),
         num_neighbors,
-        percent_cutoff
+        percent_cutoff,
+        label_cols
     )
 
     // Keep only columns required for clustering module
