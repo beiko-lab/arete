@@ -511,14 +511,34 @@ def write_neighborhood_JSON(
         outfile.write("}\n")
 
 
-def write_clustermap_JSON_HTML(gene, sample_data_path, out_path, rep_type="standard"):
+def get_JSON_specific_configs(json_filename, json_path):
+    """
+    Determines values for json filepath and clustermap chart height to write to JSON HTML file.
+    """
+    json_file_path = f'\t\td3.json("{json_filename}")\n'
+
+    with open(json_path, "r") as infile:
+        if len(infile.readlines()) != 0:
+            infile.seek(0)
+            json_data = json.load(infile)
+
+    num_clusters = len(json_data["clusters"])
+
+    # Calculate optimal canvas height as proportional to number of genomes
+    height = int(64.67 * num_clusters + 100)
+    height_px = str(height) + "px"
+    if height < 900:
+        height_px = "100vh"
+
+    return json_file_path, height_px
+
+
+def write_clustermap_JSON_HTML(gene, out_path, rep_type="standard"):
     """
     Generates accompanying HTML file for clustermap compatible JSON representation of neighborhood.
     Creates standalone HTML file for each respective type of neighborhood representation (e.g. standard,
     surrogates, or with representative UPGMA cluster) in case user wants to load individual visualizations.
     """
-    json_filename = ""
-    html_filename = ""
 
     if rep_type == "upgma":
         json_filename = f"{gene}_upgma.json"
@@ -532,54 +552,123 @@ def write_clustermap_JSON_HTML(gene, sample_data_path, out_path, rep_type="stand
 
     json_path = f"{out_path}/JSON/{json_filename}"
     file_path = f"{out_path}/JSON/{html_filename}"
-    second_line = f'\t\td3.json("{json_filename}")\n'
 
-    # Make HTML index file with appropriate JSON
-    with open(file_path, "w") as html_outfile, open(sample_data_path) as template:
-        for line in template:
-            if "height: 100vh;" in line:
-                # Determine number of genomes present
-                with open(json_path, "r") as infile:
-                    if len(infile.readlines()) != 0:
-                        infile.seek(0)
-                        json_data = json.load(infile)
-                num_clusters = len(json_data["clusters"])
+    json_file_path, height_px = get_JSON_specific_configs(json_filename, json_path)
 
-                # Calculate optimal canvas height as proportional to number of genomes
-                height = int(64.67 * num_clusters + 100)
-                height_px = str(height) + "px"
-                if height < 900:
-                    height_px = "100vh"
-                html_outfile.write("\t\t\t\theight: {};\n".format(height_px))
-            else:
-                html_outfile.write(line)
+    # Write HTML contents to file to represent clustermap chart for the gene
+    html_content = """\
+    <!DOCTYPE html>
+    <html>
+        <head>
+            <meta charset="utf-8">
+            <title>cmap</title>
+            <script src="../dist/d3.min.js"></script>
+            <style>
+                body {{ margin: 0; padding: 0; }}
+                div {{
+                    width: 100vw;
+                    height: {height_value};
+                    margin: 0;
+                    padding: 0;
+                }}
+            </style>
+        </head>
+        <body>
+            <main>
+                <button id="btn-save-svg">Save</button>
+                <div id="plot"></div>
+            </main>
+        </body>
+        <script type="module">
+            import clusterMap from "../src/clusterMap.js"
+            function serialise(svg) {{
+                /* Saves the figure to SVG in its current state.
+                 * Clones the provided SVG and sets the width/height of the clone to the
+                 * bounding box of the original SVG. Thus, downloaded figures will be sized
+                 * correctly.
+                 * This function returns a new Blob, which can then be downloaded.
+                */
+                let node = svg.node();
+                const xmlns = "http://www.w3.org/2000/xmlns/";
+                const xlinkns = "http://www.w3.org/1999/xlink";
+                const svgns = "http://www.w3.org/2000/node";
+                const bbox = svg.select("g").node().getBBox()
+                node = node.cloneNode(true);
+                node.setAttribute("width", bbox.width);
+                node.setAttribute("height", bbox.height);
+                node.setAttributeNS(xmlns, "xmlns", svgns);
+                node.setAttributeNS(xmlns, "xmlns:xlink", xlinkns);
+                // Adjust x/y of <g> to account for axis/title position.
+                // Replaces the transform attribute, so drag/zoom is ignored.
+                d3.select(node)
+                    .select("g")
+                    .attr("transform", `translate({{Math.abs(bbox.x)}}, {{Math.abs(bbox.y)}})`)
+                const serializer = new window.XMLSerializer;
+                const string = serializer.serializeToString(node);
+                return new Blob([string], {{type: "image/node+xml"}});
+            }}
+            function download(blob, filename) {{
+                /* Downloads a given blob to filename.
+                 * This function appends a new anchor to the document, which points to the
+                 * supplied blob. The anchor.click() method is called to trigger the download,
+                 * then the anchor is removed.
+                */
+                const link = document.createElement("a");
+                link.href = URL.createObjectURL(blob);
+                link.download = filename;
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+            }}
+            const div = d3.select("#plot")
+                .attr("width", "2400vw")
+                .attr("height", "{height_value}")
+            const chart = clusterMap()
+                .config({{
+                    cluster: {{
+                        alignLabels: true
+                    }},
+                    gene: {{
+                        label: {{
+                            show: false,
+                        }}
+                    }},
+                    link: {{
+                        threshold: 0.3,
+                        bestOnly: true,
+                    }}
+                }})
+            d3.json("{path_to_json}")
+                    .then(data => {{
+                        div.selectAll("div")
+                            .data([data])
+                            .join("div")
+                            .call(chart)
+                        let svg = div.select("svg")
+                        d3.select("#btn-save-svg")
+                            .on("click", () => {{
+                                const blob = serialise(svg)
+                                download(blob, "clinker.svg")
+                            }})
+                    }})
+        </script>
+    </html>
+    """
 
-        html_outfile.write("\n")
-        html_outfile.write(second_line)
-        html_outfile.write("\t\t\t.then(data => {\n")
-        html_outfile.write('\t\t\t\tdiv.selectAll("div")\n')
-        html_outfile.write("\t\t\t\t\t.data([data])\n")
-        html_outfile.write('\t\t\t\t\t.join("div")\n')
-        html_outfile.write("\t\t\t\t\t.call(chart)\n\n")
-        html_outfile.write('\t\t\t\tlet svg = div.select("svg")\n')
-        html_outfile.write('\t\t\t\td3.select("#btn-save-svg")\n')
-        html_outfile.write('\t\t\t\t\t.on("click", () => {\n')
-        html_outfile.write("\t\t\t\t\t\tconst blob = serialise(svg)\n")
-        html_outfile.write('\t\t\t\t\t\tdownload(blob, "clinker.svg")\n')
-        html_outfile.write("\t\t\t\t\t})\n")
-        html_outfile.write("\t\t\t})\n")
-        html_outfile.write("\t</script>\n")
-        html_outfile.write("</html>")
+    with open(file_path, "w") as html_outfile:
+        html_outfile.write(
+            html_content.format(height_value=height_px, path_to_json=json_file_path)
+        )
 
 
-def make_gene_HTML(genes_list, sample_data_path, out_path):
+def make_gene_HTML(genes_list, out_path):
     """
     For each AMR gene for which a JSON file was created, generates an accompanying HTML file for rendering its gene
     order visualization using clustermap with. This is done for each gene individually.
     """
     for gene in genes_list:
         # Make HTML index file with appropriate JSON
-        write_clustermap_JSON_HTML(gene, sample_data_path, out_path)
+        write_clustermap_JSON_HTML(gene, out_path)
 
 
 def get_cluster_data_genes_uid_list(json_cluster_data, genome_ids):
@@ -1044,6 +1133,4 @@ def make_representative_UPGMA_cluster_JSON(
         json.dump(final_json_data, outfile)
 
     # Make respective HTML file for Coeus
-    write_clustermap_JSON_HTML(
-        gene, output_path + "/index.html", output_path, rep_type="upgma"
-    )
+    write_clustermap_JSON_HTML(gene, output_path, rep_type="upgma")

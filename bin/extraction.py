@@ -70,13 +70,6 @@ def parse_args(args=None):
         " be saved.",
     )
     parser.add_argument(
-        "-w",
-        dest="HTML_TEMPLATE",
-        metavar="html_template",
-        type=str,
-        help="Path to HTML template.",
-    )
-    parser.add_argument(
         "-n",
         metavar="n",
         type=int,
@@ -887,7 +880,6 @@ def extract_neighborhoods(
     extract_path,
     gbk_path,
     output_path,
-    html_template,
     num_neighbors,
     cutoff_percent,
     label_cols=None,
@@ -1038,7 +1030,7 @@ def extract_neighborhoods(
             # Create JSON file
             write_neighborhood_JSON(neighborhood_JSON_dict, gene, output_path)
 
-        make_gene_HTML(neighborhoods.keys(), html_template, output_path)
+        make_gene_HTML(neighborhoods.keys(), output_path)
 
         with open(output_path + "/" + "neighborhood_indices.json", "w+") as outfile:
             outfile.write(json.dumps(neighborhood_indices, indent=4, sort_keys=True))
@@ -1116,7 +1108,7 @@ def extract_neighborhoods(
             # Create JSON file
             write_neighborhood_JSON(neighborhood_JSON_dict, gene, output_path)
 
-        make_gene_HTML(neighborhoods.keys(), html_template, output_path)
+        make_gene_HTML(neighborhoods.keys(), output_path)
 
         with open(output_path + "/" + "neighborhood_indices.txt", "w+") as outfile:
             outfile.write(str(neighborhood_indices))
@@ -1137,7 +1129,6 @@ def main(args=None):
         args.EXTRACT_PATH,
         args.GBK_PATH,
         args.OUTPUT_PATH,
-        args.HTML_TEMPLATE,
         args.n,
         args.p,
         args.c,

@@ -30,7 +30,6 @@ workflow GENE_ORDER {
         file(params.input_file_path),
         rgiFiles,
         gbkFiles,
-        file(params.gene_order_html_template),
         num_neighbors,
         percent_cutoff,
         label_cols
