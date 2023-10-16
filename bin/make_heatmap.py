@@ -17,6 +17,20 @@ def parse_args(args=None):
     parser = argparse.ArgumentParser(description=Description, epilog=Epilog)
     parser.add_argument("FILE_IN", help="Input distances file.")
     parser.add_argument("FILE_OUT", help="Output plot.")
+    parser.add_argument(
+        "-c",
+        "--core_threshold",
+        dest="CORE_THRESH",
+        type=float,
+        help="Core genome threshold",
+    )
+    parser.add_argument(
+        "-a",
+        "--accessory_threshold",
+        dest="ACC_THRESH",
+        type=float,
+        help="Accessory threshold",
+    )
     return parser.parse_args(args)
 
 
@@ -56,9 +70,20 @@ def make_heatmap(file_in, file_out):
     plt.savefig(file_out)
 
 
+def filter_genomes(file_in, core, acc):
+    df = pd.read_table(file_in)
+
+    to_remove = df[(df["Core"] * 100 <= core) & (df["Accessory"] * 100 <= acc)][
+        "Query"
+    ].drop_duplicates()
+
+    to_remove.to_csv("removed_genomes.txt", sep="\t", index=False)
+
+
 def main(args=None):
     args = parse_args(args)
     make_heatmap(args.FILE_IN, args.FILE_OUT)
+    filter_genomes(args.FILE_IN, args.CORE_THRESH, args.ACC_THRESH)
 
 
 if __name__ == "__main__":

@@ -1,4 +1,4 @@
-process MAKE_HEATMAP {
+process MAKE_HEATMAP_AND_FILTER {
     label 'process_low'
 
     conda (params.enable_conda ? "conda-forge::seaborn=0.12.2" : null)
@@ -8,13 +8,19 @@ process MAKE_HEATMAP {
 
     input:
     path distances
+    val core
+    val accessory
 
     output:
     path("thresholds_heatmap.pdf"), emit: plot
+    path("removed_genomes.txt"), emit: removed_genomes
 
     script:
     """
-    make_heatmap.py ${distances} thresholds_heatmap.pdf
+    make_heatmap.py ${distances} \\
+        thresholds_heatmap.pdf \\
+        --core_threshold $core \\
+        --accessory_threshold $accessory
     """
 
     stub:
