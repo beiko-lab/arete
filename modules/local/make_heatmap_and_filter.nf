@@ -14,6 +14,7 @@ process MAKE_HEATMAP_AND_FILTER {
     output:
     path("thresholds_heatmap.pdf"), emit: plot
     path("removed_genomes.txt"), emit: removed_genomes
+    path("genome_mappings.tsv"), emit: mappings
 
     script:
     """
@@ -26,5 +27,7 @@ process MAKE_HEATMAP_AND_FILTER {
     stub:
     """
     touch thresholds_heatmap.pdf
+    touch removed_genomes.txt
+    touch genome_mappings.tsv
     """
 }

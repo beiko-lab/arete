@@ -73,11 +73,20 @@ def make_heatmap(file_in, file_out):
 def filter_genomes(file_in, core, acc):
     df = pd.read_table(file_in)
 
-    to_remove = df[(df["Core"] * 100 <= core) & (df["Accessory"] * 100 <= acc)][
-        "Query"
-    ].drop_duplicates()
+    filtered_df = df[(df["Core"] * 100 <= core) & (df["Accessory"] * 100 <= acc)]
 
-    to_remove.to_csv("removed_genomes.txt", sep="\t", index=False)
+    filtered_df["Query"].drop_duplicates().to_csv(
+        "removed_genomes.txt", sep="\t", index=False
+    )
+
+    # Create a mapping of genomes in "Reference" to genomes in "Query"
+    genome_mapping = {
+        row["Reference"]: row["Query"] for _, row in filtered_df.iterrows()
+    }
+
+    mapping_df = pd.DataFrame(list(genome_mapping.items()), columns=["Kept", "Removed"])
+
+    mapping_df.to_csv("genome_mappings.tsv", sep="\t", index=False)
 
 
 def main(args=None):
