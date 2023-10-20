@@ -84,8 +84,23 @@ def filter_genomes(file_in, core, acc):
         row["Reference"]: row["Query"] for _, row in filtered_df.iterrows()
     }
 
-    mapping_df = pd.DataFrame(list(genome_mapping.items()), columns=["Kept", "Removed"])
+    # Create a dictionary to store the mapping of genomes
+    genome_mapping = {}
 
+    # Iterate through the DataFrame
+    for _, row in df.iterrows():
+        query_genome = row["Query"]
+        reference_genome = row["Reference"]
+        core_value = row["Core"]
+        accessory_value = row["Accessory"]
+
+        if core_value * 100 <= core and accessory_value * 100 <= acc:
+            if query_genome in genome_mapping:
+                genome_mapping[query_genome].append(reference_genome)
+            else:
+                genome_mapping[query_genome] = [reference_genome]
+
+    mapping_df = pd.DataFrame(list(genome_mapping.items()), columns=["Kept", "Removed"])
     mapping_df.to_csv("genome_mappings.tsv", sep="\t", index=False)
 
 
