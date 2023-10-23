@@ -37,6 +37,7 @@ include { ANNOTATION } from './workflows/arete'
 include { PHYLO } from './workflows/arete'
 include { QUALITYCHECK } from './workflows/arete'
 include { POPPUNK } from './workflows/arete'
+include { RUN_RSPR } from './workflows/arete'
 
 
 //
@@ -68,6 +69,9 @@ workflow poppunk {
     POPPUNK()
 }
 
+workflow rspr {
+    RUN_RSPR()
+}
 /*
 ========================================================================================
     RUN ALL WORKFLOWS
