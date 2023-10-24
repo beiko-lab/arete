@@ -12,8 +12,7 @@ process PPANGGOLIN_MSA {
     tuple val(meta), path(pangenome)
 
     output:
-    tuple val(meta), path("${prefix}_msa")    , emit: results
-    path "${prefix}_msa/msa_all_protein/*.aln", emit: alignments
+    path "ppanggolin_msa/msa_all_protein/*.aln", emit: alignments
     path "versions.yml"                       , emit: versions
 
     when:
@@ -23,12 +22,14 @@ process PPANGGOLIN_MSA {
     def args = task.ext.args ?: ''
     prefix = task.ext.prefix ?: "${meta.id}"
     """
+    cp $pangenome copied_pangenome.h5
+
     ppanggolin \\
         msa \\
         $args \\
         --cpu $task.cpus \\
-        --pangenome $pangenome \\
-        --output "${prefix}"_msa \\
+        --pangenome copied_pangenome.h5 \\
+        --output ppanggolin_msa \\
         --partition all
 
     cat <<-END_VERSIONS > versions.yml
