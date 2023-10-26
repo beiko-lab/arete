@@ -38,6 +38,7 @@ ch_multiqc_logo            = params.multiqc_logo   ? Channel.fromPath( params.mu
 include { INPUT_CHECK } from '../subworkflows/local/input_check'
 include { PHYLO_INPUT_CHECK } from '../subworkflows/local/phylo_input_check'
 include { ANNOTATION_INPUT_CHECK } from '../subworkflows/local/annotation_input_check'
+include { RSPR_INPUT_CHECK } from '../subworkflows/local/rspr_input_check'
 include { ASSEMBLE_SHORTREADS } from '../subworkflows/local/assembly'
 include { ANNOTATE_ASSEMBLIES } from '../subworkflows/local/annotation'
 include { CHECK_ASSEMBLIES } from '../subworkflows/local/assemblyqc'
@@ -46,6 +47,7 @@ include { RUN_POPPUNK } from '../subworkflows/local/poppunk'
 include { RECOMBINATION } from '../subworkflows/local/recombination'
 include { SUBSET_GENOMES } from '../subworkflows/local/subsample'
 include { EVOLCCM } from '../subworkflows/local/evolccm'
+include { RSPR } from '../subworkflows/local/rspr'
 /*
 ========================================================================================
     IMPORT NF-CORE MODULES/SUBWORKFLOWS
@@ -227,6 +229,14 @@ workflow ARETE {
             EVOLCCM (
                 PHYLOGENOMICS.out.core_tree,
                 ANNOTATE_ASSEMBLIES.out.feature_profile
+            )
+        }
+
+        if (params.run_rspr) {
+            RSPR (
+                PHYLOGENOMICS.out.core_tree,
+                PHYLOGENOMICS.out.gene_trees,
+                ANNOTATE_ASSEMBLIES.out.annotation
             )
         }
     }
@@ -447,6 +457,14 @@ workflow ANNOTATION {
                 ANNOTATE_ASSEMBLIES.out.feature_profile
             )
         }
+
+        if (params.run_rspr) {
+            RSPR (
+                PHYLOGENOMICS.out.core_tree,
+                PHYLOGENOMICS.out.gene_trees,
+                ANNOTATE_ASSEMBLIES.out.annotation
+            )
+        }
     }
 
     CUSTOM_DUMPSOFTWAREVERSIONS (
@@ -571,6 +589,23 @@ workflow POPPUNK {
 
     CUSTOM_DUMPSOFTWAREVERSIONS (
         ch_software_versions.unique().collectFile(name: 'collated_versions.yml')
+    )
+}
+
+
+workflow RUN_RSPR {
+    if (params.input_sample_table) { ch_input = Channel.of(file(params.input_sample_table)) } else { exit 1, 'Input samplesheet not specified!' }
+    if (params.core_gene_tree) { ch_core = file(params.core_gene_tree) } else { exit 1, 'Core tree not specified!' }
+    ch_annotation_data = params.concatenated_annotation ? file(params.concatenated_annotation) : []
+
+    RSPR_INPUT_CHECK (
+        ch_input
+    )
+
+    RSPR (
+        ch_core,
+        RSPR_INPUT_CHECK.out.trees,
+        ch_annotation_data
     )
 }
 

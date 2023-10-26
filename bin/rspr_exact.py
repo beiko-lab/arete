@@ -18,6 +18,7 @@ import seaborn as sns
 ### RETURN a list that contains values for all the defined arguments.
 #####################################################################
 
+
 def parse_args(args=None):
     Description = "Run rspr"
     Epilog = "Example usage: rspr.py INPUT_DIR_PATH"
@@ -45,33 +46,11 @@ def parse_args(args=None):
         "-mst",
         "--max_support_threshold",
         dest="MAX_SUPPORT_THRESHOLD",
-        type=int,
+        type=float,
         default=0.7,
         help="Maximum support threshold",
     )
     return parser.parse_args(args)
-
-
-# def make_heatmap(results, output_path):
-#     print("Generating heatmap")
-#     data = (
-#         results.groupby(["tree_size", "exact_drSPR"]).size().reset_index(name="count")
-#     )
-#     data_pivot = data.pivot(
-#         index="exact_drSPR", columns="tree_size", values="count"
-#     ).fillna(0)
-#     sns.heatmap(
-#         data_pivot.loc[sorted(data_pivot.index, reverse=True)], annot=True, fmt=".0f"
-#     ).set(title="Number of trees")
-#     plt.xlabel("Tree size")
-#     plt.ylabel("Exact rSPR distance")
-#     plt.savefig(output_path)
-
-
-# def make_heatmap_from_csv(input_path, output_path):
-#     print("Generating heatmap from CSV")
-#     results = pd.read_csv(input_path)
-#     make_heatmap(results, output_path)
 
 
 #####################################################################
@@ -80,6 +59,7 @@ def parse_args(args=None):
 ### text: rspr output text
 ### RETURN exact rspr distance
 #####################################################################
+
 
 def extract_exact_distance(text):
     for line in text.splitlines():
@@ -96,6 +76,7 @@ def extract_exact_distance(text):
 ### min_branch_len: minimum branch length
 ### max_support_threshold: maximum branching support threshold
 #####################################################################
+
 
 def fpt_rspr(results_df, min_branch_len=0, max_support_threshold=0.7):
     print("Calculating exact distance")
@@ -129,10 +110,8 @@ def main(args=None):
     fpt_rspr(results, args.MIN_BRANCH_LENGTH, args.MAX_SUPPORT_THRESHOLD)
 
     group = results["group_name"].unique()[0]
-    res_path = f"exact_output_{group}.csv"
-    results.to_csv(res_path, index=True)
-    # fig_path = os.path.join(phylo_dir, "exact_output.png")
-    # make_heatmap(results, fig_path)
+    res_path = f"exact_output_{group}.tsv"
+    results.fillna(value="NULL").to_csv(res_path, sep="\t", index=True)
 
     # From CSV
     """

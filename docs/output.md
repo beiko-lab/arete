@@ -38,6 +38,7 @@ The pipeline is built using [Nextflow](https://www.nextflow.io/) and processes d
 - [Dynamics](#dynamics)
 
       - [_EvolCCM_](#evolccm) - Community Coevolution
+      - [_rSPR_](#rSPR) - rooted subtree-prune-and-regraft distances
       - [_Recombination_](#recombination)
 
           - [_Verticall_](#verticall) - Conduct pairwise assembly comparisons between genomes in a same PopPUNK cluster
@@ -292,6 +293,15 @@ See [the PPanGGoLiN documentation](https://github.com/labgem/PPanGGOLiN/wiki/Out
       - `EvolCCM_*tre`
 
 [EvolCCM](https://github.com/beiko-lab/evolCCM) is the R implementation for CCM (Community Coevolution Model)
+
+#### _rSPR_
+
+- `dynamics/rSPR/`
+
+      - `approx` - Approximate rSPR distances
+      - `exact` - Exact rSPR distances
+
+[rSPR](https://github.com/cwhidden/rspr) is a software package for calculating rooted subtree-prune-and-regraft distances and rooted agreement forests.
 
 ### _Recombination_
 

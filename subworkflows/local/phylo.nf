@@ -93,9 +93,11 @@ workflow PHYLOGENOMICS{
         /*
         * Maximum likelihood core gene tree.
         */
+        gene_trees = Channel.empty()
         if (use_fasttree){
             def is_nt = params.use_ppanggolin ? false : true
             GENE_FASTTREE(chunked_alignments, is_nt)
+            GENE_FASTTREE.out.phylogeny.set { gene_trees }
             ch_software_versions = ch_software_versions.mix(GENE_FASTTREE.out.versions.ifEmpty(null))
 
             CORE_FASTTREE(ch_core_alignment, is_nt)
@@ -119,4 +121,5 @@ workflow PHYLOGENOMICS{
         phylo_software = ch_software_versions
         all_alignments = ch_all_alignments
         core_tree = core_tree
+        gene_trees = gene_trees
 }

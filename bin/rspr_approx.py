@@ -4,6 +4,7 @@
 
 import sys
 import os
+import re
 from pathlib import Path
 import argparse
 import subprocess
@@ -21,6 +22,7 @@ import seaborn as sns
 ### RETURN a list that contains values for all the defined arguments.
 #####################################################################
 
+
 def parse_args(args=None):
     Description = "Run rspr"
     Epilog = "Example usage: rspr.py CORE_TREE GENE_TREES"
@@ -28,6 +30,13 @@ def parse_args(args=None):
     parser.add_argument("-c", "--core", dest="CORE_TREE", help="Core tree")
     parser.add_argument(
         "-a", "--acc", dest="GENE_TREES", nargs="+", help="Gene tree list"
+    )
+    parser.add_argument(
+        "-ann",
+        "--annotation",
+        dest="ANNOTATION",
+        help="Annotation table from BAKTA/PROKKA",
+        nargs="?",
     )
     parser.add_argument(
         "-o", "--output", dest="OUTPUT_DIR", default="approx", help="Gene tree list"
@@ -52,11 +61,18 @@ def parse_args(args=None):
         "-mst",
         "--max_support_threshold",
         dest="MAX_SUPPORT_THRESHOLD",
-        type=int,
+        type=float,
         default=0.7,
         help="Maximum support threshold",
     )
     return parser.parse_args(args)
+
+
+def read_tree(input_path):
+    with open(input_path, "r") as f:
+        tree_string = f.read()
+        formatted = re.sub(r";[^:]+:", ":", tree_string)
+        return Tree(formatted)
 
 
 #####################################################################
@@ -67,8 +83,9 @@ def parse_args(args=None):
 ### RETURN rooted tree and tree size
 #####################################################################
 
+
 def root_tree(input_path, output_path):
-    tre = Tree(input_path)
+    tre = read_tree(input_path)
     midpoint = tre.get_midpoint_outgroup()
     tre.set_outgroup(midpoint)
     if not os.path.exists(os.path.dirname(output_path)):
@@ -79,7 +96,7 @@ def root_tree(input_path, output_path):
 
 #####################################################################
 ### FUNCTION ROOT_TREE
-### Root all the unrooted input trees in directory 
+### Root all the unrooted input trees in directory
 ### core_tree: path of the core tree
 ### gene_trees: input gene tree directory path
 ### output_dir: output directory path
@@ -87,6 +104,7 @@ def root_tree(input_path, output_path):
 ### merge_pair: boolean to check whether to merge coer tree and gene tree in a single file
 ### RETURN path of the rooted gene trees directory
 #####################################################################
+
 
 def root_trees(core_tree, gene_trees, output_dir, results, merge_pair=False):
     print("Rooting trees")
@@ -121,6 +139,7 @@ def root_trees(core_tree, gene_trees, output_dir, results, merge_pair=False):
 ### RETURN approx rspr distance
 #####################################################################
 
+
 def extract_approx_distance(text):
     for line in text.splitlines():
         if "approx drSPR=" in line:
@@ -137,6 +156,7 @@ def extract_approx_distance(text):
 ### min_branch_len: minimum branch length
 ### max_support_threshold: maximum branching support threshold
 #####################################################################
+
 
 def approx_rspr(
     rooted_gene_trees_path, results, min_branch_len=0, max_support_threshold=0.7
@@ -166,6 +186,7 @@ def approx_rspr(
 ### output_path: output path for storing the heatmap
 #####################################################################
 
+
 def make_heatmap(results, output_path):
     print("Generating heatmap")
     data = (
@@ -188,6 +209,7 @@ def make_heatmap(results, output_path):
 ### min_limit: minimum approx rspr distance for the first group
 ### RETURN groups of trees
 #####################################################################
+
 
 def make_groups(results, min_limit=10):
     print("Generating groups")
@@ -235,6 +257,25 @@ def make_heatmap_from_csv(input_path, output_path):
     make_heatmap(results, output_path)
 
 
+def join_annotation_data(df, annotation_data):
+    ann_df = pd.read_table(annotation_data, dtype={"genome_id": "str"})
+    ann_df.columns = map(str.lower, ann_df.columns)
+    ann_df.columns = ann_df.columns.str.replace(" ", "_")
+    ann_subset = ann_df[["gene", "product"]]
+
+    df["tree_name"] = [f.split(".")[0] for f in df["file_name"]]
+
+    merged = df.merge(ann_subset, how="left", left_on="tree_name", right_on="gene")
+
+    if merged["gene"].isnull().all():
+        ann_subset = ann_df[["locus_tag", "gene", "product"]]
+        merged = df.merge(
+            ann_subset, how="left", left_on="tree_name", right_on="locus_tag"
+        )
+
+    return merged.fillna(value="NULL").drop("tree_name", axis=1).drop_duplicates()
+
+
 def main(args=None):
     args = parse_args(args)
 
@@ -255,9 +296,11 @@ def main(args=None):
     make_heatmap(results, fig_path)
 
     results.reset_index("file_name", inplace=True)
-    res_path = os.path.join(args.OUTPUT_DIR, "output.csv")
+    if args.ANNOTATION:
+        results = join_annotation_data(results, args.ANNOTATION)
+    res_path = os.path.join(args.OUTPUT_DIR, "output.tsv")
     df_with_groups = make_groups_from_csv(results, args.MIN_RSPR_DISTANCE)
-    df_with_groups.to_csv(res_path, index=False)
+    df_with_groups.to_csv(res_path, sep="\t", index=False)
     groups = df_with_groups["group_name"].unique()
     grouped_dfs = [
         df_with_groups[df_with_groups["group_name"] == group] for group in groups
