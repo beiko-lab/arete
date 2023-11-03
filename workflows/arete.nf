@@ -609,6 +609,16 @@ workflow RUN_RSPR {
     )
 }
 
+workflow RUN_EVOLCCM {
+    if (params.core_gene_tree) { ch_core = file(params.core_gene_tree) } else { exit 1, 'Core tree not specified!' }
+    if (params.feature_profile) { ch_input = file(params.feature_profile) } else { exit 1, 'Input feature profile not specified!' }
+
+    EVOLCCM (
+        ch_core,
+        ch_input
+    )
+}
+
 /*
 ========================================================================================
     COMPLETION EMAIL AND SUMMARY

@@ -38,6 +38,7 @@ include { PHYLO } from './workflows/arete'
 include { QUALITYCHECK } from './workflows/arete'
 include { POPPUNK } from './workflows/arete'
 include { RUN_RSPR } from './workflows/arete'
+include { RUN_EVOLCCM } from './workflows/arete'
 
 
 //
@@ -71,6 +72,10 @@ workflow poppunk {
 
 workflow rspr {
     RUN_RSPR()
+}
+
+workflow evolccm {
+    RUN_EVOLCCM()
 }
 /*
 ========================================================================================
