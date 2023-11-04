@@ -10,7 +10,7 @@
             "type": "object",
             "fa_icon": "fas fa-terminal",
             "description": "Define where the pipeline should find input data and save output data.",
-            "required": ["input_sample_table"],
+            "required": [],
             "properties": {
                 "input_sample_table": {
                     "type": "string",
@@ -217,7 +217,7 @@
                 },
                 "accessory_similarity": {
                     "type": "number",
-                    "default": 99,
+                    "default": 99.0,
                     "fa_icon": "far fa-clone",
                     "description": "Similarity threshold for accessory genes"
                 }
