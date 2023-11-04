@@ -11,10 +11,6 @@ def summary_params = NfcoreSchema.paramsSummaryMap(workflow, params)
 def checkPathParamList = [ params.input_sample_table, params.multiqc_config, params.reference_genome ]
 for (param in checkPathParamList) { if (param) { file(param, checkIfExists: true) } }
 
-// Check mandatory parameters
-if (params.input_sample_table) { ch_input = file(params.input_sample_table) } else { exit 1, 'Input samplesheet not specified!' }
-
-
 /*
 ========================================================================================
     CONFIG FILES
