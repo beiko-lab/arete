@@ -11,10 +11,6 @@ def summary_params = NfcoreSchema.paramsSummaryMap(workflow, params)
 def checkPathParamList = [ params.input_sample_table, params.multiqc_config, params.reference_genome ]
 for (param in checkPathParamList) { if (param) { file(param, checkIfExists: true) } }
 
-// Check mandatory parameters
-if (params.input_sample_table) { ch_input = file(params.input_sample_table) } else { exit 1, 'Input samplesheet not specified!' }
-
-
 /*
 ========================================================================================
     CONFIG FILES
@@ -606,6 +602,16 @@ workflow RUN_RSPR {
         ch_core,
         RSPR_INPUT_CHECK.out.trees,
         ch_annotation_data
+    )
+}
+
+workflow RUN_EVOLCCM {
+    if (params.core_gene_tree) { ch_core = file(params.core_gene_tree) } else { exit 1, 'Core tree not specified!' }
+    if (params.feature_profile) { ch_input = file(params.feature_profile) } else { exit 1, 'Input feature profile not specified!' }
+
+    EVOLCCM (
+        ch_core,
+        ch_input
     )
 }
 

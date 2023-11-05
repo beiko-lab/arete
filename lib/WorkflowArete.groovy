@@ -66,11 +66,6 @@ class WorkflowArete {
         // Check the hostnames against configured profiles
         NfcoreTemplate.hostName(workflow, params, log)
 
-        // Check input has been provided
-        if (!params.input_sample_table) {
-            log.error "Please provide an input samplesheet to the pipeline e.g. '--input_sample_table samplesheet.csv'"
-            System.exit(1)
-        }
     }
 
     //
