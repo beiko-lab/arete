@@ -208,6 +208,18 @@ ED178	0	1
 ED180	0	0
 ```
 
+### Recombination Entry
+
+To execute the recombination analysis on pre-existing assemblies (PopPUNK model can be either bgmm, dbscan, refine, threshold or lineage):
+
+```bash
+nextflow run beiko-lab/ARETE \
+  -entry recombination \
+  --input_sample_table samplesheet.csv \
+  --poppunk_model dbscan \
+  -profile docker
+```
+
 ## Updating the pipeline
 
 When you run the above command, Nextflow automatically pulls the pipeline code from GitHub and stores it as a cached version. When running the pipeline after this, it will always use the cached version if available - even if the pipeline has been updated since. To make sure that you're running the latest version of the pipeline, make sure that you regularly update the cached version of the pipeline:

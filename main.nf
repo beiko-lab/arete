@@ -39,7 +39,7 @@ include { QUALITYCHECK } from './workflows/arete'
 include { POPPUNK } from './workflows/arete'
 include { RUN_RSPR } from './workflows/arete'
 include { RUN_EVOLCCM } from './workflows/arete'
-
+include { RUN_RECOMBINATION } from './workflows/arete'
 
 //
 // WORKFLOW: Run main nf-core/arete analysis pipeline
@@ -76,6 +76,10 @@ workflow rspr {
 
 workflow evolccm {
     RUN_EVOLCCM()
+}
+
+workflow recombination {
+    RUN_RECOMBINATION()
 }
 /*
 ========================================================================================
