@@ -68,7 +68,6 @@ workflow GENE_ORDER {
     	inflation,
     	epsilon,
         minpts,
-        file(params.gene_order_html_template),
         params.plot_clustering
     )
 
