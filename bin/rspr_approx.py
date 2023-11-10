@@ -36,6 +36,7 @@ def parse_args(args=None):
         "--annotation",
         dest="ANNOTATION",
         help="Annotation table from BAKTA/PROKKA",
+        nargs="?",
     )
     parser.add_argument(
         "-o", "--output", dest="OUTPUT_DIR", default="approx", help="Gene tree list"
@@ -295,7 +296,8 @@ def main(args=None):
     make_heatmap(results, fig_path)
 
     results.reset_index("file_name", inplace=True)
-    results = join_annotation_data(results, args.ANNOTATION)
+    if args.ANNOTATION:
+        results = join_annotation_data(results, args.ANNOTATION)
     res_path = os.path.join(args.OUTPUT_DIR, "output.tsv")
     df_with_groups = make_groups_from_csv(results, args.MIN_RSPR_DISTANCE)
     df_with_groups.to_csv(res_path, sep="\t", index=False)

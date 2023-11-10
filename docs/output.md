@@ -296,6 +296,8 @@ See [the PPanGGoLiN documentation](https://github.com/labgem/PPanGGOLiN/wiki/Out
 
 #### _rSPR_
 
+The outputs are approximate and exact Subtree Prune and Regraft (rSPR) distances between pairs of rooted phylogenetic trees. Each CSV file contains these distances and the tree sizes. The PNG files are heatmaps of these distances and their respective tree sizes.
+
 - `dynamics/rSPR/`
 
       - `approx` - Approximate rSPR distances

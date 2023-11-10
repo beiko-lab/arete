@@ -11,10 +11,6 @@ def summary_params = NfcoreSchema.paramsSummaryMap(workflow, params)
 def checkPathParamList = [ params.input_sample_table, params.multiqc_config, params.reference_genome ]
 for (param in checkPathParamList) { if (param) { file(param, checkIfExists: true) } }
 
-// Check mandatory parameters
-if (params.input_sample_table) { ch_input = file(params.input_sample_table) } else { exit 1, 'Input samplesheet not specified!' }
-
-
 /*
 ========================================================================================
     CONFIG FILES
@@ -38,6 +34,7 @@ ch_multiqc_logo            = params.multiqc_logo   ? Channel.fromPath( params.mu
 include { INPUT_CHECK } from '../subworkflows/local/input_check'
 include { PHYLO_INPUT_CHECK } from '../subworkflows/local/phylo_input_check'
 include { ANNOTATION_INPUT_CHECK } from '../subworkflows/local/annotation_input_check'
+include { RSPR_INPUT_CHECK } from '../subworkflows/local/rspr_input_check'
 include { ASSEMBLE_SHORTREADS } from '../subworkflows/local/assembly'
 include { ANNOTATE_ASSEMBLIES } from '../subworkflows/local/annotation'
 include { CHECK_ASSEMBLIES } from '../subworkflows/local/assemblyqc'
@@ -595,6 +592,97 @@ workflow POPPUNK {
     )
 }
 
+
+workflow RUN_RSPR {
+    if (params.input_sample_table) { ch_input = Channel.of(file(params.input_sample_table)) } else { exit 1, 'Input samplesheet not specified!' }
+    if (params.core_gene_tree) { ch_core = file(params.core_gene_tree) } else { exit 1, 'Core tree not specified!' }
+    ch_annotation_data = params.concatenated_annotation ? file(params.concatenated_annotation) : []
+
+    RSPR_INPUT_CHECK (
+        ch_input
+    )
+
+    RSPR (
+        ch_core,
+        RSPR_INPUT_CHECK.out.trees,
+        ch_annotation_data
+    )
+}
+
+workflow RUN_EVOLCCM {
+    if (params.core_gene_tree) { ch_core = file(params.core_gene_tree) } else { exit 1, 'Core tree not specified!' }
+    if (params.feature_profile) { ch_input = file(params.feature_profile) } else { exit 1, 'Input feature profile not specified!' }
+
+    EVOLCCM (
+        ch_core,
+        ch_input
+    )
+}
+
+workflow RUN_RECOMBINATION {
+    if (params.input_sample_table){ ch_input = file(params.input_sample_table) } else { exit 1, 'Input samplesheet not specified!' }
+    if (params.reference_genome) {
+        ch_reference_genome = file(params.reference_genome)
+        use_reference_genome = true
+        }
+    else {
+        ch_reference_genome = []
+        use_reference_genome = false
+    }
+    if (params.poppunk_model == null) { exit 1, 'A model must be specified with --poppunk_model in order to run PopPunk' }
+    ch_software_versions = Channel.empty()
+
+    ANNOTATION_INPUT_CHECK(ch_input)
+    ANNOTATION_INPUT_CHECK.out.genomes.set { assemblies }
+
+    CHECK_ASSEMBLIES(
+        assemblies,
+        ch_reference_genome,
+        use_reference_genome
+    )
+    ch_software_versions = ch_software_versions.mix(CHECK_ASSEMBLIES.out.assemblyqc_software)
+
+    if (params.apply_filtering) {
+        CHECK_ASSEMBLIES.out.assemblies
+            .set { assemblies }
+    }
+
+    RUN_POPPUNK(assemblies)
+    ch_software_versions = ch_software_versions.mix(RUN_POPPUNK.out.poppunk_version)
+
+
+    RECOMBINATION (
+        assemblies,
+        RUN_POPPUNK.out.clusters,
+        CHECK_ASSEMBLIES.out.quast_report
+    )
+
+    CUSTOM_DUMPSOFTWAREVERSIONS (
+        ch_software_versions.unique().collectFile(name: 'collated_versions.yml')
+    )
+
+    /*
+     * MODULE: MultiQC
+     */
+    workflow_summary    = WorkflowArete.paramsSummaryMultiqc(workflow, summary_params)
+    ch_workflow_summary = Channel.value(workflow_summary)
+
+    //Mix QUAST results into one report file
+    ch_multiqc_files = Channel.empty()
+    ch_multiqc_files = ch_multiqc_files.mix(ch_workflow_summary.collectFile(name: 'workflow_summary_mqc.yaml'))
+    ch_multiqc_files = ch_multiqc_files.mix(CUSTOM_DUMPSOFTWAREVERSIONS.out.mqc_yml.collect())
+    ch_multiqc_files = ch_multiqc_files.mix(CHECK_ASSEMBLIES.out.multiqc)
+
+    MULTIQC(
+        ch_multiqc_files.collect(),
+        ch_multiqc_config.collect().ifEmpty([]),
+        ch_multiqc_custom_config.collect().ifEmpty([]),
+        ch_multiqc_logo.collect().ifEmpty([])
+    )
+    multiqc_report       = MULTIQC.out.report.toList()
+    ch_software_versions = ch_software_versions.mix(MULTIQC.out.versions.ifEmpty(null))
+
+}
 /*
 ========================================================================================
     COMPLETION EMAIL AND SUMMARY
