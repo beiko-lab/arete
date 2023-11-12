@@ -126,6 +126,8 @@
     </li>
         </ul>
     </li>
+    <li class="toctree-l2"><a class="reference internal" href="#gene-order">Gene Order</a>
+    </li>
     <li class="toctree-l2"><a class="reference internal" href="#pipeline-information">Pipeline information</a>
         <ul>
     <li class="toctree-l3"><a class="reference internal" href="#multiqc">MultiQC</a>
@@ -232,6 +234,9 @@
 </ul>
 </li>
 </ul>
+</li>
+<li>
+<p><a href="#gene-order"><em>Gene Order</em></a></p>
 </li>
 <li>
 <p><a href="#phylogenomics-and-pangenomics">Phylogenomics and Pangenomics</a></p>
@@ -571,6 +576,18 @@ in bacterial and archaeal genomes based on the presence of dinucleotide biases a
 </li>
 </ul>
 <p><a href="https://github.com/nickjcroucher/gubbins">Gubbins</a> is an algorithm that iteratively identifies loci containing elevated densities of base substitutions while concurrently constructing a phylogeny based on the putative point mutations outside of these regions.</p>
+<h2 id="gene-order"><em>Gene Order</em></h2>
+<ul>
+<li>
+<p><code>gene-order/</code></p>
+<ul>
+<li><code>extraction/</code> - AMR genes of interest and their neighborhoods extracted from the assemblies.</li>
+<li><code>diamond/</code> - Pairwise alignments between all input genomes.</li>
+<li><code>clustering/</code> - Similarity and distance matrices for each AMR gene clustered via UPGMA, MCL and DBSCAN to identify similarities between their neighborhoods across all genomes.</li>
+</ul>
+</li>
+</ul>
+<p>Gene Order is a subworkflow for bacterial gene order analysis, with outputs easily explorable through its partner visualization application <a href="https://github.com/JTL-lab/Coeus">Coeus</a>.</p>
 <h2 id="pipeline-information">Pipeline information</h2>
 <ul>
 <li>

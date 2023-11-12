@@ -81,6 +81,8 @@
     </li>
     <li class="toctree-l2"><a class="reference internal" href="#poppunk">PopPUNK</a>
     </li>
+    <li class="toctree-l2"><a class="reference internal" href="#gene-order">Gene Order</a>
+    </li>
     <li class="toctree-l2"><a class="reference internal" href="#recombination">Recombination</a>
     </li>
     <li class="toctree-l2"><a class="reference internal" href="#dynamics">Dynamics</a>
@@ -142,7 +144,7 @@
 <td>Path to comma-separated file containing information about the samples in the experiment. <details><summary>Help</summary><small>You will need to create a design file with information about the samples in your experiment before running the pipeline. Use this parameter to specify its location. It has to be a comma-separated file with 3 columns, and a header row.</small></details></td>
 <td><code>string</code></td>
 <td></td>
-<td>True</td>
+<td></td>
 <td></td>
 </tr>
 <tr>
@@ -444,7 +446,87 @@
 <td><code>accessory_similarity</code></td>
 <td>Similarity threshold for accessory genes</td>
 <td><code>number</code></td>
-<td>99</td>
+<td>99.0</td>
+<td></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<h2 id="gene-order">Gene Order</h2>
+<p>Parameters for the Gene Order Subworkflow</p>
+<table>
+<thead>
+<tr>
+<th>Parameter</th>
+<th>Description</th>
+<th>Type</th>
+<th>Default</th>
+<th>Required</th>
+<th>Hidden</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>run_gene_order</code></td>
+<td>Whether to run the Gene Order subworkflow</td>
+<td><code>boolean</code></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td><code>gene_order_percent_cutoff</code></td>
+<td>Cutoff percentage of genomes a gene should be present within to be included in extraction and subsequent analysis. Should a float between 0 and 1 (e.g., 0.25 means only genes present in a minimum of 25% of genomes are kept).</td>
+<td><code>number</code></td>
+<td>0.25</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td><code>gene_order_label_cols</code></td>
+<td>If using annotation files predicting features, list of space separated column names to be added to the gene names</td>
+<td><code>string</code></td>
+<td>None</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td><code>num_neighbors</code></td>
+<td>Neighborhood size to extract. Should be an even number N, such that N/2 neighbors upstream and N/2 neighbors downstream will be analyzed.</td>
+<td><code>integer</code></td>
+<td>10</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td><code>inflation</code></td>
+<td>Inflation hyperparameter value for Markov Clustering Algorithm.</td>
+<td><code>integer</code></td>
+<td>2</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td><code>epsilon</code></td>
+<td>Epsilon hyperparameter value for DBSCAN clustering.</td>
+<td><code>number</code></td>
+<td>0.5</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td><code>minpts</code></td>
+<td>Minpts hyperparameter value for DBSCAN clustering.</td>
+<td><code>integer</code></td>
+<td>5</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td><code>plot_clustering</code></td>
+<td>Create Clustering HTML Plots</td>
+<td><code>boolean</code></td>
+<td></td>
 <td></td>
 <td></td>
 </tr>
