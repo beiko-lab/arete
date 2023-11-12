@@ -45,6 +45,8 @@ The pipeline is built using [Nextflow](https://www.nextflow.io/) and processes d
           - [_SKA2_](#ska2) - Generate a whole-genome FASTA alignment for each genome within a cluster.
           - [_Gubbins_](#gubbins) - Detection of recombination events within genomes of the same cluster.
 
+- [_Gene Order_](#gene-order)
+
 - [Phylogenomics and Pangenomics](#phylogenomics-and-pangenomics)
 
       - [Panaroo](#panaroo) or [_PPanGGoLiN_](#ppanggolin) - Pangenome alignment
@@ -330,6 +332,16 @@ The outputs are approximate and exact Subtree Prune and Regraft (rSPR) distances
       - `cluster_*/` - Gubbins results for the genomes within this PopPUNK cluster.
 
 [Gubbins](https://github.com/nickjcroucher/gubbins) is an algorithm that iteratively identifies loci containing elevated densities of base substitutions while concurrently constructing a phylogeny based on the putative point mutations outside of these regions.
+
+## _Gene Order_
+
+- `gene-order/`
+
+      - `extraction/` - AMR genes of interest and their neighborhoods extracted from the assemblies.
+      - `diamond/` - Pairwise alignments between all input genomes.
+      - `clustering/` - Similarity and distance matrices for each AMR gene clustered via UPGMA, MCL and DBSCAN to identify similarities between their neighborhoods across all genomes.
+
+Gene Order is a subworkflow for bacterial gene order analysis, with outputs easily explorable through its partner visualization application [Coeus](https://github.com/JTL-lab/Coeus).
 
 ## Pipeline information
 
