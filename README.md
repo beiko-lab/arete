@@ -88,7 +88,7 @@ The user can optionally subdivide their set of genomes into related lineages ide
 
 ### Gene order
 
-- Comparison of genomic neighbourhoods using the Gene Order Workflow ([`Gene Order Workflow`](https://github.com/JTL-lab/Gene-Order-Workflow)) (in progress)
+- Comparison of genomic neighbourhoods using the Gene Order Workflow ([`Gene Order Workflow`](https://github.com/JTL-lab/Gene-Order-Workflow))
 
 See our [roadmap](ROADMAP.md) for a full list of future development targets.
 

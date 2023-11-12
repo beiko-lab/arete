@@ -44,6 +44,7 @@ include { RECOMBINATION } from '../subworkflows/local/recombination'
 include { SUBSET_GENOMES } from '../subworkflows/local/subsample'
 include { EVOLCCM } from '../subworkflows/local/evolccm'
 include { RSPR } from '../subworkflows/local/rspr'
+include { GENE_ORDER } from '../subworkflows/local/gene_order'
 /*
 ========================================================================================
     IMPORT NF-CORE MODULES/SUBWORKFLOWS
@@ -235,6 +236,15 @@ workflow ARETE {
                 ANNOTATE_ASSEMBLIES.out.annotation
             )
         }
+    }
+
+    ////////////////////////// GENE ORDER /////////////////////////////////////
+    if (params.run_gene_order) {
+        GENE_ORDER (
+            ANNOTATE_ASSEMBLIES.out.faa,
+            ANNOTATE_ASSEMBLIES.out.gbk,
+            ANNOTATE_ASSEMBLIES.out.rgi,
+        )
     }
 
     CUSTOM_DUMPSOFTWAREVERSIONS (
@@ -446,21 +456,15 @@ workflow ANNOTATION {
     if (!params.skip_phylo) {
         PHYLOGENOMICS(gffs, use_full_alignment, use_fasttree)
         ch_software_versions = ch_software_versions.mix(PHYLOGENOMICS.out.phylo_software)
+    }
 
-        if (params.run_evolccm) {
-            EVOLCCM (
-                PHYLOGENOMICS.out.core_tree,
-                ANNOTATE_ASSEMBLIES.out.feature_profile
-            )
-        }
-
-        if (params.run_rspr) {
-            RSPR (
-                PHYLOGENOMICS.out.core_tree,
-                PHYLOGENOMICS.out.gene_trees,
-                ANNOTATE_ASSEMBLIES.out.annotation
-            )
-        }
+    ////////////////////////// GENE ORDER /////////////////////////////////////
+    if (params.run_gene_order) {
+        GENE_ORDER (
+            ANNOTATE_ASSEMBLIES.out.faa,
+            ANNOTATE_ASSEMBLIES.out.gbk,
+            ANNOTATE_ASSEMBLIES.out.rgi,
+        )
     }
 
     CUSTOM_DUMPSOFTWAREVERSIONS (

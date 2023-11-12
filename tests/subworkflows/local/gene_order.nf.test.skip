@@ -1,0 +1,45 @@
+nextflow_workflow {
+
+    name "Test Workflow GENE_ORDER"
+    script "subworkflows/local/gene_order.nf"
+    workflow "GENE_ORDER"
+
+    test("Should run without failures") {
+
+        when {
+            params {
+                input_file_path = "$baseDir/test/gene-order/rgi_input.txt"
+                gene_order_html_template = "$baseDir/test/gene-order/index.html"
+                outdir = "$outputDir"
+            }
+            workflow {
+                """
+                // Assemblies
+                input[0] = Channel.of(
+                    [[id:'SAMD00052607'], '$baseDir/test/gene-order/FAA/SAMD00052607.faa'],
+                    [[id:'SAMEA1486355'], '$baseDir/test/gene-order/FAA/SAMEA1486355.faa'],
+                )
+                // GBKs
+                input[1] = Channel.of(
+                    [[id:'SAMD00052607'], '$baseDir/test/gene-order/GBK/SAMD00052607.gbk'],
+                    [[id:'SAMEA1486355'], '$baseDir/test/gene-order/GBK/SAMEA1486355.gbk'],
+                )
+                // RGI outs
+                input[2] = Channel.of(
+                    [[id:'SAMD00052607'], '$baseDir/test/gene-order/RGI/SAMD00052607_rgi.txt'],
+                    [[id:'SAMEA1486355'], '$baseDir/test/gene-order/RGI/SAMEA1486355_rgi.txt'],
+                )
+                """
+            }
+        }
+
+        then {
+            assert workflow.success
+            assert workflow.trace.tasks().size() == 8
+            def surrogate_file = file("$outputDir/gene-order/clustering/JSON/surrogates/YajC_surrogates.txt").getText()
+            assert surrogate_file == "SAMD00052607: [SAMEA1486355]\n"
+        }
+
+    }
+
+}

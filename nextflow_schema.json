@@ -223,6 +223,58 @@
                 }
             }
         },
+        "gene_order": {
+            "title": "Gene Order",
+            "type": "object",
+            "description": "Parameters for the Gene Order Subworkflow",
+            "default": "",
+            "properties": {
+                "run_gene_order": {
+                    "type": "boolean",
+                    "description": "Whether to run the Gene Order subworkflow"
+                },
+                "input_file_path": {
+                    "type": "string",
+                    "default": "/home/jvfe/dev/dalhousie/arete/test/gene-order/rgi_input.txt",
+                    "hidden": true
+                },
+                "gene_order_percent_cutoff": {
+                    "type": "number",
+                    "default": 0.25,
+                    "description": "Cutoff percentage of genomes a gene should be present within to be included in extraction and subsequent analysis. Should a float between 0 and 1 (e.g., 0.25 means only genes present in a minimum of 25% of genomes are kept)."
+                },
+                "gene_order_label_cols": {
+                    "type": "string",
+                    "default": "None",
+                    "description": "If using annotation files predicting features, list of space separated column names to be added to the gene names"
+                },
+                "num_neighbors": {
+                    "type": "integer",
+                    "default": 10,
+                    "description": "Neighborhood size to extract. Should be an even number N, such that N/2 neighbors upstream and N/2 neighbors downstream will be analyzed."
+                },
+                "inflation": {
+                    "type": "integer",
+                    "default": 2,
+                    "description": "Inflation hyperparameter value for Markov Clustering Algorithm."
+                },
+                "epsilon": {
+                    "type": "number",
+                    "default": 0.5,
+                    "description": "Epsilon hyperparameter value for DBSCAN clustering."
+                },
+                "minpts": {
+                    "type": "integer",
+                    "default": 5,
+                    "description": "Minpts hyperparameter value for DBSCAN clustering."
+                },
+                "plot_clustering": {
+                    "type": "boolean",
+                    "description": "Create Clustering HTML Plots"
+                }
+            },
+            "fa_icon": "fas fa-sort-numeric-down"
+        },
         "recombination": {
             "title": "Recombination",
             "type": "object",
@@ -504,6 +556,9 @@
         },
         {
             "$ref": "#/definitions/poppunk"
+        },
+        {
+            "$ref": "#/definitions/gene_order"
         },
         {
             "$ref": "#/definitions/recombination"
