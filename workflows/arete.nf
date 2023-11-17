@@ -35,6 +35,7 @@ include { INPUT_CHECK } from '../subworkflows/local/input_check'
 include { PHYLO_INPUT_CHECK } from '../subworkflows/local/phylo_input_check'
 include { ANNOTATION_INPUT_CHECK } from '../subworkflows/local/annotation_input_check'
 include { RSPR_INPUT_CHECK } from '../subworkflows/local/rspr_input_check'
+include { GENEORDER_INPUT_CHECK } from '../subworkflows/local/geneorder_input_check'
 include { ASSEMBLE_SHORTREADS } from '../subworkflows/local/assembly'
 include { ANNOTATE_ASSEMBLIES } from '../subworkflows/local/annotation'
 include { CHECK_ASSEMBLIES } from '../subworkflows/local/assemblyqc'
@@ -682,6 +683,35 @@ workflow RUN_RECOMBINATION {
     multiqc_report       = MULTIQC.out.report.toList()
     ch_software_versions = ch_software_versions.mix(MULTIQC.out.versions.ifEmpty(null))
 
+}
+
+workflow RUN_GENE_ORDER {
+    if (params.input_sample_table){ ch_input = Channel.of(file(params.input_sample_table)) } else { exit 1, 'Input samplesheet not specified!' }
+
+    GENEORDER_INPUT_CHECK (
+        ch_input
+    )
+
+    GENEORDER_INPUT_CHECK.out.geneorder_input
+        .set { all_inputs }
+
+    all_inputs
+        .map { it -> [it[0], it[1]] }
+        .set { assemblies }
+
+    all_inputs
+        .map { it -> [it[0], it[2]] }
+        .set { gbks }
+
+    all_inputs
+        .map { it -> [it[0], it[3]] }
+        .set { rgis }
+
+    GENE_ORDER (
+        assemblies,
+        gbks,
+        rgis
+    )
 }
 /*
 ========================================================================================

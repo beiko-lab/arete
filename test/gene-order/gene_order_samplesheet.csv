@@ -1,0 +1,4 @@
+sample,fna_file_path,gbk,rgi
+SAMD00052607,test/gene-order/FAA/SAMD00052607.faa,test/gene-order/GBK/SAMD00052607.gbk,test/gene-order/RGI/SAMD00052607_rgi.txt
+SAMEA1466699,test/gene-order/FAA/SAMEA1466699.faa,test/gene-order/GBK/SAMEA1466699.gbk,test/gene-order/RGI/SAMEA1466699_rgi.txt
+SAMEA1486355,test/gene-order/FAA/SAMEA1486355.faa,test/gene-order/GBK/SAMEA1486355.gbk,test/gene-order/RGI/SAMEA1486355_rgi.txt
