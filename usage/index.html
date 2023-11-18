@@ -78,6 +78,8 @@
     </li>
     <li class="toctree-l3"><a class="reference internal" href="#recombination-entry">Recombination Entry</a>
     </li>
+    <li class="toctree-l3"><a class="reference internal" href="#gene-order-entry">Gene Order Entry</a>
+    </li>
         </ul>
     </li>
     <li class="toctree-l2"><a class="reference internal" href="#updating-the-pipeline">Updating the pipeline</a>
@@ -346,6 +348,21 @@ ED180   0   0
   --input_sample_table samplesheet.csv \
   --poppunk_model dbscan \
   -profile docker
+</code></pre>
+<h3 id="gene-order-entry">Gene Order Entry</h3>
+<p>To execute the Gene Order analysis on pre-existing assemblies and RGI annotations:</p>
+<pre><code class="language-bash">nextflow run beiko-lab/ARETE \
+  -entry gene_order \
+  --input_sample_table gene_order_samplesheet.csv \
+  -profile docker
+</code></pre>
+<ul>
+<li><code>--input_sample_table</code> - A samplesheet containing a fasta file, a genbank file and an RGI output file for each assembly:</li>
+</ul>
+<pre><code>sample,fna_file_path,gbk,rgi
+SAMD00052607,SAMD00052607.faa,SAMD00052607.gbk,SAMD00052607_rgi.txt
+SAMEA1466699,SAMEA1466699.faa,SAMEA1466699.gbk,SAMEA1466699_rgi.txt
+SAMEA1486355,SAMEA1486355.faa,SAMEA1486355.gbk,SAMEA1486355_rgi.txt
 </code></pre>
 <h2 id="updating-the-pipeline">Updating the pipeline</h2>
 <p>When you run the above command, Nextflow automatically pulls the pipeline code from GitHub and stores it as a cached version. When running the pipeline after this, it will always use the cached version if available - even if the pipeline has been updated since. To make sure that you're running the latest version of the pipeline, make sure that you regularly update the cached version of the pipeline:</p>
