@@ -220,6 +220,26 @@ nextflow run beiko-lab/ARETE \
   -profile docker
 ```
 
+### Gene Order Entry
+
+To execute the Gene Order analysis on pre-existing assemblies and RGI annotations:
+
+```bash
+nextflow run beiko-lab/ARETE \
+  -entry gene_order \
+  --input_sample_table gene_order_samplesheet.csv \
+  -profile docker
+```
+
+- `--input_sample_table` - A samplesheet containing a fasta file, a genbank file and an RGI output file for each assembly:
+
+```
+sample,fna_file_path,gbk,rgi
+SAMD00052607,SAMD00052607.faa,SAMD00052607.gbk,SAMD00052607_rgi.txt
+SAMEA1466699,SAMEA1466699.faa,SAMEA1466699.gbk,SAMEA1466699_rgi.txt
+SAMEA1486355,SAMEA1486355.faa,SAMEA1486355.gbk,SAMEA1486355_rgi.txt
+```
+
 ## Updating the pipeline
 
 When you run the above command, Nextflow automatically pulls the pipeline code from GitHub and stores it as a cached version. When running the pipeline after this, it will always use the cached version if available - even if the pipeline has been updated since. To make sure that you're running the latest version of the pipeline, make sure that you regularly update the cached version of the pipeline:
