@@ -74,8 +74,7 @@ def create_scatter(center, num_points):
     r = 1
     return [(center + r * np.cos(2 * np.pi / num_points * x), center + r * np.sin(2 * np.pi / num_points * x)) for x in range(num_points)]
 
-def generate_cluster_diagram(clusters, cluster_diagram_path):
-    #print("Generating cluster diagram")
+def generate_cluster_diagram(clusters, cluster_path):
     fig, ax = plt.subplots()
     
     cluster_idx = 1
@@ -91,44 +90,8 @@ def generate_cluster_diagram(clusters, cluster_diagram_path):
 
     ax.legend(loc='upper left')
     ax.set_title('Clusters Representation')
-    plt.savefig(cluster_diagram_path)
+    plt.savefig(cluster_path)
 
-def generate_cluster_heatmap(lst_tree_clusters, cluster_heatmap_path):
-    print("Generating cluster heatmap")
-    leaves = set(element for tree in lst_tree_clusters for cluster in tree for element in cluster)
-    leaves = sorted(list(leaves))
-    precentage_matrix = [[0 for _ in range(len(leaves))] for _ in range(len(leaves))]
-
-    total_trees = len(lst_tree_clusters)
-    for i, element1 in enumerate(leaves):
-        for j, element2 in enumerate(leaves):
-            if i < j:
-                total_element_trees = 0
-                element1_present = False
-                element2_present = False
-                count = 0
-                for tree in lst_tree_clusters:
-                    for cluster in tree:
-                        if element1 in cluster:
-                            element1_present = True
-                        if element2 in cluster:
-                            element2_present = True
-                        if element1 in cluster and element2 in cluster:
-                            count += 1
-                            break
-                    if element1_present and element2_present:
-                        total_element_trees+=1
-                percentage = (count / total_element_trees) * 100
-                precentage_matrix[i][j] = percentage
-                precentage_matrix[j][i] = percentage
-            elif i == j:
-                precentage_matrix[i][j] = 100
-
-    plt.figure()
-    sns.heatmap(precentage_matrix, annot=True, fmt=".0f").set(title="Cluster wise leaves distribution")
-    plt.xlabel("Leaves")
-    plt.ylabel("Leaves")
-    plt.savefig(cluster_heatmap_path)
 
 #####################################################################
 ### FUNCTION FPT_RSPR
@@ -150,10 +113,8 @@ def fpt_rspr(results_df, folder_path, min_branch_len=0, max_support_threshold=0.
         "-support " + str(max_support_threshold),
     ]
 
-    lst_tree_clusters = []
     trees_path = os.path.join(folder_path, "rooted_gene_trees")
     cluster_path = os.path.join(folder_path, "cluster_diagrams")
-    cluster_heatmap_path = os.path.join(folder_path, "cluster_heatmap.png")
     Path(cluster_path).mkdir(exist_ok=True)
 
     # Run this groups in parallel
@@ -194,14 +155,12 @@ def fpt_rspr(results_df, folder_path, min_branch_len=0, max_support_threshold=0.
                         clusters.append(cluster_nodes)
                     
                     output_lines.append(line)
-                #generate_cluster_diagram(clusters, cluster_diagram_path)
-                lst_tree_clusters.append(clusters)
+                generate_cluster_diagram(clusters, cluster_diagram_path)
                 process.wait()
                 full_output = ''.join(output_lines)
 
             dist = extract_exact_distance(full_output)
             results_df.loc[filename, "exact_drSPR"] = dist
-    generate_cluster_heatmap(lst_tree_clusters, cluster_heatmap_path)
 
 def main(args=None):
     args = parse_args(args)
