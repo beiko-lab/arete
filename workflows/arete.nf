@@ -231,9 +231,22 @@ workflow ARETE {
         }
 
         if (params.run_rspr) {
+            PHYLOGENOMICS.out.gene_trees
+                .flatten()
+                .map{it -> it.toString() }
+                .collectFile(newLine: true) { item ->
+                    ["${item}.txt",
+                    "sample,path\n" + item + ',' + item ]
+                }
+                .set { individual_sheets }
+
+            individual_sheets
+                .collectFile(name: 'gene_tree_paths.txt', skip:1 , keepHeader: true)
+                .set{ gene_tree_sheet }
+
             RSPR (
                 PHYLOGENOMICS.out.core_tree,
-                PHYLOGENOMICS.out.gene_trees,
+                gene_tree_sheet,
                 ANNOTATE_ASSEMBLIES.out.annotation
             )
         }

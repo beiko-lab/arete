@@ -29,7 +29,7 @@ def parse_args(args=None):
     parser = argparse.ArgumentParser(description=Description, epilog=Epilog)
     parser.add_argument("-c", "--core", dest="CORE_TREE", help="Core tree")
     parser.add_argument(
-        "-a", "--acc", dest="GENE_TREES", nargs="+", help="Gene tree samplesheet path"
+        "-a", "--acc", dest="GENE_TREES", help="Gene tree samplesheet path"
     )
     parser.add_argument(
         "-ann",

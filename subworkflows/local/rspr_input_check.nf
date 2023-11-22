@@ -4,8 +4,6 @@ workflow RSPR_INPUT_CHECK {
 
     main:
     samplesheet
-        .splitCsv(header: true)
-        .map { it -> get_sample_info_rspr(it.path) }
         .set { trees }
 
     emit:
