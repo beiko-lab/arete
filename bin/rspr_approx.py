@@ -29,7 +29,7 @@ def parse_args(args=None):
     parser = argparse.ArgumentParser(description=Description, epilog=Epilog)
     parser.add_argument("-c", "--core", dest="CORE_TREE", help="Core tree")
     parser.add_argument(
-        "-a", "--acc", dest="GENE_TREES", nargs="+", help="Gene tree list"
+        "-a", "--acc", dest="GENE_TREES", help="Gene tree samplesheet path"
     )
     parser.add_argument(
         "-ann",
@@ -98,7 +98,7 @@ def root_tree(input_path, output_path):
 ### FUNCTION ROOT_TREE
 ### Root all the unrooted input trees in directory
 ### core_tree: path of the core tree
-### gene_trees: input gene tree directory path
+### gene_trees: path of the csv file containing all the gene tree paths
 ### output_dir: output directory path
 ### results: dataframe of the results to store tree size
 ### merge_pair: boolean to check whether to merge coer tree and gene tree in a single file
@@ -106,7 +106,7 @@ def root_tree(input_path, output_path):
 #####################################################################
 
 
-def root_trees(core_tree, gene_trees, output_dir, results, merge_pair=False):
+def root_trees(core_tree, gene_trees_path, output_dir, results, merge_pair=False):
     print("Rooting trees")
     #'''
     reference_tree = core_tree
@@ -119,8 +119,9 @@ def root_trees(core_tree, gene_trees, output_dir, results, merge_pair=False):
     )
     refer_content, refer_tree_size = root_tree(reference_tree, rooted_reference_tree)
 
+    df_gene_trees = pd.read_csv(gene_trees_path)
     rooted_gene_trees_path = os.path.join(output_dir, "rooted_gene_trees")
-    for filename in gene_trees:
+    for filename in df_gene_trees["path"]:
         basename = Path(filename).name
         rooted_gene_tree_path = os.path.join(rooted_gene_trees_path, basename)
         gene_content, gene_tree_size = root_tree(filename, rooted_gene_tree_path)
