@@ -231,7 +231,8 @@ def get_heatmap_group_size(all_values, max_groups=15):
 
     multipliers = [2, 2.5, 2]
     cur_mul_idx = 0
-    while not (all_values/group_size) <= max_groups:
+    max_val = max(all_values)
+    while not (max_val/group_size) <= max_groups:
         group_size *= multipliers[cur_mul_idx]
         cur_mul_idx = (cur_mul_idx + 1) % len(multipliers)
     return int(group_size)
