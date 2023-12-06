@@ -224,7 +224,7 @@ def make_heatmap(results, output_path):
 ### max_size: maximum number of groups
 #####################################################################
 
-def get_group_size(all_values, max_groups=15):
+def get_heatmap_group_size(all_values, max_groups=15):
     group_size = 1
     if len(all_values) <= max_groups:
         return group_size
@@ -249,7 +249,7 @@ def make_group_heatmap(results, output_path):
     data = pd.crosstab(results["approx_drSPR"], results["tree_size"])
 
     all_tree_sizes = data.columns.astype('int32')
-    tree_group_size = get_group_size(all_tree_sizes)
+    tree_group_size = get_heatmap_group_size(all_tree_sizes)
     aggregated_df = pd.DataFrame()
     if tree_group_size > 1:
         for i in range(1, max(all_tree_sizes), tree_group_size):
@@ -260,7 +260,7 @@ def make_group_heatmap(results, output_path):
         aggregated_df = data
 
     all_distances = aggregated_df.index.astype('int32')
-    distance_group_size = get_group_size(all_distances)
+    distance_group_size = get_heatmap_group_size(all_distances)
     aggregated_row_df = pd.DataFrame(columns=aggregated_df.columns)
     if distance_group_size > 1:
         for i in range(1, max(all_distances), distance_group_size):
@@ -273,13 +273,68 @@ def make_group_heatmap(results, output_path):
     plt.figure(figsize=(14, 14))
     generate_heatmap(aggregated_row_df, output_path)
 
+
+#####################################################################
+### FUNCTION GENERATE_GROUP_SIZES
+### Generate groups sizes based on number of tree pairs avaialble
+### target_sum: total number of trees available
+### RETURN groups of trees
+#####################################################################
+
+def generate_group_sizes(target_sum, max_groups=500):
+    degree = 1
+    current_sum = 0
+    group_sizes = []
+    while current_sum < target_sum:
+        k = 0
+        current_sum = 0
+        group_sizes = []
+        while k < max_groups:
+            value = int(2 ** (k /(max_groups / degree)))
+            if value > 1e20:
+                break
+            group_sizes.append(value)
+            current_sum += value
+            k += 1
+        degree += 1
+    return group_sizes
+
+
+#####################################################################
+### FUNCTION MAKE_GROUPS
+### Generate groups of tree pairs based on the approx rspr distnace
+### results: the input results dataframe
+### RETURN groups of trees
+#####################################################################
+
+def make_groups_v1(results, min_limit=10):
+    print("Generating groups")
+    results["approx_drSPR"] = pd.to_numeric(results["approx_drSPR"])
+    min_group = results[results["approx_drSPR"] <= min_limit]["file_name"].tolist()
+    groups = defaultdict()
+    first_group = "group_0"
+    groups[first_group] = min_group
+
+    rem_results = results[results["approx_drSPR"] > min_limit].sort_values(
+        by="approx_drSPR", ascending=False
+    )
+    rem_length = len(rem_results)
+    group_sizes = generate_group_sizes(rem_length)
+    cur_index, grp_idx = 0, 0
+    while cur_index < rem_length:
+        cur_group_names = rem_results.iloc[cur_index : cur_index + group_sizes[grp_idx]]["file_name"].tolist()
+        groups[f"group_{grp_idx+1}"] = cur_group_names
+        cur_index += group_sizes[grp_idx]
+        grp_idx += 1
+    return groups
+
+
 #####################################################################
 ### FUNCTION MAKE_GROUPS
 ### Generate groups of tree pairs based on the approx rspr distnace
 ### min_limit: minimum approx rspr distance for the first group
 ### RETURN groups of trees
 #####################################################################
-
 
 def make_groups(results, min_limit=10):
     print("Generating groups")
@@ -309,7 +364,7 @@ def make_groups(results, min_limit=10):
 
 def make_groups_from_csv(input_df, min_limit):
     print("Generating groups from CSV")
-    groups = make_groups(input_df, min_limit)
+    groups = make_groups_v1(input_df, min_limit)
     tidy_data = [
         (key, val)
         for key, value in groups.items()
