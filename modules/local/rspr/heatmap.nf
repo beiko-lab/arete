@@ -21,6 +21,7 @@ process RSPR_HEATMAP {
     rspr_heatmap.py \\
         --dataframe $df \\
         -o exact_output.png \\
+        -go exact_group_output.png \\
         $args
     """
     stub:

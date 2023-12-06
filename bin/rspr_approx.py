@@ -181,12 +181,30 @@ def approx_rspr(
 
 
 #####################################################################
+### FUNCTION GENERATE_HEATMAP
+### Generate heatmap figure from frequency table
+### freq_table: frequency table of tree size and approx rspr distance
+### output_path: output path for storing the heatmap
+#####################################################################
+
+
+def generate_heatmap(freq_table, output_path):
+    print("Generating heatmap")
+    sns.heatmap(
+        freq_table, annot=True, fmt=".0f"
+    ).set(title="Number of trees")
+    plt.xlabel("Tree size")
+    plt.ylabel("Approx rSPR distance")
+    plt.savefig(output_path)
+    plt.clf()
+
+
+#####################################################################
 ### FUNCTION MAKE_HEATMAP
 ### Generate heatmap of tree size and approx rspr distance
 ### results: dataframe of the approx rspr distance and tree size
 ### output_path: output path for storing the heatmap
 #####################################################################
-
 
 def make_heatmap(results, output_path):
     print("Generating heatmap")
@@ -196,13 +214,64 @@ def make_heatmap(results, output_path):
     data_pivot = data.pivot(
         index="approx_drSPR", columns="tree_size", values="count"
     ).fillna(0)
-    sns.heatmap(
-        data_pivot.loc[sorted(data_pivot.index, reverse=True)], annot=True, fmt=".0f"
-    ).set(title="Number of trees")
-    plt.xlabel("Tree size")
-    plt.ylabel("Approx rSPR distance")
-    plt.savefig(output_path)
+    generate_heatmap(data_pivot.loc[sorted(data_pivot.index, reverse=True)], output_path)
 
+
+#####################################################################
+### FUNCTION GET_GROUP_SIZE
+### Get preferred group size for generating heatmap
+### all_tree_sizes: list of all values
+### max_size: maximum number of groups
+#####################################################################
+
+def get_group_size(all_values, max_groups=15):
+    group_size = 1
+    if len(all_values) <= max_groups:
+        return group_size
+
+    multipliers = [2, 2.5, 2]
+    cur_mul_idx = 0
+    while not (all_values/group_size) <= max_groups:
+        group_size *= multipliers[cur_mul_idx]
+        cur_mul_idx = (cur_mul_idx + 1) % len(multipliers)
+    return int(group_size)
+
+
+#####################################################################
+### FUNCTION MAKE_GROUP_HEATMAP
+### Generate heatmap of tree size and approx rspr distance groups
+### results: dataframe of the approx rspr distance and tree size groups
+### output_path: output path for storing the heatmap
+#####################################################################
+
+def make_group_heatmap(results, output_path):
+    print("Generating group heatmap")
+    data = pd.crosstab(results["approx_drSPR"], results["tree_size"])
+
+    all_tree_sizes = data.columns.astype('int32')
+    tree_group_size = get_group_size(all_tree_sizes)
+    aggregated_df = pd.DataFrame()
+    if tree_group_size > 1:
+        for i in range(1, max(all_tree_sizes), tree_group_size):
+            group_columns = [col for col in all_tree_sizes if i <= int(col) <= i + tree_group_size - 1]
+            group_sum = data[group_columns].sum(axis=1)
+            aggregated_df[f'{i}-{i+tree_group_size-1}'] = group_sum
+    else:
+        aggregated_df = data
+
+    all_distances = aggregated_df.index.astype('int32')
+    distance_group_size = get_group_size(all_distances)
+    aggregated_row_df = pd.DataFrame(columns=aggregated_df.columns)
+    if distance_group_size > 1:
+        for i in range(1, max(all_distances), distance_group_size):
+            group_rows = [row for row in all_distances if i <= int(row) <= i + distance_group_size - 1]
+            group_sum = aggregated_df.loc[group_rows].sum(axis=0)
+            aggregated_row_df.loc[f'{i}-{i+distance_group_size-1}'] = group_sum
+    else:
+        aggregated_row_df = aggregated_df
+
+    plt.figure(figsize=(14, 14))
+    generate_heatmap(aggregated_row_df, output_path)
 
 #####################################################################
 ### FUNCTION MAKE_GROUPS
@@ -295,6 +364,8 @@ def main(args=None):
     )
     fig_path = os.path.join(args.OUTPUT_DIR, "output.png")
     make_heatmap(results, fig_path)
+    group_fig_path = os.path.join(args.OUTPUT_DIR, "group_output.png")
+    make_group_heatmap(results, group_fig_path)
 
     results.reset_index("file_name", inplace=True)
     if args.ANNOTATION:
