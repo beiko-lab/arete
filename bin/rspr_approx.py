@@ -13,6 +13,7 @@ import pandas as pd
 from collections import defaultdict
 from matplotlib import pyplot as plt
 import seaborn as sns
+import tempfile
 
 
 #####################################################################
@@ -150,6 +151,30 @@ def extract_approx_distance(text):
 
 
 #####################################################################
+### FUNCTION RUN_APPROX_RSPR
+### Run approx rspr algorithm of set of input tree pairs
+### results: dataframe to store the approx rspr results
+### input_file: path of input trees
+### lst_filename: list of file names
+### rspr_path: path of rspr software
+#####################################################################
+
+def run_approx_rspr(results, input_file, lst_filename, rspr_path):
+    input_file.seek(0)
+    result = subprocess.run(
+        rspr_path, stdin=input_file, capture_output=True, text=True
+    )
+
+    cur_index = 0
+    for line in result.splitlines():
+        if "approx drSPR=" in line:
+            distance = line.split("approx drSPR=")[1].strip()
+            results.loc[lst_filename[cur_index], "approx_drSPR"] = distance
+            cur_index += 1
+    input_file.truncate()
+
+
+#####################################################################
 ### FUNCTION APPROX_RSPR
 ### Run approx rspr algorithm of set of input tree pairs
 ### rooted_gene_trees_path: path of the rooted gene trees directory
@@ -157,7 +182,6 @@ def extract_approx_distance(text):
 ### min_branch_len: minimum branch length
 ### max_support_threshold: maximum branching support threshold
 #####################################################################
-
 
 def approx_rspr(
     rooted_gene_trees_path, results, min_branch_len=0, max_support_threshold=0.7
@@ -170,14 +194,24 @@ def approx_rspr(
         "-length " + str(min_branch_len),
         "-support " + str(max_support_threshold),
     ]
-    for filename in os.listdir(rooted_gene_trees_path):
-        gene_tree_path = os.path.join(rooted_gene_trees_path, filename)
-        with open(gene_tree_path, "r") as infile:
-            result = subprocess.run(
-                rspr_path, stdin=infile, capture_output=True, text=True
-            )
-            dist = extract_approx_distance(result.stdout)
-            results.loc[filename, "approx_drSPR"] = dist
+    
+    group_size = 10000
+    cur_count = 1
+    lst_filename = []
+    with tempfile.TemporaryFile(mode='w+') as temp_file:
+        for filename in os.listdir(rooted_gene_trees_path):
+            lst_filename.append(filename)
+            if cur_count == group_size:
+                run_approx_rspr(results, temp_file, lst_filename, rspr_path)
+                lst_filename.clear()
+                cur_count = 0
+
+            gene_tree_path = os.path.join(rooted_gene_trees_path, filename)
+            with open(gene_tree_path, "r") as infile:
+                temp_file.write(infile.read() + "\n")
+            cur_count += 1
+        if cur_count > 0:
+            run_approx_rspr(results, temp_file, lst_filename, rspr_path)
 
 
 #####################################################################
