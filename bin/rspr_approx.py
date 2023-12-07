@@ -191,7 +191,7 @@ def approx_rspr(
 def generate_heatmap(freq_table, output_path):
     print("Generating heatmap")
     sns.heatmap(
-        freq_table, annot=True, fmt=".0f", cmap="crest"
+        freq_table, annot=True, fmt=".0f"
     ).set(title="Number of trees")
     plt.xlabel("Tree size")
     plt.ylabel("Approx rSPR distance")
