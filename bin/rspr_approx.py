@@ -190,6 +190,7 @@ def approx_rspr(
 
 def generate_heatmap(freq_table, output_path):
     print("Generating heatmap")
+    plt.figure(figsize=(12, 12))
     sns.heatmap(
         freq_table, annot=True, fmt=".0f"
     ).set(title="Number of trees")
@@ -273,8 +274,6 @@ def make_group_heatmap(results, output_path):
             aggregated_row_df.loc[f'{group_start}-{group_end}'] = group_sum
     else:
         aggregated_row_df = aggregated_df
-
-    plt.figure(figsize=(12, 12))
     generate_heatmap(aggregated_row_df, output_path)
 
 
