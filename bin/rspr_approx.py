@@ -247,7 +247,7 @@ def get_heatmap_group_size(all_values, max_groups=15):
 
 def make_group_heatmap(results, output_path, res_output_path):
     print("Generating group heatmap")
-    data = pd.crosstab(pd.to_numeric(results["approx_drSPR"]), results["tree_size"])
+    data = pd.crosstab(results["approx_drSPR"], results["tree_size"])
     data.to_csv(res_output_path, sep="\t", index=True)
 
     all_tree_sizes = data.columns.astype('int32')
@@ -311,7 +311,6 @@ def generate_group_sizes(target_sum, max_groups=500):
 
 def make_groups_v1(results, min_limit=10):
     print("Generating groups")
-    results["approx_drSPR"] = pd.to_numeric(results["approx_drSPR"])
     min_group = results[results["approx_drSPR"] <= min_limit]["file_name"].tolist()
     groups = defaultdict()
     first_group = "group_0"
@@ -340,7 +339,6 @@ def make_groups_v1(results, min_limit=10):
 
 def make_groups(results, min_limit=10):
     print("Generating groups")
-    results["approx_drSPR"] = pd.to_numeric(results["approx_drSPR"])
     min_group = results[results["approx_drSPR"] <= min_limit]["file_name"].tolist()
     groups = defaultdict()
     first_group = "group_0"
@@ -419,6 +417,7 @@ def main(args=None):
         args.MIN_BRANCH_LENGTH,
         args.MAX_SUPPORT_THRESHOLD,
     )
+    results["approx_drSPR"] = pd.to_numeric(results["approx_drSPR"])
     fig_path = os.path.join(args.OUTPUT_DIR, "output.png")
     make_heatmap(results, fig_path)
     group_fig_path = os.path.join(args.OUTPUT_DIR, "group_output.png")
