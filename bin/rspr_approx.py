@@ -190,6 +190,7 @@ def approx_rspr(
 
 def generate_heatmap(freq_table, output_path):
     print("Generating heatmap")
+    print(freq_table)
     sns.heatmap(
         freq_table, annot=True, fmt=".0f"
     ).set(title="Number of trees")
@@ -197,7 +198,6 @@ def generate_heatmap(freq_table, output_path):
     plt.ylabel("Approx rSPR distance")
     plt.savefig(output_path)
     plt.clf()
-
 
 #####################################################################
 ### FUNCTION MAKE_HEATMAP
@@ -277,7 +277,7 @@ def make_group_heatmap(results, output_path, res_output_path):
         aggregated_row_df = aggregated_df
 
     aggregated_row_df.to_csv(res_output_path, sep="\t", index=True)
-    plt.figure(figsize=(14, 14))
+    plt.figure(figsize=(12, 12))
     generate_heatmap(aggregated_row_df, output_path)
 
 
