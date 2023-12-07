@@ -248,7 +248,7 @@ def get_heatmap_group_size(all_values, max_groups=15):
 def make_group_heatmap(results, output_path, res_output_path):
     print("Generating group heatmap")
     data = pd.crosstab(results["approx_drSPR"], results["tree_size"])
-    data.to_csv(res_output_path, sep="\t", index=True)
+    #data.to_csv(res_output_path, sep="\t", index=True)
 
     all_tree_sizes = data.columns.astype('int32')
     tree_group_size = get_heatmap_group_size(all_tree_sizes)
@@ -272,6 +272,7 @@ def make_group_heatmap(results, output_path, res_output_path):
     else:
         aggregated_row_df = aggregated_df
 
+    aggregated_row_df.to_csv(res_output_path, sep="\t", index=True)
     plt.figure(figsize=(14, 14))
     generate_heatmap(aggregated_row_df, output_path)
 
@@ -421,7 +422,7 @@ def main(args=None):
     fig_path = os.path.join(args.OUTPUT_DIR, "output.png")
     make_heatmap(results, fig_path)
     group_fig_path = os.path.join(args.OUTPUT_DIR, "group_output.png")
-    res_output_path = os.path.join(args.OUTPUT_DIR, "result_output.csv")
+    res_output_path = os.path.join(args.OUTPUT_DIR, "result_group_output.csv")
     make_group_heatmap(results, group_fig_path, res_output_path)
 
     results.reset_index("file_name", inplace=True)
