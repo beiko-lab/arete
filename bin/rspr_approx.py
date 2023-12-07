@@ -254,10 +254,12 @@ def make_group_heatmap(results, output_path, res_output_path):
     tree_group_size = get_heatmap_group_size(all_tree_sizes)
     aggregated_df = pd.DataFrame()
     if tree_group_size > 1:
-        for i in range(1, max(all_tree_sizes), tree_group_size):
+        for i in range(1, max(all_tree_sizes) + 1, tree_group_size):
             group_columns = [col for col in all_tree_sizes if i <= int(col) <= i + tree_group_size - 1]
             group_sum = data[group_columns].sum(axis=1)
-            aggregated_df[f'{i}-{i+tree_group_size-1}'] = group_sum
+            group_start = i if i > min(all_tree_sizes) else min(all_tree_sizes)
+            group_end = (i+tree_group_size-1) if (i+tree_group_size-1) < max(all_tree_sizes) else max(all_tree_sizes)
+            aggregated_df[f'{group_start}-{group_end}'] = group_sum
     else:
         aggregated_df = data
 
@@ -265,10 +267,12 @@ def make_group_heatmap(results, output_path, res_output_path):
     distance_group_size = get_heatmap_group_size(all_distances)
     aggregated_row_df = pd.DataFrame(columns=aggregated_df.columns)
     if distance_group_size > 1:
-        for i in range(1, max(all_distances), distance_group_size):
+        for i in range(0, max(all_distances) + 1, distance_group_size):
             group_rows = [row for row in all_distances if i <= int(row) <= i + distance_group_size - 1]
             group_sum = aggregated_df.loc[group_rows].sum(axis=0)
-            aggregated_row_df.loc[f'{i}-{i+distance_group_size-1}'] = group_sum
+            group_start = i if i > min(all_distances) else min(all_distances)
+            group_end = (i+distance_group_size-1) if (i+distance_group_size-1) < max(all_distances) else max(all_distances)
+            aggregated_row_df.loc[f'{group_start}-{group_end}'] = group_sum
     else:
         aggregated_row_df = aggregated_df
 
