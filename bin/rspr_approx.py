@@ -195,7 +195,7 @@ def approx_rspr(
         "-support " + str(max_support_threshold),
     ]
     
-    group_size = 10000
+    group_size = 100
     cur_count = 1
     lst_filename = []
     with tempfile.TemporaryFile(mode='w+') as temp_file:
