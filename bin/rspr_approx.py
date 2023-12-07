@@ -247,7 +247,7 @@ def get_heatmap_group_size(all_values, max_groups=15):
 
 def make_group_heatmap(results, output_path, res_output_path):
     print("Generating group heatmap")
-    data = pd.crosstab(results["approx_drSPR"], results["tree_size"])
+    data = pd.crosstab(pd.to_numeric(results["approx_drSPR"]), results["tree_size"])
     data.to_csv(res_output_path, sep="\t", index=True)
 
     all_tree_sizes = data.columns.astype('int32')
