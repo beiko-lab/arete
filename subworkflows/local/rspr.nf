@@ -19,7 +19,7 @@ workflow RSPR {
             params.min_branch_length,
             params.max_support_threshold
         )
-
+        exit 1
         RSPR_EXACT (
             RSPR_APPROX.out.csvs.flatten(),
             RSPR_APPROX.out.rooted_gene_trees.first(),
