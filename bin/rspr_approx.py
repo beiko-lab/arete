@@ -160,7 +160,6 @@ def extract_approx_distance(text):
 #####################################################################
 
 def run_approx_rspr(results, input_file, lst_filename, rspr_path):
-    input_file.seek(0)
     result = subprocess.run(
         rspr_path, stdin=input_file, capture_output=True, text=True
     )
@@ -176,7 +175,6 @@ def run_approx_rspr(results, input_file, lst_filename, rspr_path):
                 print("Current index", cur_index)
                 results.loc[lst_filename[cur_index], "approx_drSPR"] = distance
                 cur_index += 1
-    input_file.truncate()
 
 
 #####################################################################
@@ -206,7 +204,9 @@ def approx_rspr(
     with tempfile.TemporaryFile(mode='w+') as temp_file:
         for filename in os.listdir(rooted_gene_trees_path):
             if cur_count == group_size:
+                temp_file.seek(0)
                 run_approx_rspr(results, temp_file, lst_filename, rspr_path)
+                temp_file.truncate()
                 lst_filename.clear()
                 cur_count = 0
 
@@ -214,7 +214,7 @@ def approx_rspr(
             with open(gene_tree_path, "r") as infile:
                 temp_file.write(infile.read() + "\n")
                 lst_filename.append(filename)
-            cur_count += 1
+                cur_count += 1
         if cur_count > 0:
             run_approx_rspr(results, temp_file, lst_filename, rspr_path)
 
