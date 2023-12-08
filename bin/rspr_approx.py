@@ -165,12 +165,15 @@ def run_approx_rspr(results, input_file, lst_filename, rspr_path):
         rspr_path, stdin=input_file, capture_output=True, text=True
     )
 
+    print("Total length", len(lst_filename))
+    print("List", lst_filename)
     cur_index = 0
     output = result.stdout
     if output:
         for line in output.splitlines():
             if "approx drSPR=" in line:
                 distance = line.split("approx drSPR=")[1].strip()
+                print("Current index", cur_index)
                 results.loc[lst_filename[cur_index], "approx_drSPR"] = distance
                 cur_index += 1
     input_file.truncate()
