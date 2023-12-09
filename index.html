@@ -186,12 +186,12 @@ The <a href="https://nf-cor.re">nf-core</a> project provided overall project tem
 <p>Install <a href="https://nf-co.re/usage/installation"><code>nextflow</code></a></p>
 </li>
 <li>
-<p>Install <a href="https://www.docker.com"><code>Docker</code></a>, <a href="https://sylabs.io/guides/3.0/user-guide/installation.html"><code>Singularity</code></a>, or, as a last resort, <a href="https://conda.io/miniconda.html"><code>Conda</code></a>. Also ensure you have a working <code>curl</code> installed (should be present on almost all systems).</p>
-<p>2.1. Note: this workflow should also support <a href="https://podman.io/"><code>Podman</code></a>, <a href="https://nersc.gitlab.io/development/shifter/how-to-use/"><code>Shifter</code></a> or <a href="https://hpc.github.io/charliecloud/"><code>Charliecloud</code></a> execution for full pipeline reproducibility. We have minimized reliance on <code>conda</code> and suggest using it only as a last resort (see <a href="https://nf-co.re/usage/configuration#basic-configuration-profiles">docs</a>). Configure <code>mail</code> on your system to send an email on workflow success/failure (without this you may get a small error at the end <code>Failed to invoke workflow.onComplete event handler</code> but this doesn't mean the workflow didn't finish successfully).</p>
+<p>Install <a href="https://www.docker.com"><code>Docker</code></a> or <a href="https://sylabs.io/guides/3.0/user-guide/installation.html"><code>Singularity</code></a>. Also ensure you have a working <code>curl</code> installed (should be present on almost all systems).</p>
+<p>2.1. Note: this workflow should also support <a href="https://podman.io/"><code>Podman</code></a>, <a href="https://nersc.gitlab.io/development/shifter/how-to-use/"><code>Shifter</code></a> or <a href="https://hpc.github.io/charliecloud/"><code>Charliecloud</code></a> execution for full pipeline reproducibility. Configure <code>mail</code> on your system to send an email on workflow success/failure (without this you may get a small error at the end <code>Failed to invoke workflow.onComplete event handler</code> but this doesn't mean the workflow didn't finish successfully).</p>
 </li>
 <li>
 <p>Download the pipeline and test with a <code>stub-run</code>. The <code>stub-run</code> will ensure that the pipeline is able to download and use containers as well as execute in the proper logic.</p>
-<p><code>nextflow run beiko-lab/ARETE -profile test,&lt;docker/singularity/conda&gt; -stub-run</code></p>
+<p><code>nextflow run beiko-lab/ARETE -profile test,&lt;docker/singularity&gt; -stub-run</code></p>
 <p>3.1. Please check <a href="https://github.com/nf-core/configs#documentation">nf-core/configs</a> to see if a custom config file to run nf-core pipelines already exists for your Institute. If so, you can simply use <code>-profile &lt;institute&gt;</code> in your command. This will enable either <code>docker</code> or <code>singularity</code> and set the appropriate execution settings for your local compute environment.</p>
 <p>3.2. If you are using <code>singularity</code> then the pipeline will auto-detect this and attempt to download the Singularity images directly as opposed to performing a conversion from Docker images. If you are persistently observing issues downloading Singularity images directly due to timeout or network issues then please use the <code>--singularity_pull_docker_container</code> parameter to pull and convert the Docker image instead.
 In case of input datasets larger than 100 samples, <a href="https://beiko-lab.github.io/arete/resource-profiles/">check our resource profiles documentation</a>, for optimal usage.</p>
@@ -351,5 +351,5 @@ Replace <code>docker</code> below as appropriate.</p>
 
 <!--
 MkDocs version : 1.5.3
-Build Date UTC : 2023-12-07 18:02:16.928666+00:00
+Build Date UTC : 2023-12-09 18:27:23.275999+00:00
 -->
