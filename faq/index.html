@@ -54,6 +54,8 @@
     </li>
     <li class="toctree-l2"><a class="reference internal" href="#can-i-use-the-arete-outputs-in-microreact">Can I use the ARETE outputs in MicroReact?</a>
     </li>
+    <li class="toctree-l2"><a class="reference internal" href="#why-am-i-getting-this-docker-permission-denied-error">Why am I getting this 'docker: Permission denied' error?</a>
+    </li>
     </ul>
                 </li>
               </ul>
@@ -161,6 +163,17 @@
 <pre><code class="language-bash">gunzip feature_profile.tsv.gz
 </code></pre>
 <p>Make sure to check our <a href="https://beiko-lab.github.io/arete/output/">output documentation</a> for a full list of outputs and the <a href="https://beiko-lab.github.io/arete/params/">parameter documentation</a> for a description of parameters to enable and disable these outputs.</p>
+<h2 id="why-am-i-getting-this-docker-permission-denied-error">Why am I getting this 'docker: Permission denied' error?</h2>
+<p>Although previous ARETE users have reported this issue, this is neither an issue with Nextflow nor with ARETE itself.</p>
+<p>This is most likely due to how Docker permissions are set up on your machine.</p>
+<ul>
+<li>
+<p>If running on your own machine, take a look at <a href="https://docs.docker.com/engine/install/linux-postinstall/">this guide</a>.</p>
+</li>
+<li>
+<p>If running on an HPC system, talk to your system administrator or consider running ARETE with <a href="https://beiko-lab.github.io/arete/usage/#-profile">Singularity</a>.</p>
+</li>
+</ul>
               
             </div>
           </div><footer>

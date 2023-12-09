@@ -205,10 +205,11 @@ In case of input datasets larger than 100 samples, <a href="https://beiko-lab.gi
   --input_sample_table samplesheet.csv \
   --poppunk_model bgmm
 </code></pre>
-<p><code>samplesheet.csv</code> must be formatted <code>sample,fastq_1,fastq_2</code></p>
+<p><code>samplesheet.csv</code> must be formatted <code>sample,fastq_1,fastq_2</code>, with the first column being sample names and the other two corresponding to compressed FASTQ files.</p>
 <p><strong>Note</strong>: If you get this error at the end <code>Failed to invoke `workflow.onComplete` event handler</code> it isn't a problem, it just means you don't have an sendmail configured and it can't send an email report saying it finished correctly i.e., its not that the workflow failed.</p>
 <p>See <a href="https://beiko-lab.github.io/arete/usage/">usage docs</a> for all of the available options when running the pipeline.
-See the <a href="https://beiko-lab.github.io/arete/params/">parameter docs</a> for a list of all params currently implemented in the pipeline and which ones are required.</p>
+See the <a href="https://beiko-lab.github.io/arete/params/">parameter docs</a> for a list of all parameters currently implemented in the pipeline and which ones are required.
+See the <a href="https://beiko-lab.github.io/arete/faq/">FAQ</a> for a list of frequently asked questions and common issues.</p>
 <h3 id="testing">Testing</h3>
 <p>To test the worklow on a minimal dataset you can use the test configuration (with either docker or singularity - replace <code>docker</code> below as appropriate):</p>
 <pre><code class="language-bash">nextflow run beiko-lab/ARETE -profile test,docker
@@ -351,5 +352,5 @@ Replace <code>docker</code> below as appropriate.</p>
 
 <!--
 MkDocs version : 1.5.3
-Build Date UTC : 2023-12-09 18:27:23.275999+00:00
+Build Date UTC : 2023-12-09 18:35:15.862462+00:00
 -->
