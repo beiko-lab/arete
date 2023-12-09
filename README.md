@@ -120,12 +120,13 @@ nextflow run beiko-lab/ARETE \
   --poppunk_model bgmm
 ```
 
-`samplesheet.csv` must be formatted `sample,fastq_1,fastq_2`
+`samplesheet.csv` must be formatted `sample,fastq_1,fastq_2`, with the first column being sample names and the other two corresponding to compressed FASTQ files.
 
 **Note**: If you get this error at the end `` Failed to invoke `workflow.onComplete` event handler `` it isn't a problem, it just means you don't have an sendmail configured and it can't send an email report saying it finished correctly i.e., its not that the workflow failed.
 
 See [usage docs](https://beiko-lab.github.io/arete/usage/) for all of the available options when running the pipeline.
-See the [parameter docs](https://beiko-lab.github.io/arete/params/) for a list of all params currently implemented in the pipeline and which ones are required.
+See the [parameter docs](https://beiko-lab.github.io/arete/params/) for a list of all parameters currently implemented in the pipeline and which ones are required.
+See the [FAQ](https://beiko-lab.github.io/arete/faq/) for a list of frequently asked questions and common issues.
 
 ### Testing
 

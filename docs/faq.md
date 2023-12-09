@@ -55,3 +55,13 @@ gunzip feature_profile.tsv.gz
 ```
 
 Make sure to check our [output documentation](https://beiko-lab.github.io/arete/output/) for a full list of outputs and the [parameter documentation](https://beiko-lab.github.io/arete/params/) for a description of parameters to enable and disable these outputs.
+
+## Why am I getting this 'docker: Permission denied' error?
+
+Although previous ARETE users have reported this issue, this is neither an issue with Nextflow nor with ARETE itself.
+
+This is most likely due to how Docker permissions are set up on your machine.
+
+- If running on your own machine, take a look at [this guide](https://docs.docker.com/engine/install/linux-postinstall/).
+
+- If running on an HPC system, talk to your system administrator or consider running ARETE with [Singularity](https://beiko-lab.github.io/arete/usage/#-profile).
