@@ -12,6 +12,7 @@ from ete3 import Tree
 import pandas as pd
 from collections import defaultdict
 from matplotlib import pyplot as plt
+from matplotlib.colors import LogNorm
 import seaborn as sns
 import tempfile
 
@@ -225,12 +226,14 @@ def approx_rspr(
 #####################################################################
 
 
-def generate_heatmap(freq_table, output_path):
+def generate_heatmap(freq_table, output_path, log_scale=False):
     print("Generating heatmap")
     plt.figure(figsize=(12, 12))
-    sns.heatmap(
-        freq_table, annot=True, fmt=".0f"
-    ).set(title="Number of trees")
+    ax = sns.heatmap(
+        freq_table, annot=True, fmt=".0f", norm=LogNorm() if log_scale else None
+    )
+    ax.invert_yaxis()
+    plt.title("Number of trees")
     plt.xlabel("Tree size")
     plt.ylabel("Approx rSPR distance")
     plt.savefig(output_path)
@@ -311,7 +314,7 @@ def make_group_heatmap(results, output_path):
             aggregated_row_df.loc[f'{group_start}-{group_end}'] = group_sum
     else:
         aggregated_row_df = aggregated_df
-    generate_heatmap(aggregated_row_df, output_path)
+    generate_heatmap(aggregated_row_df, output_path, True)
 
 
 #####################################################################
