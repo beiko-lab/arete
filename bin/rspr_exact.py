@@ -11,7 +11,9 @@ import numpy as np
 from matplotlib import pyplot as plt
 import seaborn as sns
 from pathlib import Path
-
+from collections import defaultdict
+from ete3 import Tree, TreeStyle
+import re
 
 #####################################################################
 ### FUNCTION PARSE_ARGS
@@ -93,6 +95,45 @@ def generate_cluster_diagram(clusters, cluster_diagram_path):
     ax.set_title('Clusters Representation')
     plt.savefig(cluster_diagram_path)
 
+def get_cluster_branch_val(lst_child, dict_clstr_map):
+    lst_keys = []
+    total_count = 0
+    for key in dict_clstr_map:
+        lst_key_child = [int(item) for item in key.strip('[]').split(', ')]
+        if set(lst_key_child).issubset(set(lst_child)):
+            total_count += dict_clstr_map[key]
+            lst_keys.append(key)
+    for key in lst_keys:
+        del dict_clstr_map[key]
+    return total_count
+
+def update_branch_lengths_to_cluster_val(node, dict_clstr_map, total_trees, leaf_mapping):
+    lst_node = list()
+    if not node:
+        return lst_node
+
+    if node.is_leaf():
+        lst_node.append(leaf_mapping[node.name])
+        node.dist = (get_cluster_branch_val(lst_node, dict_clstr_map) / total_trees) * 100
+    else:
+        for child in node.children:
+            lst_child_node = update_branch_lengths_to_cluster_val(child, dict_clstr_map, total_trees, leaf_mapping)
+            lst_node.extend(lst_child_node)
+        node.dist = (get_cluster_branch_val(lst_node, dict_clstr_map) / total_trees) * 100
+    return lst_node
+
+def generate_cluster_network(lst_tree_clusters, refer_tree):
+    print("Generating cluster network")
+      
+    leaf_mapping = {leaf: i for i, leaf in enumerate(refer_tree.get_leaf_names())}
+    dict_clstr_map = defaultdict(int)
+    for tree in lst_tree_clusters:
+        for cluster in tree:
+            dict_clstr_map[str(sorted(cluster))] += 1
+
+    total_trees = len(lst_tree_clusters)
+    update_branch_lengths_to_cluster_val(refer_tree.get_tree_root(), dict_clstr_map, total_trees, leaf_mapping)
+
 def generate_cluster_heatmap(lst_tree_clusters, cluster_heatmap_path):
     print("Generating cluster heatmap")
     leaves = set(element for tree in lst_tree_clusters for cluster in tree for element in cluster)
@@ -153,7 +194,6 @@ def fpt_rspr(results_df, folder_path, min_branch_len=0, max_support_threshold=0.
     lst_tree_clusters = []
     trees_path = os.path.join(folder_path, "rooted_gene_trees")
     cluster_path = os.path.join(folder_path, "cluster_diagrams")
-    cluster_heatmap_path = os.path.join(folder_path, "cluster_heatmap.png")
     Path(cluster_path).mkdir(exist_ok=True)
 
     # Run this groups in parallel
@@ -174,7 +214,6 @@ def fpt_rspr(results_df, folder_path, min_branch_len=0, max_support_threshold=0.
                 )
 
                 clusters = []
-                cluster_diagram_path = os.path.join(cluster_path, filename + ".png")
                 clustering_start = False
                 output_lines = []
                 while True:
@@ -201,7 +240,13 @@ def fpt_rspr(results_df, folder_path, min_branch_len=0, max_support_threshold=0.
 
             dist = extract_exact_distance(full_output)
             results_df.loc[filename, "exact_drSPR"] = dist
-    generate_cluster_heatmap(lst_tree_clusters, cluster_heatmap_path)
+    return lst_tree_clusters
+
+def read_tree(input_path):
+    with open(input_path, "r") as f:
+        tree_string = f.read()
+        formatted = re.sub(r";[^:]+:", ":", tree_string)
+        return Tree(formatted)
 
 def main(args=None):
     args = parse_args(args)
@@ -213,7 +258,17 @@ def main(args=None):
         results = results[(results["approx_drSPR"] <= args.MAX_APPROX_RSPR_DIST)]
 
     results.set_index("file_name", inplace=True)
-    fpt_rspr(results, args.SUBSET_DF, args.MIN_BRANCH_LENGTH, args.MAX_SUPPORT_THRESHOLD)
+    lst_tree_clusters = fpt_rspr(results, args.SUBSET_DF, args.MIN_BRANCH_LENGTH, args.MAX_SUPPORT_THRESHOLD)
+
+    refer_tree_path = os.path.join(args.SUBSET_DF, "rooted_reference_tree/core_gene_alignment.tre")
+    refer_tree = read_tree(refer_tree_path)
+    generate_cluster_network(lst_tree_clusters, refer_tree)
+
+    output_path = os.path.join(args.SUBSET_DF, "rooted_reference_tree/core_gene_alignment_fig.png")
+    ts = TreeStyle()
+    ts.show_leaf_name = True
+    ts.show_branch_length = True
+    refer_tree.render(output_path, tree_style=ts)
 
     group = results["group_name"].unique()[0]
     res_path = f"exact_output_{group}.tsv"
