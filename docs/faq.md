@@ -65,3 +65,37 @@ This is most likely due to how Docker permissions are set up on your machine.
 - If running on your own machine, take a look at [this guide](https://docs.docker.com/engine/install/linux-postinstall/).
 
 - If running on an HPC system, talk to your system administrator or consider running ARETE with [Singularity](https://beiko-lab.github.io/arete/usage/#-profile).
+
+## My server doesn't have that much memory! How do I change the resource requirements?
+
+Just write a file called `nextflow.config` in your working directory and add the following to it:
+
+```nextflow
+process {
+    withLabel:process_low {
+        cpus   = 6
+        memory = 8.GB
+        time   = 4.h
+    }
+    withLabel:process_medium {
+        cpus   = 12
+        memory = 36.GB
+        time   = 8.h
+    }
+    withLabel:process_high {
+        cpus   = 16
+        memory = 72.GB
+        time   = 20.h
+    }
+    withLabel:process_high_memory {
+        memory = 200.GB
+    }
+    withName: MOB_RECON {
+        cpus = 2
+    }
+}
+```
+
+Feel free to change the values above as you wish and then add `-c nextflow.config` to your `nextflow run beiko-lab/ARETE` command.
+
+You can point to general process labels, like `process_low`, or you can point directly to process names, like `MOB_RECON`. Learn more at [our usage documentation](https://beiko-lab.github.io/arete/usage/#custom-resource-requests) or [the official nextflow documentation](https://www.nextflow.io/docs/latest/config.html#scope-process).
