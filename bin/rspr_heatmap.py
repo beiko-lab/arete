@@ -30,6 +30,22 @@ def parse_args(args=None):
         dest="GROUP_OUTPUT",
         help="Group output file name",
     )
+    parser.add_argument(
+        "-mnher",
+        "--min_heatmap_exact_rspr",
+        dest="MIN_HEATMAP_RSPR_DISTANCE",
+        type=int,
+        default=0,
+        help="Minimum exact rSPR distance used to generate heatmap.",
+    )
+    parser.add_argument(
+        "-mxher",
+        "--max_heatmap_exact_rspr",
+        dest="MAX_HEATMAP_RSPR_DISTANCE",
+        type=int,
+        default=-1,
+        help="Maximum exact rSPR distance used to generate heatmap.",
+    )
     return parser.parse_args(args)
 
 

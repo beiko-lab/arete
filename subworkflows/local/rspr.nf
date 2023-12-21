@@ -17,7 +17,9 @@ workflow RSPR {
             annotation,
             params.min_rspr_distance,
             params.min_branch_length,
-            params.max_support_threshold
+            params.max_support_threshold,
+            params.min_heatmap_approx_rspr,
+            params.max_heatmap_approx_rspr,
         )
         
         RSPR_EXACT (
@@ -38,7 +40,9 @@ workflow RSPR {
             .set { exact_output }
 
         RSPR_HEATMAP (
-            exact_output
+            exact_output,
+            params.min_heatmap_exact_rspr,
+            params.max_heatmap_exact_rspr,
         )
 
     emit:

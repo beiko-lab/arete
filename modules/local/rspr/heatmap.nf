@@ -8,6 +8,8 @@ process RSPR_HEATMAP {
 
     input:
     path df
+    val min_heatmap_exact_rspr
+    val max_heatmap_exact_rspr
 
     output:
     path "exact_output.png", emit: png
@@ -22,6 +24,8 @@ process RSPR_HEATMAP {
         --dataframe $df \\
         -o exact_output.png \\
         -go exact_group_output.png \\
+        --min_heatmap_exact_rspr $min_heatmap_exact_rspr \\
+        --max_heatmap_exact_rspr $max_heatmap_exact_rspr \\
         $args
     """
     stub:

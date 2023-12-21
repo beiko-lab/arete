@@ -67,6 +67,22 @@ def parse_args(args=None):
         default=0.7,
         help="Maximum support threshold",
     )
+    parser.add_argument(
+        "-mnhar",
+        "--min_heatmap_approx_rspr",
+        dest="MIN_HEATMAP_RSPR_DISTANCE",
+        type=int,
+        default=0,
+        help="Minimum approximate rSPR distance used to generate heatmap.",
+    )
+    parser.add_argument(
+        "-mxhar",
+        "--max_heatmap_approx_rspr",
+        dest="MAX_HEATMAP_RSPR_DISTANCE",
+        type=int,
+        default=-1,
+        help="Maximum approximate rSPR distance used to generate heatmap.",
+    )
     return parser.parse_args(args)
 
 
