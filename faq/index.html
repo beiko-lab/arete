@@ -56,6 +56,8 @@
     </li>
     <li class="toctree-l2"><a class="reference internal" href="#why-am-i-getting-this-docker-permission-denied-error">Why am I getting this 'docker: Permission denied' error?</a>
     </li>
+    <li class="toctree-l2"><a class="reference internal" href="#my-server-doesnt-have-that-much-memory-how-do-i-change-the-resource-requirements">My server doesn't have that much memory! How do I change the resource requirements?</a>
+    </li>
     </ul>
                 </li>
               </ul>
@@ -174,6 +176,34 @@
 <p>If running on an HPC system, talk to your system administrator or consider running ARETE with <a href="https://beiko-lab.github.io/arete/usage/#-profile">Singularity</a>.</p>
 </li>
 </ul>
+<h2 id="my-server-doesnt-have-that-much-memory-how-do-i-change-the-resource-requirements">My server doesn't have that much memory! How do I change the resource requirements?</h2>
+<p>Just write a file called <code>nextflow.config</code> in your working directory and add the following to it:</p>
+<pre><code class="language-nextflow">process {
+    withLabel:process_low {
+        cpus   = 6
+        memory = 8.GB
+        time   = 4.h
+    }
+    withLabel:process_medium {
+        cpus   = 12
+        memory = 36.GB
+        time   = 8.h
+    }
+    withLabel:process_high {
+        cpus   = 16
+        memory = 72.GB
+        time   = 20.h
+    }
+    withLabel:process_high_memory {
+        memory = 200.GB
+    }
+    withName: MOB_RECON {
+        cpus = 2
+    }
+}
+</code></pre>
+<p>Feel free to change the values above as you wish and then add <code>-c nextflow.config</code> to your <code>nextflow run beiko-lab/ARETE</code> command.</p>
+<p>You can point to general process labels, like <code>process_low</code>, or you can point directly to process names, like <code>MOB_RECON</code>. Learn more at <a href="https://beiko-lab.github.io/arete/usage/#custom-resource-requests">our usage documentation</a> or <a href="https://www.nextflow.io/docs/latest/config.html#scope-process">the official nextflow documentation</a>.</p>
               
             </div>
           </div><footer>
