@@ -295,12 +295,6 @@ If `-profile` is not specified, the pipeline will run locally and expect all sof
 
       - A generic configuration profile to be used with [Charliecloud](https://hpc.github.io/charliecloud/)
 
-- `conda`
-
-      - Please only use Conda as a last resort i.e. when it's not possible to run the pipeline with Docker, Singularity, Podman, Shifter or Charliecloud.
-      - A generic configuration profile to be used with [Conda](https://conda.io/docs/)
-      - Pulls most software from [Bioconda](https://bioconda.github.io/)
-
 - `test`
 
       - A profile with a complete configuration for automated testing

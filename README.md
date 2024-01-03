@@ -96,14 +96,14 @@ See our [roadmap](ROADMAP.md) for a full list of future development targets.
 
 1.  Install [`nextflow`](https://nf-co.re/usage/installation)
 
-2.  Install [`Docker`](https://www.docker.com), [`Singularity`](https://sylabs.io/guides/3.0/user-guide/installation.html), or, as a last resort, [`Conda`](https://conda.io/miniconda.html). Also ensure you have a working `curl` installed (should be present on almost all systems).
+2.  Install [`Docker`](https://www.docker.com) or [`Singularity`](https://sylabs.io/guides/3.0/user-guide/installation.html). Also ensure you have a working `curl` installed (should be present on almost all systems).
 
-    2.1. Note: this workflow should also support [`Podman`](https://podman.io/), [`Shifter`](https://nersc.gitlab.io/development/shifter/how-to-use/) or [`Charliecloud`](https://hpc.github.io/charliecloud/) execution for full pipeline reproducibility. We have minimized reliance on `conda` and suggest using it only as a last resort (see [docs](https://nf-co.re/usage/configuration#basic-configuration-profiles)). Configure `mail` on your system to send an email on workflow success/failure (without this you may get a small error at the end `Failed to invoke workflow.onComplete event handler` but this doesn't mean the workflow didn't finish successfully).
+    2.1. Note: this workflow should also support [`Podman`](https://podman.io/), [`Shifter`](https://nersc.gitlab.io/development/shifter/how-to-use/) or [`Charliecloud`](https://hpc.github.io/charliecloud/) execution for full pipeline reproducibility. Configure `mail` on your system to send an email on workflow success/failure (without this you may get a small error at the end `Failed to invoke workflow.onComplete event handler` but this doesn't mean the workflow didn't finish successfully).
 
 3.  Download the pipeline and test with a `stub-run`. The `stub-run` will ensure that the pipeline is able to download and use containers as well as execute in the proper logic.
 
     ```
-    nextflow run beiko-lab/ARETE -profile test,<docker/singularity/conda> -stub-run
+    nextflow run beiko-lab/ARETE -profile test,<docker/singularity> -stub-run
     ```
 
     3.1. Please check [nf-core/configs](https://github.com/nf-core/configs#documentation) to see if a custom config file to run nf-core pipelines already exists for your Institute. If so, you can simply use `-profile <institute>` in your command. This will enable either `docker` or `singularity` and set the appropriate execution settings for your local compute environment.
@@ -120,12 +120,13 @@ nextflow run beiko-lab/ARETE \
   --poppunk_model bgmm
 ```
 
-`samplesheet.csv` must be formatted `sample,fastq_1,fastq_2`
+`samplesheet.csv` must be formatted `sample,fastq_1,fastq_2`, with the first column being sample names and the other two corresponding to compressed FASTQ files.
 
 **Note**: If you get this error at the end `` Failed to invoke `workflow.onComplete` event handler `` it isn't a problem, it just means you don't have an sendmail configured and it can't send an email report saying it finished correctly i.e., its not that the workflow failed.
 
 See [usage docs](https://beiko-lab.github.io/arete/usage/) for all of the available options when running the pipeline.
-See the [parameter docs](https://beiko-lab.github.io/arete/params/) for a list of all params currently implemented in the pipeline and which ones are required.
+See the [parameter docs](https://beiko-lab.github.io/arete/params/) for a list of all parameters currently implemented in the pipeline and which ones are required.
+See the [FAQ](https://beiko-lab.github.io/arete/faq/) for a list of frequently asked questions and common issues.
 
 ### Testing
 

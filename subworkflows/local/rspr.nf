@@ -6,16 +6,10 @@ workflow RSPR {
 
     take:
         core_tree
-        gene_trees
+        gene_tree_sheet
         annotation
 
     main:
-
-        gene_trees
-            .flatten()
-            .map{it -> it.toString() }
-            .collectFile(name: 'gene_tree_paths.txt', newLine: true)
-            .set{ gene_tree_sheet }
 
         RSPR_APPROX (
             core_tree,

@@ -3,6 +3,34 @@
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## v1.0 - November 30, 2023
+
+### `Added`
+
+- Automate phylogenomic analysis from ppanggolin outputs (d78dfc9d811bac6f8f0f5d0d71cb31a24dadaf02)
+- Add parameter to skip pangenomics/phylogenomics subworkflow (3f3f5b218e94adb6ba6d743e3b8854bebae02eb4)
+- Add new ARETE logo (4a3b49275d124ca92186d9e82ea2e700bfbf1f2f)
+- **Added `--annotation_tools` parameter** (2cf57a3a06be53d0550a004101d199fc1760f84d)
+- Validate sample IDs in annotation input check (09400c0e10919001286c8e829299c03129dd64c2)
+- General improvements to documentation (3bdea3083d9dfc3f23a198a23843820ac68be2ca, 21b853bf065da239247ed62a2a670f2d25a56de, a109c3c19576cffa9a1029e58229c3054806a017, a10f7bd4ff73bcadb389d18a82d18c6508792237)
+- **Add phylogenomics entry** (1cb656372a752bb9288b3e220cbddc71943d4496)
+- **Add recombination subworkflow** (1d10d96612c7c7e7f0a7c703771b1ce7d76b35a9)
+- Add QC assembly filtering (ccc2f50c7342bb05598cf8deb64cab332acbcfdb)
+- Improve MultiQC reports (b097f9b58722d7ff99a1bb4c057152f4e0875dca)
+- **Add rSPR** (b0d0cf1467c7f86aa01e023b359e0fe31e7029ad, 7e494ab18d3bcff2e9da87af103c9b2ebe164b20)
+- Add entries for EvolCCM and recombination (8bdad860fd75f6d1b06034201874f4739a20895f, 710ba2524f7850938039d6dd4703b47065d49768)
+- **Add Gene Order** (6b7e2685143db2d1153ce8cd58b0baab84b064dc, b22988b7a0b945c63f8261fb27dc4b6ccc0f64b0)
+
+### `Fixed`
+
+- Stop ppaggoolin from altering input file (53cbe771c8af23432cfec09b95be7ac6a27c3d0d)
+- Return PopPUNK create db outputs (339620c9257e7d99c8b5f933f298e3b2f3e96b14)
+- Fix large dataset error on rSPR entry (9a119b4fa588707e36114d864a0ad4cc38cc239c)
+
+### `Deprecated`
+
+- No longer includes phispy information in the annotation report (82bb3f8069a714cd423bef8bdd9e03b2f0f8f919)
+
 ## v0.9 - June 6, 2023
 
 ### `Added`

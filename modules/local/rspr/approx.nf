@@ -3,8 +3,8 @@ process RSPR_APPROX {
 
     conda "bioconda::ete3=3.1.1"
     container "${ workflow.containerEngine == 'singularity' && !task.ext.singularity_pull_docker_container ?
-        'docker://docker.io/jvfe/rspr:v1.3.0':
-        'docker.io/jvfe/rspr:v1.3.0' }"
+        'docker://docker.io/jvfe/rspr:v1.3.2':
+        'docker.io/jvfe/rspr:v1.3.2' }"
 
     input:
     path core_tree
@@ -29,7 +29,7 @@ process RSPR_APPROX {
     """
     rspr_approx.py \\
         --core $core_tree \\
-        --acc \$(cat $gene_tree_list) \\
+        --acc $gene_tree_list \\
         --annotation $annotation \\
         -o approx \\
         --min_rspr_distance $min_rspr_distance \\
