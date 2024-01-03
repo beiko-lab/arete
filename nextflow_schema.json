@@ -332,6 +332,26 @@
                     "default": -1,
                     "description": "Maximum approximate rSPR distance for filtering"
                 },
+                "min_heatmap_approx_rspr": {
+                    "type": "integer",
+                    "default": 0,
+                    "description": "Minimum approximate rSPR distance used to generate heatmap"
+                },
+                "max_heatmap_approx_rspr": {
+                    "type": "integer",
+                    "default": -1,
+                    "description": "Maximum approximate rSPR distance used to generate heatmap"
+                },
+                "min_heatmap_exact_rspr": {
+                    "type": "integer",
+                    "default": 0,
+                    "description": "Minimum exact rSPR distance used to generate heatmap"
+                },
+                "max_heatmap_exact_rspr": {
+                    "type": "integer",
+                    "default": -1,
+                    "description": "Maximum exact rSPR distance used to generate heatmap"
+                },
                 "core_gene_tree": {
                     "type": "string",
                     "description": "Core (or reference) genome tree. Used in the rSPR and evolCCM entries."
