@@ -179,7 +179,7 @@ def generate_cluster_heatmap(lst_tree_clusters, cluster_heatmap_path):
 ### max_support_threshold: maximum branching support threshold
 #####################################################################
 
-def fpt_rspr(results_df, folder_path, min_branch_len=0, max_support_threshold=0.7, gather_cluster_info=True):
+def fpt_rspr(results_df, min_branch_len=0, max_support_threshold=0.7, gather_cluster_info=True):
     print("Calculating exact distance")
     current_dir = os.path.dirname(os.path.abspath(__file__))
     exe_path = os.path.join(current_dir, 'rspr.exe')
@@ -192,9 +192,7 @@ def fpt_rspr(results_df, folder_path, min_branch_len=0, max_support_threshold=0.
     ]
 
     lst_tree_clusters = []
-    trees_path = os.path.join(folder_path, "rooted_gene_trees")
-    cluster_path = os.path.join(folder_path, "cluster_diagrams")
-    Path(cluster_path).mkdir(exist_ok=True)
+    trees_path = os.path.join("rooted_gene_trees")
 
     # Run this groups in parallel
     for filename in results_df.index:
@@ -252,7 +250,7 @@ def main(args=None):
     args = parse_args(args)
 
     # Exact RSPR
-    csv_path = os.path.join(args.SUBSET_DF, "output.tsv")
+    csv_path = os.path.join(args.SUBSET_DF)
     results = pd.read_csv(csv_path, delimiter='\t')
     if args.MAX_APPROX_RSPR_DIST >= 0:
         results = results[(results["approx_drSPR"] <= args.MAX_APPROX_RSPR_DIST)]
@@ -260,20 +258,19 @@ def main(args=None):
     results.set_index("file_name", inplace=True)
     lst_tree_clusters = fpt_rspr(results, args.SUBSET_DF, args.MIN_BRANCH_LENGTH, args.MAX_SUPPORT_THRESHOLD)
 
-    refer_tree_path = os.path.join(args.SUBSET_DF, "rooted_reference_tree/core_gene_alignment.tre")
+    refer_tree_path = os.path.join("rooted_reference_tree/core_gene_alignment.tre")
     refer_tree = read_tree(refer_tree_path)
     generate_cluster_network(lst_tree_clusters, refer_tree)
 
-    output_path = os.path.join(args.SUBSET_DF, "rooted_reference_tree/core_gene_alignment_fig.png")
+    cluster_tree_path = os.path.join("cluster_tree.png")
     ts = TreeStyle()
     ts.show_leaf_name = True
     ts.show_branch_length = True
-    refer_tree.render(output_path, tree_style=ts)
+    refer_tree.render(cluster_tree_path, tree_style=ts)
 
     group = results["group_name"].unique()[0]
     res_path = f"exact_output_{group}.tsv"
-    out_path = os.path.join(args.SUBSET_DF, res_path)
-    results.fillna(value="NULL").to_csv(out_path, sep="\t", index=True)
+    results.fillna(value="NULL").to_csv(res_path, sep="\t", index=True)
 
     # From CSV
     """
