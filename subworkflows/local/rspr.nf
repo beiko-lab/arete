@@ -21,9 +21,10 @@ workflow RSPR {
             params.min_heatmap_approx_rspr,
             params.max_heatmap_approx_rspr,
         )
-        
+
         RSPR_EXACT (
             RSPR_APPROX.out.csvs.flatten(),
+            RSPR_APPROX.out.rooted_reference_tree.first(),
             RSPR_APPROX.out.rooted_gene_trees.first(),
             params.min_branch_length,
             params.max_support_threshold,
@@ -41,6 +42,7 @@ workflow RSPR {
 
         RSPR_HEATMAP (
             exact_output,
+            RSPR_APPROX.out.rooted_reference_tree.first(),
             params.min_heatmap_exact_rspr,
             params.max_heatmap_exact_rspr,
         )

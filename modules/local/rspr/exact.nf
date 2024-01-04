@@ -9,6 +9,7 @@ process RSPR_EXACT {
 
     input:
     path subset_df
+    path rooted_reference
     path rooted_gene_trees
     val min_branch_length
     val max_support_threshold
