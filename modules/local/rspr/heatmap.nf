@@ -8,6 +8,7 @@ process RSPR_HEATMAP {
 
     input:
     path df
+    path rooted_reference
     val min_heatmap_exact_rspr
     val max_heatmap_exact_rspr
 
