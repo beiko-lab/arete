@@ -255,6 +255,13 @@ def main(args=None):
     if args.MAX_APPROX_RSPR_DIST >= 0:
         results = results[(results["approx_drSPR"] <= args.MAX_APPROX_RSPR_DIST)]
 
+    print(results.columns)
+    if results.index.name is not None:
+        print("Index column name:", results.index.name)
+    else:
+        print("DataFrame does not have a named index.")
+    print(results)
+
     results.set_index("file_name", inplace=True)
     lst_tree_clusters = fpt_rspr(results, args.SUBSET_DF, args.MIN_BRANCH_LENGTH, args.MAX_SUPPORT_THRESHOLD)
 
