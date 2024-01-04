@@ -190,8 +190,7 @@ def generate_cluster_heatmap(lst_tree_clusters, cluster_heatmap_path):
 
 def fpt_rspr(results_df, min_branch_len=0, max_support_threshold=0.7, gather_cluster_info=True):
     print("Calculating exact distance")
-    current_dir = os.path.dirname(os.path.abspath(__file__))
-    exe_path = os.path.join(current_dir, 'rspr.exe')
+    exe_path = "rspr"
     rspr_path = [
         exe_path,
         "-multifurcating",
