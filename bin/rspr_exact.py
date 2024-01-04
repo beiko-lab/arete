@@ -64,7 +64,6 @@ def parse_args(args=None):
 ### RETURN exact rspr distance
 #####################################################################
 
-
 def extract_exact_distance(text):
     for line in text.splitlines():
         if "total exact drSPR=" in line:
@@ -72,28 +71,13 @@ def extract_exact_distance(text):
             return distance
     return "0"
 
-def create_scatter(center, num_points):
-    r = 1
-    return [(center + r * np.cos(2 * np.pi / num_points * x), center + r * np.sin(2 * np.pi / num_points * x)) for x in range(num_points)]
 
-def generate_cluster_diagram(clusters, cluster_diagram_path):
-    #print("Generating cluster diagram")
-    fig, ax = plt.subplots()
-    
-    cluster_idx = 1
-    center_val = 0
-    for cluster in clusters:
-        center_val += 5
-        x, y = zip(*create_scatter(center_val, len(cluster)))
-        ax.scatter(x, y, label=f'Cluster {cluster_idx}')
-        cluster_idx += 1
-
-        for i, label in enumerate(cluster):
-            ax.annotate(label, (x[i], y[i]), textcoords="offset points", xytext=(5,5), ha='center')
-
-    ax.legend(loc='upper left')
-    ax.set_title('Clusters Representation')
-    plt.savefig(cluster_diagram_path)
+#####################################################################
+### FUNCTION GET_CLUSTER_BRANCH_VAL
+### Calculate cluster network branch value
+### lst_child: list of child of node
+### dict_clstr_map: cluster map
+#####################################################################
 
 def get_cluster_branch_val(lst_child, dict_clstr_map):
     lst_keys = []
@@ -106,6 +90,14 @@ def get_cluster_branch_val(lst_child, dict_clstr_map):
     for key in lst_keys:
         del dict_clstr_map[key]
     return total_count
+
+
+#####################################################################
+### FUNCTION UPDATE_BRANCH_LENGTHS_TO_CLUSTER_VAL
+### Update branch length of the cluster trees to cluster value
+### node: current node
+### dict_clstr_map: cluster map
+#####################################################################
 
 def update_branch_lengths_to_cluster_val(node, dict_clstr_map, total_trees, leaf_mapping):
     lst_node = list()
@@ -122,6 +114,14 @@ def update_branch_lengths_to_cluster_val(node, dict_clstr_map, total_trees, leaf
         node.dist = (get_cluster_branch_val(lst_node, dict_clstr_map) / total_trees) * 100
     return lst_node
 
+
+#####################################################################
+### FUNCTION GENERATE_CLUSTER_NETWORK
+### Generate cluster network from list of clusters
+### lst_tree_clusters: list of clusters for all gene trees
+### refer_tree: reference tree
+#####################################################################
+
 def generate_cluster_network(lst_tree_clusters, refer_tree):
     print("Generating cluster network")
       
@@ -133,6 +133,14 @@ def generate_cluster_network(lst_tree_clusters, refer_tree):
 
     total_trees = len(lst_tree_clusters)
     update_branch_lengths_to_cluster_val(refer_tree.get_tree_root(), dict_clstr_map, total_trees, leaf_mapping)
+
+
+#####################################################################
+### FUNCTION GENERATE_CLUSTER_HEATMAP
+### Generate cluster heatmap
+### lst_tree_clusters: list of clusters for all gene trees
+### cluster_heatmap_path: putput path of heatmap
+#####################################################################
 
 def generate_cluster_heatmap(lst_tree_clusters, cluster_heatmap_path):
     print("Generating cluster heatmap")
@@ -170,6 +178,7 @@ def generate_cluster_heatmap(lst_tree_clusters, cluster_heatmap_path):
     plt.xlabel("Leaves")
     plt.ylabel("Leaves")
     plt.savefig(cluster_heatmap_path)
+
 
 #####################################################################
 ### FUNCTION FPT_RSPR
@@ -231,7 +240,6 @@ def fpt_rspr(results_df, min_branch_len=0, max_support_threshold=0.7, gather_clu
                         clusters.append(cluster_nodes)
                     
                     output_lines.append(line)
-                #generate_cluster_diagram(clusters, cluster_diagram_path)
                 lst_tree_clusters.append(clusters)
                 process.wait()
                 full_output = ''.join(output_lines)
@@ -240,30 +248,25 @@ def fpt_rspr(results_df, min_branch_len=0, max_support_threshold=0.7, gather_clu
             results_df.loc[filename, "exact_drSPR"] = dist
     return lst_tree_clusters
 
+
 def read_tree(input_path):
     with open(input_path, "r") as f:
         tree_string = f.read()
         formatted = re.sub(r";[^:]+:", ":", tree_string)
         return Tree(formatted)
 
+
 def main(args=None):
     args = parse_args(args)
 
     # Exact RSPR
     csv_path = os.path.join(args.SUBSET_DF)
-    results = pd.read_csv(csv_path, delimiter='\t')
+    results = pd.read_csv(csv_path)
     if args.MAX_APPROX_RSPR_DIST >= 0:
         results = results[(results["approx_drSPR"] <= args.MAX_APPROX_RSPR_DIST)]
 
-    print(results.columns)
-    if results.index.name is not None:
-        print("Index column name:", results.index.name)
-    else:
-        print("DataFrame does not have a named index.")
-    print(results)
-
     results.set_index("file_name", inplace=True)
-    lst_tree_clusters = fpt_rspr(results, args.SUBSET_DF, args.MIN_BRANCH_LENGTH, args.MAX_SUPPORT_THRESHOLD)
+    lst_tree_clusters = fpt_rspr(results, args.MIN_BRANCH_LENGTH, args.MAX_SUPPORT_THRESHOLD, True)
 
     refer_tree_path = os.path.join("rooted_reference_tree/core_gene_alignment.tre")
     refer_tree = read_tree(refer_tree_path)
