@@ -277,6 +277,19 @@ Replace <code>docker</code> below as appropriate.</p>
 <li><code>-entry annotation</code> - Run annotation subworkflow and further steps (See <a href="https://beiko-lab.github.io/arete/usage/">usage</a>).</li>
 <li><code>-profile large,docker</code> - Run tools in docker containers. For <code>-profile large</code>, check our <a href="https://beiko-lab.github.io/arete/resource_profiles/">resource requirements documentation</a>.</li>
 </ul>
+<h3 id="annotation-on-a-tiny-dataset-4-12-genomes-in-a-personal-computer">Annotation on a tiny dataset (4-12 genomes) in a personal computer</h3>
+<p>While ARETE is primarily designed to run in HPC clusters, we have implemented a simple, bare-bones version that is able to run on most modern computers and laptops, with at most 6 CPU cores and a minimum of 8GB of memory.</p>
+<p>Keep in mind this will make it impossible to run most tools included in ARETE, but it should still provide a useful testing ground.</p>
+<pre><code class="language-bash">nextflow run beiko-lab/ARETE \
+ --input_sample_table samplesheet.csv \
+ --poppunk_model bgmm \
+ -entry annotation \
+ -profile light,docker
+</code></pre>
+<ul>
+<li>Note the addition of the <code>light</code> profile, this is the configuration for running on personal computers.</li>
+<li>Check out how to <a href="https://beiko-lab.github.io/arete/usage/#custom-resource-requests">assign resource requests</a> for even more customization.</li>
+</ul>
 <h2 id="credits">Credits <a name="credits"></a></h2>
 <p>The ARETE software was originally written and developed by <a href="https://github.com/fmaguire">Finlay Maguire</a> and <a href="https://github.com/alexmanuele">Alex Manuele</a>, and is currently developed by <a href="https://github.com/jvfe">João Cavalcante</a>.</p>
 <p>Rob Beiko is the PI of the ARETE project. The project Co-PI is Fiona Brinkman. Other project leads include Andrew MacArthur, Cedric Chauve, Chris Whidden, Gary van Domselaar, John Nash, Rahat Zaheer, and Tim McAllister.</p>
@@ -352,5 +365,5 @@ Replace <code>docker</code> below as appropriate.</p>
 
 <!--
 MkDocs version : 1.5.3
-Build Date UTC : 2024-01-04 11:14:54.290219+00:00
+Build Date UTC : 2024-01-07 12:48:06.997801+00:00
 -->
