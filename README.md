@@ -216,6 +216,23 @@ Parameters used:
 - `-entry annotation` - Run annotation subworkflow and further steps (See [usage](https://beiko-lab.github.io/arete/usage/)).
 - `-profile large,docker` - Run tools in docker containers. For `-profile large`, check our [resource requirements documentation](https://beiko-lab.github.io/arete/resource_profiles/).
 
+### Annotation on a tiny dataset (4-12 genomes) in a personal computer
+
+While ARETE is primarily designed to run in HPC clusters, we have implemented a simple, bare-bones version that is able to run on most modern computers and laptops, with at most 6 CPU cores and a minimum of 8GB of memory.
+
+Keep in mind this will make it impossible to run most tools included in ARETE, but it should still provide a useful testing ground.
+
+```bash
+nextflow run beiko-lab/ARETE \
+ --input_sample_table samplesheet.csv \
+ --poppunk_model bgmm \
+ -entry annotation \
+ -profile light,docker
+```
+
+- Note the addition of the `light` profile, this is the configuration for running on personal computers.
+- Check out how to [assign resource requests](https://beiko-lab.github.io/arete/usage/#custom-resource-requests) for even more customization.
+
 ## Credits <a name="credits"></a>
 
 The ARETE software was originally written and developed by [Finlay Maguire](https://github.com/fmaguire) and [Alex Manuele](https://github.com/alexmanuele), and is currently developed by [João Cavalcante](https://github.com/jvfe).
