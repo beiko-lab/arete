@@ -1,6 +1,7 @@
 process EVOLCCM {
     tag "$core_tree"
     label 'process_high'
+    label 'process_long'
 
     conda "bioconda::bioconductor-tximeta=1.8.0"
     container "${ workflow.containerEngine == 'singularity' && !task.ext.singularity_pull_docker_container ?
