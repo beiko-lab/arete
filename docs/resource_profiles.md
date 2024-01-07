@@ -17,3 +17,6 @@ The sizes are:
 - For the `large` profile, we expect datasets with >1000 samples.
   It also increases default resource requirements for some processes and uses PPanGGoLin.
   Additionally, **it enables [PopPUNK subsampling](subsampling.md), with default parameters**.
+
+- For the `light` profile, we expect datasets with at most 12 samples.
+  This is a profile primarily designed to run on personal computers and it disables most ARETE processes.
