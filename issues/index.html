@@ -5,15 +5,15 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="author" content="Beiko Lab" />
       <link rel="shortcut icon" href="../img/favicon.ico" />
-    <title>Dataset Size - ARETE</title>
+    <title>Known issues - ARETE</title>
     <link rel="stylesheet" href="../css/theme.css" />
     <link rel="stylesheet" href="../css/theme_extra.css" />
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github.min.css" />
     
       <script>
         // Current page data
-        var mkdocs_page_name = "Dataset Size";
-        var mkdocs_page_input_path = "resource_profiles.md";
+        var mkdocs_page_name = "Known issues";
+        var mkdocs_page_input_path = "issues.md";
         var mkdocs_page_url = null;
       </script>
     
@@ -55,8 +55,14 @@
                 <li class="toctree-l1"><a class="reference internal" href="../output/">Output</a>
                 </li>
               </ul>
-              <ul>
-                <li class="toctree-l1"><a class="reference internal" href="../issues/">Known issues</a>
+              <ul class="current">
+                <li class="toctree-l1 current"><a class="reference internal current" href="./">Known issues</a>
+    <ul class="current">
+    <li class="toctree-l2"><a class="reference internal" href="#poppunk">PopPUNK</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#rspr">rSPR</a>
+    </li>
+    </ul>
                 </li>
               </ul>
               <ul>
@@ -68,10 +74,8 @@
                 </li>
               </ul>
               <p class="caption"><span class="caption-text">Reference</span></p>
-              <ul class="current">
-                  <li class="toctree-l1 current"><a class="reference internal current" href="./">Dataset Size</a>
-    <ul class="current">
-    </ul>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../resource_profiles/">Dataset Size</a>
                   </li>
                   <li class="toctree-l1"><a class="reference internal" href="../params/">Parameters</a>
                   </li>
@@ -92,10 +96,9 @@
         <div class="rst-content"><div role="navigation" aria-label="breadcrumbs navigation">
   <ul class="wy-breadcrumbs">
     <li><a href=".." class="icon icon-home" aria-label="Docs"></a></li>
-          <li class="breadcrumb-item">Reference</li>
-      <li class="breadcrumb-item active">Dataset Size</li>
+      <li class="breadcrumb-item active">Known issues</li>
     <li class="wy-breadcrumbs-aside">
-          <a href="https://github.com/beiko-lab/arete/edit/master/docs/resource_profiles.md" class="icon icon-github"> Edit on GitHub</a>
+          <a href="https://github.com/beiko-lab/arete/edit/master/docs/issues.md" class="icon icon-github"> Edit on GitHub</a>
     </li>
   </ul>
   <hr/>
@@ -103,36 +106,31 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
             <div class="section" itemprop="articleBody">
               
-                <h1 id="arete-and-dataset-size">ARETE and dataset size</h1>
-<p>Currently ARETE has three distinct profiles that change the pipeline execution in some ways: The default profile (which we can call <code>small</code>), the <code>medium</code> profile and the <code>large</code> profile.</p>
-<p>These three profiles were developed based on the size and diversity of the input dataset and change some parameter defaults based on tests we have performed on similar-sized datasets.</p>
-<p>If you want to first gauge the potential diversity of your dataset and have some input assemblies you can try the <a href="https://beiko-lab.github.io/arete/usage/#poppunk-entry">PopPUNK entry</a>. One of the outputs will provide insight into how many clusters, or lineages, your dataset divides into.</p>
-<p>The sizes are:</p>
+                <h1 id="known-issues-in-arete">Known issues in ARETE</h1>
+<h2 id="poppunk">PopPUNK</h2>
+<p>We have experienced issues with PopPUNK in ARETE runs, primarily related to the distances and clusters generated and how these affect both the <strong>subsampling</strong> and <strong>recombination</strong> subworkflows.</p>
+<p>Sometimes the distances generated are too small or the number of clusters changes between executions of the same dataset.
+While we can't solve the latter since it is a result of how PopPUNK itself is defined, the former can be mitigated by adjusting the subsampling thresholds with <code>--core_similarity</code> (99.9 by default) and <code>--accessory_similarity</code> (99 by default), or disabling subsampling altogether (<code>--enable_subsetting false</code>).</p>
+<p>A useful course of action is to first run your dataset through the <a href="https://beiko-lab.github.io/arete/usage/#poppunk-entry">PopPUNK entry</a>, and then choose the appropriate parameters for your final pipeline run.
+The PopPUNK entry takes at most 2 hours to run, even on <a href="https://beiko-lab.github.io/arete/resource_profiles/">large datasets</a>.
+Disabling PopPUNK in your execution is also simple to do with <code>--skip_poppunk</code>.</p>
+<h2 id="rspr">rSPR</h2>
+<p>rSPR, which you can enable with <code>--run_rspr</code> or with the <a href="https://beiko-lab.github.io/arete/usage/#rspr-entry">rSPR entry</a>, is known to be <strong>very slow</strong>, especially with larger datasets.</p>
+<p>The default of 3 days for rSPR runtimes should be enough for some runs, but for most larger datasets it won't be sufficient. In this case, if you do want to run rSPR, we suggest two possible routes:</p>
 <ul>
-<li>
-<p>For the default or <code>small</code> profile, we expect datasets with 100 samples/assemblies or fewer.
-  It runs on the default pipeline parameters, with no changes.</p>
-</li>
-<li>
-<p>For the <code>medium</code> profile, we expect datasets with &gt;100 and &lt;1000 samples.
-  It increases the default resource requirements for most processes and also uses <a href="https://github.com/labgem/PPanGGOLiN">PPanGGoLiN</a> for pangenome construction, instead of <a href="https://github.com/gtonkinhill/panaroo/">Panaroo</a>.</p>
-</li>
-<li>
-<p>For the <code>large</code> profile, we expect datasets with &gt;1000 samples.
-  It also increases default resource requirements for some processes and uses PPanGGoLin.
-  Additionally, <strong>it enables <a href="../subsampling/">PopPUNK subsampling</a>, with default parameters</strong>.</p>
-</li>
-<li>
-<p>For the <code>light</code> profile, we expect datasets with at most 12 samples.
-  This is a profile primarily designed to run on personal computers and it disables most ARETE processes.</p>
-</li>
+<li>Increasing the default time allocation for the <code>RSPR_EXACT</code> processes. <a href="https://beiko-lab.github.io/arete/usage/#custom-resource-requests">Check out how</a>.</li>
+<li>Ignoring timeout errors altogether and finish the pipeline execution with whatever finished running in these 3 days. <strong>This is the default course of action for ARETE</strong>.</li>
 </ul>
+<p>By choosing the second course of action, we ignore timeout errors generated with <code>RSPR_EXACT</code> and finish the execution of downstream processes, i.e. <code>RSPR_HEATMAP</code>, with whatever results we already have.
+This process generates a heatmap of Tree size and Exact rSPR distance.</p>
+<p>While <code>RSPR_HEATMAP</code> should execute with the results that were generated up to the timeout, we have heard from users that this process can still not run, even when results from <code>RSPR_EXACT</code> were generated.
+This is unfortunate but it shouldn't be a big problem: The only output given by <code>RSPR_HEATMAP</code> is the aforementioned heatmap, which can also be generated externally by using our <a href="https://github.com/beiko-lab/arete/blob/master/bin/rspr_heatmap.py"><code>rspr_heatmap.py</code></a> script or your own downstream analysis.</p>
               
             </div>
           </div><footer>
     <div class="rst-footer-buttons" role="navigation" aria-label="Footer Navigation">
-        <a href="../ROADMAP/" class="btn btn-neutral float-left" title="Roadmap"><span class="icon icon-circle-arrow-left"></span> Previous</a>
-        <a href="../params/" class="btn btn-neutral float-right" title="Parameters">Next <span class="icon icon-circle-arrow-right"></span></a>
+        <a href="../output/" class="btn btn-neutral float-left" title="Output"><span class="icon icon-circle-arrow-left"></span> Previous</a>
+        <a href="../CITATIONS/" class="btn btn-neutral float-right" title="Citations">Next <span class="icon icon-circle-arrow-right"></span></a>
     </div>
 
   <hr/>
@@ -159,10 +157,10 @@
         </span>
     
     
-      <span><a href="../ROADMAP/" style="color: #fcfcfc">&laquo; Previous</a></span>
+      <span><a href="../output/" style="color: #fcfcfc">&laquo; Previous</a></span>
     
     
-      <span><a href="../params/" style="color: #fcfcfc">Next &raquo;</a></span>
+      <span><a href="../CITATIONS/" style="color: #fcfcfc">Next &raquo;</a></span>
     
   </span>
 </div>
