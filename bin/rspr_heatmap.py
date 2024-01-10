@@ -6,7 +6,12 @@ import pandas as pd
 from matplotlib import pyplot as plt
 from matplotlib.colors import LogNorm
 import seaborn as sns
-
+import os 
+import json
+from Bio import Phylo
+import re
+import io
+from collections import defaultdict
 
 def parse_args(args=None):
     Description = "Run rspr heatmap"
@@ -157,6 +162,125 @@ def make_group_heatmap(results, output_path, min_distance, max_distance):
         aggregated_row_df = aggregated_df
     generate_heatmap(aggregated_row_df, output_path, True)
 
+
+#region cluster network
+
+#####################################################################
+### FUNCTION GET_CLUSTER_BRANCH_VAL
+### Calculate cluster network branch value
+### lst_child: list of child of node
+### dict_clstr_map: cluster map
+#####################################################################
+
+def get_cluster_branch_val(lst_child, dict_clstr_map):
+    lst_keys = []
+    total_count = 0
+    for key in dict_clstr_map:
+        lst_key_child = [int(item) for item in key.strip('[]').split(', ')]
+        if set(lst_key_child).issubset(set(lst_child)):
+            total_count += dict_clstr_map[key]
+            lst_keys.append(key)
+    for key in lst_keys:
+        del dict_clstr_map[key]
+    return total_count
+
+
+#####################################################################
+### FUNCTION UPDATE_BRANCH_LENGTHS_TO_CLUSTER_VAL
+### Update branch length of the cluster trees to cluster value
+### node: current node
+### dict_clstr_map: cluster map
+#####################################################################
+
+def update_branch_lengths_to_cluster_val(node, dict_clstr_map, total_trees, leaf_mapping):
+    lst_node = list()
+    if not node:
+        return lst_node
+
+    if node.is_terminal():
+        lst_node.append(leaf_mapping[node.name])
+        node.branch_length = (get_cluster_branch_val(lst_node, dict_clstr_map) / total_trees) * 100
+    else:
+        for child in node.clades:
+            lst_child_node = update_branch_lengths_to_cluster_val(child, dict_clstr_map, total_trees, leaf_mapping)
+            lst_node.extend(lst_child_node)
+        node.branch_length = (get_cluster_branch_val(lst_node, dict_clstr_map) / total_trees) * 100
+    return lst_node
+
+
+#####################################################################
+### FUNCTION GENERATE_CLUSTER_NETWORK
+### Generate cluster network from list of clusters
+### lst_tree_clusters: list of clusters for all gene trees
+### refer_tree: reference tree
+#####################################################################
+
+def generate_cluster_network(lst_tree_clusters, refer_tree):
+    print("Generating cluster network")
+      
+    leaf_mapping = {leaf: i for i, leaf in enumerate(refer_tree.get_leaf_names())}
+    dict_clstr_map = defaultdict(int)
+    for tree in lst_tree_clusters:
+        for cluster in tree:
+            dict_clstr_map[str(sorted(cluster))] += 1
+
+    total_trees = len(lst_tree_clusters)
+    update_branch_lengths_to_cluster_val(refer_tree.root, dict_clstr_map, total_trees, leaf_mapping)
+
+
+#####################################################################
+### FUNCTION GENERATE_CLUSTER_HEATMAP
+### Generate cluster heatmap
+### lst_tree_clusters: list of clusters for all gene trees
+### cluster_heatmap_path: putput path of heatmap
+#####################################################################
+
+def generate_cluster_heatmap(lst_tree_clusters, cluster_heatmap_path):
+    print("Generating cluster heatmap")
+    leaves = set(element for tree in lst_tree_clusters for cluster in tree for element in cluster)
+    leaves = sorted(list(leaves))
+    precentage_matrix = [[0 for _ in range(len(leaves))] for _ in range(len(leaves))]
+
+    total_trees = len(lst_tree_clusters)
+    for i, element1 in enumerate(leaves):
+        for j, element2 in enumerate(leaves):
+            if i < j:
+                total_element_trees = 0
+                element1_present = False
+                element2_present = False
+                count = 0
+                for tree in lst_tree_clusters:
+                    for cluster in tree:
+                        if element1 in cluster:
+                            element1_present = True
+                        if element2 in cluster:
+                            element2_present = True
+                        if element1 in cluster and element2 in cluster:
+                            count += 1
+                            break
+                    if element1_present and element2_present:
+                        total_element_trees+=1
+                percentage = (count / total_element_trees) * 100
+                precentage_matrix[i][j] = percentage
+                precentage_matrix[j][i] = percentage
+            elif i == j:
+                precentage_matrix[i][j] = 100
+
+    plt.figure()
+    sns.heatmap(precentage_matrix, annot=True, fmt=".0f").set(title="Cluster wise leaves distribution")
+    plt.xlabel("Leaves")
+    plt.ylabel("Leaves")
+    plt.savefig(cluster_heatmap_path)
+
+    
+def read_tree(input_path):
+    with open(input_path, "r") as f:
+        tree_string = f.read()
+        formatted = re.sub(r";[^:]+:", ":", tree_string)
+        return Phylo.read(io.StringIO(formatted), "newick")
+
+#endregion
+    
 def main(args=None):
     args = parse_args(args)
 
@@ -178,6 +302,22 @@ def main(args=None):
         args.MIN_HEATMAP_RSPR_DISTANCE,
         args.MAX_HEATMAP_RSPR_DISTANCE
     )
+
+    # Generate cluster network
+
+    lst_tree_clusters = []
+    cluster_path = os.path.join("cluster_file.txt")
+    with open(cluster_path, "r") as f:
+        str_clstr = f.read()
+        lst_tree_clusters = json.loads(str_clstr)
+
+    refer_tree_path = os.path.join("rooted_reference_tree/core_gene_alignment.tre")
+    refer_tree = read_tree(refer_tree_path)
+    generate_cluster_network(lst_tree_clusters, refer_tree)
+
+    cluster_tree_path = os.path.join("cluster_tree.png")
+    Phylo.draw(refer_tree, do_show=False, branch_labels=lambda c: c.branch_length)
+    plt.savefig(cluster_tree_path, format="PNG")
 
 if __name__ == "__main__":
     sys.exit(main())
