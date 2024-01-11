@@ -4,8 +4,8 @@ process RSPR_EXACT {
 
     conda "bioconda::ete3=3.1.1"
     container "${ workflow.containerEngine == 'singularity' && !task.ext.singularity_pull_docker_container ?
-        'docker://docker.io/jvfe/rspr:v1.3.6':
-        'docker.io/jvfe/rspr:v1.3.6' }"
+        'docker://docker.io/jvfe/rspr:v1.3.7':
+        'docker.io/jvfe/rspr:v1.3.7' }"
 
     input:
     path subset_df
