@@ -123,8 +123,8 @@ Disabling PopPUNK in your execution is also simple to do with <code>--skip_poppu
 </ul>
 <p>By choosing the second course of action, we ignore timeout errors generated with <code>RSPR_EXACT</code> and finish the execution of downstream processes, i.e. <code>RSPR_HEATMAP</code>, with whatever results we already have.
 This process generates a heatmap of Tree size and Exact rSPR distance.</p>
-<p>While <code>RSPR_HEATMAP</code> should execute with the results that were generated up to the timeout, we have heard from users that this process can still not run, even when results from <code>RSPR_EXACT</code> were generated.
-This is unfortunate but it shouldn't be a big problem: The only output given by <code>RSPR_HEATMAP</code> is the aforementioned heatmap, which can also be generated externally by using our <a href="https://github.com/beiko-lab/arete/blob/master/bin/rspr_heatmap.py"><code>rspr_heatmap.py</code></a> script or your own downstream analysis.</p>
+<p>While <code>RSPR_HEATMAP</code> should execute with the results that were generated up to the timeout, we have heard from users that this process can still not run, even when results from <code>RSPR_EXACT</code> were generated. <strong>This issue has only been reported with older versions of nextflow, v23 onwards should work fine</strong>.</p>
+<p>While this issue is unfortunate it shouldn't be a big problem: The only output given by <code>RSPR_HEATMAP</code> is the aforementioned heatmap, which can also be generated externally by using our <a href="https://github.com/beiko-lab/arete/blob/master/bin/rspr_heatmap.py"><code>rspr_heatmap.py</code></a> script or your own downstream analysis.</p>
               
             </div>
           </div><footer>
