@@ -40,8 +40,16 @@ workflow RSPR {
             )
             .set { exact_output }
 
+        RSPR_EXACT.out.txt
+            .collectFile(
+                name: 'cluster_file.txt',
+                storeDir: "${params.outdir}/dynamics/rSPR/exact"
+            )
+            .set { cluster_file }
+
         RSPR_HEATMAP (
             exact_output,
+            cluster_file,
             RSPR_APPROX.out.rooted_reference_tree.first(),
             params.min_heatmap_exact_rspr,
             params.max_heatmap_exact_rspr,
