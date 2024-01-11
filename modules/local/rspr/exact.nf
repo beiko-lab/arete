@@ -17,6 +17,7 @@ process RSPR_EXACT {
 
     output:
     path "exact_output_*tsv", emit: tsv
+    path "cluster_file_*txt", emit: txt
 
     when:
     task.ext.when == null || task.ext.when
