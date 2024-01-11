@@ -23,5 +23,6 @@ The default of 3 days for rSPR runtimes should be enough for some runs, but for 
 By choosing the second course of action, we ignore timeout errors generated with `RSPR_EXACT` and finish the execution of downstream processes, i.e. `RSPR_HEATMAP`, with whatever results we already have.
 This process generates a heatmap of Tree size and Exact rSPR distance.
 
-While `RSPR_HEATMAP` should execute with the results that were generated up to the timeout, we have heard from users that this process can still not run, even when results from `RSPR_EXACT` were generated.
-This is unfortunate but it shouldn't be a big problem: The only output given by `RSPR_HEATMAP` is the aforementioned heatmap, which can also be generated externally by using our [`rspr_heatmap.py`](https://github.com/beiko-lab/arete/blob/master/bin/rspr_heatmap.py) script or your own downstream analysis.
+While `RSPR_HEATMAP` should execute with the results that were generated up to the timeout, we have heard from users that this process can still not run, even when results from `RSPR_EXACT` were generated. **This issue has only been reported with older versions of nextflow, v23 onwards should work fine**.
+
+While this issue is unfortunate it shouldn't be a big problem: The only output given by `RSPR_HEATMAP` is the aforementioned heatmap, which can also be generated externally by using our [`rspr_heatmap.py`](https://github.com/beiko-lab/arete/blob/master/bin/rspr_heatmap.py) script or your own downstream analysis.
