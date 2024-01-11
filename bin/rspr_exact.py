@@ -91,7 +91,7 @@ def fpt_rspr(results_df, min_branch_len=0, max_support_threshold=0.7, gather_clu
     trees_path = os.path.join("rooted_gene_trees")
 
     cluster_file = None
-    if gather_cluster_info and cluster_file_path:
+    if gather_cluster_info:
         cluster_file = open(cluster_file_path, 'a')
 
     # Run this groups in parallel
@@ -155,7 +155,7 @@ def main(args=None):
     gather_cluster_info = True
     cluster_file_path = None
     if gather_cluster_info:
-        cluster_file_path = os.path.join(f"exact_output_{group}.tsv")
+        cluster_file_path = os.path.join(f"cluster_file_{group}.txt")
 
     fpt_rspr(results, args.MIN_BRANCH_LENGTH, args.MAX_SUPPORT_THRESHOLD, gather_cluster_info, cluster_file_path)
     res_path = f"exact_output_{group}.tsv"
