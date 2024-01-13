@@ -9,6 +9,7 @@ nav:
   - Known issues: issues.md
   - Citations: CITATIONS.md
   - Roadmap: ROADMAP.md
+  - Contributing: contributing.md
   - Reference:
       - Dataset Size: resource_profiles.md
       - Parameters: params.md
