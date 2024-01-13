@@ -5,15 +5,15 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="author" content="Beiko Lab" />
       <link rel="shortcut icon" href="../img/favicon.ico" />
-    <title>Subsampling - ARETE</title>
+    <title>Contributing - ARETE</title>
     <link rel="stylesheet" href="../css/theme.css" />
     <link rel="stylesheet" href="../css/theme_extra.css" />
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github.min.css" />
     
       <script>
         // Current page data
-        var mkdocs_page_name = "Subsampling";
-        var mkdocs_page_input_path = "subsampling.md";
+        var mkdocs_page_name = "Contributing";
+        var mkdocs_page_input_path = "contributing.md";
         var mkdocs_page_url = null;
       </script>
     
@@ -67,21 +67,21 @@
                 <li class="toctree-l1"><a class="reference internal" href="../ROADMAP/">Roadmap</a>
                 </li>
               </ul>
-              <ul>
-                <li class="toctree-l1"><a class="reference internal" href="../contributing/">Contributing</a>
+              <ul class="current">
+                <li class="toctree-l1 current"><a class="reference internal current" href="./">Contributing</a>
+    <ul class="current">
+    <li class="toctree-l2"><a class="reference internal" href="#contribution-workflow">Contribution Workflow</a>
+    </li>
+    </ul>
                 </li>
               </ul>
               <p class="caption"><span class="caption-text">Reference</span></p>
-              <ul class="current">
+              <ul>
                   <li class="toctree-l1"><a class="reference internal" href="../resource_profiles/">Dataset Size</a>
                   </li>
                   <li class="toctree-l1"><a class="reference internal" href="../params/">Parameters</a>
                   </li>
-                  <li class="toctree-l1 current"><a class="reference internal current" href="./">Subsampling</a>
-    <ul class="current">
-    <li class="toctree-l2"><a class="reference internal" href="#example-command">Example command</a>
-    </li>
-    </ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../subsampling/">Subsampling</a>
                   </li>
               </ul>
       </div>
@@ -98,10 +98,9 @@
         <div class="rst-content"><div role="navigation" aria-label="breadcrumbs navigation">
   <ul class="wy-breadcrumbs">
     <li><a href=".." class="icon icon-home" aria-label="Docs"></a></li>
-          <li class="breadcrumb-item">Reference</li>
-      <li class="breadcrumb-item active">Subsampling</li>
+      <li class="breadcrumb-item active">Contributing</li>
     <li class="wy-breadcrumbs-aside">
-          <a href="https://github.com/beiko-lab/arete/edit/master/docs/subsampling.md" class="icon icon-github"> Edit on GitHub</a>
+          <a href="https://github.com/beiko-lab/arete/edit/master/docs/contributing.md" class="icon icon-github"> Edit on GitHub</a>
     </li>
   </ul>
   <hr/>
@@ -109,37 +108,27 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
             <div class="section" itemprop="articleBody">
               
-                <h2 id="poppunk-subsetting">PopPUNK subsetting</h2>
-<p>The subsampling subworkflow is executed if you want
-to reduce the number of genomes that get added to the phylogenomics subworkflow.
-By reducing the number of genomes, you can potentially reduce resource requirements for the pangenomics and phylogenomics tools.</p>
-<p>To enable this subworkflow, add <code>--enable_subsetting</code> when running beiko-lab/ARETE.
-This will subset genomes based on their core genome similarity and accessory genome similarity, as calculated via their PopPUNK distances.</p>
-<p>By default, the threshold is <code>--core_similarity 99.9</code> and <code>--accessory_similarity 99</code>. But these
-can be changed by adding these parameters to your execution. What happens then is if any pair of genomes is this similar, only one genome from this pair will
-be included in the phylogenomic section. All of the removed genome IDs will be present under <code>poppunk_results/removed_genomes.txt</code>.</p>
-<p>By adding <code>--enable_subsetting</code>, you'll be adding two processes to the execution DAG:</p>
-<ul>
-<li>POPPUNK_EXTRACT_DISTANCES: This process will extract pair-wise distances between all genomes, returning a table under <code>poppunk_results/distances/</code>. This table will be used to perform the subsetting.</li>
-<li>MAKE_HEATMAP: This process will create a heatmap showing different similarity thresholds and the number of genomes that'd be present in each of the possible subsets. It'll also be under <code>poppunk_results/distances/</code>.</li>
-</ul>
-<h3 id="example-command">Example command</h3>
-<p>The command below will execute the 'annotation' ARETE entry with subsetting enabled,
-with a core similarity threshold of 99% and an accessory similarity of 95%.</p>
-<pre><code>nextflow run beiko-lab/ARETE \
-  --input_sample_table samplesheet.csv \
-  --enable_subsetting \
-  --core_similarity 99 \
-  --accessory_similarity 95 \
-  -profile docker \
-  -entry annotation
-</code></pre>
-<p>Be sure to not include <code>--skip_poppunk</code> in your command, because that will then disable all PopPUNK-related processes, including the subsetting subworkflow.</p>
+                <h1 id="beiko-labarete-contributing-guidelines">beiko-lab/ARETE: Contributing Guidelines</h1>
+<p>Hey! Thank you for taking an interest in contributing to ARETE.</p>
+<p>We use GitHub for managing issues, contribution requests and everything else. So feel free to communicate with us using new issues and discussions, whatever best fits your idea for your contribution</p>
+<h2 id="contribution-workflow">Contribution Workflow</h2>
+<p>The standard workflow for contributing to ARETE is as follows:</p>
+<ol>
+<li>Check first if there isn't already an issue for your feature request, bug, etc. If there isn't one, <strong>you should create a new <a href="https://github.com/beiko-lab/arete/issues/new/choose">issue</a> or <a href="https://github.com/beiko-lab/arete/discussions/new/choose">discussion</a> for your planned contribution before starting working on it</strong>.</li>
+<li><a href="https://help.github.com/en/github/getting-started-with-github/fork-a-repo">Fork</a> the <a href="https://github.com/beiko-lab/arete/">beiko-lab/ARETE</a> repository to your GitHub account</li>
+<li>Make the necessary changes or additions within your forked repository. <strong>You should probably create a new branch for your contribution, instead of committing directly to the master branch of your repository</strong>.</li>
+<li>In case any parameters were added or changed, use <code>nf-core schema build</code> to add them to the pipeline JSON schema and <code>nf-core schema docs --output docs/params.md --force</code> to update the respective documentation (requires <a href="https://github.com/nf-core/tools">nf-core tools</a> &gt;= 1.10).</li>
+<li>Optionally run the pipeline's unit tests locally using <a href="https://github.com/askimed/nf-test#installation"><code>nf-test</code></a>: <code>nf-test test tests/subworkflows/local/*</code>.</li>
+<li>Submit a Pull Request to our <code>master</code> branch and wait for your changes to be reviewed and merged by our maintainers.</li>
+</ol>
+<p>Our Github Actions workflows should perform a few pipeline tests automatically after receiving your pull request.
+Any errors on them should be looked at since they could point to underlying issues in your changes.</p>
               
             </div>
           </div><footer>
     <div class="rst-footer-buttons" role="navigation" aria-label="Footer Navigation">
-        <a href="../params/" class="btn btn-neutral float-left" title="Parameters"><span class="icon icon-circle-arrow-left"></span> Previous</a>
+        <a href="../ROADMAP/" class="btn btn-neutral float-left" title="Roadmap"><span class="icon icon-circle-arrow-left"></span> Previous</a>
+        <a href="../resource_profiles/" class="btn btn-neutral float-right" title="Dataset Size">Next <span class="icon icon-circle-arrow-right"></span></a>
     </div>
 
   <hr/>
@@ -166,8 +155,10 @@ with a core similarity threshold of 99% and an accessory similarity of 95%.</p>
         </span>
     
     
-      <span><a href="../params/" style="color: #fcfcfc">&laquo; Previous</a></span>
+      <span><a href="../ROADMAP/" style="color: #fcfcfc">&laquo; Previous</a></span>
     
+    
+      <span><a href="../resource_profiles/" style="color: #fcfcfc">Next &raquo;</a></span>
     
   </span>
 </div>
