@@ -245,9 +245,7 @@ ARETE development has been supported from many sources, including Genome Canada,
 
 ## Contributing to ARETE <a name="contributing"></a>
 
-<!--If you would like to contribute to this pipeline, please see the [contributing guidelines](.github/CONTRIBUTING.md).-->
-
-Thank you for your interest in contributing to ARETE. We are currently in the process of formalizing contribution guidelines. In the meantime, please feel free to open an issue describing your suggested changes.
+If you would like to contribute to ARETE, please see the [contributing guidelines](https://beiko-lab.github.io/arete/contributing/).
 
 ## Citing ARETE <a name="citing"></a>
 
