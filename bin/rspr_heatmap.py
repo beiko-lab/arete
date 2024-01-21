@@ -215,14 +215,16 @@ def update_branch_lengths_to_cluster_val(node, dict_clstr_map, total_trees, leaf
 ### refer_tree: reference tree
 #####################################################################
 
-def generate_cluster_network(lst_tree_clusters, refer_tree):
+def generate_cluster_network(lst_tree_clusters, refer_tree, lst_leaves):
     print("Generating cluster network")
       
-    leaf_mapping = {leaf: i for i, leaf in enumerate(refer_tree.get_leaf_names())}
+    lst_leaves = [leave.name for leave in refer_tree.get_terminals()]
+    leaf_mapping = {leaf: i for i, leaf in enumerate(lst_leaves)}
     dict_clstr_map = defaultdict(int)
     for tree in lst_tree_clusters:
         for cluster in tree:
-            dict_clstr_map[str(sorted(cluster))] += 1
+            if len(cluster) > 0:
+                dict_clstr_map[str(sorted(cluster))] += 1
 
     total_trees = len(lst_tree_clusters)
     update_branch_lengths_to_cluster_val(refer_tree.root, dict_clstr_map, total_trees, leaf_mapping)
@@ -278,6 +280,16 @@ def read_tree(input_path):
         tree_string = f.read()
         formatted = re.sub(r";[^:]+:", ":", tree_string)
         return Phylo.read(io.StringIO(formatted), "newick")
+    
+
+def get_fig_size(refer_tree):
+    max_fig_size = 100
+    num_leaves = refer_tree.count_terminals()
+    fig_size = num_leaves
+    if fig_size > max_fig_size:
+        fig_size = max_fig_size
+    return fig_size
+
 
 #endregion
     
@@ -304,20 +316,26 @@ def main(args=None):
     )
 
     # Generate cluster network
-
     lst_tree_clusters = []
     cluster_path = os.path.join("cluster_file.txt")
     with open(cluster_path, "r") as f:
         str_clstr = f.read()
         lst_tree_clusters = json.loads(str_clstr)
 
+    cluster_tree_path = os.path.join("cluster_tree.png")
     refer_tree_path = os.path.join("rooted_reference_tree/core_gene_alignment.tre")
     refer_tree = read_tree(refer_tree_path)
-    generate_cluster_network(lst_tree_clusters, refer_tree)
+    if refer_tree:
+        generate_cluster_network(lst_tree_clusters, refer_tree)
 
-    cluster_tree_path = os.path.join("cluster_tree.png")
-    Phylo.draw(refer_tree, do_show=False, branch_labels=lambda c: c.branch_length)
-    plt.savefig(cluster_tree_path, format="PNG")
+        plt.rcParams['font.size'] = '12'
+        fig_size = get_fig_size(refer_tree)
+        fig, ax = plt.subplots(figsize=(fig_size, fig_size))
+        Phylo.draw(refer_tree, axes=ax, do_show=False, branch_labels=lambda c: round(c.branch_length, 2))
+
+        plt.xlabel('Cluster probability (%)')
+        plt.title("Cluster network")
+        plt.savefig(cluster_tree_path, format="png")
 
 if __name__ == "__main__":
     sys.exit(main())
