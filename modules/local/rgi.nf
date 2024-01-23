@@ -48,8 +48,7 @@ process RGI {
     path "versions.yml", emit: version
 
     script:
-    def software = getSoftwareName(task.process)
-    def prefix   = options.suffix ? "${meta.id}${options.suffix}" : "${meta.id}"
+    def prefix   = task.ext.prefix ? "${meta.id}${options.suffix}" : "${meta.id}"
 
     """
     rgi load -i $card_db --local
@@ -61,8 +60,7 @@ process RGI {
     END_VERSIONS
     """
     stub:
-    def software = getSoftwareName(task.process)
-    def prefix   = options.suffix ? "${meta.id}${options.suffix}" : "${meta.id}"
+    def prefix   = task.ext.prefix ? "${meta.id}${options.suffix}" : "${meta.id}"
     """
     touch ${prefix}_rgi.txt
     cat <<-END_VERSIONS > versions.yml
