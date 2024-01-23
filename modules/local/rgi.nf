@@ -1,9 +1,3 @@
-// Import generic module functions
-include { initOptions; saveFiles; getSoftwareName } from './functions'
-
-params.options = [:]
-options        = initOptions(params.options)
-
 process UPDATE_RGI_DB {
     tag "CARD"
     label 'process_low'
@@ -36,9 +30,6 @@ process UPDATE_RGI_DB {
 process RGI {
     tag "$meta.id"
     label 'process_low'
-    publishDir "${params.outdir}",
-        mode: params.publish_dir_mode,
-        saveAs: { filename -> saveFiles(filename:filename, options:params.options, publish_dir:getSoftwareName(task.process), publish_id:meta.id) }
 
     conda (params.enable_conda ? "bioconda::rgi=6.0.2" : null)
     if (workflow.containerEngine == 'singularity' && !params.singularity_pull_docker_container) {
@@ -57,8 +48,7 @@ process RGI {
     path "versions.yml", emit: version
 
     script:
-    def software = getSoftwareName(task.process)
-    def prefix   = options.suffix ? "${meta.id}${options.suffix}" : "${meta.id}"
+    def prefix   = task.ext.prefix ? "${meta.id}${options.suffix}" : "${meta.id}"
 
     """
     rgi load -i $card_db --local
@@ -70,8 +60,7 @@ process RGI {
     END_VERSIONS
     """
     stub:
-    def software = getSoftwareName(task.process)
-    def prefix   = options.suffix ? "${meta.id}${options.suffix}" : "${meta.id}"
+    def prefix   = task.ext.prefix ? "${meta.id}${options.suffix}" : "${meta.id}"
     """
     touch ${prefix}_rgi.txt
     cat <<-END_VERSIONS > versions.yml
