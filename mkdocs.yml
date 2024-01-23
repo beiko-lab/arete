@@ -17,5 +17,6 @@ nav:
 repo_url: https://github.com/beiko-lab/arete
 theme:
   name: "readthedocs"
+  logo: assets/arete-symbol.png
 plugins:
   - search
