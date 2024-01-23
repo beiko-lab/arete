@@ -1,13 +1,5 @@
-// Import generic module functions
-include { saveFiles } from './functions'
-
-params.options = [:]
-
 process SAMPLESHEET_CHECK {
     tag "$samplesheet"
-    publishDir "${params.outdir}",
-        mode: params.publish_dir_mode,
-        saveAs: { filename -> saveFiles(filename:filename, options:params.options, publish_dir:'pipeline_info', meta:[:], publish_by_meta:[]) }
 
     conda (params.enable_conda ? "conda-forge::python=3.8.3" : null)
     if (workflow.containerEngine == 'singularity' && !params.singularity_pull_docker_container) {
@@ -22,7 +14,7 @@ process SAMPLESHEET_CHECK {
     output:
     path '*.csv'
 
-    script: // This script is bundled with the pipeline, in nf-core/arete/bin/
+    script:
     """
     check_samplesheet.py \\
         $samplesheet \\
@@ -32,9 +24,6 @@ process SAMPLESHEET_CHECK {
 
 process ASSEMBLYSHEET_CHECK {
     tag "$assemblysheet"
-    publishDir "${params.outdir}",
-        mode: params.publish_dir_mode,
-        saveAs: { filename -> saveFiles(filename:filename, options:params.options, publish_dir:'pipeline_info', publish_id:'') }
 
     conda (params.enable_conda ? "conda-forge::python=3.8.3" : null)
     if (workflow.containerEngine == 'singularity' && !params.singularity_pull_docker_container) {
@@ -49,7 +38,7 @@ process ASSEMBLYSHEET_CHECK {
     output:
     path '*.csv'
 
-    script:  // This script is bundled with the pipeline, in arete/bin/
+    script:
     """
     check_assembly_samplesheet.py $assemblysheet assemblysheet.valid.csv
     """
@@ -74,7 +63,7 @@ process PHYLOSHEET_CHECK {
     output:
     path '*.csv'
 
-    script:  // This script is bundled with the pipeline, in arete/bin/
+    script:
     """
     check_phylo_samplesheet.py $phylosheet phylosheet.valid.csv
     """

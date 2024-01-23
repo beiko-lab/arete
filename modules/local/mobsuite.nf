@@ -1,4 +1,3 @@
-// Import generic module functions
 process MOB_RECON {
     tag "$meta.id"
     label 'process_low'
@@ -12,7 +11,6 @@ process MOB_RECON {
 
     input:
     tuple val(meta), path(fasta)
-    //path mob_db
 
     output:
     tuple val(meta), path("${meta.id}_mob_recon")                             , emit: mob_predictions
@@ -33,7 +31,7 @@ process MOB_RECON {
         mobsuite: \$(echo \$(mob_recon --version 2>&1) | sed 's/^.*mob_recon //; s/ .*\$//')
     END_VERSIONS
     """
-    //--database_directory $mob_db  \\
+
     stub:
     """
     mkdir ${meta.id}_mob_recon
