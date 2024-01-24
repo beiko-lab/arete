@@ -318,9 +318,9 @@ def main(args=None):
     # Generate cluster network
     lst_tree_clusters = []
     cluster_path = os.path.join("cluster_file.txt")
-    with open(cluster_path, "r") as f:
-        str_clstr = f.read()
-        lst_tree_clusters = json.loads(str_clstr)
+    with open(cluster_path, "r") as file:
+        for str_clstr in file:
+            lst_tree_clusters.append(json.loads(str_clstr))
 
     cluster_tree_path = os.path.join("cluster_tree.png")
     refer_tree_path = os.path.join("rooted_reference_tree/core_gene_alignment.tre")
