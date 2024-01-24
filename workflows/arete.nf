@@ -470,6 +470,34 @@ workflow ANNOTATION {
     if (!params.skip_phylo) {
         PHYLOGENOMICS(gffs, use_full_alignment, use_fasttree)
         ch_software_versions = ch_software_versions.mix(PHYLOGENOMICS.out.phylo_software)
+
+        if (params.run_evolccm) {
+            EVOLCCM (
+                PHYLOGENOMICS.out.core_tree,
+                ANNOTATE_ASSEMBLIES.out.feature_profile
+            )
+        }
+
+        if (params.run_rspr) {
+            PHYLOGENOMICS.out.gene_trees
+                .flatten()
+                .map{it -> it.toString() }
+                .collectFile(newLine: true) { item ->
+                    ["${item}.txt",
+                    "sample,path\n" + item + ',' + item ]
+                }
+                .set { individual_sheets }
+
+            individual_sheets
+                .collectFile(name: 'gene_tree_paths.txt', skip:1 , keepHeader: true)
+                .set{ gene_tree_sheet }
+
+            RSPR (
+                PHYLOGENOMICS.out.core_tree,
+                gene_tree_sheet,
+                ANNOTATE_ASSEMBLIES.out.annotation
+            )
+        }
     }
 
     ////////////////////////// GENE ORDER /////////////////////////////////////
