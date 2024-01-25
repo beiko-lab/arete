@@ -285,7 +285,7 @@ def read_tree(input_path):
 def get_fig_size(refer_tree):
     max_fig_size = 100
     num_leaves = refer_tree.count_terminals()
-    fig_size = num_leaves
+    fig_size = num_leaves / 2
     if fig_size > max_fig_size:
         fig_size = max_fig_size
     return fig_size
