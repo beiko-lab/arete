@@ -8,6 +8,8 @@
 
 ![ARETE Logo](assets/arete-logo-transparent.png)
 
+[__Check out the full ARETE documentation for more information__](https://beiko-lab.github.io/arete/)
+
 ## What is ARETE?
 
 **ARETE** (Antimicrobial Resistance: Emergence, Transmission, and Ecology) is a bioinformatics best-practice analysis pipeline for profiling the **genomic repertoire** and **evolutionary dynamics** of microorganisms with a particular focus on pathogens. We use ARETE to identify important genes (e.g., those that confer antimicrobial resistance or contribute to virulence) and mobile genetic elements such as plasmids and genomic islands, and infer important routes by which these are transmitted using evidence from recombination, cosegregation, coevolution, and phylogenetic trees comparisons.
