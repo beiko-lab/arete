@@ -74,7 +74,7 @@ The user can optionally subdivide their set of genomes into related lineages ide
 
 ### Recombination detection
 
-- Recombination detection is performed within lineages identified by PopPUNK ([`poppunk`](https://poppunk.net/)). Note that this application of PopPUNK is different from the subsetting described above.
+- Recombination detection is performed within lineages identified by PopPUNK ([`poppunk`](https://poppunk.bacpop.org/)). Note that this application of PopPUNK is different from the subsetting described above.
 - Genome alignment using SKA2 ([`ska2`](https://github.com/bacpop/ska.rust))
 - Recombination detection using Verticall ([`verticall`](https://github.com/rrwick/Verticall/)) and/or Gubbins ([`gubbins`](https://github.com/nickjcroucher/gubbins))
 

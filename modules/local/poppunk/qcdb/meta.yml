@@ -8,7 +8,7 @@ keywords:
 tools:
   - poppunk:
     description: Population partitioning using nucleotide k-mers
-    homepage: https://poppunk.net/
+    homepage: https://poppunk.bacpop.org/
     documentation: https://poppunk.readthedocs.io/en/latest/
     tool_dev_url: https://github.com/bacpop/PopPUNK
     doi: "doi:10.1101/gr.241455.118"
