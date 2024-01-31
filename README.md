@@ -72,7 +72,7 @@ The user can optionally subdivide their set of genomes into related lineages ide
 - Reference and gene tree inference using FastTree ([`fasttree`](http://www.microbesonline.org/fasttree/)) or IQTree ([`iqtree`](http://www.iqtree.org/))
 - (_optionally_) SNP-sites ([`SNPsites`](https://github.com/sanger-pathogens/snp-sites))
 
-### Recombination detection
+### Recombination detection (_optionally_)
 
 - Recombination detection is performed within lineages identified by PopPUNK ([`poppunk`](https://poppunk.bacpop.org/)). Note that this application of PopPUNK is different from the subsetting described above.
 - Genome alignment using SKA2 ([`ska2`](https://github.com/bacpop/ska.rust))
@@ -80,15 +80,15 @@ The user can optionally subdivide their set of genomes into related lineages ide
 
 ### Coevolution
 
-- Identification of coordinated gain and loss of features using EvolCCM ([`EvolCCM`](https://rdrr.io/github/beiko-lab/evolCCM/f/README.md))
+- (_optionally_) Identification of coordinated gain and loss of features using EvolCCM ([`EvolCCM`](https://rdrr.io/github/beiko-lab/evolCCM/f/README.md))
 
 ### Lateral gene transfer
 
-- Phylogenetic inference of LGT using rSPR ([`rSPR`](https://github.com/cwhidden/rspr))
+- (_optionally_) Phylogenetic inference of LGT using rSPR ([`rSPR`](https://github.com/cwhidden/rspr))
 
 ### Gene order
 
-- Comparison of genomic neighbourhoods using the Gene Order Workflow ([`Gene Order Workflow`](https://github.com/JTL-lab/Gene-Order-Workflow))
+- (_optionally_) Comparison of genomic neighbourhoods using the Gene Order Workflow ([`Gene Order Workflow`](https://github.com/JTL-lab/Gene-Order-Workflow))
 
 See our [roadmap](ROADMAP.md) for a full list of future development targets.
 
