@@ -31,6 +31,12 @@ The pipeline is built using [Nextflow](https://www.nextflow.io/) and processes d
         - BacMet: Metal resistance determinants
         - ICEberg: Integrative and conjugative elements
 
+      - annotation_report.tsv.gz - A tabular file aggregating annotation data from all genomes
+      - feature_profile.tsv.gz - A presence absence matrix of features in all genomes
+
+IslandPath, PhiSpy and IntegronFinder results are currently not added to the final annotation report.
+We seek to fix this issue in the future.
+
 - [PopPUNK Subworkflow](#poppunk)
 
       - PopPUNK - Genome clustering
