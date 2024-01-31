@@ -238,7 +238,7 @@ See the [PhiSpy documentation](https://github.com/linsalrob/PhiSpy#output-files)
       - `poppunk_${poppunk_model}/` - Results from PopPUNK's fit-model command
       - `poppunk_visualizations/` - Results from the poppunk_visualise command
 
-[PopPUNK](https://poppunk.net/) is a tool for clustering genomes.
+[PopPUNK](https://poppunk.bacpop.org/) is a tool for clustering genomes.
 
 ## Phylogenomics and Pangenomics
 
