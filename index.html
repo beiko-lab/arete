@@ -300,6 +300,21 @@ Replace <code>docker</code> below as appropriate.</p>
 <li>Note the addition of the <code>light</code> profile, this is the configuration for running on personal computers.</li>
 <li>Check out how to <a href="https://beiko-lab.github.io/arete/usage/#custom-resource-requests">assign resource requests</a> for even more customization.</li>
 </ul>
+<h2 id="run-all-arete-subworkflows-in-a-small-dataset">Run all ARETE subworkflows in a small dataset</h2>
+<p>The command below will run all tools included in the annotation subworkflow and
+will enable the recombination, gene order, rSPR and evolCCM subworkflows.</p>
+<p>Be aware that the performance of the evolCCM and Gene Order subworkflows with
+large or very diverse datasets can be subpar.</p>
+<pre><code class="language-bash">nextflow run beiko-lab/ARETE \
+  --input_sample_table samplesheet.csv \
+  --annotation_tools 'mobsuite,rgi,cazy,vfdb,iceberg,bacmet,islandpath,phispy,integronfinder,report' \
+  --run_recombination \
+  --run_evolccm \
+  --run_rspr \
+  --run_gene_order \
+  --poppunk_model dbscan \
+  -profile docker
+</code></pre>
 <h2 id="credits">Credits <a name="credits"></a></h2>
 <p>The ARETE software was originally written and developed by <a href="https://github.com/fmaguire">Finlay Maguire</a> and <a href="https://github.com/alexmanuele">Alex Manuele</a>, and is currently developed by <a href="https://github.com/jvfe">João Cavalcante</a>.</p>
 <p>Rob Beiko is the PI of the ARETE project. The project Co-PI is Fiona Brinkman. Other project leads include Andrew MacArthur, Cedric Chauve, Chris Whidden, Gary van Domselaar, John Nash, Rahat Zaheer, and Tim McAllister.</p>
@@ -371,5 +386,5 @@ Replace <code>docker</code> below as appropriate.</p>
 
 <!--
 MkDocs version : 1.5.3
-Build Date UTC : 2024-01-31 19:13:51.604914+00:00
+Build Date UTC : 2024-02-01 12:00:05.992212+00:00
 -->
