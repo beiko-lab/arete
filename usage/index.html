@@ -103,6 +103,8 @@
     </li>
     <li class="toctree-l2"><a class="reference internal" href="#nextflow-memory-requirements">Nextflow memory requirements</a>
     </li>
+    <li class="toctree-l2"><a class="reference internal" href="#aretes-storage-requirements">ARETE's storage requirements</a>
+    </li>
     </ul>
                 </li>
               </ul>
@@ -463,6 +465,11 @@ We recommend adding the following line to your environment to limit this (typica
 </code></pre>
 <p>Sometimes LevelDB, which is used by Nextflow to track execution metadata, can lead to memory-related issues, often showing as a <strong>SIGBUS</strong> error. <a href="https://github.com/nextflow-io/nextflow/issues/842">This tends to happen when running Nextflow in SLURM environments</a>.</p>
 <p>In this case, setting <code>NXF_OPTS="-Dleveldb.mmap=false"</code> in your <code>~/.bashrc</code> or immediately before executing <code>nextflow run</code> usually solves the issue.</p>
+<h2 id="aretes-storage-requirements">ARETE's storage requirements</h2>
+<p>ARETE generates a lot of intermediary files, which is even further exacerbated if you are running on a dataset with more than 100 genomes.
+Before running ARETE you should make sure you have at least 500 GB of free storage.</p>
+<p>After running ARETE and checking your results, you can remove the <code>work/</code> directory in your working directory, which is where Nextflow stores its cache.
+<strong>Be aware that deleting <code>work/</code> will make it so your pipeline won't re-run with cache when using the <code>-resume</code> flag, it will run every process from scratch.</strong></p>
               
             </div>
           </div><footer>
