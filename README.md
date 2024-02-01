@@ -235,7 +235,7 @@ nextflow run beiko-lab/ARETE \
 - Note the addition of the `light` profile, this is the configuration for running on personal computers.
 - Check out how to [assign resource requests](https://beiko-lab.github.io/arete/usage/#custom-resource-requests) for even more customization.
 
-## Run all ARETE subworkflows in a small dataset
+### Run all ARETE subworkflows in a small dataset
 
 The command below will run all tools included in the annotation subworkflow and
 will enable the recombination, gene order, rSPR and evolCCM subworkflows.
