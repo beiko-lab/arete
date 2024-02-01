@@ -350,3 +350,11 @@ NXF_OPTS='-Xms1g -Xmx4g'
 Sometimes LevelDB, which is used by Nextflow to track execution metadata, can lead to memory-related issues, often showing as a **SIGBUS** error. [This tends to happen when running Nextflow in SLURM environments](https://github.com/nextflow-io/nextflow/issues/842).
 
 In this case, setting `NXF_OPTS="-Dleveldb.mmap=false"` in your `~/.bashrc` or immediately before executing `nextflow run` usually solves the issue.
+
+## ARETE's storage requirements
+
+ARETE generates a lot of intermediary files, which is even further exacerbated if you are running on a dataset with more than 100 genomes.
+Before running ARETE you should make sure you have at least 500 GB of free storage.
+
+After running ARETE and checking your results, you can remove the `work/` directory in your working directory, which is where Nextflow stores its cache.
+**Be aware that deleting `work/` will make it so your pipeline won't re-run with cache when using the `-resume` flag, it will run every process from scratch.**
