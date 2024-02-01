@@ -235,6 +235,26 @@ nextflow run beiko-lab/ARETE \
 - Note the addition of the `light` profile, this is the configuration for running on personal computers.
 - Check out how to [assign resource requests](https://beiko-lab.github.io/arete/usage/#custom-resource-requests) for even more customization.
 
+## Run all ARETE subworkflows in a small dataset
+
+The command below will run all tools included in the annotation subworkflow and
+will enable the recombination, gene order, rSPR and evolCCM subworkflows.
+
+Be aware that the performance of the evolCCM and Gene Order subworkflows with
+large or very diverse datasets can be subpar.
+
+```bash
+nextflow run beiko-lab/ARETE \
+  --input_sample_table samplesheet.csv \
+  --annotation_tools 'mobsuite,rgi,cazy,vfdb,iceberg,bacmet,islandpath,phispy,integronfinder,report' \
+  --run_recombination \
+  --run_evolccm \
+  --run_rspr \
+  --run_gene_order \
+  --poppunk_model dbscan \
+  -profile docker
+```
+
 ## Credits <a name="credits"></a>
 
 The ARETE software was originally written and developed by [Finlay Maguire](https://github.com/fmaguire) and [Alex Manuele](https://github.com/alexmanuele), and is currently developed by [João Cavalcante](https://github.com/jvfe).
