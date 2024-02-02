@@ -25,7 +25,7 @@ def make_heatmap(file_in, file_out):
     df = pd.read_table(file_in)
     total_genomes = len(set(df["Query"].to_list() + df["Reference"].to_list()))
     # define the thresholds to investigate
-    thresholds = [0.9, 0.95, 0.99, 0.999, 0.9999]
+    thresholds = [0.9, 0.95, 0.99, 0.999, 0.9999, 1.0]
     records = []
 
     for t in it.product(thresholds, thresholds):
