@@ -167,7 +167,7 @@ def make_group_heatmap(results, output_path, min_distance, max_distance):
 
 #####################################################################
 ### FUNCTION GET_CLUSTER_PROBABILITY_VAL
-### Calculate cluster probability value for branch
+### Calculate cluster probability value for node
 ### lst_child: list of child of node
 ### dict_clstr_map: cluster map
 #####################################################################
@@ -333,7 +333,7 @@ def main(args=None):
         plt.rcParams['font.size'] = '12'
         fig_size = get_fig_size(refer_tree)
         fig, ax = plt.subplots(figsize=(fig_size, fig_size))
-        Phylo.draw(refer_tree, axes=ax, do_show=False, branch_labels=lambda c: round(c.branch_length, 2))
+        Phylo.draw(refer_tree, axes=ax, do_show=False, branch_labels=lambda c: round(c.cluster_probability, 2))
 
         plt.xlabel('Cluster probability (%)')
         plt.title("Cluster network")
