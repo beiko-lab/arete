@@ -166,13 +166,13 @@ def make_group_heatmap(results, output_path, min_distance, max_distance):
 #region cluster network
 
 #####################################################################
-### FUNCTION GET_CLUSTER_BRANCH_VAL
-### Calculate cluster network branch value
+### FUNCTION GET_CLUSTER_PROBABILITY_VAL
+### Calculate cluster probability value for branch
 ### lst_child: list of child of node
 ### dict_clstr_map: cluster map
 #####################################################################
 
-def get_cluster_branch_val(lst_child, dict_clstr_map):
+def get_cluster_probability_val(lst_child, dict_clstr_map):
     lst_keys = []
     total_count = 0
     for key in dict_clstr_map:
@@ -186,25 +186,25 @@ def get_cluster_branch_val(lst_child, dict_clstr_map):
 
 
 #####################################################################
-### FUNCTION UPDATE_BRANCH_LENGTHS_TO_CLUSTER_VAL
-### Update branch length of the cluster trees to cluster value
+### FUNCTION UPDATE_CLUSTER_PROBABILITY
+### Update cluster probability value and assign it to node
 ### node: current node
 ### dict_clstr_map: cluster map
 #####################################################################
 
-def update_branch_lengths_to_cluster_val(node, dict_clstr_map, total_trees, leaf_mapping):
+def update_cluster_probability(node, dict_clstr_map, total_trees, leaf_mapping):
     lst_node = list()
     if not node:
         return lst_node
 
     if node.is_terminal():
         lst_node.append(leaf_mapping[node.name])
-        node.branch_length = (get_cluster_branch_val(lst_node, dict_clstr_map) / total_trees) * 100
+        node.cluster_probability = (get_cluster_probability_val(lst_node, dict_clstr_map) / total_trees) * 100
     else:
         for child in node.clades:
-            lst_child_node = update_branch_lengths_to_cluster_val(child, dict_clstr_map, total_trees, leaf_mapping)
+            lst_child_node = update_cluster_probability(child, dict_clstr_map, total_trees, leaf_mapping)
             lst_node.extend(lst_child_node)
-        node.branch_length = (get_cluster_branch_val(lst_node, dict_clstr_map) / total_trees) * 100
+        node.cluster_probability = (get_cluster_probability_val(lst_node, dict_clstr_map) / total_trees) * 100
     return lst_node
 
 
@@ -217,6 +217,8 @@ def update_branch_lengths_to_cluster_val(node, dict_clstr_map, total_trees, leaf
 
 def generate_cluster_network(lst_tree_clusters, refer_tree, lst_leaves):
     print("Generating cluster network")
+    if not refer_tree:
+        return
       
     lst_leaves = [leave.name for leave in refer_tree.get_terminals()]
     leaf_mapping = {leaf: i for i, leaf in enumerate(lst_leaves)}
@@ -227,7 +229,7 @@ def generate_cluster_network(lst_tree_clusters, refer_tree, lst_leaves):
                 dict_clstr_map[str(sorted(cluster))] += 1
 
     total_trees = len(lst_tree_clusters)
-    update_branch_lengths_to_cluster_val(refer_tree.root, dict_clstr_map, total_trees, leaf_mapping)
+    update_cluster_probability(refer_tree.root, dict_clstr_map, total_trees, leaf_mapping)
 
 
 #####################################################################
