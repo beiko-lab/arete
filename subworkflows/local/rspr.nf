@@ -35,7 +35,7 @@ workflow RSPR {
             .collectFile(
                 name: 'exact_output.tsv',
                 keepHeader: true,
-                storeDir: "${params.outdir}/dynamics/rSPR/exact",
+                storeDir: "${params.outdir}/dynamics/rSPR/exact/exact_output",
                 skip: 1
             )
             .set { exact_output }
@@ -43,7 +43,7 @@ workflow RSPR {
         RSPR_EXACT.out.txt
             .collectFile(
                 name: 'cluster_file.txt',
-                storeDir: "${params.outdir}/dynamics/rSPR/exact"
+                storeDir: "${params.outdir}/dynamics/rSPR/exact/cluster_output"
             )
             .set { cluster_file }
 

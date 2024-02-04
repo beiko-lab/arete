@@ -19,6 +19,18 @@ def parse_args(args=None):
     parser = argparse.ArgumentParser(description=Description, epilog=Epilog)
     parser.add_argument("-df", "--dataframe", dest="DF", help="CSV table")
     parser.add_argument(
+        "-cf",
+        "--cluster_file",
+        dest="CF",
+        help="Cluster data file"
+    )
+    parser.add_argument(
+        "-rr",
+        "--rooted_reference",
+        dest="RR",
+        help="Rooted reference tree path"
+    )
+    parser.add_argument(
         "-o",
         "--output",
         dest="OUTPUT",
@@ -29,6 +41,12 @@ def parse_args(args=None):
         "--group_output",
         dest="GROUP_OUTPUT",
         help="Group output file name",
+    )
+    parser.add_argument(
+        "-co",
+        "--cluster_output",
+        dest="CLUSTER_OUTPUT",
+        help="Cluster probability output file name",
     )
     parser.add_argument(
         "-mnher",
@@ -319,13 +337,13 @@ def main(args=None):
 
     # Generate cluster network
     lst_tree_clusters = []
-    cluster_path = os.path.join("cluster_file.txt")
+    cluster_path = args.CF
     with open(cluster_path, "r") as file:
         for str_clstr in file:
             lst_tree_clusters.append(json.loads(str_clstr))
 
-    cluster_tree_path = os.path.join("cluster_tree.png")
-    refer_tree_path = os.path.join("rooted_reference_tree/core_gene_alignment.tre")
+    cluster_tree_path = args.CLUSTER_OUTPUT
+    refer_tree_path = args.RR
     refer_tree = read_tree(refer_tree_path)
     if refer_tree:
         generate_cluster_network(lst_tree_clusters, refer_tree)

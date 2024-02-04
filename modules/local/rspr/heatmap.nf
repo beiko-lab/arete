@@ -15,6 +15,8 @@ process RSPR_HEATMAP {
 
     output:
     path "exact_output.png", emit: png
+    path "exact_group_output.png", emit: png
+    path "cluster_tree_output.png", emit: png
 
     when:
     task.ext.when == null || task.ext.when
@@ -24,8 +26,11 @@ process RSPR_HEATMAP {
     """
     rspr_heatmap.py \\
         --dataframe $df \\
+        --cluster_file $cluster_file \\
+        --rooted_reference $rooted_reference \\
         -o exact_output.png \\
         -go exact_group_output.png \\
+        -co cluster_tree_output.png \\
         --min_heatmap_exact_rspr $min_heatmap_exact_rspr \\
         --max_heatmap_exact_rspr $max_heatmap_exact_rspr \\
         $args
@@ -33,5 +38,7 @@ process RSPR_HEATMAP {
     stub:
     """
     touch exact_output.png
+    touch exact_group_output.png
+    touch cluster_tree_output.png
     """
 }
