@@ -215,7 +215,7 @@ def update_cluster_probability(node, dict_clstr_map, total_trees, leaf_mapping):
 ### refer_tree: reference tree
 #####################################################################
 
-def generate_cluster_network(lst_tree_clusters, refer_tree, lst_leaves):
+def generate_cluster_network(lst_tree_clusters, refer_tree):
     print("Generating cluster network")
     if not refer_tree:
         return
