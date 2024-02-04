@@ -25,12 +25,6 @@ def parse_args(args=None):
         help="Cluster data file"
     )
     parser.add_argument(
-        "-rr",
-        "--rooted_reference",
-        dest="RR",
-        help="Rooted reference tree path"
-    )
-    parser.add_argument(
         "-o",
         "--output",
         dest="OUTPUT",
@@ -343,7 +337,7 @@ def main(args=None):
             lst_tree_clusters.append(json.loads(str_clstr))
 
     cluster_tree_path = args.CLUSTER_OUTPUT
-    refer_tree_path = args.RR
+    refer_tree_path = os.path.join("rooted_reference_tree/core_gene_alignment.tre")
     refer_tree = read_tree(refer_tree_path)
     if refer_tree:
         generate_cluster_network(lst_tree_clusters, refer_tree)

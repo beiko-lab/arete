@@ -27,7 +27,6 @@ process RSPR_HEATMAP {
     rspr_heatmap.py \\
         --dataframe $df \\
         --cluster_file $cluster_file \\
-        --rooted_reference $rooted_reference \\
         -o exact_output.png \\
         -go exact_group_output.png \\
         -co cluster_tree_output.png \\
