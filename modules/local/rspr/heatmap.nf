@@ -15,8 +15,8 @@ process RSPR_HEATMAP {
 
     output:
     path "exact_output.png", emit: png
-    path "exact_group_output.png", emit: png
-    path "cluster_tree_output.png", emit: png
+    path "exact_group_output.png", emit: exact_group_output
+    path "cluster_tree_output.png", emit: cluster_tree_output
 
     when:
     task.ext.when == null || task.ext.when
