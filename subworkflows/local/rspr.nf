@@ -17,11 +17,14 @@ workflow RSPR {
             annotation,
             params.min_rspr_distance,
             params.min_branch_length,
-            params.max_support_threshold
+            params.max_support_threshold,
+            params.min_heatmap_approx_rspr,
+            params.max_heatmap_approx_rspr,
         )
 
         RSPR_EXACT (
             RSPR_APPROX.out.csvs.flatten(),
+            RSPR_APPROX.out.rooted_reference_tree.first(),
             RSPR_APPROX.out.rooted_gene_trees.first(),
             params.min_branch_length,
             params.max_support_threshold,
@@ -32,13 +35,24 @@ workflow RSPR {
             .collectFile(
                 name: 'exact_output.tsv',
                 keepHeader: true,
-                storeDir: "${params.outdir}/dynamics/rSPR/exact",
+                storeDir: "${params.outdir}/dynamics/rSPR/exact/exact_output",
                 skip: 1
             )
             .set { exact_output }
 
+        RSPR_EXACT.out.txt
+            .collectFile(
+                name: 'cluster_file.txt',
+                storeDir: "${params.outdir}/dynamics/rSPR/exact/cluster_output"
+            )
+            .set { cluster_file }
+
         RSPR_HEATMAP (
-            exact_output
+            exact_output,
+            cluster_file,
+            RSPR_APPROX.out.rooted_reference_tree.first(),
+            params.min_heatmap_exact_rspr,
+            params.max_heatmap_exact_rspr,
         )
 
     emit:

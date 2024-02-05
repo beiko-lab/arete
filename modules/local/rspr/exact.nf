@@ -4,11 +4,12 @@ process RSPR_EXACT {
 
     conda "bioconda::ete3=3.1.1"
     container "${ workflow.containerEngine == 'singularity' && !task.ext.singularity_pull_docker_container ?
-        'docker://docker.io/jvfe/rspr:v1.3.5':
-        'docker.io/jvfe/rspr:v1.3.5' }"
+        'docker://docker.io/jvfe/rspr:v1.3.7':
+        'docker.io/jvfe/rspr:v1.3.7' }"
 
     input:
     path subset_df
+    path rooted_reference
     path rooted_gene_trees
     val min_branch_length
     val max_support_threshold
@@ -16,6 +17,7 @@ process RSPR_EXACT {
 
     output:
     path "exact_output_*tsv", emit: tsv
+    path "cluster_file_*txt", emit: txt
 
     when:
     task.ext.when == null || task.ext.when

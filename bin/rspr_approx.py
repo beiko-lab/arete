@@ -12,7 +12,9 @@ from ete3 import Tree
 import pandas as pd
 from collections import defaultdict
 from matplotlib import pyplot as plt
+from matplotlib.colors import LogNorm
 import seaborn as sns
+import tempfile
 
 
 #####################################################################
@@ -64,6 +66,22 @@ def parse_args(args=None):
         type=float,
         default=0.7,
         help="Maximum support threshold",
+    )
+    parser.add_argument(
+        "-mnhar",
+        "--min_heatmap_approx_rspr",
+        dest="MIN_HEATMAP_RSPR_DISTANCE",
+        type=int,
+        default=0,
+        help="Minimum approximate rSPR distance used to generate heatmap.",
+    )
+    parser.add_argument(
+        "-mxhar",
+        "--max_heatmap_approx_rspr",
+        dest="MAX_HEATMAP_RSPR_DISTANCE",
+        type=int,
+        default=-1,
+        help="Maximum approximate rSPR distance used to generate heatmap.",
     )
     return parser.parse_args(args)
 
@@ -150,6 +168,31 @@ def extract_approx_distance(text):
 
 
 #####################################################################
+### FUNCTION RUN_APPROX_RSPR
+### Run approx rspr algorithm of set of input tree pairs
+### results: dataframe to store the approx rspr results
+### input_file: path of input trees
+### lst_filename: list of file names
+### rspr_path: path of rspr software
+#####################################################################
+
+def run_approx_rspr(results, input_file, lst_filename, rspr_path):
+    input_file.seek(0)
+    result = subprocess.run(
+        rspr_path, stdin=input_file, capture_output=True, text=True
+    )
+
+    cur_index = 0
+    output = result.stdout
+    if output:
+        for line in output.splitlines():
+            if "approx drSPR=" in line:
+                distance = line.split("approx drSPR=")[1].strip()
+                results.loc[lst_filename[cur_index], "approx_drSPR"] = distance
+                cur_index += 1
+
+
+#####################################################################
 ### FUNCTION APPROX_RSPR
 ### Run approx rspr algorithm of set of input tree pairs
 ### rooted_gene_trees_path: path of the rooted gene trees directory
@@ -157,7 +200,6 @@ def extract_approx_distance(text):
 ### min_branch_len: minimum branch length
 ### max_support_threshold: maximum branching support threshold
 #####################################################################
-
 
 def approx_rspr(
     rooted_gene_trees_path, results, min_branch_len=0, max_support_threshold=0.7
@@ -170,14 +212,46 @@ def approx_rspr(
         "-length " + str(min_branch_len),
         "-support " + str(max_support_threshold),
     ]
-    for filename in os.listdir(rooted_gene_trees_path):
-        gene_tree_path = os.path.join(rooted_gene_trees_path, filename)
-        with open(gene_tree_path, "r") as infile:
-            result = subprocess.run(
-                rspr_path, stdin=infile, capture_output=True, text=True
-            )
-            dist = extract_approx_distance(result.stdout)
-            results.loc[filename, "approx_drSPR"] = dist
+    
+    group_size = 10000
+    cur_count = 0
+    lst_filename = []
+    with tempfile.TemporaryFile(mode='w+') as temp_file:
+        for filename in os.listdir(rooted_gene_trees_path):
+            if cur_count == group_size:
+                run_approx_rspr(results, temp_file, lst_filename, rspr_path)
+                temp_file.seek(0)
+                temp_file.truncate()
+                lst_filename.clear()
+                cur_count = 0
+
+            gene_tree_path = os.path.join(rooted_gene_trees_path, filename)
+            with open(gene_tree_path, "r") as infile:
+                temp_file.write(infile.read() + "\n")
+                lst_filename.append(filename)
+                cur_count += 1
+        if cur_count > 0:
+            run_approx_rspr(results, temp_file, lst_filename, rspr_path)
+
+
+#####################################################################
+### FUNCTION GENERATE_HEATMAP
+### Generate heatmap figure from frequency table
+### freq_table: frequency table of tree size and approx rspr distance
+### output_path: output path for storing the heatmap
+#####################################################################
+
+def generate_heatmap(freq_table, output_path, log_scale=False):
+    plt.figure(figsize=(12, 12))
+    ax = sns.heatmap(
+        freq_table, annot=True, fmt=".0f", norm=LogNorm() if log_scale else None
+    )
+    ax.invert_yaxis()
+    plt.title("Number of trees")
+    plt.xlabel("Tree size")
+    plt.ylabel("Approx rSPR distance")
+    plt.savefig(output_path)
+    plt.clf()
 
 
 #####################################################################
@@ -187,21 +261,146 @@ def approx_rspr(
 ### output_path: output path for storing the heatmap
 #####################################################################
 
-
-def make_heatmap(results, output_path):
+def make_heatmap(results, output_path, min_distance, max_distance):
     print("Generating heatmap")
+
+    # create sub dataframe
+    sub_results = results[(results["approx_drSPR"] >= min_distance)]
+    if max_distance >= 0:
+        sub_results = sub_results[(sub_results["approx_drSPR"] <= max_distance)]
+
     data = (
-        results.groupby(["tree_size", "approx_drSPR"]).size().reset_index(name="count")
+        sub_results.groupby(["tree_size", "approx_drSPR"]).size().reset_index(name="count")
     )
     data_pivot = data.pivot(
         index="approx_drSPR", columns="tree_size", values="count"
     ).fillna(0)
-    sns.heatmap(
-        data_pivot.loc[sorted(data_pivot.index, reverse=True)], annot=True, fmt=".0f"
-    ).set(title="Number of trees")
-    plt.xlabel("Tree size")
-    plt.ylabel("Approx rSPR distance")
-    plt.savefig(output_path)
+    generate_heatmap(data_pivot.loc[sorted(data_pivot.index, reverse=True)], output_path)
+
+
+def make_heatmap_from_tsv(input_path, output_path, min_distance, max_distance):
+    print("Generating heatmap from CSV")
+    results = pd.read_table(input_path)
+    make_heatmap(results, output_path, min_distance, max_distance)
+
+#####################################################################
+### FUNCTION GET_GROUP_SIZE
+### Get preferred group size for generating heatmap
+### all_tree_sizes: list of all values
+### max_size: maximum number of groups
+#####################################################################
+
+def get_heatmap_group_size(all_values, max_groups=15):
+    group_size = 1
+    if len(all_values) <= max_groups:
+        return group_size
+
+    multipliers = [2, 2.5, 2]
+    cur_mul_idx = 0
+    max_val = max(all_values)
+    while not (max_val/group_size) <= max_groups:
+        group_size *= multipliers[cur_mul_idx]
+        cur_mul_idx = (cur_mul_idx + 1) % len(multipliers)
+    return int(group_size)
+
+
+#####################################################################
+### FUNCTION MAKE_GROUP_HEATMAP
+### Generate heatmap of tree size and approx rspr distance groups
+### results: dataframe of the approx rspr distance and tree size groups
+### output_path: output path for storing the heatmap
+#####################################################################
+
+def make_group_heatmap(results, output_path, min_distance, max_distance):
+    print("Generating group heatmap")
+
+    # create sub dataframe
+    sub_results = results[(results["approx_drSPR"] >= min_distance)]
+    if max_distance >= 0:
+        sub_results = sub_results[(sub_results["approx_drSPR"] <= max_distance)]
+
+    data = pd.crosstab(sub_results["approx_drSPR"], sub_results["tree_size"])
+
+    all_tree_sizes = data.columns.astype('int32')
+    tree_group_size = get_heatmap_group_size(all_tree_sizes)
+    aggregated_df = pd.DataFrame()
+    if tree_group_size > 1:
+        for i in range(1, max(all_tree_sizes) + 1, tree_group_size):
+            group_columns = [col for col in all_tree_sizes if i <= int(col) <= i + tree_group_size - 1]
+            group_sum = data[group_columns].sum(axis=1)
+            group_start = i if i > min(all_tree_sizes) else min(all_tree_sizes)
+            group_end = (i+tree_group_size-1) if (i+tree_group_size-1) < max(all_tree_sizes) else max(all_tree_sizes)
+            aggregated_df[f'{group_start}-{group_end}'] = group_sum
+    else:
+        aggregated_df = data
+
+    all_distances = aggregated_df.index.astype('int32')
+    distance_group_size = get_heatmap_group_size(all_distances)
+    aggregated_row_df = pd.DataFrame(columns=aggregated_df.columns)
+    if distance_group_size > 1:
+        for i in range(0, max(all_distances) + 1, distance_group_size):
+            group_rows = [row for row in all_distances if i <= int(row) <= i + distance_group_size - 1]
+            group_sum = aggregated_df.loc[group_rows].sum(axis=0)
+            group_start = i if i > min(all_distances) else min(all_distances)
+            group_end = (i+distance_group_size-1) if (i+distance_group_size-1) < max(all_distances) else max(all_distances)
+            aggregated_row_df.loc[f'{group_start}-{group_end}'] = group_sum
+    else:
+        aggregated_row_df = aggregated_df
+    generate_heatmap(aggregated_row_df, output_path, True)
+
+
+#####################################################################
+### FUNCTION GENERATE_GROUP_SIZES
+### Generate groups sizes based on number of tree pairs avaialble
+### target_sum: total number of trees available
+### RETURN groups of trees
+#####################################################################
+
+def generate_group_sizes(target_sum, max_groups=500):
+    degree = 1
+    current_sum = 0
+    group_sizes = []
+    while current_sum < target_sum:
+        k = 0
+        current_sum = 0
+        group_sizes = []
+        while k < max_groups:
+            value = int(2 ** (k /(max_groups / degree)))
+            if value > 1e20:
+                break
+            group_sizes.append(value)
+            current_sum += value
+            k += 1
+        degree += 1
+    return group_sizes
+
+
+#####################################################################
+### FUNCTION MAKE_GROUPS
+### Generate groups of tree pairs based on the approx rspr distnace
+### results: the input results dataframe
+### RETURN groups of trees
+#####################################################################
+
+def make_groups_v1(results, min_limit=10):
+    print("Generating groups")
+    min_group = results[results["approx_drSPR"] <= min_limit]["file_name"].tolist()
+    groups = defaultdict()
+    first_group = "group_0"
+    groups[first_group] = min_group
+
+    rem_results = results[results["approx_drSPR"] > min_limit].sort_values(
+        by="approx_drSPR", ascending=False
+    )
+    rem_length = len(rem_results)
+    group_sizes = generate_group_sizes(rem_length)
+    cur_index, grp_idx = 0, 0
+    while cur_index < rem_length:
+        cur_group_names = rem_results.iloc[cur_index : cur_index + group_sizes[grp_idx]]["file_name"].tolist()
+        groups[f"group_{grp_idx+1}"] = cur_group_names
+        cur_index += group_sizes[grp_idx]
+        grp_idx += 1
+    return groups
 
 
 #####################################################################
@@ -211,10 +410,8 @@ def make_heatmap(results, output_path):
 ### RETURN groups of trees
 #####################################################################
 
-
 def make_groups(results, min_limit=10):
     print("Generating groups")
-    results["approx_drSPR"] = pd.to_numeric(results["approx_drSPR"])
     min_group = results[results["approx_drSPR"] <= min_limit]["file_name"].tolist()
     groups = defaultdict()
     first_group = "group_0"
@@ -240,7 +437,7 @@ def make_groups(results, min_limit=10):
 
 def make_groups_from_csv(input_df, min_limit):
     print("Generating groups from CSV")
-    groups = make_groups(input_df, min_limit)
+    groups = make_groups_v1(input_df, min_limit)
     tidy_data = [
         (key, val)
         for key, value in groups.items()
@@ -250,12 +447,6 @@ def make_groups_from_csv(input_df, min_limit):
     merged = input_df.merge(df_w_groups, on="file_name")
 
     return merged
-
-
-def make_heatmap_from_csv(input_path, output_path):
-    print("Generating heatmap from CSV")
-    results = pd.read_csv(input_path)
-    make_heatmap(results, output_path)
 
 
 def join_annotation_data(df, annotation_data):
@@ -293,9 +484,27 @@ def main(args=None):
         args.MIN_BRANCH_LENGTH,
         args.MAX_SUPPORT_THRESHOLD,
     )
-    fig_path = os.path.join(args.OUTPUT_DIR, "output.png")
-    make_heatmap(results, fig_path)
 
+    # Generate standard heatmap
+    results["approx_drSPR"] = pd.to_numeric(results["approx_drSPR"])
+    fig_path = os.path.join(args.OUTPUT_DIR, "output.png")
+    make_heatmap(
+        results,
+        fig_path,
+        args.MIN_HEATMAP_RSPR_DISTANCE,
+        args.MAX_HEATMAP_RSPR_DISTANCE
+    )
+
+    # Generate group heatmap
+    group_fig_path = os.path.join(args.OUTPUT_DIR, "group_output.png")
+    make_group_heatmap(
+        results, 
+        group_fig_path,
+        args.MIN_HEATMAP_RSPR_DISTANCE,
+        args.MAX_HEATMAP_RSPR_DISTANCE
+    )
+
+    # Generate groups for exact rSPR
     results.reset_index("file_name", inplace=True)
     if args.ANNOTATION:
         results = join_annotation_data(results, args.ANNOTATION)
@@ -317,7 +526,12 @@ def main(args=None):
     phylo_dir = os.path.join(args.INPUT_DIR_PATH, "phylogenomics")
     res_path = os.path.join(phylo_dir, 'output.csv')
     fig_path = os.path.join(phylo_dir, 'output.png')
-    make_heatmap_from_csv(res_path, fig_path)
+    make_heatmap_from_csv(
+        results,
+        fig_path,
+        args.MIN_HEATMAP_RSPR_DISTANCE,
+        args.MAX_HEATMAP_RSPR_DISTANCE
+    )
     """
 
 
