@@ -17,7 +17,7 @@ process MAKE_HEATMAP_AND_FILTER {
 
     script:
     """
-    make_heatmap.py ${distances} \\
+    filter_genomes.py ${distances} \\
         thresholds_heatmap.pdf \\
         --core_threshold $core \\
         --accessory_threshold $accessory
