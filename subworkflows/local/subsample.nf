@@ -8,8 +8,8 @@ workflow SUBSET_GENOMES {
         poppunk_db
 
     main:
-        def accessory_threshold = 100.0 - params.accessory_similarity
-        def core_threshold = 100.0 - params.core_similarity
+        def accessory_threshold = (100.0 - params.accessory_similarity)/100.0
+        def core_threshold = (100.0 - params.core_similarity)/100.0
 
         println '\033[0;33mWARN: Your assemblies will be subsampled (--enable_subsetting is true)\033[0m'
 
@@ -23,8 +23,8 @@ workflow SUBSET_GENOMES {
         )
 
         MAKE_HEATMAP_AND_FILTER.out.removed_genomes
-            .splitCsv(header: true, sep: '\t')
-            .map { row -> row.Query }
+            .splitCsv(sep: '\t')
+            .map { it }
             .set { genomes_to_remove }
 
     emit:

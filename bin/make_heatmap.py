@@ -46,9 +46,7 @@ def make_heatmap(file_in, file_out):
         core_thresh = round(1 - t[0], 6)
         acc_thresh = round(1 - t[1], 6)
         # Which genomes can be removed
-        to_remove = df[(df["Core"] <= core_thresh) & (df["Accessory"] <= acc_thresh)][
-            "Query"
-        ].to_list()
+        to_remove = filter_genomes(file_in, core_thresh, acc_thresh)
         n_to_remove = len(set(to_remove))
         n_genomes = total_genomes - n_to_remove
 
@@ -65,7 +63,7 @@ def make_heatmap(file_in, file_out):
     ndf = ndf.pivot(index="core", columns="accessory", values="n_genomes")
     # plot
     sns.heatmap(ndf.loc[sorted(ndf.index, reverse=True)], annot=True, fmt=".0f").set(
-        title="Number of unique genomes by threshold value"
+        title="Number of unique genomes by similarity threshold value"
     )
     plt.savefig(file_out)
 
@@ -73,20 +71,7 @@ def make_heatmap(file_in, file_out):
 def filter_genomes(file_in, core, acc):
     df = pd.read_table(file_in)
 
-    filtered_df = df[(df["Core"] * 100 <= core) & (df["Accessory"] * 100 <= acc)]
-
-    filtered_df["Query"].drop_duplicates().to_csv(
-        "removed_genomes.txt", sep="\t", index=False
-    )
-
-    # Create a mapping of genomes in "Reference" to genomes in "Query"
-    genome_mapping = {
-        row["Reference"]: row["Query"] for _, row in filtered_df.iterrows()
-    }
-
-    # Create a dictionary to store the mapping of genomes
-    genome_mapping = {}
-
+    checked = []
     # Iterate through the DataFrame
     for _, row in df.iterrows():
         query_genome = row["Query"]
@@ -94,20 +79,25 @@ def filter_genomes(file_in, core, acc):
         core_value = row["Core"]
         accessory_value = row["Accessory"]
 
-        if core_value * 100 <= core and accessory_value * 100 <= acc:
-            if query_genome in genome_mapping:
-                genome_mapping[query_genome].append(reference_genome)
-            else:
-                genome_mapping[query_genome] = [reference_genome]
+        if reference_genome in checked:
+            continue
+        else:
+            if core_value <= core and accessory_value <= acc:
+                checked.append(query_genome)
 
-    mapping_df = pd.DataFrame(list(genome_mapping.items()), columns=["Kept", "Removed"])
-    mapping_df.to_csv("genome_mappings.tsv", sep="\t", index=False)
+    return checked
+
+def write_removed_genomes(file_in, core, acc):
+    removed = filter_genomes(file_in, core, acc)
+
+    with open("removed_genomes.txt", "w") as f:
+        f.write("\n".join(set(removed)))
 
 
 def main(args=None):
     args = parse_args(args)
     make_heatmap(args.FILE_IN, args.FILE_OUT)
-    filter_genomes(args.FILE_IN, args.CORE_THRESH, args.ACC_THRESH)
+    write_removed_genomes(args.FILE_IN, args.CORE_THRESH, args.ACC_THRESH)
 
 
 if __name__ == "__main__":
