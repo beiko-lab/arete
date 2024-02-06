@@ -11,8 +11,8 @@ import sys
 
 
 def parse_args(args=None):
-    Description = "Create heatmap of similarity thresholds based on PopPUNK distances."
-    Epilog = "Example usage: python make_heatmap.py <FILE_IN> <FILE_OUT>"
+    Description = "Subset genomes and create heatmap of similarity thresholds based on PopPUNK distances."
+    Epilog = "Example usage: python filter_genomes.py <FILE_IN> <FILE_OUT> -c <CORE_DISTANCE> -a <ACC_DISTANCE>"
 
     parser = argparse.ArgumentParser(description=Description, epilog=Epilog)
     parser.add_argument("FILE_IN", help="Input distances file.")
@@ -22,14 +22,14 @@ def parse_args(args=None):
         "--core_threshold",
         dest="CORE_THRESH",
         type=float,
-        help="Core genome threshold",
+        help="Core genome distance threshold",
     )
     parser.add_argument(
         "-a",
         "--accessory_threshold",
         dest="ACC_THRESH",
         type=float,
-        help="Accessory threshold",
+        help="Accessory distance threshold",
     )
     return parser.parse_args(args)
 
