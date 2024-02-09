@@ -1,5 +1,5 @@
 process MAKE_HEATMAP_AND_FILTER {
-    label 'process_low'
+    label 'process_medium'
 
     conda (params.enable_conda ? "conda-forge::seaborn=0.12.2" : null)
     container "${ workflow.containerEngine == 'singularity' && !task.ext.singularity_pull_docker_container ?
