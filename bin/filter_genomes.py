@@ -3,6 +3,11 @@
 # Create heatmap of similarity thresholds based on PopPUNK distances
 
 from matplotlib import pyplot as plt
+
+
+from io import StringIO
+import sys
+import subprocess
 import itertools as it
 import pandas as pd
 import seaborn as sns
@@ -46,8 +51,8 @@ def make_heatmap(file_in, file_out):
         core_thresh = round(1 - t[0], 6)
         acc_thresh = round(1 - t[1], 6)
         # Which genomes can be removed
-        to_remove = filter_genomes(file_in, core_thresh, acc_thresh)
-        n_to_remove = len(set(to_remove))
+        _, to_remove = filter_genomes(file_in, core_thresh, acc_thresh)
+        n_to_remove = len(to_remove)
         n_genomes = total_genomes - n_to_remove
 
         records.append(
@@ -69,26 +74,34 @@ def make_heatmap(file_in, file_out):
 
 
 def filter_genomes(file_in, core, acc):
-    df = pd.read_table(file_in)
+    run_cmd = [
+        "awk",
+        "-v",
+        f"core_dist={core}",
+        "-v",
+        f"acc_dist={acc}",
+        '{ if ($3 <= core_dist && $4 <= acc_dist) { if (!($1 in checked)) { print $1 "," $2; checked[$2] = 1 } } }',
+        str(file_in),
+    ]
 
-    checked = []
-    # Iterate through the DataFrame
-    for _, row in df.iterrows():
-        query_genome = row["Query"]
-        reference_genome = row["Reference"]
-        core_value = row["Core"]
-        accessory_value = row["Accessory"]
+    proc_out = subprocess.Popen(
+        run_cmd,
+        stdout=subprocess.PIPE,
+    )
 
-        if reference_genome in checked:
-            continue
-        else:
-            if core_value <= core and accessory_value <= acc:
-                checked.append(query_genome)
+    b = StringIO(proc_out.communicate()[0].decode("utf-8"))
 
-    return checked
+    genome_mapping = pd.read_csv(b, sep=",", names=["kept", "removed"])
+
+    removed = set(genome_mapping["removed"].to_list())
+
+    return genome_mapping, removed
+
 
 def write_removed_genomes(file_in, core, acc):
-    removed = filter_genomes(file_in, core, acc)
+    genome_mapping, removed = filter_genomes(file_in, core, acc)
+
+    genome_mapping.to_csv("genome_mapping.csv", index=False)
 
     with open("removed_genomes.txt", "w") as f:
         f.write("\n".join(set(removed)))

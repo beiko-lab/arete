@@ -13,6 +13,7 @@ process MAKE_HEATMAP_AND_FILTER {
 
     output:
     path("thresholds_heatmap.pdf"), emit: plot
+    path("genome_mapping.csv"), emit: mapping
     path("removed_genomes.txt"), emit: removed_genomes
 
     script:
