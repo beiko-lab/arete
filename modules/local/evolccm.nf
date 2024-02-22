@@ -5,8 +5,8 @@ process EVOLCCM {
 
     conda "bioconda::bioconductor-tximeta=1.8.0"
     container "${ workflow.containerEngine == 'singularity' && !task.ext.singularity_pull_docker_container ?
-        'docker://docker.io/jvfe/evol_ccm:v1.3':
-        'docker.io/jvfe/evol_ccm:v1.3' }"
+        'docker://docker.io/jvfe/evol_ccm:v1.3.1':
+        'docker.io/jvfe/evol_ccm:v1.3.1' }"
 
     input:
     path core_tree
