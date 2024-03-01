@@ -199,11 +199,13 @@ workflow ARETE {
 
             SUBSET_GENOMES.out.genomes_to_remove.set { to_remove }
 
+
             gffs
                 .combine (to_remove.collect().map { [it] })
                 .filter { meta, path, to_remove -> !(meta.id in to_remove) }
                 .map { it[0, 1] }
                 .set { gffs }
+
         }
 
         if (params.run_recombination) {
@@ -449,6 +451,12 @@ workflow ANNOTATION {
 
             SUBSET_GENOMES.out.genomes_to_remove.set { to_remove }
 
+
+            // TODO: Find a better way of handling empty to_remove channel.
+            // Weird hack but if there are no genomes to remove
+            // the gffs logic fails and generates an empty channel
+            // skipping phylo altogether.
+            to_remove.ifEmpty('NA').set { to_remove }
             // Filter GFFs not in the to_remove ID list
             gffs
                 .combine (to_remove.collect().map { [it] })
