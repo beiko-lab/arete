@@ -4,10 +4,10 @@ process PPANGGOLIN_WORKFLOW {
     label 'process_high_memory'
     label 'process_long'
 
-    conda "bioconda::ppanggolin=1.2.105"
+    conda "bioconda::ppanggolin=2.0.5"
     container "${ workflow.containerEngine == 'singularity' && !task.ext.singularity_pull_docker_container ?
-        'https://depot.galaxyproject.org/singularity/ppanggolin:1.2.105--py37h8902056_0':
-        'quay.io/biocontainers/ppanggolin:1.2.105--py37h8902056_0' }"
+        'https://depot.galaxyproject.org/singularity/ppanggolin:2.0.5--py39hf95cd2a_0':
+        'quay.io/biocontainers/ppanggolin:2.0.5--py39hf95cd2a_0' }"
 
     input:
     tuple val(meta), path(samplesheet)
