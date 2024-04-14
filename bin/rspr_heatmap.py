@@ -43,6 +43,12 @@ def parse_args(args=None):
         help="Cluster probability output file name",
     )
     parser.add_argument(
+        "-cfo",
+        "--cluster_file_output",
+        dest="CLUSTER_FILE_OUTPUT",
+        help="Cluster probability output newick tree file name",
+    )
+    parser.add_argument(
         "-mnher",
         "--min_heatmap_exact_rspr",
         dest="MIN_HEATMAP_RSPR_DISTANCE",
@@ -294,7 +300,10 @@ def read_tree(input_path):
         tree_string = f.read()
         formatted = re.sub(r";[^:]+:", ":", tree_string)
         return Phylo.read(io.StringIO(formatted), "newick")
-    
+
+def write_tree(output_path, data):
+    with open(output_path, "w") as f:
+        f.write(data) 
 
 def get_fig_size(refer_tree):
     max_fig_size = 100
@@ -337,10 +346,12 @@ def main(args=None):
             lst_tree_clusters.append(json.loads(str_clstr))
 
     cluster_tree_path = args.CLUSTER_OUTPUT
+    cluster_file_path = args.CLUSTER_FILE_OUTPUT
     refer_tree_path = os.path.join("rooted_reference_tree/core_gene_alignment.tre")
     refer_tree = read_tree(refer_tree_path)
     if refer_tree:
         generate_cluster_network(lst_tree_clusters, refer_tree)
+        write_tree(cluster_file_path, refer_tree)
 
         plt.rcParams['font.size'] = '12'
         fig_size = get_fig_size(refer_tree)
