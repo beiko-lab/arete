@@ -6,7 +6,7 @@ import pandas as pd
 from matplotlib import pyplot as plt
 from matplotlib.colors import LogNorm
 import seaborn as sns
-import os 
+import os
 import json
 from Bio import Phylo
 import re
@@ -237,7 +237,7 @@ def generate_cluster_network(lst_tree_clusters, refer_tree):
     print("Generating cluster network")
     if not refer_tree:
         return
-      
+
     lst_leaves = [leave.name for leave in refer_tree.get_terminals()]
     leaf_mapping = {leaf: i for i, leaf in enumerate(lst_leaves)}
     dict_clstr_map = defaultdict(int)
@@ -294,7 +294,7 @@ def generate_cluster_heatmap(lst_tree_clusters, cluster_heatmap_path):
     plt.ylabel("Leaves")
     plt.savefig(cluster_heatmap_path)
 
-    
+
 def read_tree(input_path):
     with open(input_path, "r") as f:
         tree_string = f.read()
@@ -302,8 +302,7 @@ def read_tree(input_path):
         return Phylo.read(io.StringIO(formatted), "newick")
 
 def write_tree(output_path, data):
-    with open(output_path, "w") as f:
-        f.write(data) 
+    Phylo.write(data, output_path, "newick")
 
 def get_fig_size(refer_tree):
     max_fig_size = 100
@@ -315,7 +314,7 @@ def get_fig_size(refer_tree):
 
 
 #endregion
-    
+
 def main(args=None):
     args = parse_args(args)
 
@@ -324,7 +323,7 @@ def main(args=None):
     # Generate standard heatmap
     results["exact_drSPR"] = pd.to_numeric(results["exact_drSPR"])
     make_heatmap(
-        results, 
+        results,
         args.OUTPUT,
         args.MIN_HEATMAP_RSPR_DISTANCE,
         args.MAX_HEATMAP_RSPR_DISTANCE
