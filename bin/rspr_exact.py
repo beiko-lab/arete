@@ -88,7 +88,7 @@ def fpt_rspr(results_df, min_branch_len=0, max_support_threshold=0.7, gather_clu
         "-support " + str(max_support_threshold),
     ]
 
-    trees_path = os.path.join("rooted_gene_trees")
+    trees_path = os.path.join("rooted_gene_trees/unique")
 
     cluster_file = None
     if gather_cluster_info:
@@ -123,13 +123,13 @@ def fpt_rspr(results_df, min_branch_len=0, max_support_threshold=0.7, gather_clu
                         continue
                     elif "Clusters end" in line:
                         clustering_start = False
-                    
+
                     if clustering_start:
                         updated_line = line.replace('(', '').replace(')', '').replace('\n', '')
                         cluster_nodes = updated_line.split(',')
                         cluster_nodes = [int(node) for node in cluster_nodes if "X" not in node]
                         clusters.append(cluster_nodes)
-                    
+
                     output_lines.append(line)
                 cluster_file.write(json.dumps(clusters) + '\n')
                 process.wait()
