@@ -460,20 +460,22 @@ for (result in results) {
 temp_files <- list.files(pattern = "output_temp_chunk_[0-9]+\\.txt")
 
 outputHeadings <- paste("feature1","feature2","intrisic1", "intrisic2", "gainloss1", "gainloss2", "interaction", "interact_score", "interact_pval",sep="\t")
-cat(outputHeadings, file = outputFile, sep = "\n")
+outputFilegz = gzfile(outputFile, "w")
+cat(outputHeadings, file = outputFilegz, sep = "\n")
 for (temp_file in temp_files) {
   # Read the contents of the temporary file
   temp_contents <- readLines(temp_file)
 
   # Write the contents to the main output file
-  cat(temp_contents, file = outputFile, append = TRUE, sep = "\n")
+  cat(temp_contents, file = outputFilegz, append = TRUE, sep = "\n")
 
   # Remove the temporary file
   file.remove(temp_file)
 }
 
 # Read the lines from the input file
-lines <- readLines(outputFile)[-1]
+lines <- readLines(outputFilegz)[-1]
+close(outputFilegz)
 X2file = paste(outputFile,"X2",sep = ".")
 Pfile = paste(outputFile,"pvals",sep = ".")
 
