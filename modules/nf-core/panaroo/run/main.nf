@@ -9,6 +9,7 @@ process PANAROO_RUN {
 
     input:
     tuple val(meta), path(gff)
+    path gffs
 
     output:
     tuple val(meta), path("results/*")                                      , emit: results
