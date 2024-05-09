@@ -347,7 +347,9 @@ constructMatrix <- function(lines, outputFile, column) {
   colnames(distances) <- entities
 
   # Write the matrix to a file
-  write.table(distances, file = outputFile, sep = "\t", quote = FALSE)
+  gz1 <- gzfile(outputFile, "w")
+  write.table(distances, file = gz1, sep = "\t", quote = FALSE)
+  close(gz1)
 
 }
 
