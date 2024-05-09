@@ -472,8 +472,8 @@ for (temp_file in temp_files) {
 }
 
 # Read the lines from the input file
-lines <- readLines(outputFilegz)[-1]
 close(outputFilegz)
+lines <- readLines(outputFile)[-1]
 X2file = paste(outputFile,"X2",sep = ".")
 Pfile = paste(outputFile,"pvals",sep = ".")
 
