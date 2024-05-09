@@ -9,6 +9,7 @@ process POPPUNK_CREATEDB {
     input:
 
     path filesheet
+    path assemblies
 
     output:
 
