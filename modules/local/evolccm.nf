@@ -34,7 +34,7 @@ process EVOLCCM {
 
     stub:
     """
-    touch EvolCCM_test.tsv
+    touch EvolCCM_test.tsv.gz
     touch EvolCCM_test.tsv.pvals
     touch EvolCCM_test.tsv.X2
     touch EvolCCM_test.tre
