@@ -24,14 +24,14 @@ workflow RUN_POPPUNK {
         }
 
         genome_assemblies
-            .map { meta, path -> [meta.id, path.toString()] }
+            .map { meta, path -> [meta.id, path.getName()] }
             .collectFile(newLine: true) { item ->
                 [ "${item[0]}.txt", item[0] + '\t' + item[1] ]
             }
             .collectFile(name: 'poppunk_samplesheet.tsv')
             .set { poppunk_samplesheet }
 
-        POPPUNK_CREATEDB(poppunk_samplesheet)
+        POPPUNK_CREATEDB(poppunk_samplesheet, genome_assemblies.collect { it[1] } )
 
         POPPUNK_CREATEDB.out.poppunk_db.set { poppunk_db }
 

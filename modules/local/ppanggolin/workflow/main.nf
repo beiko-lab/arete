@@ -11,6 +11,7 @@ process PPANGGOLIN_WORKFLOW {
 
     input:
     tuple val(meta), path(samplesheet)
+    path gffs
 
     output:
     tuple val(meta), path("$prefix")             , emit: results

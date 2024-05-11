@@ -26,7 +26,7 @@ workflow PHYLOGENOMICS{
         ch_software_versions = Channel.empty()
 
         gffs
-            .map { meta, path -> [meta.id, path.toString()] }
+            .map { meta, path -> [meta.id, path.getName()] }
             .set { gff_paths }
 
         // Create samplesheet
@@ -39,7 +39,7 @@ workflow PHYLOGENOMICS{
                 .map{ path -> [[id: 'ppanggolin'], path] }
                 .set { gff_samplesheet }
 
-            PPANGGOLIN_WORKFLOW(gff_samplesheet)
+            PPANGGOLIN_WORKFLOW(gff_samplesheet, gffs.collect{ it[1] })
 
             PPANGGOLIN_WORKFLOW.out.pangenome.set { pangenome }
 
@@ -76,7 +76,7 @@ workflow PHYLOGENOMICS{
             * Core gene identification and alignment
             */
             // By default, run panaroo
-            PANAROO_RUN(gff_samplesheet)
+            PANAROO_RUN(gff_samplesheet, gffs.collect{ it[1] })
             PANAROO_RUN.out.aln.collect{ meta, aln -> aln }.set{ ch_core_alignment }
             PANAROO_RUN.out.accessory_aln.set{ ch_all_alignments }
 
