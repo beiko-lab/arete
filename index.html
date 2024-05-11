@@ -136,7 +136,7 @@
 <p>The pipeline is built using <a href="https://www.nextflow.io">Nextflow</a>, a workflow tool to run tasks across multiple compute infrastructures in a very portable manner. It uses Docker / Singularity containers making installation trivial and results highly reproducible.
 Like other workflow languages it provides <a href="https://www.nextflow.io/docs/latest/getstarted.html#modify-and-resume">useful features</a> like <code>-resume</code> to only rerun tasks that haven't already been completed (e.g., allowing editing of inputs/tasks and recovery from crashes without a full re-run).
 The <a href="https://nf-cor.re">nf-core</a> project provided overall project template, pre-written software modules when available, and general best-practice recommendations.</p>
-<p>ARETE is organized as a series of subworkflows, each of which executes a different conceptual step of the pipeline. The subworkflow orgnaization provides suitable entry and exit points for users who want to run only a portion of the full pipeline.</p>
+<p>ARETE is organized as a series of subworkflows, each of which executes a different conceptual step of the pipeline. The subworkflow organization provides suitable entry and exit points for users who want to run only a portion of the full pipeline.</p>
 <h3 id="genome-subsetting">Genome subsetting</h3>
 <p>The user can optionally subdivide their set of genomes into related lineages identified by PopPUNK (<a href="https://beiko-lab.github.io/arete/subsampling/">See documentation</a>). PopPUNK quickly assignes genomes to 'lineages' based on core and accessory genome identity. If this option is selected, all genomes will still be annotated, but cross-genome comparisons (e.g., pan-genome inference and phylogenomics) will use only a single representative genome from each lineage. The user can run PopPUNK with a spread of different thresholds and decide how to proceed based on the number of lineages produced and their own specific knowledge of the genetic population structure of the taxon being analyzed.</p>
 <h3 id="short-read-processing-and-assembly">Short-read processing and assembly</h3>
@@ -386,5 +386,5 @@ large or very diverse datasets can be subpar.</p>
 
 <!--
 MkDocs version : 1.6.0
-Build Date UTC : 2024-05-11 13:35:42.576238+00:00
+Build Date UTC : 2024-05-11 17:21:08.324494+00:00
 -->
