@@ -39,7 +39,7 @@ The pipeline is built using [Nextflow](https://www.nextflow.io), a workflow tool
 Like other workflow languages it provides [useful features](https://www.nextflow.io/docs/latest/getstarted.html#modify-and-resume) like `-resume` to only rerun tasks that haven't already been completed (e.g., allowing editing of inputs/tasks and recovery from crashes without a full re-run).
 The [nf-core](https://nf-cor.re) project provided overall project template, pre-written software modules when available, and general best-practice recommendations.
 
-ARETE is organized as a series of subworkflows, each of which executes a different conceptual step of the pipeline. The subworkflow orgnaization provides suitable entry and exit points for users who want to run only a portion of the full pipeline.
+ARETE is organized as a series of subworkflows, each of which executes a different conceptual step of the pipeline. The subworkflow organization provides suitable entry and exit points for users who want to run only a portion of the full pipeline.
 
 ### Genome subsetting
 
