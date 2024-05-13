@@ -14,6 +14,7 @@ nav:
       - Dataset Size: resource_profiles.md
       - Parameters: params.md
       - Subsampling: subsampling.md
+      - ParallelEvolCCM: evolccm.md
 repo_url: https://github.com/beiko-lab/arete
 theme:
   name: "readthedocs"
