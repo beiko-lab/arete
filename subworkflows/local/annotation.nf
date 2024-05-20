@@ -189,12 +189,17 @@ workflow ANNOTATE_ASSEMBLIES {
         /*
         * Run RGI
         */
+        rgi_out = Channel.empty()
         if (tools_to_run.contains('rgi')) {
             RGI(ch_ffn_files, ch_card_json)
+
+            RGI.out.tsv
+                .set{ rgi_out }
+
             ch_software_versions = ch_software_versions.mix(RGI.out.version.first().ifEmpty(null))
 
             FILTER_RGI(
-                RGI.out.tsv.collect{ id, paths -> paths },
+                rgi_out.collect{ id, paths -> paths },
                 "RGI",
                 "no_header",
                 min_pident,
@@ -359,6 +364,6 @@ workflow ANNOTATE_ASSEMBLIES {
         gff = ch_gff_files
         feature_profile = profile
         gbk = ch_gbk_files
-        rgi = RGI.out.tsv
+        rgi = rgi_out
 
 }
