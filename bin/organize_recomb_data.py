@@ -35,7 +35,7 @@ def remove_after_second_underscore(val):
     parts = val.split('_')
     if len(parts) > 2:
         return '_'.join(parts[:2])
-    return val
+    return re.sub("\.(.*)|_T1|$", "", val)
 
 def create_recomb_input(quast_report, poppunk_clusters, assembly_samplesheet, file_out):
     # Parsing datasets
@@ -46,13 +46,13 @@ def create_recomb_input(quast_report, poppunk_clusters, assembly_samplesheet, fi
             )
 
     poppunk = read_csv(poppunk_clusters)
-    poppunk["Taxon"] = poppunk["Taxon"].str.replace("\.(.*)|_T1|$", "", regex=True)
+    poppunk["Taxon"] = poppunk["Taxon"].apply(remove_after_second_underscore)
 
     assemblies = read_csv(assembly_samplesheet, names=["id", "assembly_path"])
     assemblies["assembly_path"] = [
         Path(path).name for path in assemblies["assembly_path"].to_list()
     ]
-    assemblies["id"] = assemblies["id"].str.replace("\.(.*)|_T1|$", "", regex=True)
+    assemblies["id"] = assemblies["id"].apply(remove_after_second_underscore)
 
     # Merging datasets
     merged = poppunk.merge(quast, right_on="Assembly", left_on="Taxon").loc[
