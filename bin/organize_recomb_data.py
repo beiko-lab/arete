@@ -31,10 +31,19 @@ def get_cluster_samplesheet(df, cluster):
     return str(out_path)
 
 
+def remove_after_second_underscore(val):
+    parts = val.split('_')
+    if len(parts) > 2:
+        return '_'.join(parts[:2])
+    return val
+
 def create_recomb_input(quast_report, poppunk_clusters, assembly_samplesheet, file_out):
     # Parsing datasets
     quast = read_table(quast_report).loc[:, ["Assembly", "N50"]]
-    quast["Assembly"] = quast["Assembly"].str.replace("\.(.*)|_T1|$", "", regex=True)
+    quast["Assembly"] = (
+            quast["Assembly"]
+            .apply(remove_after_second_underscore)
+            )
 
     poppunk = read_csv(poppunk_clusters)
     poppunk["Taxon"] = poppunk["Taxon"].str.replace("\.(.*)|_T1|$", "", regex=True)
