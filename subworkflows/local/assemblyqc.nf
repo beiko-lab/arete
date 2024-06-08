@@ -27,13 +27,8 @@ workflow CHECK_ASSEMBLIES {
         /*
         * Module: QUAST quality check
         */
-        assemblies
-            .map { meta, fasta -> fasta.toString() }
-            .collectFile(name:'assemblies.txt', newLine: true)
-            .set { quast_input }
-
         QUAST (
-            quast_input,
+            assemblies.collect { meta, fasta -> fasta },
             reference_genome,
             [],
             use_reference_genome,

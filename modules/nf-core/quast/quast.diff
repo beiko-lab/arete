@@ -10,8 +10,11 @@ Changes in module 'nf-core/quast'
      container "${ workflow.containerEngine == 'singularity' && !task.ext.singularity_pull_docker_container ?
          'https://depot.galaxyproject.org/singularity/quast:5.2.0--py39pl5321h2add14b_1' :
          'quay.io/biocontainers/quast:5.2.0--py39pl5321h2add14b_1' }"
-@@ -15,7 +15,8 @@
+@@ -13,9 +13,11 @@
+     val use_fasta
+     val use_gff
  
++
      output:
      path "${prefix}"    , emit: results
 -    path '*.tsv'        , emit: tsv
@@ -20,16 +23,7 @@ Changes in module 'nf-core/quast'
      path "versions.yml" , emit: versions
  
      when:
-@@ -33,7 +34,7 @@
-         $features \\
-         --threads $task.cpus \\
-         $args \\
--        ${consensus.join(' ')}
-+        \$(cat ${consensus.join(' ')})
- 
-     ln -s ${prefix}/report.tsv
- 
-@@ -42,4 +43,16 @@
+@@ -42,4 +44,16 @@
          quast: \$(quast.py --version 2>&1 | sed 's/^.*QUAST v//; s/ .*\$//')
      END_VERSIONS
      """

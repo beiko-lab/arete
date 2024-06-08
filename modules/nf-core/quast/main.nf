@@ -13,6 +13,7 @@ process QUAST {
     val use_fasta
     val use_gff
 
+
     output:
     path "${prefix}"    , emit: results
     path "*.tsv"        , emit: tsv
@@ -34,7 +35,7 @@ process QUAST {
         $features \\
         --threads $task.cpus \\
         $args \\
-        \$(cat ${consensus.join(' ')})
+        ${consensus.join(' ')}
 
     ln -s ${prefix}/report.tsv
 
