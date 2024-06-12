@@ -12,7 +12,7 @@
 cran_packages <-
   c("ape",
     "dplyr",
-    "devtools",
+    "remotes",
     "phytools",
     "foreach",
     "doParallel",
