@@ -30,7 +30,7 @@ if (!require(phytools)) {
 }
 
 if (!require(evolCCM)) {
-  devtools::install_github("beiko-lab/evolCCM")
+  remotes::install_github("beiko-lab/evolCCM")
 }
 
 suppressPackageStartupMessages(library(evolCCM))
