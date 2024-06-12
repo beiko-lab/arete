@@ -84,9 +84,17 @@
     <ul class="current">
     <li class="toctree-l2"><a class="reference internal" href="#parallelevolccm-inputs">ParallelEvolCCM inputs</a>
     </li>
+    <li class="toctree-l2"><a class="reference internal" href="#using-parallelevolccm-with-arete">Using ParallelEvolCCM with ARETE</a>
+    </li>
     <li class="toctree-l2"><a class="reference internal" href="#using-parallelevolccm-by-itself">Using ParallelEvolCCM by itself</a>
     </li>
-    <li class="toctree-l2"><a class="reference internal" href="#using-parallelevolccm-with-arete">Using ParallelEvolCCM with ARETE</a>
+    <li class="toctree-l2"><a class="reference internal" href="#parallelevolccm-release-package">ParallelEvolCCM Release Package</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#structure">Structure</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#additional-scripts">Additional Scripts</a>
+    </li>
+        </ul>
     </li>
     </ul>
                   </li>
@@ -142,27 +150,6 @@ ED142   0   1
 ED178   0   1
 ED180   0   0
 </code></pre>
-<h2 id="using-parallelevolccm-by-itself">Using ParallelEvolCCM by itself</h2>
-<p>The ParallelEvolCCM tool is a command line tool written in R.
-It is available through the <a href="https://github.com/beiko-lab/arete/blob/master/bin/ParallelEvolCCM.R">bin/ParallelEvolCCM.R</a> script.</p>
-<p>To download the tool and make it executable, run:</p>
-<pre><code class="language-bash">wget https://raw.githubusercontent.com/beiko-lab/arete/master/bin/ParallelEvolCCM.R
-chmod +x ParallelEvolCCM.R
-</code></pre>
-<p>Then, ensure all EvolCCM dependencies are installed.
-You can install them by running the following command in your R console:</p>
-<pre><code class="language-r">install.packages(c('ape', 'dplyr', 'phytools', 'foreach', 'doParallel', 'gplots', 'remotes'))
-remotes::install_github('beiko-lab/evolCCM')
-</code></pre>
-<p>You can then run the tool like this:</p>
-<pre><code class="language-bash">./ParallelEvolCCM.R --intree tree.nwk --intable feature_table.tsv.gz --cores -1
-</code></pre>
-<ul>
-<li><code>--intree</code> specifies the phylogenetic tree in Newick format.</li>
-<li><code>--intable</code> specifies the feature table in compressed TSV format.</li>
-<li><code>--cores</code> specifies the number of cores to use. Use <code>-1</code> to use all available cores.</li>
-</ul>
-<p>Additional parameters can be found by running <code>./ParallelEvolCCM.R</code> with no additional parameters.</p>
 <h2 id="using-parallelevolccm-with-arete">Using ParallelEvolCCM with ARETE</h2>
 <p>The ParallelEvolCCM tool is also made available through the <code>evolccm</code> entry in ARETE.
 Making it possible to run the tool with Docker or Singularity.</p>
@@ -182,6 +169,146 @@ Making it possible to run the tool with Docker or Singularity.</p>
 <li><code>-profile</code> - The profile to use. In this case, <code>docker</code>.</li>
 </ul>
 <p>For more information, check the <a href="https://beiko-lab.github.io/arete/">full ARETE documentation</a>.</p>
+<h2 id="using-parallelevolccm-by-itself">Using ParallelEvolCCM by itself</h2>
+<p>The ParallelEvolCCM tool is a command line tool written in R.
+It is available through the <a href="https://github.com/beiko-lab/arete/blob/master/bin/ParallelEvolCCM.R">bin/ParallelEvolCCM.R</a> script.</p>
+<p>To download the tool and make it executable, run:</p>
+<pre><code class="language-bash">wget https://raw.githubusercontent.com/beiko-lab/arete/master/bin/ParallelEvolCCM.R
+chmod +x ParallelEvolCCM.R
+</code></pre>
+<p>ParallelEvolCCM.R has several dependencies, which should automatically be installed
+the first time you run the script. You may need to install missing Linux packages using
+the following command:</p>
+<pre><code class="language-bash">sudo apt-get install libssl-dev libfontconfig1-dev libharfbuzz-dev \
+libfribidi-dev libfreetype6-dev libpng-dev libtiff5-dev libjpeg-dev \
+libopenblas-dev
+</code></pre>
+<p>If you prefer to install the dependencies manually, you can do so by running the following R commands:</p>
+<pre><code class="language-r">install.packages(c('ape', 'dplyr', 'phytools', 'foreach', 'doParallel', 'gplots', 'remotes'))
+remotes::install_github('beiko-lab/evolCCM')
+</code></pre>
+<p>You can then run the tool like this:</p>
+<pre><code class="language-bash">./ParallelEvolCCM.R --intree tree.nwk --intable feature_table.tsv.gz --cores -1
+</code></pre>
+<ul>
+<li><code>--intree</code> specifies the phylogenetic tree in Newick format.</li>
+<li><code>--intable</code> specifies the feature table in compressed TSV format.</li>
+<li><code>--cores</code> specifies the number of cores to use. Use <code>-1</code> to use all available cores.</li>
+</ul>
+<p>Additional parameters can be found by running <code>./ParallelEvolCCM.R</code> with no additional parameters.</p>
+<h2 id="parallelevolccm-release-package">ParallelEvolCCM Release Package</h2>
+<p>We also provide test data that can be used to run EvolCCM along with some useful scripts
+for downstream analyses. These can be found in a .tar.gz file, which you can download like this:</p>
+<pre><code class="language-bash">wget https://raw.githubusercontent.com/beiko-lab/arete/master/assets/ParallelEvolCCM_supplement.tar.gz
+tar -xzf ParallelEvolCCM_supplement.tar.gz
+</code></pre>
+<h3 id="structure">Structure</h3>
+<p>The tarball contains three subfolders:</p>
+<ul>
+<li>
+<p><code>Scripts/</code> - The R scripts used to generate feature and statistical histograms, and the
+Python script that is used to build the GraphML files from PECCM output.</p>
+</li>
+<li>
+<p><code>100Bifido/</code> - The results of the 100-genome analysis described in the paper.</p>
+</li>
+<li>
+<p><code>1000Bifido/</code> - The results of the 1000-genome analysis described in the paper.</p>
+</li>
+</ul>
+<p>Each of the results folders contains the following subdirectories and files. X is a placeholder for the size (i.e., 100 or 1000):</p>
+<ul>
+<li>
+<p><code>SourceFiles/</code> - The source files.</p>
+<ul>
+<li>
+<p><code>Bifido_X.tre</code>: The Newick-formatted tree</p>
+</li>
+<li>
+<p><code>Bifido_X_feature_profile</code>: The tab-separated feature file. <strong>This is the input
+file for ‘PECCM BuildFeatureHistogram.R’, see usage below</strong></p>
+</li>
+</ul>
+</li>
+<li>
+<p><code>Results/</code> - The results produced by PECCM and the helper scripts.</p>
+<ul>
+<li>
+<p><code>EvolCCM_Bifido_X.tre</code>: The tree used by EvolCCM (with midpoint rooting
+and multifurcating node resolution if necessary)</p>
+</li>
+<li>
+<p><code>EvolCCM_Bifido_X_feature_profile.tsv</code>: A tab-separated file with the p-values
+and statistics for all pairwise comparisons between features. This is the
+input file for the scripts <code>PECCM_BuildStatHistogram.R</code>
+and <code>PECCM_Build_GraphML.py</code>, see below</p>
+</li>
+<li>
+<p><code>EvolCCM_Bifido_X_feature_profile.tsv.pvals</code> and
+<code>EvolCCM_Bifido_X_feature_profile.tsv.X2</code>: Tab-separated matrices showing
+the p-values and X2 scores for all features.</p>
+</li>
+<li>
+<p><code>EvolCCM_Bifido_100.graphml</code>: GraphML-formatted file with connections between features.</p>
+</li>
+<li>
+<p>Four .jpg files: 'a' is the output feature profile, and 'b', 'c', and 'd' are the
+feature and statistical distributions.</p>
+</li>
+</ul>
+</li>
+</ul>
+<h3 id="additional-scripts">Additional Scripts</h3>
+<p>First, in order to recreate the results of
+the 100-genome dataset, run the command  below (specifying any reasonable number of cores):</p>
+<pre><code class="language-bash">ParallelEvolCCM.R --intree Bifido_100.tre \
+  --intable Bifido_100_feature_profile.tsv \
+  --min abundance 0.05 --max abundance 0.95 --cores 8
+</code></pre>
+<p>Four output files will be produced. All will be prefixed with 'EvolCCM' to distiguish
+them from the input files.</p>
+<ul>
+<li>
+<p>.tre file: The tree used by EvolCCM (with midpoint rooting and multifurcating
+node resolution if necessary). This file will end with a ‘.tre’ extension.</p>
+</li>
+<li>
+<p>.tsv file: Statistics associated with the EvolCCM comparisons, with one line for
+each pairwise comparison.</p>
+</li>
+<li>
+<p>.tsv.pvals file: A matrix showing the p-values from all-versus-all comparisons between features.</p>
+</li>
+<li>
+<p>.tsv.X2 file: A matrix showing the X2 values from all-versus-all comparisons between features.</p>
+</li>
+</ul>
+<hr />
+<p>Next, <code>PECCM_BuildFeatureHistogram.R</code> can be used to generate the feature distribution
+histogram. Usage is:</p>
+<pre><code class="language-bash">Rscript PECCM_BuildFeatureHistogram.R infile
+</code></pre>
+<p>Where ‘infile’ is the input feature table (for example, Bifido_100_feature_profile.tsv).
+There are no other command-line options. A single .jpg file will be produced.</p>
+<hr />
+<p><code>PECCM_BuildStatHistogram.R</code> is used to generate the statistical summary histograms. Usage is:</p>
+<pre><code class="language-bash">Rscript PECCM_BuildStatHistogram.R infile
+</code></pre>
+<p>Where ‘infile’ is the input table of results (‘EvolCCM...tsv’).
+Three .jpg files will be produced.</p>
+<hr />
+<p><code>PECCM_Build_GraphML.py</code> is used to generate a graph from the pairwise comparisons,
+with optional p-value thresholding. You can also use the --attribute_name_length
+option to truncate attribute names for visual purposes.</p>
+<p>The optional ‘type_underscore’ argument will treat the first part of each attribute name
+(up to the first underscore) as its type: for example, ‘plasmid_ABC’ and ‘plasmid_def’
+would both be treated as objects of type ‘plasmid’, with names ‘ABC’ and ‘DEF’, respectively.</p>
+<p>Usage:</p>
+<pre><code class="language-bash">python ../PECCM_Build_GraphML.py \
+  --attribute_name_length 10 \
+  --type_underscore EvolCCM_Bifido_100_feature_profile.tsv \
+  EvolCCM_Bifido_100.graphml
+</code></pre>
               
             </div>
           </div><footer>
