@@ -22,6 +22,7 @@ process EVOLCCM {
     task.ext.when == null || task.ext.when
 
     script:
+    def args = task.ext.args ?: ''
     """
     ParallelEvolCCM.R \\
         --intree \\
@@ -29,7 +30,8 @@ process EVOLCCM {
         --intable \\
         $feature_table \\
         --cores \\
-        $task.cpus
+        $task.cpus \\
+        $args
     """
 
     stub:
