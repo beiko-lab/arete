@@ -276,7 +276,7 @@ check_and_filter_profile <-
 
     ### ABUNDANCE FILTER ###
 
-    aprofile <- aprofile[tree$tip.label, ]
+    aprofile <- aprofile[tree$tip.label,]
     aprofile[aprofile > 1] <- 1
 
     numFeatures <- dim(aprofile)[2]
@@ -476,8 +476,10 @@ args <- commandArgs(trailingOnly = TRUE)
 parsed <- parse_args(args)
 
 ### Output file name (could be changed to a command-line argument) ###
-outputTree <- paste("EvolCCM_", parsed$inputTree, sep = "")
-outputFile <- paste("EvolCCM_", parsed$inputProfile, sep = "")
+outputTree <-
+  paste("EvolCCM_", basename(parsed$inputTree), sep = "")
+outputFile <-
+  paste("EvolCCM_", basename(parsed$inputProfile), sep = "")
 
 ###################### READ THE TREE FILE AND FIX IF NECESSARY ######################
 
