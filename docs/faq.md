@@ -99,3 +99,17 @@ process {
 Feel free to change the values above as you wish and then add `-c nextflow.config` to your `nextflow run beiko-lab/ARETE` command.
 
 You can point to general process labels, like `process_low`, or you can point directly to process names, like `MOB_RECON`. Learn more at [our usage documentation](https://beiko-lab.github.io/arete/usage/#custom-resource-requests) or [the official nextflow documentation](https://www.nextflow.io/docs/latest/config.html#scope-process).
+
+## How do I add extra parameters when executing a tool in ARETE?
+
+Simple! As above, create a file called `nextflow.config` in your working directory and add the following to it:
+
+```nextflow
+withName: EVOLCCM {
+    ext.args = '--max_abundance 0.8'
+}
+```
+
+Then, add `-c nextflow.config` to your `nextflow run beiko-lab/ARETE` command.
+The command above will attach the `--max_abundance 0.8` parameter to the execution of the
+`EVOLCCM` tool.
