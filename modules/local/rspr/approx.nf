@@ -15,6 +15,7 @@ process RSPR_APPROX {
     val max_support_threshold
     val min_heatmap_approx_rspr
     val max_heatmap_approx_rspr
+    path trees
 
     output:
     path "approx", emit: res_dir
@@ -29,9 +30,7 @@ process RSPR_APPROX {
     script:
     def args = task.ext.args ?: ''
     """
-    for t in \$(cut -f2 -d',' $gene_tree_list); do
-       cp \$t .
-    done && rspr_approx.py \\
+    rspr_approx.py \\
         --core $core_tree \\
         --acc $gene_tree_list \\
         --annotation $annotation \\

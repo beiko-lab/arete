@@ -11,6 +11,11 @@ workflow RSPR {
 
     main:
 
+        gene_tree_sheet
+            .splitCsv(header: true)
+            .map { it -> file(it.path) }
+            .set { trees }
+
         RSPR_APPROX (
             core_tree,
             gene_tree_sheet,
@@ -20,6 +25,7 @@ workflow RSPR {
             params.max_support_threshold,
             params.min_heatmap_approx_rspr,
             params.max_heatmap_approx_rspr,
+            trees.collect()
         )
 
         RSPR_EXACT (
