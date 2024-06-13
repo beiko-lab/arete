@@ -96,7 +96,7 @@ def check_formatted_tree(tree_string):
 
 def read_tree(input_path):
     print(glob.glob("./*tre"))
-    with open(Path("." / input_path), "r") as f:
+    with open(Path(".") / Path(input_path), "r") as f:
         tree_string = f.read()
         formatted = re.sub(r";[^:]+:", ":", tree_string)
         is_duplicated = check_formatted_tree(formatted)
