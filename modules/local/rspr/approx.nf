@@ -30,7 +30,7 @@ process RSPR_APPROX {
     def args = task.ext.args ?: ''
     """
     for t in \$(cut -f2 -d',' $gene_tree_list); do
-       ln -s t
+       ln -s \$t
     done
 
     rspr_approx.py \\
