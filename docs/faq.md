@@ -105,8 +105,10 @@ You can point to general process labels, like `process_low`, or you can point di
 Simple! As above, create a file called `nextflow.config` in your working directory and add the following to it:
 
 ```nextflow
-withName: EVOLCCM {
-    ext.args = '--max_abundance 0.8'
+process {
+    withName: EVOLCCM {
+        ext.args = '--max_abundance 0.8'
+    }
 }
 ```
 
