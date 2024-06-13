@@ -219,8 +219,10 @@
 <p>You can point to general process labels, like <code>process_low</code>, or you can point directly to process names, like <code>MOB_RECON</code>. Learn more at <a href="https://beiko-lab.github.io/arete/usage/#custom-resource-requests">our usage documentation</a> or <a href="https://www.nextflow.io/docs/latest/config.html#scope-process">the official nextflow documentation</a>.</p>
 <h2 id="how-do-i-add-extra-parameters-when-executing-a-tool-in-arete">How do I add extra parameters when executing a tool in ARETE?</h2>
 <p>Simple! As above, create a file called <code>nextflow.config</code> in your working directory and add the following to it:</p>
-<pre><code class="language-nextflow">withName: EVOLCCM {
-    ext.args = '--max_abundance 0.8'
+<pre><code class="language-nextflow">process {
+    withName: EVOLCCM {
+        ext.args = '--max_abundance 0.8'
+    }
 }
 </code></pre>
 <p>Then, add <code>-c nextflow.config</code> to your <code>nextflow run beiko-lab/ARETE</code> command.
