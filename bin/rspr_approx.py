@@ -97,7 +97,7 @@ def check_formatted_tree(tree_string):
 def read_tree(input_path):
     #print(glob.glob("./*tre"))
     path = Path(".") / Path(input_path)
-    print("Path exists:", path.exists())
+    print(str(path), "Path exists:", path.exists())
     with open(path, "r") as f:
         tree_string = f.read()
         formatted = re.sub(r";[^:]+:", ":", tree_string)
