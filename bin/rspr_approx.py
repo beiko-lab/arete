@@ -112,7 +112,7 @@ def read_tree(input_path):
 
 
 def root_tree(input_path, basename, output_path):
-    tre,is_duplicated = read_tree(input_path)
+    tre,is_duplicated = read_tree(basename)
     midpoint = tre.get_midpoint_outgroup()
     tre.set_outgroup(midpoint)
     if is_duplicated:
