@@ -300,7 +300,7 @@ workflow ANNOTATE_ASSEMBLIES {
             DIAMOND_BLAST_CAZY(ch_ffn_files, DIAMOND_MAKE_CAZY.out.db, "txt", blast_columns)
             CAZY_FILTER(
                 DIAMOND_BLAST_CAZY.out.txt,
-                "CAZY",
+                "CAZYDB",
                 blast_columns,
                 min_pident,
                 min_qcover
