@@ -182,6 +182,13 @@ def create_report(ann, diamond_outs, rgi, vfdb_fasta, phispy, mobsuite):
             mobrecon_sum, on=["genome_id", "contig_id"], how="inner"
         )
 
+        non_contig_merge = False
+        if w_mobrecon.empty:
+            non_contig_merge = True
+            w_mobrecon = ann_sum.merge(
+                mobrecon_sum.drop(['contig_id'], axis=1), on=["genome_id"], how="inner"
+            )
+
         full_contigs = w_mobrecon
 
         if phispy is not None:
@@ -202,15 +209,27 @@ def create_report(ann, diamond_outs, rgi, vfdb_fasta, phispy, mobsuite):
                 phispy_sum, on=["genome_id", "contig_id"], how="inner"
             )
 
-            full_contigs = w_phispy.merge(
-                full_contigs,
-                on=["genome_id", "orf", "contig_id", "Start", "Stop"],
-                how="outer",
-            )
+            if non_contig_merge:
+                full_contigs = w_phispy.merge(
+                    full_contigs.drop(['contig_id'], axis=1),
+                    on=["genome_id", "orf", "Start", "Stop"],
+                    how="outer",
+                )
+            else:
+                full_contigs = w_phispy.merge(
+                    full_contigs,
+                    on=["genome_id", "orf", "contig_id", "Start", "Stop"],
+                    how="outer",
+                )
 
-        merged_full = full_contigs.merge(
-            w_vfdb, on=["genome_id", "orf", "contig_id", "Start", "Stop"], how="outer"
-        )
+        if non_contig_merge:
+            merged_full = full_contigs.merge(
+                w_vfdb.drop(['contig_id'], axis=1), on=["genome_id", "orf", "Start", "Stop"], how="outer"
+            )
+        else:
+            merged_full = full_contigs.merge(
+                w_vfdb, on=["genome_id", "orf", "contig_id", "Start", "Stop"], how="outer"
+            )
 
         merged_full.to_csv(
             path_or_buf="annotation_report.tsv.gz", sep="\t", index=False
