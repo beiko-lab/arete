@@ -23,6 +23,7 @@ process FEATURE_DISPERSION {
     def args = task.ext.args ?: ''
     """
     Feature_Dispersion.py \\
+        --output_base FeatureDispersion \\
         --tree_file $core_tree \\
         --feature_file $feature_profile \\
         --samplesheet_file $samplesheet \\
