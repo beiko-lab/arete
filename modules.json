@@ -14,10 +14,11 @@
                     },
                     "bakta/baktadbdownload": {
                         "branch": "master",
-                        "git_sha": "280c5c86b3da7dfcc92ebd5420584dd6ff26c4a8",
+                        "git_sha": "7c06e6820fa3918bc28a040e794f8a2b39fabadb",
                         "installed_by": [
                             "modules"
-                        ]
+                        ],
+                        "patch": "modules/nf-core/bakta/baktadbdownload/bakta-baktadbdownload.diff"
                     },
                     "blast/blastn": {
                         "branch": "master",
