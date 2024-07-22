@@ -56,7 +56,7 @@ def verify_genome_ids(tree, feature_file, samplesheet_file=None):
     feature_genomes = set(feature_df.index)
 
     if samplesheet_file:
-        samplesheet_df = pd.read_csv(samplesheet_file, sep='\t', usecols=[0], header=0, names=['genome_id'], skiprows=1)
+        samplesheet_df = pd.read_csv(samplesheet_file, usecols=[0], header=0, names=['genome_id'], skiprows=1)
         samplesheet_genomes = set(samplesheet_df['genome_id'])
     else:
         samplesheet_genomes = set()
@@ -118,7 +118,7 @@ def main(tree_file, feature_file, output_base, samplesheet_file=None, sampleshee
 
     # Read samplesheet if provided
     if samplesheet_file:
-        samplesheet_df = pd.read_csv(samplesheet_file, sep='\t', header=0)
+        samplesheet_df = pd.read_csv(samplesheet_file, header=0)
         available_columns = set(samplesheet_df.columns)
         if 'genome_id' not in available_columns:
             print("Error: 'genome_id' column is missing in the samplesheet.")
