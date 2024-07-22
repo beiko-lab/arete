@@ -15,6 +15,7 @@ include { PPANGGOLIN_MSA } from '../../modules/local/ppanggolin/msa/main'
 include { GML2GV } from '../../modules/local/graphviz/gml2gv/main'
 include { GET_SOFTWARE_VERSIONS } from '../../modules/local/get_software_versions'
 include { CONCAT_ALIGNMENT } from '../../modules/local/concat_alignment'
+include { FEATURE_DISPERSION } from '../../modules/local/featuredispersion/main'
 
 
 workflow PHYLOGENOMICS{
@@ -22,6 +23,7 @@ workflow PHYLOGENOMICS{
         gffs
         use_full_alignment
         use_fasttree
+        feature_profile
     main:
         ch_software_versions = Channel.empty()
 
@@ -116,6 +118,20 @@ workflow PHYLOGENOMICS{
             core_tree = IQTREE.out.phylogeny
             ch_software_versions = ch_software_versions.mix(IQTREE.out.versions.ifEmpty(null))
         }
+
+    if (feature_profile) {
+        if (params.feature_dispersion_columns) {
+            FEATURE_DISPERSION(
+                core_tree,
+                feature_profile,
+                file(params.input_sample_table),
+                params.feature_dispersion_columns
+            )
+        } else {
+            FEATURE_DISPERSION(core_tree, feature_profile, [], [])
+        }
+
+    }
 
     emit:
         phylo_software = ch_software_versions
