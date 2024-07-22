@@ -20,14 +20,15 @@ process FEATURE_DISPERSION {
     task.ext.when == null || task.ext.when
 
     script:
-    def args = task.ext.args ?: ''
+    def sheet = samplesheet ? "--samplesheet_file $samplesheet": ''
+    def columns = samplesheet_columns ? "--samplesheet_columns $samplesheet_columns": ''
     """
     Feature_Dispersion.py \\
         --output_base FeatureDispersion \\
         --tree_file $core_tree \\
         --feature_file $feature_profile \\
-        --samplesheet_file $samplesheet \\
-        --samplesheet_columns $samplesheet_columns
+        $sheet \\
+        $columns
     """
     stub:
     """
