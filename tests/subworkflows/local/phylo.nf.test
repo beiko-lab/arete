@@ -23,6 +23,7 @@ nextflow_workflow {
                 input[1] = false
                 // Use fasttree
                 input[2] = true
+                input[3] = Channel.empty()
                 """
             }
         }
