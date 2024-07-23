@@ -326,7 +326,7 @@ workflow ANNOTATE_ASSEMBLIES {
             ch_multiqc_files = ch_multiqc_files.mix(DIAMOND_BLAST_ICEBERG.out.log.collect{it[1]}.ifEmpty([]))
         }
 
-        profile = []
+        profile = Channel.empty()
         if (tools_to_run.contains('report')) {
             needed_for_report = ['vfdb', 'rgi', 'mobsuite']
             if (!params.use_prokka && needed_for_report.every { it in tools_to_run }) {
@@ -353,7 +353,7 @@ workflow ANNOTATE_ASSEMBLIES {
                 )
             }
 
-            profile = (params.skip_profile_creation) ? [] : CREATE_REPORT.out.profile
+            profile = (params.skip_profile_creation) ? profile : CREATE_REPORT.out.profile
         }
 
     emit:

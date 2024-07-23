@@ -26,6 +26,7 @@ workflow PHYLOGENOMICS{
         feature_profile
     main:
         ch_software_versions = Channel.empty()
+        ch_feature_profile = feature_profile.ifEmpty(false)
 
         gffs
             .map { meta, path -> [meta.id, path.getName()] }
@@ -119,7 +120,7 @@ workflow PHYLOGENOMICS{
             ch_software_versions = ch_software_versions.mix(IQTREE.out.versions.ifEmpty(null))
         }
 
-    if (feature_profile) {
+    if (ch_feature_profile != false) {
         if (params.feature_dispersion_columns) {
             FEATURE_DISPERSION(
                 core_tree,
@@ -130,7 +131,6 @@ workflow PHYLOGENOMICS{
         } else {
             FEATURE_DISPERSION(core_tree, feature_profile, [], [])
         }
-
     }
 
     emit:

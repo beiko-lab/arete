@@ -613,7 +613,7 @@ workflow PHYLO {
     PHYLO_INPUT_CHECK.out.genomes.set { gffs }
 
     ////////////////////////// PANGENOME /////////////////////////////////////
-    PHYLOGENOMICS(gffs, use_full_alignment, use_fasttree, [])
+    PHYLOGENOMICS(gffs, use_full_alignment, use_fasttree, Channel.empty())
     ch_software_versions = ch_software_versions.mix(PHYLOGENOMICS.out.phylo_software)
 
 
