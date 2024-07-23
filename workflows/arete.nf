@@ -222,7 +222,12 @@ workflow ARETE {
 
     ////////////////////////// PANGENOME /////////////////////////////////////
     if (!params.skip_phylo) {
-        PHYLOGENOMICS(gffs, use_full_alignment, use_fasttree)
+        PHYLOGENOMICS(
+                gffs,
+                use_full_alignment,
+                use_fasttree,
+                ANNOTATE_ASSEMBLIES.out.feature_profile
+        )
         ch_software_versions = ch_software_versions.mix(PHYLOGENOMICS.out.phylo_software)
 
         if (params.run_evolccm) {
@@ -476,7 +481,12 @@ workflow ANNOTATION {
 
     ////////////////////////// PANGENOME /////////////////////////////////////
     if (!params.skip_phylo) {
-        PHYLOGENOMICS(gffs, use_full_alignment, use_fasttree)
+        PHYLOGENOMICS(
+                gffs,
+                use_full_alignment,
+                use_fasttree,
+                ANNOTATE_ASSEMBLIES.out.feature_profile
+        )
         ch_software_versions = ch_software_versions.mix(PHYLOGENOMICS.out.phylo_software)
 
         if (params.run_evolccm) {
@@ -603,7 +613,7 @@ workflow PHYLO {
     PHYLO_INPUT_CHECK.out.genomes.set { gffs }
 
     ////////////////////////// PANGENOME /////////////////////////////////////
-    PHYLOGENOMICS(gffs, use_full_alignment, use_fasttree)
+    PHYLOGENOMICS(gffs, use_full_alignment, use_fasttree, Channel.empty())
     ch_software_versions = ch_software_versions.mix(PHYLOGENOMICS.out.phylo_software)
 
 
