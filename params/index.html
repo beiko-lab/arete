@@ -145,8 +145,6 @@
 <th>Description</th>
 <th>Type</th>
 <th>Default</th>
-<th>Required</th>
-<th>Hidden</th>
 </tr>
 </thead>
 <tbody>
@@ -155,23 +153,17 @@
 <td>Path to comma-separated file containing information about the samples in the experiment. <details><summary>Help</summary><small>You will need to create a design file with information about the samples in your experiment before running the pipeline. Use this parameter to specify its location. It has to be a comma-separated file with 3 columns, and a header row.</small></details></td>
 <td><code>string</code></td>
 <td></td>
-<td></td>
-<td></td>
 </tr>
 <tr>
 <td><code>outdir</code></td>
 <td>Path to the output directory where the results will be saved.</td>
 <td><code>string</code></td>
 <td>./results</td>
-<td></td>
-<td></td>
 </tr>
 <tr>
 <td><code>db_cache</code></td>
 <td>Directory where the databases are located</td>
 <td><code>string</code></td>
-<td></td>
-<td></td>
 <td></td>
 </tr>
 <tr>
@@ -179,15 +171,11 @@
 <td>Email address for completion summary. <details><summary>Help</summary><small>Set this parameter to your e-mail address to get a summary e-mail with details of the run sent to you when the workflow exits. If set in your user config file (<code>~/.nextflow/config</code>) then you don't need to specify this on the command line for every run.</small></details></td>
 <td><code>string</code></td>
 <td></td>
-<td></td>
-<td></td>
 </tr>
 <tr>
 <td><code>multiqc_title</code></td>
 <td>MultiQC report title. Printed as page header, used for filename if not otherwise specified.</td>
 <td><code>string</code></td>
-<td></td>
-<td></td>
 <td></td>
 </tr>
 </tbody>
@@ -201,8 +189,6 @@
 <th>Description</th>
 <th>Type</th>
 <th>Default</th>
-<th>Required</th>
-<th>Hidden</th>
 </tr>
 </thead>
 <tbody>
@@ -210,8 +196,6 @@
 <td><code>reference_genome</code></td>
 <td>Path to FASTA reference genome file.</td>
 <td><code>string</code></td>
-<td></td>
-<td></td>
 <td></td>
 </tr>
 </tbody>
@@ -224,8 +208,6 @@
 <th>Description</th>
 <th>Type</th>
 <th>Default</th>
-<th>Required</th>
-<th>Hidden</th>
 </tr>
 </thead>
 <tbody>
@@ -234,15 +216,11 @@
 <td>Run CheckM QC software</td>
 <td><code>boolean</code></td>
 <td></td>
-<td></td>
-<td></td>
 </tr>
 <tr>
 <td><code>apply_filtering</code></td>
 <td>Filter assemblies on QC results</td>
 <td><code>boolean</code></td>
-<td></td>
-<td></td>
 <td></td>
 </tr>
 <tr>
@@ -250,32 +228,24 @@
 <td>Don't run Kraken2 taxonomic classification</td>
 <td><code>boolean</code></td>
 <td></td>
-<td></td>
-<td></td>
 </tr>
 <tr>
 <td><code>min_n50</code></td>
 <td>Minimum N50 for filtering</td>
 <td><code>integer</code></td>
 <td>10000</td>
-<td></td>
-<td></td>
 </tr>
 <tr>
 <td><code>min_contigs_1000_bp</code></td>
 <td>Minimum number of contigs with &gt;1000bp</td>
 <td><code>integer</code></td>
 <td>1</td>
-<td></td>
-<td></td>
 </tr>
 <tr>
 <td><code>min_contig_length</code></td>
 <td>Minimum average contig length</td>
 <td><code>integer</code></td>
 <td>1</td>
-<td></td>
-<td></td>
 </tr>
 </tbody>
 </table>
@@ -288,8 +258,6 @@
 <th>Description</th>
 <th>Type</th>
 <th>Default</th>
-<th>Required</th>
-<th>Hidden</th>
 </tr>
 </thead>
 <tbody>
@@ -298,15 +266,11 @@
 <td>Comma-separated list of annotation tools to run</td>
 <td><code>string</code></td>
 <td>mobsuite,rgi,cazy,vfdb,iceberg,bacmet,islandpath,phispy,report</td>
-<td></td>
-<td></td>
 </tr>
 <tr>
 <td><code>bakta_db</code></td>
 <td>Path to the BAKTA database</td>
 <td><code>string</code></td>
-<td></td>
-<td></td>
 <td></td>
 </tr>
 <tr>
@@ -314,31 +278,23 @@
 <td>Use Prokka (not Bakta) for annotating assemblies</td>
 <td><code>boolean</code></td>
 <td></td>
-<td></td>
-<td></td>
 </tr>
 <tr>
 <td><code>min_pident</code></td>
 <td>Minimum match identity percentage for filtering</td>
 <td><code>integer</code></td>
 <td>60</td>
-<td></td>
-<td></td>
 </tr>
 <tr>
 <td><code>min_qcover</code></td>
 <td>Minimum coverage of each match for filtering</td>
 <td><code>number</code></td>
 <td>0.6</td>
-<td></td>
-<td></td>
 </tr>
 <tr>
 <td><code>skip_profile_creation</code></td>
 <td>Skip annotation feature profile creation</td>
 <td><code>boolean</code></td>
-<td></td>
-<td></td>
 <td></td>
 </tr>
 <tr>
@@ -346,8 +302,6 @@
 <td>Columns to include in the feature profile</td>
 <td><code>string</code></td>
 <td>mobsuite,rgi,cazy,vfdb,iceberg,bacmet</td>
-<td></td>
-<td></td>
 </tr>
 </tbody>
 </table>
@@ -360,8 +314,6 @@
 <th>Description</th>
 <th>Type</th>
 <th>Default</th>
-<th>Required</th>
-<th>Hidden</th>
 </tr>
 </thead>
 <tbody>
@@ -370,15 +322,11 @@
 <td>Skip Pangenomics and Phylogenomics subworkflow</td>
 <td><code>boolean</code></td>
 <td></td>
-<td></td>
-<td></td>
 </tr>
 <tr>
 <td><code>use_ppanggolin</code></td>
 <td>Use ppanggolin for calculating the pangenome</td>
 <td><code>boolean</code></td>
-<td></td>
-<td></td>
 <td></td>
 </tr>
 <tr>
@@ -386,15 +334,17 @@
 <td>Use full alignment</td>
 <td><code>boolean</code></td>
 <td></td>
-<td></td>
-<td></td>
 </tr>
 <tr>
 <td><code>use_fasttree</code></td>
 <td>Use FastTree</td>
 <td><code>boolean</code></td>
 <td>True</td>
-<td></td>
+</tr>
+<tr>
+<td><code>feature_dispersion_columns</code></td>
+<td>Columns from the input samplesheet to use in the feature dispersion module</td>
+<td><code>string</code></td>
 <td></td>
 </tr>
 </tbody>
@@ -408,8 +358,6 @@
 <th>Description</th>
 <th>Type</th>
 <th>Default</th>
-<th>Required</th>
-<th>Hidden</th>
 </tr>
 </thead>
 <tbody>
@@ -418,15 +366,11 @@
 <td>Skip PopPunk</td>
 <td><code>boolean</code></td>
 <td></td>
-<td></td>
-<td></td>
 </tr>
 <tr>
 <td><code>poppunk_model</code></td>
 <td>Which PopPunk model to use (bgmm, dbscan, refine, threshold or lineage)</td>
 <td><code>string</code></td>
-<td></td>
-<td></td>
 <td></td>
 </tr>
 <tr>
@@ -434,15 +378,11 @@
 <td>Whether to run the QC step for PopPunk</td>
 <td><code>boolean</code></td>
 <td></td>
-<td></td>
-<td></td>
 </tr>
 <tr>
 <td><code>enable_subsetting</code></td>
 <td>Enable subsetting workflow based on genome similarity</td>
 <td><code>boolean</code></td>
-<td></td>
-<td></td>
 <td></td>
 </tr>
 <tr>
@@ -450,16 +390,12 @@
 <td>Similarity threshold for core genomes</td>
 <td><code>number</code></td>
 <td>99.99</td>
-<td></td>
-<td></td>
 </tr>
 <tr>
 <td><code>accessory_similarity</code></td>
 <td>Similarity threshold for accessory genes</td>
 <td><code>number</code></td>
-<td>99.0</td>
-<td></td>
-<td></td>
+<td>99</td>
 </tr>
 </tbody>
 </table>
@@ -472,8 +408,6 @@
 <th>Description</th>
 <th>Type</th>
 <th>Default</th>
-<th>Required</th>
-<th>Hidden</th>
 </tr>
 </thead>
 <tbody>
@@ -482,63 +416,53 @@
 <td>Whether to run the Gene Order subworkflow</td>
 <td><code>boolean</code></td>
 <td></td>
+</tr>
+<tr>
+<td><code>input_file_path</code></td>
 <td></td>
-<td></td>
+<td><code>string</code></td>
+<td>/home/jvfe/dev/dalhousie/arete/test/gene-order/rgi_input.txt</td>
 </tr>
 <tr>
 <td><code>gene_order_percent_cutoff</code></td>
 <td>Cutoff percentage of genomes a gene should be present within to be included in extraction and subsequent analysis. Should a float between 0 and 1 (e.g., 0.25 means only genes present in a minimum of 25% of genomes are kept).</td>
 <td><code>number</code></td>
 <td>0.25</td>
-<td></td>
-<td></td>
 </tr>
 <tr>
 <td><code>gene_order_label_cols</code></td>
 <td>If using annotation files predicting features, list of space separated column names to be added to the gene names</td>
 <td><code>string</code></td>
 <td>None</td>
-<td></td>
-<td></td>
 </tr>
 <tr>
 <td><code>num_neighbors</code></td>
 <td>Neighborhood size to extract. Should be an even number N, such that N/2 neighbors upstream and N/2 neighbors downstream will be analyzed.</td>
 <td><code>integer</code></td>
 <td>10</td>
-<td></td>
-<td></td>
 </tr>
 <tr>
 <td><code>inflation</code></td>
 <td>Inflation hyperparameter value for Markov Clustering Algorithm.</td>
 <td><code>integer</code></td>
 <td>2</td>
-<td></td>
-<td></td>
 </tr>
 <tr>
 <td><code>epsilon</code></td>
 <td>Epsilon hyperparameter value for DBSCAN clustering.</td>
 <td><code>number</code></td>
 <td>0.5</td>
-<td></td>
-<td></td>
 </tr>
 <tr>
 <td><code>minpts</code></td>
 <td>Minpts hyperparameter value for DBSCAN clustering.</td>
 <td><code>integer</code></td>
 <td>5</td>
-<td></td>
-<td></td>
 </tr>
 <tr>
 <td><code>plot_clustering</code></td>
 <td>Create Clustering HTML Plots</td>
 <td><code>boolean</code></td>
-<td></td>
-<td></td>
 <td></td>
 </tr>
 </tbody>
@@ -552,8 +476,6 @@
 <th>Description</th>
 <th>Type</th>
 <th>Default</th>
-<th>Required</th>
-<th>Hidden</th>
 </tr>
 </thead>
 <tbody>
@@ -562,23 +484,17 @@
 <td>Run Recombination</td>
 <td><code>boolean</code></td>
 <td></td>
-<td></td>
-<td></td>
 </tr>
 <tr>
 <td><code>run_verticall</code></td>
 <td>Run Verticall recombination tool</td>
 <td><code>boolean</code></td>
 <td>True</td>
-<td></td>
-<td></td>
 </tr>
 <tr>
 <td><code>run_gubbins</code></td>
 <td>Run Gubbins recombination tool</td>
 <td><code>boolean</code></td>
-<td></td>
-<td></td>
 <td></td>
 </tr>
 </tbody>
@@ -591,8 +507,6 @@
 <th>Description</th>
 <th>Type</th>
 <th>Default</th>
-<th>Required</th>
-<th>Hidden</th>
 </tr>
 </thead>
 <tbody>
@@ -601,15 +515,11 @@
 <td>Run the community coevolution model</td>
 <td><code>boolean</code></td>
 <td></td>
-<td></td>
-<td></td>
 </tr>
 <tr>
 <td><code>run_rspr</code></td>
 <td>Run rSPR</td>
 <td><code>boolean</code></td>
-<td></td>
-<td></td>
 <td></td>
 </tr>
 <tr>
@@ -617,71 +527,53 @@
 <td>Minimum rSPR distance used to define processing groups</td>
 <td><code>integer</code></td>
 <td>10</td>
-<td></td>
-<td></td>
 </tr>
 <tr>
 <td><code>min_branch_length</code></td>
 <td>Minimum rSPR branch length</td>
 <td><code>integer</code></td>
 <td>0</td>
-<td></td>
-<td></td>
 </tr>
 <tr>
 <td><code>max_support_threshold</code></td>
 <td>Maximum rSPR support threshold</td>
 <td><code>number</code></td>
 <td>0.7</td>
-<td></td>
-<td></td>
 </tr>
 <tr>
 <td><code>max_approx_rspr</code></td>
 <td>Maximum approximate rSPR distance for filtering</td>
 <td><code>integer</code></td>
 <td>-1</td>
-<td></td>
-<td></td>
 </tr>
 <tr>
 <td><code>min_heatmap_approx_rspr</code></td>
 <td>Minimum approximate rSPR distance used to generate heatmap</td>
 <td><code>integer</code></td>
 <td>0</td>
-<td></td>
-<td></td>
 </tr>
 <tr>
 <td><code>max_heatmap_approx_rspr</code></td>
 <td>Maximum approximate rSPR distance used to generate heatmap</td>
 <td><code>integer</code></td>
 <td>-1</td>
-<td></td>
-<td></td>
 </tr>
 <tr>
 <td><code>min_heatmap_exact_rspr</code></td>
 <td>Minimum exact rSPR distance used to generate heatmap</td>
 <td><code>integer</code></td>
 <td>0</td>
-<td></td>
-<td></td>
 </tr>
 <tr>
 <td><code>max_heatmap_exact_rspr</code></td>
 <td>Maximum exact rSPR distance used to generate heatmap</td>
 <td><code>integer</code></td>
 <td>-1</td>
-<td></td>
-<td></td>
 </tr>
 <tr>
 <td><code>core_gene_tree</code></td>
 <td>Core (or reference) genome tree. Used in the rSPR and evolCCM entries.</td>
 <td><code>string</code></td>
-<td></td>
-<td></td>
 <td></td>
 </tr>
 <tr>
@@ -689,15 +581,11 @@
 <td>TSV table of annotations for all genomes. Such as the ones generated by Bakta or Prokka in ARETE.</td>
 <td><code>string</code></td>
 <td></td>
-<td></td>
-<td></td>
 </tr>
 <tr>
 <td><code>feature_profile</code></td>
 <td>Feature profile TSV (A presence-absence matrix). Used in the evolCCM entry.</td>
 <td><code>string</code></td>
-<td></td>
-<td></td>
 <td></td>
 </tr>
 </tbody>
@@ -711,8 +599,6 @@
 <th>Description</th>
 <th>Type</th>
 <th>Default</th>
-<th>Required</th>
-<th>Hidden</th>
 </tr>
 </thead>
 <tbody>
@@ -721,56 +607,42 @@
 <td>Git commit id for Institutional configs.</td>
 <td><code>string</code></td>
 <td>master</td>
-<td></td>
-<td>True</td>
 </tr>
 <tr>
 <td><code>custom_config_base</code></td>
 <td>Base directory for Institutional configs. <details><summary>Help</summary><small>If you're running offline, Nextflow will not be able to fetch the institutional config files from the internet. If you don't need them, then this is not a problem. If you do need them, you should download the files from the repo and tell Nextflow where to find them with this parameter.</small></details></td>
 <td><code>string</code></td>
 <td>https://raw.githubusercontent.com/nf-core/configs/master</td>
-<td></td>
-<td>True</td>
 </tr>
 <tr>
 <td><code>hostnames</code></td>
 <td>Institutional configs hostname.</td>
 <td><code>string</code></td>
 <td></td>
-<td></td>
-<td>True</td>
 </tr>
 <tr>
 <td><code>config_profile_name</code></td>
 <td>Institutional config name.</td>
 <td><code>string</code></td>
 <td></td>
-<td></td>
-<td>True</td>
 </tr>
 <tr>
 <td><code>config_profile_description</code></td>
 <td>Institutional config description.</td>
 <td><code>string</code></td>
 <td></td>
-<td></td>
-<td>True</td>
 </tr>
 <tr>
 <td><code>config_profile_contact</code></td>
 <td>Institutional config contact information.</td>
 <td><code>string</code></td>
 <td></td>
-<td></td>
-<td>True</td>
 </tr>
 <tr>
 <td><code>config_profile_url</code></td>
 <td>Institutional config URL link.</td>
 <td><code>string</code></td>
 <td></td>
-<td></td>
-<td>True</td>
 </tr>
 </tbody>
 </table>
@@ -783,8 +655,6 @@
 <th>Description</th>
 <th>Type</th>
 <th>Default</th>
-<th>Required</th>
-<th>Hidden</th>
 </tr>
 </thead>
 <tbody>
@@ -793,24 +663,18 @@
 <td>Maximum number of CPUs that can be requested for any single job. <details><summary>Help</summary><small>Use to set an upper-limit for the CPU requirement for each process. Should be an integer e.g. <code>--max_cpus 1</code></small></details></td>
 <td><code>integer</code></td>
 <td>16</td>
-<td></td>
-<td>True</td>
 </tr>
 <tr>
 <td><code>max_memory</code></td>
 <td>Maximum amount of memory that can be requested for any single job. <details><summary>Help</summary><small>Use to set an upper-limit for the memory requirement for each process. Should be a string in the format integer-unit e.g. <code>--max_memory '8.GB'</code></small></details></td>
 <td><code>string</code></td>
 <td>128.GB</td>
-<td></td>
-<td>True</td>
 </tr>
 <tr>
 <td><code>max_time</code></td>
 <td>Maximum amount of time that can be requested for any single job. <details><summary>Help</summary><small>Use to set an upper-limit for the time requirement for each process. Should be a string in the format integer-unit e.g. <code>--max_time '2.h'</code></small></details></td>
 <td><code>string</code></td>
 <td>240.h</td>
-<td></td>
-<td>True</td>
 </tr>
 </tbody>
 </table>
@@ -823,8 +687,6 @@
 <th>Description</th>
 <th>Type</th>
 <th>Default</th>
-<th>Required</th>
-<th>Hidden</th>
 </tr>
 </thead>
 <tbody>
@@ -833,71 +695,53 @@
 <td>Display help text.</td>
 <td><code>boolean</code></td>
 <td></td>
-<td></td>
-<td>True</td>
 </tr>
 <tr>
 <td><code>publish_dir_mode</code></td>
 <td>Method used to save pipeline results to output directory. <details><summary>Help</summary><small>The Nextflow <code>publishDir</code> option specifies which intermediate files should be saved to the output directory. This option tells the pipeline what method should be used to move these files. See <a href="https://www.nextflow.io/docs/latest/process.html#publishdir">Nextflow docs</a> for details.</small></details></td>
 <td><code>string</code></td>
 <td>copy</td>
-<td></td>
-<td>True</td>
 </tr>
 <tr>
 <td><code>email_on_fail</code></td>
 <td>Email address for completion summary, only when pipeline fails. <details><summary>Help</summary><small>An email address to send a summary email to when the pipeline is completed - ONLY sent if the pipeline does not exit successfully.</small></details></td>
 <td><code>string</code></td>
 <td></td>
-<td></td>
-<td>True</td>
 </tr>
 <tr>
 <td><code>plaintext_email</code></td>
 <td>Send plain-text email instead of HTML.</td>
 <td><code>boolean</code></td>
 <td></td>
-<td></td>
-<td>True</td>
 </tr>
 <tr>
 <td><code>max_multiqc_email_size</code></td>
 <td>File size limit when attaching MultiQC reports to summary emails.</td>
 <td><code>string</code></td>
 <td>25.MB</td>
-<td></td>
-<td>True</td>
 </tr>
 <tr>
 <td><code>monochrome_logs</code></td>
 <td>Do not use coloured log outputs.</td>
 <td><code>boolean</code></td>
 <td></td>
-<td></td>
-<td>True</td>
 </tr>
 <tr>
 <td><code>multiqc_config</code></td>
 <td>Custom config file to supply to MultiQC.</td>
 <td><code>string</code></td>
 <td></td>
-<td></td>
-<td>True</td>
 </tr>
 <tr>
 <td><code>tracedir</code></td>
 <td>Directory to keep pipeline Nextflow logs and reports.</td>
 <td><code>string</code></td>
 <td>${params.outdir}/pipeline_info</td>
-<td></td>
-<td>True</td>
 </tr>
 <tr>
 <td><code>validate_params</code></td>
 <td>Boolean whether to validate parameters against the schema at runtime</td>
 <td><code>boolean</code></td>
-<td>True</td>
-<td></td>
 <td>True</td>
 </tr>
 <tr>
@@ -905,40 +749,30 @@
 <td>Show all params when using <code>--help</code> <details><summary>Help</summary><small>By default, parameters set as <em>hidden</em> in the schema are not shown on the command line when a user runs with <code>--help</code>. Specifying this option will tell the pipeline to show all parameters.</small></details></td>
 <td><code>boolean</code></td>
 <td></td>
-<td></td>
-<td>True</td>
 </tr>
 <tr>
 <td><code>enable_conda</code></td>
 <td>Run this workflow with Conda. You can also use '-profile conda' instead of providing this parameter.</td>
 <td><code>boolean</code></td>
 <td></td>
-<td></td>
-<td>True</td>
 </tr>
 <tr>
 <td><code>singularity_pull_docker_container</code></td>
 <td>Instead of directly downloading Singularity images for use with Singularity, force the workflow to pull and convert Docker containers instead. <details><summary>Help</summary><small>This may be useful for example if you are unable to directly pull Singularity containers to run the pipeline due to http/https proxy issues.</small></details></td>
 <td><code>boolean</code></td>
 <td></td>
-<td></td>
-<td>True</td>
 </tr>
 <tr>
 <td><code>schema_ignore_params</code></td>
 <td></td>
 <td><code>string</code></td>
 <td>genomes,modules</td>
-<td></td>
-<td></td>
 </tr>
 <tr>
 <td><code>multiqc_logo</code></td>
 <td></td>
 <td><code>string</code></td>
 <td></td>
-<td></td>
-<td>True</td>
 </tr>
 </tbody>
 </table>
