@@ -46,7 +46,7 @@ def process_data(samplesheet_df, feature_df, column_name):
     Returns:
         pd.DataFrame: Transposed presence/absence dataframe with groups column.
     """
-    merged_df = feature_df.merge(samplesheet_df, on='genome', how='left')
+    merged_df = feature_df.merge(samplesheet_df, left_on='genome_id', right_on='sample', how='left')
 
     if column_name not in merged_df.columns:
         print(f"Warning: Column '{column_name}' not found in samplesheet. Skipping.")
@@ -56,10 +56,10 @@ def process_data(samplesheet_df, feature_df, column_name):
         print(f"Warning: Column '{column_name}' contains only a single unique value. Skipping.")
         return None
 
-    selected_columns = ['genome', column_name] + list(feature_df.columns[1:])
+    selected_columns = ['genome_id', column_name] + list(feature_df.columns[1:])
     feature_df = merged_df[selected_columns]
     presence = feature_df.groupby(column_name).any().astype(int)
-    presence.drop('genome', axis=1, inplace=True, errors='ignore')
+    presence.drop('genome_id', axis=1, inplace=True, errors='ignore')
     presence_transposed = presence.transpose()
     presence_transposed.reset_index(inplace=True)
     presence_transposed.rename(columns={'index': 'feature'}, inplace=True)
