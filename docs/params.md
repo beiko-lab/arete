@@ -48,6 +48,7 @@ Parameters for the annotation subworkflow
 | `min_qcover` | Minimum coverage of each match for filtering | `number` | 0.6 |
 | `skip_profile_creation` | Skip annotation feature profile creation | `boolean` |  |
 | `feature_profile_columns` | Columns to include in the feature profile | `string` | mobsuite,rgi,cazy,vfdb,iceberg,bacmet |
+| `upset_plot_columns` | Columns to use for making Upset plots of genome features | `string` |  |
 
 ## Phylogenomics
 
@@ -71,7 +72,7 @@ Parameters for the lineage subworkflow
 | `poppunk_model` | Which PopPunk model to use (bgmm, dbscan, refine, threshold or lineage) | `string` |  |
 | `run_poppunk_qc` | Whether to run the QC step for PopPunk | `boolean` |  |
 | `enable_subsetting` | Enable subsetting workflow based on genome similarity | `boolean` |  |
-| `core_similarity` | Similarity threshold for core genomes | `number` | 99.99 |
+| `core_similarity` | Similarity threshold for core genomes | `number` | 99.9 |
 | `accessory_similarity` | Similarity threshold for accessory genes | `number` | 99 |
 
 ## Gene Order
