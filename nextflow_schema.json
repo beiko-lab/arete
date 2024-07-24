@@ -148,6 +148,11 @@
                     "fa_icon": "fas fa-columns",
                     "description": "Columns to include in the feature profile",
                     "pattern": "^((rgi|mobsuite|vfdb|cazy|bacmet|iceberg)?,?)*(?<!,)$"
+                },
+                "upset_plot_columns": {
+                    "type": "string",
+                    "fa_icon": "fas fa-columns",
+                    "description": "Columns to use for making Upset plots of genome features"
                 }
             }
         },
@@ -215,7 +220,7 @@
                 },
                 "core_similarity": {
                     "type": "number",
-                    "default": 99.99,
+                    "default": 99.9,
                     "fa_icon": "fas fa-clone",
                     "description": "Similarity threshold for core genomes"
                 },
