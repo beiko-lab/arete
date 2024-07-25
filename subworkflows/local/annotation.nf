@@ -35,6 +35,7 @@ include { CONCAT_OUTPUT as CONCAT_MOBSUITE;
           CONCAT_OUTPUT as CONCAT_INTEGRONS } from '../../modules/local/concat_output.nf'
 include { FILTER_AND_CONCAT_MATCHES as FILTER_RGI } from '../../modules/local/filter_matches'
 include { CREATE_REPORT } from '../../modules/local/create_report'
+include { BUILD_UPSET } from '../../modules/local/build_upset/main'
 
 //
 // SUBWORKFLOWS
@@ -355,6 +356,15 @@ workflow ANNOTATE_ASSEMBLIES {
 
             profile = (params.skip_profile_creation) ? profile : CREATE_REPORT.out.profile
         }
+
+        if (params.upset_plot_columns) {
+            BUILD_UPSET(
+                profile,
+                file(params.input_sample_table),
+                params.upset_plot_columns
+            )
+        }
+
 
     emit:
         annotation = concat_annotation

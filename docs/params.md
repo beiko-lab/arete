@@ -48,6 +48,7 @@ Parameters for the annotation subworkflow
 | `min_qcover` | Minimum coverage of each match for filtering | `number` | 0.6 |
 | `skip_profile_creation` | Skip annotation feature profile creation | `boolean` |  |
 | `feature_profile_columns` | Columns to include in the feature profile | `string` | mobsuite,rgi,cazy,vfdb,iceberg,bacmet |
+| `upset_plot_columns` | Columns to use for making Upset plots of genome features | `string` |  |
 
 ## Phylogenomics
 
@@ -71,8 +72,8 @@ Parameters for the lineage subworkflow
 | `poppunk_model` | Which PopPunk model to use (bgmm, dbscan, refine, threshold or lineage) | `string` |  |
 | `run_poppunk_qc` | Whether to run the QC step for PopPunk | `boolean` |  |
 | `enable_subsetting` | Enable subsetting workflow based on genome similarity | `boolean` |  |
-| `core_similarity` | Similarity threshold for core genomes | `number` | 99.99 |
-| `accessory_similarity` | Similarity threshold for accessory genes | `number` | 99 |
+| `core_similarity` | Similarity threshold for core genomes | `number` | 99.9 |
+| `accessory_similarity` | Similarity threshold for accessory genes | `number` | 99.0 |
 
 ## Gene Order
 
@@ -140,9 +141,9 @@ Set the top limit for requested resources for any single job.
 
 | Parameter | Description | Type | Default |
 |-----------|-----------|-----------|-----------|
-| `max_cpus` | Maximum number of CPUs that can be requested for any single job. <details><summary>Help</summary><small>Use to set an upper-limit for the CPU requirement for each process. Should be an integer e.g. `--max_cpus 1`</small></details>| `integer` | 16 |
-| `max_memory` | Maximum amount of memory that can be requested for any single job. <details><summary>Help</summary><small>Use to set an upper-limit for the memory requirement for each process. Should be a string in the format integer-unit e.g. `--max_memory '8.GB'`</small></details>| `string` | 128.GB |
-| `max_time` | Maximum amount of time that can be requested for any single job. <details><summary>Help</summary><small>Use to set an upper-limit for the time requirement for each process. Should be a string in the format integer-unit e.g. `--max_time '2.h'`</small></details>| `string` | 240.h |
+| `max_cpus` | Maximum number of CPUs that can be requested for any single job. <details><summary>Help</summary><small>Use to set an upper-limit for the CPU requirement for each process. Should be an integer e.g. `--max_cpus 1`</small></details>| `integer` | 72 |
+| `max_memory` | Maximum amount of memory that can be requested for any single job. <details><summary>Help</summary><small>Use to set an upper-limit for the memory requirement for each process. Should be a string in the format integer-unit e.g. `--max_memory '8.GB'`</small></details>| `string` | 125.GB |
+| `max_time` | Maximum amount of time that can be requested for any single job. <details><summary>Help</summary><small>Use to set an upper-limit for the time requirement for each process. Should be a string in the format integer-unit e.g. `--max_time '2.h'`</small></details>| `string` | 168.h |
 
 ## Generic options
 
