@@ -101,7 +101,7 @@ workflow PHYLOGENOMICS{
             def is_nt = params.use_ppanggolin ? false : true
             GENE_FASTTREE(chunked_alignments, is_nt)
             GENE_FASTTREE.out.phylogeny.set { gene_trees }
-            ch_software_versions = ch_software_versions.mix(GENE_FASTTREE.out.versions.ifEmpty(null))
+            ch_software_versions = ch_software_versions.mix(GENE_FASTTREE.out.versions.first().ifEmpty(null))
 
             CORE_FASTTREE(ch_core_alignment, is_nt)
             CORE_FASTTREE.out.phylogeny.set { core_tree }
