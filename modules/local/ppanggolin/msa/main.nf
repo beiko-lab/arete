@@ -34,7 +34,7 @@ process PPANGGOLIN_MSA {
 
     cat <<-END_VERSIONS > versions.yml
     "${task.process}":
-        ppanggolin: \$(echo \$(ppanggolin --version 2>&1) | sed 's/^.*ppanggolin //' ))
+        ppanggolin: \$(echo \$(ppanggolin --version 2>&1) | sed 's/^.*ppanggolin //' )
     END_VERSIONS
     """
     stub:
@@ -45,7 +45,7 @@ process PPANGGOLIN_MSA {
 
     cat <<-END_VERSIONS > versions.yml
     "${task.process}":
-        ppanggolin: \$(echo \$(ppanggolin --version 2>&1) | sed 's/^.*ppanggolin //' ))
+        ppanggolin: \$(echo \$(ppanggolin --version 2>&1) | sed 's/^.*ppanggolin //' )
     END_VERSIONS
     """
 }
