@@ -9,14 +9,13 @@
 ### devtools: sudo apt-get install libssl-dev libfontconfig1-dev libharfbuzz-dev libfribidi-dev libfreetype6-dev libpng-dev libtiff5-dev libjpeg-dev
 
 # List of CRAN packages to check and install
-cran_packages <-
-  c("ape",
-    "dplyr",
-    "remotes",
-    "phytools",
-    "foreach",
-    "doParallel",
-    "gplots")
+cran_packages <- c("ape",
+                   "dplyr",
+                   "devtools",
+                   "phytools",
+                   "foreach",
+                   "doParallel",
+                   "gplots")
 
 for (package in cran_packages) {
   if (!suppressPackageStartupMessages(require(package, character.only = TRUE))) {
@@ -226,8 +225,7 @@ modify_tree <- function(tree,
           "Setting these branches to equal the threshold; this will affect the results!"
         )
       )
-      tree$edge.length[tree$edge.length < min_branch_length] <-
-        min_branch_length
+      tree$edge.length[tree$edge.length < min_branch_length] <- min_branch_length
     }
   }
   return(tree)
@@ -243,106 +241,100 @@ modify_tree <- function(tree,
 ### RETURN a filtered profile, as long as nothing is broken
 ########################################################################################
 
-check_and_filter_profile <-
-  function(aprofile, tree, min_abund, max_abund) {
-    # Get the leaf labels from the phylogenetic tree
-    tree_labels <- tree$tip.label
+check_and_filter_profile <- function(aprofile, tree, min_abund, max_abund) {
+  # Get the leaf labels from the phylogenetic tree
+  tree_labels <- tree$tip.label
 
-    # Get the row labels from the dataframe
-    df_labels <- rownames(aprofile)
+  # Get the row labels from the dataframe
+  df_labels <- rownames(aprofile)
 
-    mismatch <- 0
-    # Find labels that are in the tree but not in the dataframe
-    missing_in_df <- setdiff(tree_labels, df_labels)
-    if (length(missing_in_df) > 0) {
-      cat("Labels in the tree but not in the dataframe:", quote = FALSE)
-      cat(missing_in_df)
-      mismatch = 2
-    }
-
-    # Find labels that are in the dataframe but not in the tree
-    missing_in_tree <- setdiff(df_labels, tree_labels)
-    if (length(missing_in_tree) > 0) {
-      cat("Labels in the dataframe but not in the tree:", quote = FALSE)
-      cat(missing_in_tree)
-      mismatch = 1
-    }
-
-    if (mismatch == 1) {
-      stop("Exiting...")
-    }
-
-    cat("All names match between tree and matrix.\n")
-
-    ### ABUNDANCE FILTER ###
-
-    aprofile <- aprofile[tree$tip.label,]
-    aprofile[aprofile > 1] <- 1
-
-    numFeatures <- dim(aprofile)[2]
-    cat(paste("Total number of features: ", numFeatures, "\n"))
-
-    ### Abundance filter: subset the dataframe to include only those columns that satisfy the proportion criteria ###
-    proportion_ones <-
-      apply(aprofile, 2, function(col)
-        sum(col == 1) / length(col))
-    aprofile <-
-      aprofile[, proportion_ones >= min_abund &
-                 proportion_ones <= max_abund]
-    numFeatures <- dim(aprofile)[2]
-    cat(paste(
-      "Total number of features post abundance filtering: ",
-      numFeatures,
-      "\n"
-    ))
-
-    ### CLADE FILTERING: Remove any feature that maps perfectly onto a clade in the rooted phylogenetic tree ###
-    # This function will recursively explore the tree and return the clades
-    # Function to get all descendant tips of a node
-    #if(clade_filter) {
-    if (FALSE) {
-      get_descendant_tips <- function(tree, node) {
-        if (node <= length(tree$tip.label)) {
-          return(tree$tip.label[node])
-        } else {
-          descend <- which(tree$edge[, 1] == node)
-          tips <- c()
-          for (i in descend) {
-            tips <- c(tips, get_descendant_tips(tree, tree$edge[i, 2]))
-          }
-          return(tips)
-        }
-      }
-
-      # Get the clades for all internal nodes
-      clades <-
-        lapply((length(tree$tip.label) + 1):(length(tree$tip.label) + tree$Nnode),
-               function(node)
-                 get_descendant_tips(tree, node))
-
-      # Function to check if a feature is unique to a clade
-      check_feature <- function(feature) {
-        for (clade in clades) {
-          clade_data <- aprofile[unlist(clade), feature]
-          outside_clade_data <-
-            aprofile[setdiff(rownames(aprofile), unlist(clade)), feature]
-
-          if (all(clade_data == 1, na.rm = TRUE) &
-              all(outside_clade_data == 0, na.rm = TRUE)) {
-            return(TRUE)
-          }
-        }
-        return(FALSE)
-      }
-
-      for (feature in colnames(aprofile)) {
-        if (check_feature(feature)) {
-          filtered_data <- filtered_data %>% select(-feature)
-        }
-      }
-    }
-    return(aprofile)
+  mismatch <- 0
+  # Find labels that are in the tree but not in the dataframe
+  missing_in_df <- setdiff(tree_labels, df_labels)
+  if (length(missing_in_df) > 0) {
+    cat("Labels in the tree but not in the dataframe:", quote = FALSE)
+    cat(missing_in_df)
+    mismatch = 2
   }
+
+  # Find labels that are in the dataframe but not in the tree
+  missing_in_tree <- setdiff(df_labels, tree_labels)
+  if (length(missing_in_tree) > 0) {
+    cat("Labels in the dataframe but not in the tree:", quote = FALSE)
+    cat(missing_in_tree)
+    mismatch = 1
+  }
+
+  if (mismatch == 1) {
+    stop("Exiting...")
+  }
+
+  cat("All names match between tree and matrix.\n")
+
+  ### ABUNDANCE FILTER ###
+
+  aprofile <- aprofile[tree$tip.label, ]
+  aprofile[aprofile > 1] <- 1
+
+  numFeatures <- dim(aprofile)[2]
+  cat(paste("Total number of features: ", numFeatures, "\n"))
+
+  ### Abundance filter: subset the dataframe to include only those columns that satisfy the proportion criteria ###
+  proportion_ones <- apply(aprofile, 2, function(col)
+    sum(col == 1) / length(col))
+  aprofile <- aprofile[, proportion_ones >= min_abund &
+                         proportion_ones <= max_abund]
+  numFeatures <- dim(aprofile)[2]
+  cat(paste(
+    "Total number of features post abundance filtering: ",
+    numFeatures,
+    "\n"
+  ))
+
+  ### CLADE FILTERING: Remove any feature that maps perfectly onto a clade in the rooted phylogenetic tree ###
+  # This function will recursively explore the tree and return the clades
+  # Function to get all descendant tips of a node
+  #if(clade_filter) {
+  if (FALSE) {
+    get_descendant_tips <- function(tree, node) {
+      if (node <= length(tree$tip.label)) {
+        return(tree$tip.label[node])
+      } else {
+        descend <- which(tree$edge[, 1] == node)
+        tips <- c()
+        for (i in descend) {
+          tips <- c(tips, get_descendant_tips(tree, tree$edge[i, 2]))
+        }
+        return(tips)
+      }
+    }
+
+    # Get the clades for all internal nodes
+    clades <- lapply((length(tree$tip.label) + 1):(length(tree$tip.label) + tree$Nnode), function(node)
+      get_descendant_tips(tree, node))
+
+    # Function to check if a feature is unique to a clade
+    check_feature <- function(feature) {
+      for (clade in clades) {
+        clade_data <- aprofile[unlist(clade), feature]
+        outside_clade_data <- aprofile[setdiff(rownames(aprofile), unlist(clade)), feature]
+
+        if (all(clade_data == 1, na.rm = TRUE) &
+            all(outside_clade_data == 0, na.rm = TRUE)) {
+          return(TRUE)
+        }
+      }
+      return(FALSE)
+    }
+
+    for (feature in colnames(aprofile)) {
+      if (check_feature(feature)) {
+        filtered_data <- filtered_data %>% select(-feature)
+      }
+    }
+  }
+  return(aprofile)
+}
 
 ####################################################################
 ### FUNCTION PROCESS_PAIR
@@ -361,8 +353,7 @@ process_pair <- function(i, j, filtered_data, tree) {
     }
 
     # Run EstimateCCM for the current pair
-    aE <-
-      EstimateCCM(filtered_data[, c(i, j)], phytree = tree, trace = FALSE)
+    aE <- EstimateCCM(filtered_data[, c(i, j)], phytree = tree, trace = FALSE)
     estimatedRates <- aE$nlm.par
 
     # Retrieve the score and pvalue
@@ -419,8 +410,7 @@ constructMatrix <- function(lines, outputFile, column) {
   }
 
   # Initialize an empty matrix to store the distances
-  distances <-
-    matrix(nrow = length(entities), ncol = length(entities))
+  distances <- matrix(nrow = length(entities), ncol = length(entities))
 
   for (line in lines) {
     # Parse the line into fields
@@ -438,7 +428,7 @@ constructMatrix <- function(lines, outputFile, column) {
   # Convert the matrix to a data frame and set the row and column names
   distances <- as.data.frame(distances)
   rownames(distances) <- entities
-  colnames(distances) <- entities
+  colnames(distances) <- "Feature"+entities
 
   # Write the matrix to a file
   write.table(distances,
@@ -476,10 +466,8 @@ args <- commandArgs(trailingOnly = TRUE)
 parsed <- parse_args(args)
 
 ### Output file name (could be changed to a command-line argument) ###
-outputTree <-
-  paste("EvolCCM_", basename(parsed$inputTree), sep = "")
-outputFile <-
-  paste("EvolCCM_", basename(parsed$inputProfile), sep = "")
+outputTree <- paste("EvolCCM_", basename(parsed$inputTree), sep = "")
+outputFile <- paste("EvolCCM_", basename(parsed$inputProfile), sep = "")
 
 ###################### READ THE TREE FILE AND FIX IF NECESSARY ######################
 
@@ -494,8 +482,7 @@ write.tree(tree, outputTree)
 
 cat("\nReading profile...\n")
 aprofile <- read.csv(parsed$inputProfile, row.names = 1, sep = "\t")
-filtered_data <-
-  check_and_filter_profile(aprofile, tree, parsed$min_abund, parsed$max_abund)
+filtered_data <- check_and_filter_profile(aprofile, tree, parsed$min_abund, parsed$max_abund)
 numFeatures <- dim(filtered_data)[2]
 
 ######################## PARALLELIZED NESTED LOOP FOR PAIRWISE PROFILE COMPARISONS ########################
@@ -506,45 +493,40 @@ registerDoParallel(cores = parsed$num_cores)
 compare_from_vector <- parsed$compare_from_vector
 compare_to_vector <- parsed$compare_to_vector
 
-results <-
-  foreach(
-    i = 1:(numFeatures - 1),
-    .combine = 'c',
-    .multicombine = TRUE
-  ) %dopar% {
-    i_name <- colnames(filtered_data)[i]
+results <- foreach(
+  i = 1:(numFeatures - 1),
+  .combine = 'c',
+  .multicombine = TRUE
+) %dopar% {
+  i_name <- colnames(filtered_data)[i]
 
-    # If compare_from_str is defined, then check the condition. If not, then set to TRUE by default.
-    i_condition <- ifelse(!is.null(compare_from_vector),
-                          any(sapply(compare_from_vector, function(x) {
-                            startsWith(i_name, x)
-                          })),
-                          TRUE)
+  # If compare_from_str is defined, then check the condition. If not, then set to TRUE by default.
+  i_condition <- ifelse(!is.null(compare_from_vector), any(sapply(compare_from_vector, function(x) {
+    startsWith(i_name, x)
+  })), TRUE)
 
-    if (i_condition) {
-      print(paste("Processing feature #", i, " (", i_name, ")", sep = ""),
-            quote = FALSE)
+  if (i_condition) {
+    print(paste("Processing feature #", i, " (", i_name, ")", sep = ""),
+          quote = FALSE)
 
-      sapply((i + 1):numFeatures, function(j) {
-        j_name <- colnames(filtered_data)[j]
+    sapply((i + 1):numFeatures, function(j) {
+      j_name <- colnames(filtered_data)[j]
 
-        # If compare_to_str is defined, then check the condition. If not, then set to TRUE by default.
-        j_condition <- ifelse(!is.null(compare_to_vector),
-                              any(sapply(compare_to_vector, function(x) {
-                                startsWith(j_name, x)
-                              })),
-                              TRUE)
+      # If compare_to_str is defined, then check the condition. If not, then set to TRUE by default.
+      j_condition <- ifelse(!is.null(compare_to_vector), any(sapply(compare_to_vector, function(x) {
+        startsWith(j_name, x)
+      })), TRUE)
 
-        if (j_condition) {
-          return(process_pair(i, j, filtered_data, tree))
-        } else {
-          return(NULL)
-        }
-      }, simplify = FALSE)
-    } else {
-      return(NULL)
-    }
+      if (j_condition) {
+        return(process_pair(i, j, filtered_data, tree))
+      } else {
+        return(NULL)
+      }
+    }, simplify = FALSE)
+  } else {
+    return(NULL)
   }
+}
 
 cat("\nProfile comparisons complete!\n")
 
