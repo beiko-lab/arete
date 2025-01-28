@@ -20,7 +20,7 @@ process GET_VFDB{
 
     script:
     """
-    curl http://www.mgc.ac.cn/VFs/Down/VFDB_setA_pro.fas.gz --output VFDB_setA_pro.fas.gz
+    curl https://www.mgc.ac.cn/VFs/Down/VFDB_setA_pro.fas.gz --output VFDB_setA_pro.fas.gz
     """
     stub:
     """
