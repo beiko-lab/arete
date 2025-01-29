@@ -11,7 +11,7 @@
 # List of CRAN packages to check and install
 cran_packages <- c("ape",
                    "dplyr",
-                   "devtools",
+                   "remotes",
                    "phytools",
                    "foreach",
                    "doParallel",
@@ -428,7 +428,7 @@ constructMatrix <- function(lines, outputFile, column) {
   # Convert the matrix to a data frame and set the row and column names
   distances <- as.data.frame(distances)
   rownames(distances) <- entities
-  colnames(distances) <- "Feature"+entities
+  colnames(distances) <- entities
 
   # Write the matrix to a file
   write.table(distances,
