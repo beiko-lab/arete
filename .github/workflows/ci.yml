@@ -19,7 +19,7 @@ jobs:
     strategy:
       matrix:
         NXF_VER:
-          - "latest-stable"
+          - "23.10.0"
     steps:
       - name: Check out pipeline code
         uses: actions/checkout@v2
