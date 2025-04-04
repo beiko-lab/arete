@@ -1,4 +1,4 @@
-// Run RGI
+// Run RGI application
 process UPDATE_RGI_DB {
     tag "CARD"
     label 'process_low'
