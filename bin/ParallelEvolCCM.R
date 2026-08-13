@@ -51,6 +51,7 @@ parse_args <- function(args) {
     cat("Options:\n")
     cat("  --intree <tree_file>        : Path to the tree file (required).\n")
     cat("  --intable <table_file>      : Path to the table file (required).\n")
+    cat("  --outdir <directory>        : Directory for output files (optional, default is working directory).\n")
     cat(
       "  --compare_from <values>     : Comma-separated list of values for comparison (optional).\n"
     )
@@ -89,6 +90,7 @@ parse_args <- function(args) {
   # Parse the CL arguments
   inputTree <- parseArg("--intree", args)
   inputProfile <- parseArg("--intable", args)
+  outputDir <- parseArg("--outdir", args)
   compare_to_str <- parseArg("--compare_to", args)
   min_abundance_str <- parseArg("--min_abundance", args)
   max_abundance_str <- parseArg("--max_abundance", args)
@@ -165,6 +167,7 @@ parse_args <- function(args) {
   parsed_list <- list(
     "inputTree" = inputTree,
     "inputProfile" = inputProfile,
+    "outputDir" = outputDir,
     "compare_from_vector" = compare_from_vector,
     "compare_to_vector" = compare_to_vector,
     "min_abund" = min_abund,
@@ -442,7 +445,6 @@ constructMatrix <- function(lines, outputFile, column) {
 ### MAIN PROGRAM ###
 ####################
 
-
 ########################################## FILTERS ##########################################
 
 ### Remove any profile that maps perfectly onto a clade in the tree. In practice this doesn't do much ###
@@ -465,10 +467,23 @@ fix_multifurcations = TRUE
 args <- commandArgs(trailingOnly = TRUE)
 parsed <- parse_args(args)
 
-### Output file name (could be changed to a command-line argument) ###
-outputTree <- paste("EvolCCM_", basename(parsed$inputTree), sep = "")
-outputFile <- paste("EvolCCM_", basename(parsed$inputProfile), sep = "")
+### Output file name ###
+if (!is.null(parsed$outputDir)) {
+  dir.create(parsed$outputDir, showWarnings = FALSE, recursive = TRUE)
+  outputTree <- file.path(parsed$outputDir, paste("EvolCCM_", basename(parsed$inputTree), sep = ""))
+  outputFile <- file.path(parsed$outputDir, paste("EvolCCM_", basename(parsed$inputProfile), sep = ""))
+} else {
+  outputTree <- paste("EvolCCM_", basename(parsed$inputTree), sep = "")
+  outputFile <- paste("EvolCCM_", basename(parsed$inputProfile), sep = "")
+}
 
+### Remove any chunk files already in output directory, from a previous failed run for instance. ###
+existing_chunks <- list.files(path = dirname(outputFile), pattern = "output_temp_chunk_[0-9]+\\.txt", full.names = TRUE)
+if (length(existing_chunks) > 0) {
+  message(paste0("Removing ", length(existing_chunks), " stale chunk file(s) from ", dirname(outputFile), "."))
+  file.remove(existing_chunks)
+}
+ 
 ###################### READ THE TREE FILE AND FIX IF NECESSARY ######################
 
 cat("\nReading tree...\n")
@@ -536,7 +551,7 @@ cat("\nWriting output...\n")
 
 ### Process the results and write them to chunks of output files ###
 chunk_size <- 100
-output_file_pattern <- "output_temp_chunk_%d.txt"
+output_file_pattern <- file.path(dirname(outputFile), "output_temp_chunk_%d.txt")
 chunk_index <- 1
 result_counter <- 1
 
@@ -570,7 +585,7 @@ for (result in results) {
 }
 
 # Merge the chunks of output files into the main output file
-temp_files <- list.files(pattern = "output_temp_chunk_[0-9]+\\.txt")
+temp_files <- list.files(path = dirname(outputFile), pattern = "output_temp_chunk_[0-9]+\\.txt", full.names = TRUE)
 
 outputHeadings <-
   paste(
@@ -585,7 +600,7 @@ outputHeadings <-
     "interact_pval",
     sep = "\t"
   )
-outputFilegz = gzfile(outputFile, "w")
+outputFilegz = gzfile(paste0(outputFile, ".gz"), "w")
 cat(outputHeadings, file = outputFilegz, sep = "\n")
 for (temp_file in temp_files) {
   # Read the contents of the temporary file
@@ -603,7 +618,7 @@ for (temp_file in temp_files) {
 
 # Read the lines from the input file
 close(outputFilegz)
-lines <- readLines(outputFile)[-1]
+lines <- readLines(paste0(outputFile, ".gz"))[-1]
 X2file = paste(outputFile, "X2", sep = ".")
 Pfile = paste(outputFile, "pvals", sep = ".")
 
