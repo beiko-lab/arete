@@ -476,7 +476,7 @@ if (!is.null(parsed$outputDir)) {
   outputTree <- paste("EvolCCM_", basename(parsed$inputTree), sep = "")
   outputFile <- paste("EvolCCM_", basename(parsed$inputProfile), sep = "")
 }
-
+outputFile <- paste0(tools::file_path_sans_ext(outputFile), ".tsv")
 ### Remove any chunk files already in output directory, from a previous failed run for instance. ###
 existing_chunks <- list.files(path = dirname(outputFile), pattern = "output_temp_chunk_[0-9]+\\.txt", full.names = TRUE)
 if (length(existing_chunks) > 0) {
@@ -619,8 +619,8 @@ for (temp_file in temp_files) {
 # Read the lines from the input file
 close(outputFilegz)
 lines <- readLines(paste0(outputFile, ".gz"))[-1]
-X2file = paste(outputFile, "X2", sep = ".")
-Pfile = paste(outputFile, "pvals", sep = ".")
+X2file = paste0(tools::file_path_sans_ext(outputFile), "_X2.tsv")
+Pfile = paste0(tools::file_path_sans_ext(outputFile), "_pvals.tsv")
 
 constructMatrix(lines, X2file, 8)
 constructMatrix(lines, Pfile, 9)
