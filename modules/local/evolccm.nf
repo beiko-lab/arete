@@ -13,10 +13,10 @@ process EVOLCCM {
     path feature_table
 
     output:
-    path "EvolCCM_*tsv.gz" , emit: profile
-    path "EvolCCM_*pvals"  , emit: pvalues
-    path "EvolCCM_*X2"     , emit: x2
-    path "EvolCCM_*tre"    , emit: tree
+    path "EvolCCM_*tsv.gz"     , emit: profile
+    path "EvolCCM_*_pvals.tsv" , emit: pvalues
+    path "EvolCCM_*_X2.tsv"    , emit: x2
+    path "EvolCCM_*tre"        , emit: tree
 
     when:
     task.ext.when == null || task.ext.when
@@ -37,8 +37,8 @@ process EVOLCCM {
     stub:
     """
     touch EvolCCM_test.tsv.gz
-    touch EvolCCM_test.tsv.pvals
-    touch EvolCCM_test.tsv.X2
+    touch EvolCCM_test_pvals.tsv
+    touch EvolCCM_test_X2.tsv
     touch EvolCCM_test.tre
     """
 }
