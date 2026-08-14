@@ -476,14 +476,17 @@ if (!is.null(parsed$outputDir)) {
   outputTree <- paste("EvolCCM_", basename(parsed$inputTree), sep = "")
   outputFile <- paste("EvolCCM_", basename(parsed$inputProfile), sep = "")
 }
-outputFile <- paste0(tools::file_path_sans_ext(outputFile), ".tsv")
+outputFile <- paste0(tools::file_path_sans_ext(outputFile, compression=TRUE), ".tsv")
+
 ### Remove any chunk files already in output directory, from a previous failed run for instance. ###
-existing_chunks <- list.files(path = dirname(outputFile), pattern = "output_temp_chunk_[0-9]+\\.txt", full.names = TRUE)
+chunk_prefix <- paste0(basename(outputFile), "_output_temp_chunk_")
+output_file_pattern <- file.path(dirname(outputFile), paste0(chunk_prefix, "%d.txt"))
+existing_chunks <- list.files(dirname(outputFile), pattern = glob2rx(paste0(chunk_prefix, "*.txt")), full.names = TRUE)
 if (length(existing_chunks) > 0) {
   message(paste0("Removing ", length(existing_chunks), " stale chunk file(s) from ", dirname(outputFile), "."))
   file.remove(existing_chunks)
 }
- 
+
 ###################### READ THE TREE FILE AND FIX IF NECESSARY ######################
 
 cat("\nReading tree...\n")
@@ -551,7 +554,6 @@ cat("\nWriting output...\n")
 
 ### Process the results and write them to chunks of output files ###
 chunk_size <- 100
-output_file_pattern <- file.path(dirname(outputFile), "output_temp_chunk_%d.txt")
 chunk_index <- 1
 result_counter <- 1
 
@@ -585,7 +587,7 @@ for (result in results) {
 }
 
 # Merge the chunks of output files into the main output file
-temp_files <- list.files(path = dirname(outputFile), pattern = "output_temp_chunk_[0-9]+\\.txt", full.names = TRUE)
+temp_files <- sprintf(output_file_pattern, seq_len(chunk_index - 1))
 
 outputHeadings <-
   paste(
@@ -619,8 +621,8 @@ for (temp_file in temp_files) {
 # Read the lines from the input file
 close(outputFilegz)
 lines <- readLines(paste0(outputFile, ".gz"))[-1]
-X2file = paste0(tools::file_path_sans_ext(outputFile), "_X2.tsv")
-Pfile = paste0(tools::file_path_sans_ext(outputFile), "_pvals.tsv")
+X2file = paste0(tools::file_path_sans_ext(outputFile, compression=TRUE), "_X2.tsv")
+Pfile = paste0(tools::file_path_sans_ext(outputFile, compression=TRUE), "_pvals.tsv")
 
 constructMatrix(lines, X2file, 8)
 constructMatrix(lines, Pfile, 9)
